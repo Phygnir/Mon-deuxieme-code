@@ -191,6 +191,48 @@ button { font: inherit; color: inherit; }
 .line-moves .n { color: var(--muted); }
 .line-moves .cur { color: var(--accent); font-weight: 700; }
 
+/* Coach */
+.coach { display: flex; flex-direction: column; gap: 10px; }
+.coach-card { border-radius: 12px; padding: 13px 15px; background: var(--bg); border: 1px solid var(--line); border-left-width: 4px; display: flex; flex-direction: column; gap: 8px; }
+.coach-card.ok { border-left-color: var(--good); }
+.coach-card.warn { border-left-color: var(--warn); }
+.coach-card.bad { border-left-color: var(--bad); }
+.coach-card.info, .coach-card.brief { border-left-color: var(--accent); }
+.coach-card p, .coach-card ul { margin: 0; font-size: 0.95rem; }
+.coach-card ul { padding-left: 1.1em; display: flex; flex-direction: column; gap: 3px; }
+.coach-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.coach-title b { font-family: var(--font-mono); font-size: 1.02rem; }
+.verdict { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 999px; }
+.verdict.ok { background: var(--good-bg); color: var(--good); }
+.verdict.warn { background: var(--warn-bg); color: var(--warn); }
+.verdict.bad { background: var(--bad-bg); color: var(--bad); }
+.verdict.info { background: var(--accent-soft); color: var(--accent); }
+.threats li { color: var(--bad); font-weight: 700; }
+.calm { color: var(--muted); }
+.book { color: var(--accent); }
+.toggles { display: flex; flex-direction: column; gap: 8px; }
+.legend { margin: 0; font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 4px; }
+.legend i.q-best, .dot.q-best { background: #1f9d55; }
+.legend i.q-ok, .dot.q-ok { background: #8fbf4a; }
+.legend i.q-dub, .dot.q-dub { background: #e6a117; }
+.legend i.q-bad, .dot.q-bad { background: #d23c30; }
+.ring.q-best { border-color: #1f9d55; } .ring.q-ok { border-color: #8fbf4a; } .ring.q-dub { border-color: #e6a117; } .ring.q-bad { border-color: #d23c30; }
+.dot[class*="q-"] { width: 32%; height: 32%; opacity: 0.92; box-shadow: 0 0 0 2px rgba(255,255,255,.6); }
+
+/* Fiche d'ouverture */
+.sheet { display: flex; flex-direction: column; gap: 14px; }
+.sheet h3 { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: var(--font-body); font-weight: 700; margin: 0 0 6px; }
+.sheet ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.typ { display: flex; flex-direction: column; gap: 6px; }
+.typ button { text-align: left; display: grid; grid-template-columns: 5.4em minmax(0, 1fr); gap: 10px; align-items: baseline; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 8px 11px; cursor: pointer; font-size: 0.92rem; }
+.typ button:hover, .typ button[aria-pressed="true"] { border-color: var(--accent); }
+.typ button b { font-family: var(--font-mono); color: var(--accent); }
+.situ { display: flex; flex-direction: column; gap: 8px; }
+.situ div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 0.93rem; }
+.situ b { display: block; margin-bottom: 2px; }
+
 /* Partie */
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
 .seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: var(--muted); }
@@ -263,6 +305,9 @@ button { font: inherit; color: inherit; }
           <defs>
             <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
               <path d="M0,0 L10,5 L0,10 z" fill="#1d8a52" fill-opacity="0.85"></path>
+            </marker>
+            <marker id="ahr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#d23c30" fill-opacity="0.85"></path>
             </marker>
           </defs>
           <g id="arrow-layer"></g>
@@ -600,7 +645,7 @@ function think(g, opts = {}) {
         let bestN = -Infinity;
         for (const x of scored) { const n = x.v + (Math.random() * 2 - 1) * noise; if (n > bestN) { bestN = n; pick = x; } }
       }
-      result = { move: pick.m, score: pick.v, best: scored[0].m, bestScore: scored[0].v, depth: d };
+      result = { move: pick.m, score: pick.v, best: scored[0].m, bestScore: scored[0].v, depth: d, all: scored };
       if (scored[0].v > MATE - 1000) break;
     } catch (e) {
       if (e !== TIMEOUT) throw e;
@@ -799,12 +844,257 @@ const L_EXPERT = [
   ]}
 ];
 
-// Ouvertures : chaque leçon = une présentation, la ligne guidée, puis la même ligne de mémoire.
+// Fiches d'ouverture : plans, coups typiques (montrés en flèche depuis la position finale de la ligne), situations courantes,
+// puis exercices « trouve le coup typique » joués à partir de la ligne prolongée de quelques coups (pre).
+const SHEETS = {
+  italienne: {
+    plans: {
+      w: ["Garder le centre e4-d4 et chasser les cavaliers noirs avec d5 ou e5.", "Mettre la pression sur f7 avec le fou c4 et la dame en b3.", "Roquer, puis Te1 et Cbd2 pour soutenir le centre."],
+      b: ["Frapper le centre par ...d5 : c'est la libération classique.", "Échanger des pièces (...Fxd2+) pour réduire l'initiative blanche.", "Roquer vite : le roi en e8 est exposé sur la colonne e."]
+    },
+    typical: [
+      { u: "b4d2", t: "...Fxd2+ : échanger avant de roquer." },
+      { u: "d7d5", t: "...d5 ! La riposte au centre qui libère le jeu noir." },
+      { u: "e4e5", t: "e5 : chasse le cavalier f6, très fort si les Noirs ne jouent pas ...d5." },
+      { u: "d1b3", t: "Db3 : double attaque sur f7 et b7." }
+    ],
+    situations: [
+      { t: "La partie des deux cavaliers", x: "Si les Noirs jouent 3...Cf6 au lieu de 3...Fc5, le coup 4.Cg5 attaque f7 deux fois. Réponse correcte : 4...d5 5.exd5 Ca5, en sacrifiant un pion pour l'initiative." },
+      { t: "e4-e5 qui chasse le cavalier", x: "Quand le pion blanc arrive en e5, le cavalier f6 doit fuir. Réponds par ...d5 ou ...Ce4 pour garder une pièce active au centre." }
+    ],
+    practice: [
+      { pre: ["b4d2", "b1d2", "d7d5"], accept: ["e4d5"], x: "Les Noirs frappent avec ...d5. Que fais-tu de ton pion e4 ?", ok: "exd5 : on échange au centre plutôt que de laisser les Noirs prendre en e4." },
+      { pre: ["b4d2", "b1d2", "d7d5", "e4d5", "f6d5"], accept: ["d1b3"], x: "Le cavalier noir trône en d5. Trouve le coup de dame typique.", ok: "Db3 ! La dame attaque b7 et renforce la pression du fou c4 sur d5." }
+    ]
+  },
+  espagnole: {
+    plans: {
+      w: ["Jouer d4 pour bâtir le centre idéal e4-d4.", "Manœuvre Cbd2-f1-g3 : le cavalier rejoint l'aile roi.", "Replier le fou en c2 pour viser le roque noir."],
+      b: ["Chasser le fou b3 par ...Ca5 et gagner de l'espace avec ...c5.", "Mettre la pression sur e4 avec ...Fb7, ...Te8 et ...Ff8.", "Tenir le pion e5 : c'est le cœur de la position noire."]
+    },
+    typical: [
+      { u: "c6a5", t: "...Ca5 : chasse le fou de la diagonale a2-g8." },
+      { u: "c8b7", t: "...Fb7 : vise e4." },
+      { u: "d2d4", t: "d4 : l'objectif central des Blancs." },
+      { u: "a2a4", t: "a4 : attaque le pion b5 et ouvre la colonne a." }
+    ],
+    situations: [
+      { t: "Le piège de l'arche de Noé", x: "Après un échange en d4, le fou blanc en b3 peut être enfermé par ...c5 puis ...c4. C'est pour ça que les Blancs jouent c3 : la case c2 sert de refuge." },
+      { t: "La variante d'échange", x: "Avec 4.Fxc6 dxc6, les Blancs abîment les pions noirs. En finale, leur majorité à l'aile roi (4 pions contre 3) peut créer un pion passé." }
+    ],
+    practice: [
+      { pre: ["c6a5"], accept: ["b3c2"], x: "Le cavalier noir attaque ton fou b3. Où le replier ?", ok: "Fc2 : le fou reste sur une diagonale qui vise le roque noir." },
+      { pre: ["c6a5", "b3c2", "c7c5"], accept: ["d2d4"], x: "Les Noirs ont joué ...c5. C'est le moment de jouer le coup central prévu depuis c3.", ok: "d4 : la variante Tchigorine, position principale de l'espagnole fermée." }
+    ]
+  },
+  ecossaise: {
+    plans: {
+      w: ["Gagner de l'espace avec e5 et c4.", "Développer vite et viser les pions noirs abîmés (c6 et a7).", "Défendre e5 avec De2 et Ff4."],
+      b: ["Attaquer le pion e5 : ...De7, ...Cd5, puis ...d6.", "Utiliser la paire de fous et la colonne b semi-ouverte.", "Jouer ...d5 pour réparer la structure c6."]
+    },
+    typical: [
+      { u: "d8e7", t: "...De7 : cloue le pion e5 contre le roi." },
+      { u: "f6d5", t: "...Cd5 : le cavalier se centralise." },
+      { u: "d1e2", t: "De2 : bloque la colonne e et défend e5." },
+      { u: "c2c4", t: "c4 : chasse le cavalier de d5." }
+    ],
+    situations: [
+      { t: "4...Fc5 au lieu de 4...Cf6", x: "Le fou vise f2 et le cavalier d4. Les Blancs répondent 5.Fe3 (ou 5.Cxc6) et c3 pour solidifier d4." },
+      { t: "La dame trop tôt", x: "Après 5.Cxc6 bxc6 6.e5, si les Noirs jouent mollement, le cavalier f6 n'a plus de bonne case. Il faut réagir tout de suite avec ...De7 ou ...Cd5." }
+    ],
+    practice: [
+      { pre: ["d8e7"], accept: ["d1e2"], x: "La dame noire attaque e5 et le cloue. Comment réagir ?", ok: "De2 : la dame défend e5 et bloque la colonne e." },
+      { pre: ["d8e7", "d1e2", "f6d5"], accept: ["c2c4"], x: "Le cavalier noir s'installe en d5. Chasse-le.", ok: "c4 : le cavalier doit reculer, les Blancs gagnent de l'espace." }
+    ]
+  },
+  gambitdame: {
+    plans: {
+      w: ["Maintenir la pression sur d5 (Cc3, Fg5, Dc2).", "Dans la structure Carlsbad (après cxd5 exd5), attaque de minorité avec b4-b5.", "Placer les tours en c1 et d1."],
+      b: ["Libérer le jeu avec ...c5 ou ...dxc4 suivi de ...c5.", "Simplifier avec ...h6 et ...Ce4 (défense Lasker).", "Fianchetto ...b6 et ...Fb7 (défense Tartakower)."]
+    },
+    typical: [
+      { u: "h7h6", t: "...h6 : questionne le fou g5." },
+      { u: "b7b6", t: "...b6 : prépare ...Fb7 et ...c5." },
+      { u: "a1c1", t: "Tc1 : la tour sur la colonne c, future colonne ouverte." },
+      { u: "f1d3", t: "Fd3 : développement naturel vers le roque." }
+    ],
+    situations: [
+      { t: "Le piège de l'éléphant", x: "Après 4...Cbd7 5.cxd5 exd5, le coup 6.Cxd5?? semble gagner un pion. Mais 6...Cxd5! 7.Fxd8 Fb4+ 8.Dd2 Fxd2+ 9.Rxd2 Rxd8 : les Noirs gagnent une pièce." },
+      { t: "La structure Carlsbad", x: "Après cxd5 exd5, les Blancs avancent leurs pions b et a (b4-b5) contre les trois pions noirs a, b, c. C'est l'attaque de minorité : créer une faiblesse en c6." }
+    ],
+    practice: [
+      { pre: ["h7h6"], accept: ["g5h4", "g5f6"], x: "Les Noirs demandent au fou g5 de choisir. Que fais-tu ?", ok: "Fh4 garde le clouage ; Fxf6 donne la paire de fous mais simplifie. Les deux se jouent." },
+      { pre: ["h7h6", "g5h4", "b7b6"], accept: ["f1d3", "f1e2", "a1c1", "c4d5", "d1c2"], x: "Les Noirs préparent ...Fb7. Continue ton développement.", ok: "Bon plan : finir le développement, puis roquer et centraliser les tours." }
+    ]
+  },
+  londres: {
+    plans: {
+      w: ["Fd3, roque, puis Ce5 : un avant-poste au centre.", "Avec f4, l'attaque à l'aile roi devient dangereuse.", "Garder la pyramide c3-d4-e3 : elle ne cède jamais."],
+      b: ["Attaquer b2 avec ...Db6, sans laisser le fou d6 sans défense.", "Gagner de l'espace avec ...c4 ou frapper avec ...e5.", "Échanger le fou par ...Fxg3 : la colonne h s'ouvre alors pour les Blancs."]
+    },
+    typical: [
+      { u: "c5c4", t: "...c4 : gagne de l'espace à l'aile dame." },
+      { u: "d6g3", t: "...Fxg3 : échange, mais hxg3 ouvre la colonne h." },
+      { u: "f1d3", t: "Fd3 : le fou vise h7." },
+      { u: "f3e5", t: "Ce5 : le cavalier sur un avant-poste central." }
+    ],
+    situations: [
+      { t: "La pression sur b2", x: "Le fou c1 est sorti en f4, donc b2 n'est plus défendu. Après ...Db6, défends-le avec Db3, Dc1, Db1 ou Tb1." },
+      { t: "La colonne h ouverte", x: "Si les Noirs échangent en g3 et que tu reprends hxg3, ta tour h1 travaille déjà. Ne roque pas trop vite : une attaque sur h7 peut venir." }
+    ],
+    practice: [
+      { pre: ["e8g8"], accept: ["f1d3"], x: "Les Noirs ont roqué. Développe ta dernière pièce mineure vers le roi adverse.", ok: "Fd3 : le fou vise h7 et prépare le roque." },
+      { pre: ["e8g8", "f1d3", "b7b6"], accept: ["f3e5", "e1g1", "d1e2"], x: "Les Noirs préparent ...Fb7. Poursuis le plan du Londres.", ok: "Bien : le cavalier en e5 ou le roque, puis f4 pour attaquer à l'aile roi." }
+    ]
+  },
+  sicilienne: {
+    plans: {
+      w: ["Attaque anglaise : Fe3, f3, Dd2, grand roque puis g4-g5.", "Attaque Fg5 avec f4 : pression immédiate.", "Utiliser la case d5, faible si les Noirs jouent ...e5."],
+      b: ["Colonne c semi-ouverte : Tc8, ...Dc7, pression sur c3 et c2.", "Attaque à l'aile dame avec ...b5-b4.", "Jouer ...e5 ou ...e6 pour prendre sa part du centre."]
+    },
+    typical: [
+      { u: "c1e3", t: "Fe3 : l'attaque anglaise." },
+      { u: "c1g5", t: "Fg5 : variante principale, très tranchante." },
+      { u: "e7e5", t: "...e5 : chasse le cavalier d4." },
+      { u: "b7b5", t: "...b5 : expansion à l'aile dame." }
+    ],
+    situations: [
+      { t: "Les sacrifices en d5 et e6", x: "Si le roi noir reste au centre, les Blancs sacrifient souvent un cavalier en d5 ou un fou en e6 pour ouvrir le jeu. Roque avant de lancer ton attaque." },
+      { t: "Les attaques sur les deux ailes", x: "Quand les rois sont roqués de côtés opposés, c'est une course : chaque tempo compte. Avance tes pions vers le roi adverse, pas devant le tien." }
+    ],
+    practice: [
+      { pre: ["c1e3"], accept: ["e7e5", "e7e6", "f6g4"], x: "6.Fe3 : les Blancs préparent l'attaque anglaise. Prends ta part du centre.", ok: "Bon coup : ...e5 et ...e6 sont les deux plans principaux, et ...Cg4 chasse le fou." },
+      { pre: ["f1e2"], accept: ["e7e5"], x: "6.Fe2 : variante calme. Trouve le coup typique de la Najdorf.", ok: "...e5 ! Le cavalier d4 doit reculer. La case d5 s'affaiblit, mais les Noirs ont un bon jeu." }
+    ]
+  },
+  francaise: {
+    plans: {
+      w: ["Tenir la chaîne d4-e5 coûte que coûte.", "Jouer a3 et b4 pour gagner de l'espace à l'aile dame.", "Attaquer à l'aile roi, où l'espace est blanc."],
+      b: ["Attaquer la base de la chaîne : d4 (...c5, ...Cc6, ...Db6, ...Cge7-f5).", "Casser la tête de la chaîne avec ...f6.", "Activer le fou c8, souvent enfermé derrière e6."]
+    },
+    typical: [
+      { u: "a2a3", t: "a3 : prépare b4." },
+      { u: "f1d3", t: "Fd3 : développement actif, mais attention au pion d4." },
+      { u: "c8d7", t: "...Fd7 : sort le fou enfermé." },
+      { u: "g8e7", t: "...Ce7 puis ...Cf5 : une pièce de plus contre d4." }
+    ],
+    situations: [
+      { t: "Le piège de d4", x: "Après 6.Fd3 cxd4 7.cxd4, la prise 7...Cxd4?? perd la dame : 8.Cxd4 Dxd4 9.Fb5+ et la dame d1 attaque la dame noire. Il faut d'abord jouer ...Fd7." },
+      { t: "Le mauvais fou", x: "Le fou c8 est bloqué par le pion e6. Les Noirs cherchent à l'échanger (...b6 et ...Fa6) ou à le sortir par d7." }
+    ],
+    practice: [
+      { pre: ["a2a3"], accept: ["c5c4", "g8h6", "c8d7", "a7a5", "f7f6"], x: "6.a3 prépare b4. Choisis un plan noir typique.", ok: "Bon plan. ...c4 bloque l'aile dame, ...Ch6-f5 attaque d4, ...f6 attaque e5." },
+      { pre: ["f1d3", "c5d4", "c3d4"], accept: ["c8d7"], x: "Le pion d4 semble ne tenir qu'à un fil. Attention au piège !", ok: "...Fd7 ! Surtout pas ...Cxd4?? Cxd4 Dxd4 Fb5+ qui gagne la dame. Maintenant ...Fb5 n'est plus possible." }
+    ]
+  },
+  carokann: {
+    plans: {
+      w: ["Chasser le fou avec h4-h5.", "Gagner de l'espace et installer un cavalier en e5.", "Grand roque et attaque à l'aile roi."],
+      b: ["Structure solide c6-e6, puis ...Cd7, ...Cgf6, ...e6 et ...Fd6.", "Échanger les pièces et viser une bonne finale.", "Jouer ...c5 au bon moment pour attaquer d4."]
+    },
+    typical: [
+      { u: "h2h4", t: "h4 : menace h5 et la capture du fou." },
+      { u: "h7h6", t: "...h6 : garde la case h7 au fou." },
+      { u: "b8d7", t: "...Cd7 : contrôle e5." },
+      { u: "e7e6", t: "...e6 : ouvre la diagonale du fou f8." }
+    ],
+    situations: [
+      { t: "Le mat étouffé en d6", x: "Après 4...Cd7 5.De2 Cgf6??, le coup 6.Cd6# est mat ! Le roi noir est entouré par ses propres pièces et le pion e7 est cloué par la dame." },
+      { t: "La poussée h4-h5", x: "Quand les Blancs poussent h4, réponds ...h6 pour garder h7 au fou. Le pion h5 peut ensuite devenir une faiblesse blanche." }
+    ],
+    practice: [
+      { pre: ["h2h4"], accept: ["h7h6", "h7h5"], x: "6.h4 menace h5 qui piégerait le fou. Que fais-tu ?", ok: "...h6 : le fou garde la case h7 pour se replier." },
+      { pre: ["h2h4", "h7h6", "g1f3"], accept: ["b8d7", "e7e6", "g8f6"], x: "Continue ton développement solide.", ok: "Développement typique de la Caro-Kann : ...Cd7, ...e6, ...Cgf6." }
+    ]
+  },
+  scandinave: {
+    plans: {
+      w: ["Développer en gagnant du temps sur la dame noire.", "Fc4, Fd2, O-O puis Ce5.", "Exploiter l'avance de développement."],
+      b: ["Sortir le fou c8 (...Ff5 ou ...Fg4) avant ...e6.", "Structure type Caro-Kann : c6-e6.", "Garder une case de retraite à la dame (c7, d8)."]
+    },
+    typical: [
+      { u: "c8f5", t: "...Ff5 : le fou sort avant ...e6." },
+      { u: "c8g4", t: "...Fg4 : cloue le cavalier f3." },
+      { u: "f1c4", t: "Fc4 : développement actif." },
+      { u: "c1d2", t: "Fd2 : prépare une attaque à la découverte sur la dame a5." }
+    ],
+    situations: [
+      { t: "La dame en a5 visée", x: "Avec un fou blanc en d2 et le cavalier en c3, si le cavalier bouge (Cd5, Cb5), le fou attaque la dame a5. Garde toujours une case de repli." },
+      { t: "Le temps perdu", x: "La dame noire a déjà bougé deux fois. Les Noirs doivent jouer simple et solide pour compenser les temps perdus." }
+    ],
+    practice: [
+      { pre: ["f1c4"], accept: ["c8f5", "c8g4", "e7e6"], x: "Développe-toi. Pense au fou c8.", ok: "Bien : le fou sort avant d'être enfermé par ...e6." },
+      { pre: ["f1c4", "c8f5", "c1d2"], accept: ["e7e6", "b8d7"], x: "Le fou d2 regarde ta dame en a5. Continue sans paniquer.", ok: "Solide. Si le cavalier c3 bouge, ta dame recule simplement en d8 ou c7." }
+    ]
+  },
+  estindienne: {
+    plans: {
+      w: ["Fermer le centre avec d5 puis attaquer à l'aile dame (c5, b4).", "Manœuvre Ce1-d3 pour soutenir c5.", "Échanger les dames (dxe5) si l'on veut une partie calme."],
+      b: ["Après d5, attaque à l'aile roi : ...Ce8, ...f5, ...f4, ...g5.", "Le fou g7 reste sur la grande diagonale.", "Ne pas se presser : préparer ...f5 avant de lancer les pions."]
+    },
+    typical: [
+      { u: "b8c6", t: "...Cc6 : met la pression sur d4." },
+      { u: "d4d5", t: "d5 : ferme le centre et fixe les plans." },
+      { u: "f6e8", t: "...Ce8 : libère la case f7 pour ...f5." },
+      { u: "f6h5", t: "...Ch5 : libère le pion f pour la poussée ...f5." }
+    ],
+    situations: [
+      { t: "La course aux ailes", x: "Après d5, les Blancs attaquent là où pointent leurs pions (l'aile dame) et les Noirs à l'aile roi. L'attaque noire vise directement le roi : elle est souvent plus dangereuse." },
+      { t: "L'échange des dames", x: "Après dxe5 dxe5 Dxd8 Txd8, la finale est sûre pour les Noirs : le fou g7 est actif et la case d4 leur appartient." }
+    ],
+    practice: [
+      { pre: ["e1g1"], accept: ["b8c6", "b8a6", "b8d7"], x: "7.O-O. Développe ta dernière pièce mineure.", ok: "Bien : ...Cc6 est le plus actif, ...Ca6 et ...Cbd7 se jouent aussi." },
+      { pre: ["e1g1", "b8c6", "d4d5", "c6e7", "f3e1"], accept: ["f6e8", "f6d7"], x: "Le centre est fermé. Prépare la poussée typique des Noirs.", ok: "Le cavalier libère la case f7 : ...f5 arrive au prochain coup." }
+    ]
+  },
+  pieges: {
+    at: 8,
+    plans: {
+      w: ["Un clouage sur la dame n'est pas absolu : la pièce clouée peut bouger si ça rapporte plus.", "Chercher les échecs avant tout, même avec un sacrifice."],
+      b: ["Avant de prendre une pièce offerte, vérifier tous les échecs adverses.", "Ne pas jouer ...g6 ou ...h6 sans raison quand f7 est fragile."]
+    },
+    typical: [
+      { u: "f3e5", t: "Cxe5 !! : le cavalier « cloué » bouge quand même." },
+      { u: "c4f7", t: "Fxf7+ : l'échec qui commence l'attaque." }
+    ],
+    situations: [
+      { t: "Le mat du lion (mat de Kiss)", x: "Les mêmes idées reviennent souvent : le fou c4 et le cavalier visent f7, et le roi noir se retrouve sans cases. Défends f7 et roque tôt." },
+      { t: "Les clouages relatifs", x: "Un cavalier cloué sur la dame peut bouger : on perd la dame, mais on gagne parfois bien plus. Un cavalier cloué sur le roi, lui, ne peut pas bouger." }
+    ],
+    practice: [
+      { pre: [], cut: 9, accept: ["d6e5"], x: "Tu as les Noirs. Le cavalier blanc vient de prendre en e5 en abandonnant sa dame. Que joues-tu ?", ok: "...dxe5 ! Tu prends le cavalier et pas la dame. Après Dxg4, tu as perdu un pion, mais tu n'es pas mat." }
+    ]
+  },
+  berger: {
+    at: 8,
+    plans: {
+      w: ["Le coup du berger vise f7 avec la dame et le fou.", "Contre une bonne défense, la dame sortie tôt devient une cible."],
+      b: ["Défendre f7 en développant : ...g6 chasse la dame, ...Cf6 bouche la diagonale.", "Profiter du temps gagné pour attaquer la dame."]
+    },
+    typical: [
+      { u: "f8g7", t: "...Fg7 : le fou sur la grande diagonale." },
+      { u: "c6d4", t: "...Cd4 : attaque la dame f3 et le pion c2." }
+    ],
+    situations: [
+      { t: "La dame en f3", x: "Même idée avec la dame en f3 au lieu de h5 : le cavalier en f6 bouche la diagonale et défend f7." },
+      { t: "Ne pas paniquer", x: "Après une défense correcte, c'est la dame blanche qui est en danger. Les Noirs gagnent souvent du temps en l'attaquant avec leurs pièces." }
+    ],
+    practice: [
+      { base: ["e2e4", "e7e5", "d1f3", "b8c6", "f1c4"], accept: ["g8f6"], x: "Variante du berger avec la dame en f3. Les Blancs menacent Dxf7#. Pare la menace en développant.", ok: "...Cf6 : le cavalier bloque la colonne f et défend f7." }
+    ]
+  }
+};
+
+// Ouvertures : présentation, ligne guidée, fiche (plans, coups typiques, situations), exercices, puis la ligne de mémoire.
+function fenAfter(moves) { const g = new Chess(START); for (const u of moves) g.make(g.find(u)); return g.fen(); }
 function opening(id, t, d, side, intro, moves, notes) {
+  const sh = SHEETS[id];
   return { id, t, d, g: side === "w" ? "n" : "p", side, steps: [
     { k: "info", fen: START, x: intro },
     { k: "line", fen: START, side, moves, notes, guide: true, x: `Joue les coups ${side === "w" ? "des Blancs" : "des Noirs"} en suivant la flèche. Je joue l'autre camp.` },
-    { k: "line", fen: START, side, moves, notes, x: "Maintenant, de mémoire. Après deux erreurs, la flèche réapparaît." }
+    { k: "sheet", fen: fenAfter(moves.slice(0, sh.at || moves.length)), side, sheet: sh, x: "Les idées à retenir. Clique sur un coup typique pour le voir sur l'échiquier." },
+    ...sh.practice.map(p => ({ k: "move", fen: fenAfter(p.base || moves.slice(0, p.cut || moves.length).concat(p.pre || [])), accept: p.accept, x: p.x, ok: p.ok, no: "Ce n'est pas le coup typique de cette ouverture. Relis la fiche et réessaie." })),
+    { k: "line", fen: START, side, moves, notes, x: "Pour finir, rejoue la ligne de mémoire. Après deux erreurs, la flèche réapparaît." }
   ]};
 }
 const L_OUV = [
@@ -915,7 +1205,7 @@ function render() {
     const p = g.b[sq];
     if (p) inner += pieceEl(p, B.dragFrom === sq ? "ghosted" : "");
     if (B.stars.has(sq)) inner += `<span class="star">★</span>`;
-    if (targets.has(sq)) inner += p || targets.get(sq).flags === "e" ? `<span class="ring"></span>` : `<span class="dot"></span>`;
+    if (targets.has(sq)) { const q = B.quality ? B.quality(targets.get(sq)) : ""; inner += p || targets.get(sq).flags === "e" ? `<span class="ring ${q}"></span>` : `<span class="dot ${q}"></span>`; }
     if (B.coords) {
       if (vi >= 56) inner += `<span class="co f">${FILES[f]}</span>`;
       if (vi % 8 === 0) inner += `<span class="co r">${8 - r}</span>`;
@@ -928,11 +1218,12 @@ function render() {
 }
 function center(sq) { const v = B.flip ? 63 - sq : sq; return [(v & 7) + 0.5, (v >> 3) + 0.5]; }
 function drawArrows() {
-  arrowLayer.innerHTML = B.arrows.map(([a, b]) => {
+  arrowLayer.innerHTML = B.arrows.map(([a, b, col]) => {
+    const red = col === "red";
     const [x1, y1] = center(a), [x2, y2] = center(b);
     const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
     const ex = x2 - (dx / len) * 0.38, ey = y2 - (dy / len) * 0.38;
-    return `<line x1="${x1}" y1="${y1}" x2="${ex}" y2="${ey}" stroke="#1d8a52" stroke-opacity="0.85" stroke-width="0.17" stroke-linecap="round" marker-end="url(#ah)"></line>`;
+    return `<line x1="${x1}" y1="${y1}" x2="${ex}" y2="${ey}" stroke="${red ? "#d23c30" : "#1d8a52"}" stroke-opacity="0.85" stroke-width="0.17" stroke-linecap="round" marker-end="url(#${red ? "ahr" : "ah"})"></line>`;
   }).join("");
 }
 function renderCaptured() {
@@ -1048,8 +1339,10 @@ function flashSq(sq, cls) { B.flash = { sq, cls }; render(); setTimeout(() => { 
 let timers = [];
 const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
 function clearTimers() { timers.forEach(clearTimeout); timers = []; if (C.iv) { clearInterval(C.iv); C.iv = null; } }
+let modeNow = null;
 function setMode(mode) {
   clearTimers();
+  modeNow = mode;
   save.mode = mode; persist();
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.mode === mode ? "true" : "false"));
   if (mode === "lecons") { if (save.path) lessonList(save.path); else pathList(); }
@@ -1172,10 +1465,12 @@ function startLesson(id, i = 0) {
 function loadStep() {
   clearTimers();
   const st = L.lesson.steps[L.i];
-  Object.assign(L, { moves: 0, done: st.k === "info", targets: null, ply: 0, errors: 0, userMoves: 0, note: null, sans: [], found: new Set(), fb: null });
+  Object.assign(L, { moves: 0, done: st.k === "info" || st.k === "sheet", targets: null, ply: 0, errors: 0, userMoves: 0, note: null, sans: [], found: new Set(), fb: null });
   const own = sq => colorOf(B.game.b[sq]) === B.game.turn;
   const opts = { canMove: own, onMove: lessonMove };
   if (st.k === "info") opts.locked = true;
+  if (st.k === "sheet") { opts.locked = true; opts.flip = st.side === "b"; }
+  if (st.k === "move" && st.fen.split(" ")[1] === "b") opts.flip = true;
   if (st.k === "stars") opts.canMove = sq => colorOf(B.game.b[sq]) === "w";
   if (st.k === "square") { opts.onSquare = lessonSquare; opts.coords = false; L.targets = st.targets.slice(); L.found = 0; }
   if (st.k === "pick") opts.onSquare = lessonPick;
@@ -1205,6 +1500,15 @@ function lessonPanel() {
     });
     extra = `<div class="line-moves">${parts.join(" ")}</div>`;
   }
+  if (st.k === "sheet") {
+    const s = st.sheet;
+    extra = `<div class="sheet">
+      <div class="plans"><div><h3>Plans des Blancs</h3><ul>${s.plans.w.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      <div><h3>Plans des Noirs</h3><ul>${s.plans.b.map(x => `<li>${x}</li>`).join("")}</ul></div></div>
+      <div><h3>Coups typiques</h3><div class="typ">${s.typical.map((x, i) => `<button data-typ="${i}" aria-pressed="false"><b>${sanFor(st.fen, x.u)}</b><span>${x.t}</span></button>`).join("")}</div></div>
+      <div><h3>Situations courantes</h3><div class="situ">${s.situations.map(x => `<div><b>${x.t}</b>${x.x}</div>`).join("")}</div></div>
+    </div>`;
+  }
   const canHint = !L.done && ["line", "mate", "kpk"].includes(st.k) && !(st.k === "line" && st.guide);
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between">
@@ -1227,6 +1531,19 @@ function lessonPanel() {
   const nx = $("#next"); if (nx) { nx.onclick = nextStep; nx.focus({ preventScroll: true }); }
   const rt = $("#retry"); if (rt) rt.onclick = loadStep;
   const lh = $("#lhint"); if (lh) lh.onclick = lessonHint;
+  panel.querySelectorAll("[data-typ]").forEach(b => b.onclick = () => {
+    const x = st.sheet.typical[+b.dataset.typ], f = sqIdx(x.u.slice(0, 2)), t = sqIdx(x.u.slice(2, 4));
+    panel.querySelectorAll("[data-typ]").forEach(o => o.setAttribute("aria-pressed", o === b ? "true" : "false"));
+    B.arrows = [[f, t]]; B.marks = new Set([f]); render();
+  });
+}
+// Notation d'un coup typique, même s'il appartient au camp qui n'a pas le trait
+function sanFor(fen, u) {
+  let g = new Chess(fen), m = g.find(u);
+  if (!m) { g = withTurn(g, g.turn === "w" ? "b" : "w"); m = g.find(u); }
+  if (!m) return u;
+  const s = frSan(g.san(m));
+  return colorOf(m.piece) === "b" ? "..." + s : s;
 }
 function setFb(c, t) { L.fb = c ? { c, t } : null; lessonPanel(); }
 function nextStep() {
@@ -1525,16 +1842,168 @@ function convertMove() {
   }, 380);
 }
 
-// ---------- Jouer contre l'ordinateur ----------
+// ---------- Jouer contre l'ordinateur, avec un coach ----------
 const LEVELS = [
   { name: "Débutant", cfg: { depth: 1, noise: 220, random: 0.2, time: 400 } },
   { name: "Facile", cfg: { depth: 2, noise: 70, time: 700 } },
   { name: "Moyen", cfg: { depth: 3, noise: 15, time: 1100 } },
   { name: "Fort", cfg: { depth: 6, noise: 0, time: 1800 } }
 ];
-const PL = Object.assign({ color: "w", level: 1, coach: true, log: [], over: null, coachMsg: null, bal: 0 }, save.play || {});
+const PL = Object.assign({ color: "w", level: 1, coach: true, live: true, log: [], over: null, bal: 0 }, save.play || {});
+Object.assign(PL, { review: null, brief: null, analysis: null, paused: false });
 let thinking = false;
-function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, log: PL.log, over: PL.over }; persist(); }
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, log: PL.log, over: PL.over }; persist(); }
+
+// --- Outils d'analyse pour le coach ---
+const FEM = { q: true, r: true };
+const le = t => (FEM[t] ? "la " : "le ") + NAME[t];
+const un = t => (FEM[t] ? "une " : "un ") + NAME[t];
+const ton = t => (FEM[t] ? "ta " : "ton ") + NAME[t];
+const Ton = t => (FEM[t] ? "Ta " : "Ton ") + NAME[t];
+const pris = t => "pris" + (FEM[t] ? "e" : "");
+function withTurn(g, turn) { const f = g.fen().split(" "); f[1] = turn; f[3] = "-"; return new Chess(f.join(" ")); }
+// Pièces du camp c attaquées et insuffisamment défendues (comme si l'adversaire avait le trait)
+function hangingOf(g, c) {
+  const opp = c === "w" ? "b" : "w", h = withTurn(g, opp), out = new Map();
+  for (const m of h.moves()) {
+    if (!m.captured || colorOf(m.captured) !== c || m.flags === "e") continue;
+    const t = m.captured.toLowerCase(), av = VAL[m.piece.toLowerCase()], tv = VAL[t];
+    if (t === "k") continue;
+    const defended = h.attacked(m.to, c);
+    if (defended && av >= tv) continue;
+    const prev = out.get(m.to);
+    if (!prev || av < prev.av) out.set(m.to, { sq: m.to, t, tv, av, by: m.piece.toLowerCase(), defended, move: m });
+  }
+  return [...out.values()].sort((a, b) => b.tv - a.tv);
+}
+const minorsDeveloped = (g, c) => {
+  const home = c === "w" ? { 57: "N", 62: "N", 58: "B", 61: "B" } : { 1: "n", 6: "n", 2: "b", 5: "b" };
+  return Object.entries(home).filter(([sq, p]) => g.b[sq] !== p).length;
+};
+// Ce que fait un coup : liste de faits typés, calculés sur la position avant le coup
+function moveFacts(g, m) {
+  const c = colorOf(m.piece), opp = c === "w" ? "b" : "w", t = m.piece.toLowerCase(), F = [];
+  const early = g.full <= 12;
+  const hangBefore = hangingOf(g, c);
+  const myKing = g.king(c);
+  const prevOwn = g.hist.length >= 2 ? g.hist[g.hist.length - 2].m : null;
+  const castleRights = c === "w" ? /[KQ]/.test(g.castle) : /[kq]/.test(g.castle);
+  g.make(m, true);
+  const replies = g.moves();
+  if (!replies.length && g.inCheck()) F.push({ k: "mate" });
+  else if (g.inCheck()) F.push({ k: "check" });
+  if (m.captured) {
+    const cap = m.captured.toLowerCase(), defended = g.attacked(m.to, opp);
+    if (!defended) F.push({ k: "capFree", cap });
+    else if (VAL[cap] > VAL[t] + 50) F.push({ k: "capWin", cap, by: t });
+    else if (Math.abs(VAL[cap] - VAL[t]) <= 50) F.push({ k: "capEven", cap });
+    else F.push({ k: "capBad", cap, by: t });
+  }
+  if (m.flags === "k" || m.flags === "q") F.push({ k: "castle" });
+  if (early && (t === "n" || t === "b") && (m.from >> 3) === (c === "w" ? 7 : 0)) F.push({ k: "develop", p: t });
+  if (early && t === "p" && ["d4", "e4", "d5", "e5"].includes(sqName(m.to)) && !m.captured) F.push({ k: "center" });
+  if (t === "q" && g.full <= 7 && minorsDeveloped(g, c) < 2 && !m.captured) F.push({ k: "earlyQueen" });
+  if (t === "k" && m.flags !== "k" && m.flags !== "q" && castleRights && g.full <= 20) F.push({ k: "kingWalk" });
+  if (t === "p" && !m.captured && [5, 6, 7].includes(m.from & 7) && [62, 63, 6, 7].includes(myKing) && ((myKing >> 3) === (c === "w" ? 7 : 0))) F.push({ k: "shield" });
+  if (early && prevOwn && t !== "p" && t !== "k" && prevOwn.to === m.from && !m.captured && !F.some(f => f.k === "check")) F.push({ k: "twice" });
+  // Menaces créées par la pièce jouée
+  const att = withTurn(g, c).pseudo(c).filter(x => x.from === m.to && x.captured && colorOf(x.captured) === opp);
+  const targets = att.map(x => x.captured.toLowerCase()).filter((ct, i) => ct !== "k" && (!g.attacked(att[i].to, opp) || VAL[ct] > VAL[t]));
+  const gives = F.some(f => f.k === "check" || f.k === "mate");
+  if (targets.length + (gives ? 1 : 0) >= 2) F.push({ k: "fork", targets: (gives ? ["k"] : []).concat(targets) });
+  else if (targets.length) F.push({ k: "threat", p: targets[0], sq: att.find(x => x.captured.toLowerCase() === targets[0]).to });
+  // Pièces en prise après le coup
+  const hangAfter = hangingOf(g, c);
+  for (const h of hangBefore) {
+    if (h.sq === m.from) { if (!hangAfter.some(a => a.sq === m.to)) F.push({ k: "saved", p: h.t }); continue; }
+    if (hangAfter.some(a => a.sq === h.sq)) F.push({ k: "ignore", p: h.t, sq: h.sq });
+    else F.push({ k: "defend", p: h.t, sq: h.sq });
+  }
+  for (const h of hangAfter) if (!hangBefore.some(b => b.sq === h.sq) || h.sq === m.to) {
+    if (!F.some(f => f.k === "ignore" && f.sq === h.sq)) F.push({ k: "hang", p: h.t, sq: h.sq, by: h.by, defended: h.defended });
+  }
+  g.undo();
+  // Pas de doublon : si la pièce qui prend reste en prise, « en prise » suffit
+  if (F.some(f => f.k === "hang" && f.sq === m.to)) return F.filter(f => f.k !== "capBad");
+  return F;
+}
+// Phrases : who = "me" (ton coup) ou "opp" (le coup de l'ordinateur)
+function factText(f, who) {
+  const me = who === "me";
+  switch (f.k) {
+    case "mate": return me ? "Échec et mat !" : "Échec et mat.";
+    case "check": return me ? "Tu donnes échec : il doit d'abord sauver son roi." : "Il te donne échec : tu dois parer.";
+    case "capFree": return me ? `Tu gagnes ${un(f.cap)} gratuitement.` : `Il prend ${ton(f.cap)} sans contrepartie.`;
+    case "capWin": return me ? `Tu prends ${un(f.cap)} avec ${ton(f.by)} : échange gagnant.` : `Il prend ${ton(f.cap)} avec ${un(f.by)}.`;
+    case "capEven": return me ? "Échange de pièces de même valeur." : `Il prend ${ton(f.cap)} : reprends pour rétablir l'équilibre.`;
+    case "capBad": return me ? `Tu donnes ${ton(f.by)} contre ${un(f.cap)} : il peut reprendre.` : `Il donne ${un(f.by)} contre ${ton(f.cap)}.`;
+    case "castle": return me ? "Tu roques : ton roi est à l'abri et ta tour entre en jeu." : "Il roque pour mettre son roi à l'abri.";
+    case "develop": return me ? `Tu développes ${ton(f.p)} : une pièce de plus en jeu.` : `Il développe ${un(f.p)}.`;
+    case "center": return me ? "Tu prends le centre avec un pion." : "Il prend sa part du centre.";
+    case "earlyQueen": return me ? "Tu sors ta dame tôt : elle risque d'être chassée avec gain de temps." : "Il sort sa dame tôt : attaque-la en développant tes pièces.";
+    case "kingWalk": return me ? "Ton roi bouge sans roquer : tu perds le droit de roquer." : "Son roi bouge : il ne pourra plus roquer.";
+    case "shield": return me ? "Tu avances un pion devant ton roi roqué : son abri s'affaiblit." : "Il affaiblit l'abri de son roi.";
+    case "twice": return me ? "Tu rejoues la même pièce : dans l'ouverture, développe plutôt les autres." : null;
+    case "fork": return me ? `Fourchette ! Tu attaques ${f.targets.map(le).join(" et ")} en même temps.` : `Fourchette : il attaque ${f.targets.map(ton).join(" et ")} en même temps.`;
+    case "threat": return me ? `Tu menaces ${le(f.p)} en ${sqName(f.sq)}.` : `Il menace ${ton(f.p)} en ${sqName(f.sq)}.`;
+    case "saved": return me ? `Tu mets ${ton(f.p)} à l'abri.` : null;
+    case "defend": return me ? `Tu protèges ${ton(f.p)} en ${sqName(f.sq)}.` : null;
+    case "ignore": return me ? `Tu laisses ${ton(f.p)} en ${sqName(f.sq)} sous la menace.` : null;
+    case "hang": return me ? `${Ton(f.p)} en ${sqName(f.sq)} peut être ${pris(f.p)}${f.by === "p" ? " par un pion" : f.defended ? ` par ${un(f.by)}` : " gratuitement"}.` : `Il laisse ${un(f.p)} en ${sqName(f.sq)} mal défendu : regarde si tu peux le prendre.`;
+  }
+  return null;
+}
+const GOOD = ["mate", "check", "capFree", "capWin", "fork", "threat", "castle", "saved", "defend", "develop", "center", "capEven"];
+const BAD = ["hang", "ignore", "capBad", "earlyQueen", "kingWalk", "shield", "twice"];
+const pickFacts = (F, keys, who, n) => keys.flatMap(k => F.filter(f => f.k === k)).map(f => factText(f, who)).filter(Boolean).slice(0, n);
+function quality(loss, best) {
+  if (best || loss <= 25) return { cls: "q-best", c: "ok", word: "excellent coup" };
+  if (loss <= 80) return { cls: "q-ok", c: "ok", word: "bon coup" };
+  if (loss <= 200) return { cls: "q-dub", c: "warn", word: "imprécision" };
+  return { cls: "q-bad", c: "bad", word: "gaffe" };
+}
+// Ouvertures connues (lignes des leçons)
+// Lignes d'ouverture compatibles avec la partie. Le nom n'est donné que s'il n'y a pas d'ambiguïté.
+function bookInfo(log) {
+  const us = log.map(e => e.u);
+  const lines = L_OUV.filter(l => { const line = l.steps[1].moves; return us.length <= line.length && us.every((u, i) => line[i] === u); });
+  if (!lines.length) return null;
+  const names = [...new Set(lines.map(l => l.t))];
+  const next = [...new Set(lines.map(l => l.steps[1].moves[us.length]).filter(Boolean))];
+  return { name: names.length === 1 ? names[0] : null, next, line: lines[0].steps[1].moves };
+}
+let lastBook = null;
+function analyse() {
+  const g = B.game;
+  if (PL.over || g.turn !== PL.color) return;
+  const r = think(g, { depth: 2, noise: 0.001, time: 900 });
+  PL.analysis = r ? { best: r.all[0], map: new Map(r.all.map(x => [uci(x.m), x.v])) } : null;
+}
+B.quality = m => {
+  if (!PL.live || !PL.analysis || B.game.turn !== PL.color || modeNow !== "jouer") return "";
+  let v = PL.analysis.map.get(uci(m));
+  if (v === undefined && m.promo) v = PL.analysis.map.get(uci(m).slice(0, 4) + "q");
+  if (v === undefined) return "";
+  return quality(PL.analysis.best.v - v, uci(m) === uci(PL.analysis.best.m)).cls;
+};
+// Briefing avant le coup du joueur : coup adverse, menaces, théorie
+function makeBrief(oppMove, oppFacts) {
+  const g = B.game, me = PL.color, items = [];
+  if (oppMove) {
+    const txt = pickFacts(oppFacts, ["mate", "check", "capFree", "capWin", "capEven", "capBad", "fork", "threat", "castle", "develop", "center", "earlyQueen", "kingWalk", "hang"], "opp", 2);
+    const bk = bookInfo(PL.log);
+    items.push({ c: "info", t: `Il a joué <b>${frSan(oppMove)}</b>.`, s: txt.length ? txt.join(" ") : bk ? `Coup de théorie${bk.name ? ` de ${bk.name.replace(/^(La|Le) /, m => m.toLowerCase())}` : ""}.` : "Pas de menace directe : demande-toi ce qu'il prépare." });
+  }
+  const threats = [];
+  for (const h of hangingOf(g, me).slice(0, 2)) threats.push(`${Ton(h.t)} en ${sqName(h.sq)} est attaqué${FEM[h.t] ? "e" : ""} par ${un(h.by)} et n'est pas assez défendu${FEM[h.t] ? "e" : ""}.`);
+  const opp = withTurn(g, me === "w" ? "b" : "w");
+  if (!g.inCheck() && !g.inCheck(me === "w" ? "b" : "w")) {
+    const mm = mateIn(opp, 1);
+    if (mm) threats.unshift(`Il menace mat en un coup avec ${frSan(opp.san(mm))} !`);
+  }
+  const book = bookInfo(PL.log);
+  return { items, threats, book };
+}
 function rebuildGame() {
   const g = new Chess(START);
   for (const e of PL.log) { const m = g.find(e.u); if (!m) break; g.make(m); }
@@ -1546,20 +2015,48 @@ function playView() {
   resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true });
   rebuildGame();
   B.locked = !!PL.over;
+  PL.review = null; PL.paused = false; PL.analysis = null;
+  if (!PL.over && B.game.turn === PL.color) { PL.brief = makeBrief(null, []); later(() => { analyse(); render(); }, 30); }
   render();
   playPanel();
   if (!PL.over && B.game.turn !== PL.color) aiMove();
 }
 function newGame(color) {
   PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
-  PL.log = []; PL.over = null; PL.coachMsg = null; PL.bal = 0;
+  PL.log = []; PL.over = null; PL.review = null; PL.brief = null; PL.bal = 0; PL.paused = false;
   savePlay();
   playView();
+}
+function coachHTML() {
+  if (!PL.coach) return "";
+  const parts = [];
+  const r = PL.review;
+  if (r) parts.push(`<div class="coach-card ${r.c}">
+      <div class="coach-title"><span class="verdict ${r.c}">${r.word}</span><b>${r.san}</b></div>
+      ${r.reasons.length ? `<ul>${r.reasons.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
+      ${r.better ? `<p class="coach-better">${r.better}</p>` : ""}
+      ${PL.paused ? `<div class="row"><button class="btn primary" id="takeback">Reprendre ce coup</button><button class="btn" id="goon">Continuer quand même</button></div>` : ""}
+    </div>`);
+  const br = PL.brief;
+  if (br && !PL.paused && !PL.over && B.game.turn === PL.color && !thinking) {
+    const body = [];
+    for (const it of br.items) body.push(`<p>${it.t} ${it.s}</p>`);
+    if (br.threats.length) body.push(`<ul class="threats">${br.threats.map(x => `<li>${x}</li>`).join("")}</ul>`);
+    else if (PL.log.length) body.push(`<p class="calm">Aucune de tes pièces n'est menacée. Cherche à améliorer ta pire pièce ou à créer une menace.</p>`);
+    if (br.book && br.book.next.length) {
+      const sans = br.book.next.map(u => { const m = B.game.find(u); return m ? `<b>${frSan(B.game.san(m))}</b>` : null; }).filter(Boolean);
+      const list = sans.length > 1 ? sans.slice(0, -1).join(", ") + " ou " + sans[sans.length - 1] : sans[0];
+      body.push(`<p class="book">Théorie${br.book.name ? ` (${br.book.name})` : ""} : on joue ici ${list}.</p>`);
+    }
+    parts.push(`<div class="coach-card brief"><div class="coach-title"><span class="verdict info">À toi</span><b>Ce qu'il faut voir</b></div>${body.join("")}</div>`);
+  }
+  return parts.length ? `<div class="coach">${parts.join("")}</div>` : "";
 }
 function playPanel() {
   const g = B.game, lvl = LEVELS[PL.level];
   let status;
   if (PL.over) status = { c: PL.over.c, t: PL.over.t };
+  else if (PL.paused) status = { c: "warn", t: "Le coach a mis la partie en pause : regarde les flèches sur l'échiquier." };
   else if (thinking) status = { c: "info", t: `L'ordinateur (${lvl.name}) réfléchit...` };
   else status = { c: "info", t: g.turn === PL.color ? (g.inCheck() ? "<b>Échec !</b> Protège ton roi." : "À toi de jouer.") : "Au tour de l'ordinateur." };
   const rows = [];
@@ -1568,9 +2065,9 @@ function playPanel() {
     rows.push(`<span class="n">${i / 2 + 1}.</span><span${cur(i)}>${frSan(PL.log[i].san)}</span><span${cur(i + 1)}>${PL.log[i + 1] ? frSan(PL.log[i + 1].san) : ""}</span>`);
   }
   const balPct = Math.max(4, Math.min(96, 50 + 50 * Math.tanh(PL.bal / 600)));
-  const rec = save.record;
+  const rec = save.record, book = bookInfo(PL.log);
   panel.innerHTML = `
-    <p class="eyebrow">Partie contre l'ordinateur</p>
+    <div class="row" style="justify-content:space-between"><p class="eyebrow">Partie avec coach</p>${book && book.name && PL.log.length ? `<span class="pill">${book.name}</span>` : ""}</div>
     <div class="settings">
       <div class="field"><span>Niveau</span><div class="seg" role="group" aria-label="Niveau">${LEVELS.map((l, i) => `<button aria-pressed="${i === PL.level}" data-lvl="${i}">${l.name}</button>`).join("")}</div></div>
       <div class="field"><span>Nouvelle partie avec</span><div class="row">
@@ -1578,14 +2075,18 @@ function playPanel() {
       </div></div>
     </div>
     <div class="fb ${status.c}">${status.t}</div>
-    ${PL.coach && PL.coachMsg ? `<div class="fb ${PL.coachMsg.c}">${PL.coachMsg.t}${PL.coachMsg.s ? `<small>${PL.coachMsg.s}</small>` : ""}</div>` : ""}
+    ${coachHTML()}
     <div class="row">
-      <button class="btn" id="hint" ${PL.over || thinking || g.turn !== PL.color ? "disabled" : ""}>Indice</button>
+      <button class="btn" id="hint" ${PL.over || thinking || PL.paused || g.turn !== PL.color ? "disabled" : ""}>Indice</button>
       <button class="btn" id="undo" ${thinking || !PL.log.length ? "disabled" : ""}>Reprendre le coup</button>
       <button class="btn" id="flip">Retourner</button>
       ${PL.over ? "" : `<button class="btn" id="resign" ${!PL.log.length ? "disabled" : ""}>Abandonner</button>`}
     </div>
-    <label class="switch"><input type="checkbox" id="coach" ${PL.coach ? "checked" : ""}> Coach : commente chacun de mes coups</label>
+    <div class="toggles">
+      <label class="switch"><input type="checkbox" id="coach" ${PL.coach ? "checked" : ""}> Coach : explique chaque coup</label>
+      <label class="switch"><input type="checkbox" id="live" ${PL.live ? "checked" : ""}> Aide en direct : colorer les cases</label>
+    </div>
+    ${PL.live ? `<p class="legend"><i class="q-best"></i>excellent <i class="q-ok"></i>bon <i class="q-dub"></i>imprécis <i class="q-bad"></i>gaffe <span>· prends une pièce pour voir ses coups</span></p>` : ""}
     ${PL.coach ? `<div class="balance"><div class="balance-bar" title="Balance de la partie"><i style="width:${balPct}%"></i></div><small>${balanceText()}</small></div>` : ""}
     <div class="moves" id="moves">${rows.join("")}</div>
     <div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>`;
@@ -1597,6 +2098,9 @@ function playPanel() {
   $("#flip").onclick = () => { B.flip = !B.flip; render(); };
   const rs = $("#resign"); if (rs) rs.onclick = () => endGame("l", "Tu as abandonné. La prochaine sera la bonne !");
   $("#coach").onchange = e => { PL.coach = e.target.checked; savePlay(); playPanel(); };
+  $("#live").onchange = e => { PL.live = e.target.checked; savePlay(); render(); playPanel(); };
+  const tb = $("#takeback"); if (tb) tb.onclick = () => { PL.paused = false; playUndo(); };
+  const go = $("#goon"); if (go) go.onclick = () => { PL.paused = false; B.arrows = []; render(); aiMove(); };
 }
 function balanceText() {
   const v = PL.bal;
@@ -1606,20 +2110,22 @@ function balanceText() {
   return `Avantage ${v > 0 ? "Blancs" : "Noirs"} : environ ${pawns} pion${Math.abs(v) >= 150 ? "s" : ""}.`;
 }
 function playHint() {
-  if (thinking || PL.over) return;
-  const r = think(B.game, { depth: 4, time: 900 });
+  if (thinking || PL.over || PL.paused) return;
+  const g = B.game, r = think(g, { depth: 4, time: 900 });
   if (!r) return;
   B.arrows = [[r.best.from, r.best.to]];
-  PL.coachMsg = { c: "info", t: `Indice : ${frSan(B.game.san(r.best))}`, s: "La flèche montre le coup conseillé." };
+  const why = pickFacts(moveFacts(g, r.best), GOOD, "me", 2);
+  PL.review = { c: "info", word: "indice", san: frSan(g.san(r.best)), reasons: why.length ? why : ["C'est le coup qui garde le mieux l'équilibre de la position."], better: null };
   render(); playPanel();
 }
 function playUndo() {
   if (thinking || !PL.log.length) return;
   PL.log.pop();
   while (PL.log.length && (PL.log.length % 2 === 0 ? "w" : "b") !== PL.color) PL.log.pop();
-  PL.over = null; PL.coachMsg = null;
+  PL.over = null; PL.review = null; PL.paused = false;
   savePlay();
   rebuildGame(); B.locked = false; B.sel = null; B.arrows = [];
+  if (B.game.turn === PL.color) { PL.brief = makeBrief(null, []); analyse(); }
   render(); playPanel();
   if (B.game.turn !== PL.color) aiMove();
 }
@@ -1641,56 +2147,98 @@ function checkOver() {
   }
   return true;
 }
+// Revue du coup joué (la position actuelle est après le coup m)
 function coachReview(m, san) {
   const g = B.game, me = PL.color, sign = me === "w" ? 1 : -1;
   g.undo();
-  const before = think(g, { depth: 2, time: 500 });
+  if (!PL.analysis) analyse();
+  const an = PL.analysis;
+  const facts = moveFacts(g, m);
+  const best = an.best.m, bestSan = frSan(g.san(best)), bestFacts = moveFacts(g, best);
+  let v = an.map.get(uci(m));
   g.make(m);
-  let after;
-  const replies = g.moves();
-  if (!replies.length) after = g.inCheck() ? MATE : 0;
-  else { const r = think(g, { depth: 1, time: 300 }); after = -r.score; }
-  PL.bal = sign * after;
-  const best = before.best, bestSan = frSan((() => { g.undo(); const s = g.san(best); g.make(m); return s; })());
-  const loss = before.bestScore - after;
-  const isBest = uci(best) === uci(m);
-  if (before.bestScore > MATE - 1000 && after < MATE - 1000) return { c: "warn", t: "Tu avais un mat !", s: `${bestSan} matait directement.` };
-  if (isBest || loss < 40) return { c: "ok", t: isBest ? `${frSan(san)} : excellent coup.` : `${frSan(san)} : bon coup.` };
-  // Pièces laissées en prise
-  let hang = null;
-  for (const r of replies) {
-    if (!r.captured || colorOf(r.captured) !== me) continue;
-    const tv = VAL[r.captured.toLowerCase()], av = VAL[r.piece.toLowerCase()];
-    if ((!g.attacked(r.to, me) || av < tv) && (!hang || tv > hang.v)) hang = { v: tv, t: r.captured.toLowerCase(), sq: r.to };
+  if (v === undefined) { const r = g.moves().length ? think(g, { depth: 1, time: 300 }) : null; v = r ? -r.bestScore : (g.inCheck() ? MATE : 0); }
+  PL.bal = sign * v;
+  const isBest = uci(best) === uci(m), loss = an.best.v - v;
+  const q = quality(loss, isBest);
+  const book = bookInfo(PL.log);
+  const res = { c: q.c, word: q.word, san: frSan(san), reasons: [], better: null, arrows: [] };
+  if (book) {
+    res.c = "ok"; res.word = "théorie";
+    res.reasons.push(book.name ? `Coup de théorie : ${book.name.replace(/^(La|Le) /, m => m.toLowerCase())}.` : "Coup d'ouverture classique, joué par les champions.");
   }
-  const why = hang ? `Attention : ${POSS[hang.t]} ${NAME[hang.t]} en ${sqName(hang.sq)} peut être pris${hang.t === "q" || hang.t === "r" ? "e" : ""}. ` : "";
-  if (loss >= 250) return { c: "bad", t: `${frSan(san)} : gaffe.`, s: `${why}Il fallait jouer ${bestSan}.` };
-  if (loss >= 90) return { c: "warn", t: `${frSan(san)} : imprécision.`, s: `${why}Meilleur : ${bestSan}.` };
-  return { c: "ok", t: `${frSan(san)} : coup correct.`, s: `${bestSan} était un peu plus précis.` };
+  if (an.best.v > MATE - 1000 && v < MATE - 1000) {
+    res.c = "warn"; res.word = "mat manqué";
+    res.reasons.push("Tu avais un mat forcé !");
+    res.better = `Il fallait jouer <b>${bestSan}</b>.`;
+    res.arrows = [[best.from, best.to]];
+    return res;
+  }
+  if (q.c === "ok") {
+    res.reasons.push(...pickFacts(facts, GOOD, "me", 3));
+    if (!res.reasons.length) res.reasons.push("Coup solide : tu ne laisses rien et tu gardes l'équilibre.");
+    const bad = pickFacts(facts, ["shield", "earlyQueen", "twice"], "me", 1);
+    if (bad.length && res.word !== "théorie") res.reasons.push("À surveiller : " + bad[0].charAt(0).toLowerCase() + bad[0].slice(1));
+    if (!isBest && q.cls === "q-ok") res.better = `${bestSan} était encore un peu plus précis.`;
+    return res;
+  }
+  // Coup faible : pourquoi ?
+  res.reasons.push(...pickFacts(facts, BAD, "me", 2));
+  const reply = g.moves().length ? think(g, { depth: 2, time: 500 }) : null;
+  if (reply && reply.best) {
+    const rf = moveFacts(g, reply.best);
+    const why = pickFacts(rf, ["mate", "capFree", "capWin", "fork", "check", "threat"], "opp", 1);
+    res.reasons.push(`Il peut répondre <b>${frSan(g.san(reply.best))}</b>${why.length ? " : " + why[0].charAt(0).toLowerCase() + why[0].slice(1) : "."}`);
+    res.arrows.push([reply.best.from, reply.best.to, "red"]);
+  }
+  const bw = pickFacts(bestFacts, GOOD, "me", 2);
+  res.better = `Mieux : <b>${bestSan}</b>${bw.length ? " — " + bw.join(" ").replace(/^./, ch => ch.toLowerCase()) : "."}`;
+  res.arrows.push([best.from, best.to]);
+  return res;
 }
 function playMove(m, san) {
   PL.log.push({ u: uci(m), san });
-  PL.coachMsg = null;
-  if (PL.coach) { try { PL.coachMsg = coachReview(m, san); } catch (e) { PL.coachMsg = null; } }
+  PL.review = null; PL.brief = null;
+  let pause = false;
+  if (PL.coach) {
+    try {
+      PL.review = coachReview(m, san);
+      pause = PL.review.c === "bad" || PL.review.word === "mat manqué";
+    } catch (e) { PL.review = null; }
+  }
+  PL.analysis = null;
   savePlay();
   if (checkOver()) return;
+  if (pause) {
+    PL.paused = true; B.locked = true;
+    // Flèche rouge : la réponse adverse ; flèche verte : le coup qu'il fallait jouer
+    B.arrows = PL.review.arrows;
+    render(); playPanel();
+    return;
+  }
   aiMove();
 }
 function aiMove() {
-  thinking = true; B.locked = true; playPanel();
+  thinking = true; B.locked = true; B.arrows = []; render(); playPanel();
   later(() => {
     const g = B.game;
-    const r = think(g, LEVELS[PL.level].cfg);
+    let mv = null;
+    // L'ordinateur suit souvent la théorie des ouvertures étudiées
+    const book = PL.log.length < 14 ? L_OUV.map(l => l.steps[1].moves).filter(line => PL.log.length < line.length && PL.log.every((e, i) => line[i] === e.u)) : [];
+    if (book.length && Math.random() < 0.85) mv = g.find(book[(Math.random() * book.length) | 0][PL.log.length]);
+    if (!mv) { const r = think(g, LEVELS[PL.level].cfg); mv = r && r.move; }
     thinking = false;
-    if (!r) { checkOver(); return; }
-    const san = g.san(r.move);
-    PL.log.push({ u: uci(r.move), san });
-    g.make(r.move);
-    B.last = [r.move.from, r.move.to]; B.sel = null;
+    if (!mv) { checkOver(); return; }
+    const san = g.san(mv), facts = moveFacts(g, mv);
+    PL.log.push({ u: uci(mv), san });
+    g.make(mv);
+    B.last = [mv.from, mv.to]; B.sel = null;
     B.locked = false;
     savePlay();
-    render();
-    if (!checkOver()) playPanel();
+    if (checkOver()) { render(); return; }
+    PL.brief = makeBrief(san, facts);
+    render(); playPanel();
+    later(() => { analyse(); render(); }, 30);
   }, 350);
 }
 

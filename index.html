@@ -217,16 +217,17 @@ const EX = {
     ],
     seq: [[0,.4,1.2],[1,.6,1.2]]
   },
-  hollow: {
-    name: "Hollow body", short: "Gainage creux au sol",
-    desc: "Allongé sur le dos, bas du dos plaqué au sol, bras et jambes tendus décollés. C'est la forme du corps en handstand.",
-    cues: ["Bas du dos collé au sol en permanence", "Côtes rentrées, fesses serrées", "Trop dur : plie les genoux ou ramène les bras"],
+  bearCrawl: {
+    name: "Bear crawl", short: "Marche de l'ours",
+    desc: "À quatre pattes, genoux décollés de 3 cm du sol. Avance main droite et pied gauche en même temps, puis l'autre côté, sans que les genoux ne remontent. Gainage, épaules et poignets en un seul exercice.",
+    cues: ["Genoux à 3 cm du sol tout du long", "Dos plat : un verre d'eau ne tomberait pas", "Petits pas, avant puis arrière"],
     props: [],
     poses: [
-      { h:[46,165], e:[68,171], s:[92,178], p:[130,188], k:[166,182], f:[200,174], hd:[80,175] },
-      { h:[46,159], e:[68,166], s:[92,174], p:[130,188], k:[166,178], f:[200,168], hd:[80,170] }
+      { h:[90,190], e:[93,170], s:[96,150], h2:[104,190], e2:[100,170], p:[142,154], k:[146,182], f:[180,190], k2:[152,182], f2:[186,190], hd:[84,146] },
+      { h:[90,190], e:[93,170], s:[95,150], h2:[88,183], e2:[94,168], p:[141,154], k:[142,180], f:[172,183], k2:[152,182], f2:[186,190], hd:[83,146] },
+      { h:[78,183], e:[88,168], s:[95,150], h2:[104,190], e2:[100,170], p:[141,154], k:[146,182], f:[180,190], k2:[148,180], f2:[178,183], hd:[83,146] }
     ],
-    seq: [[0,.3,1.4],[1,.3,1.4]]
+    seq: [[0,.1,.4],[1,.1,.4],[0,.1,.4],[2,.1,.4]]
   },
   kickup: {
     name: "Entrées en handstand", short: "Kick-up contrôlé",
@@ -288,7 +289,7 @@ const EX = {
   hsFree: {
     name: "Handstand libre", short: "Tenue sans appui",
     desc: "Le mouvement cible. Monte, cherche la ligne droite et tiens. Les corrections se font avec les doigts (vers l'avant) et la paume (vers l'arrière).",
-    cues: ["Pousse le sol, bras verrouillés", "Corps gainé comme en hollow", "Si tu tombes en avant : rotation et sortie en roue"],
+    cues: ["Pousse le sol, bras verrouillés", "Corps gainé, côtes rentrées, fesses serrées", "Si tu tombes en avant : rotation et sortie en roue"],
     props: [],
     poses: [
       { h:[120,190], e:[120,168], s:[120,146], p:[120,102], k:[120,66], f:[120,30], hd:[127,158] },
@@ -441,16 +442,16 @@ const EX = {
     ],
     seq: [[0,.6,1],[1,.6,1]]
   },
-  hollowRock: {
-    name: "Hollow rocks", short: "Bascule en hollow",
-    desc: "En position hollow body, bascule d'avant en arrière comme une barque sans casser la forme. Version dynamique du gainage.",
-    cues: ["La forme ne change pas, seul le point d'appui bouge", "Bras collés aux oreilles", "Rythme régulier"],
+  plankPike: {
+    name: "Planche → pike", short: "Gainage dynamique",
+    desc: "Depuis la planche bras tendus, monte les hanches jusqu'au V inversé en gardant les jambes tendues, puis redescends en planche. Travaille la compression et les épaules au-dessus des mains, comme en handstand.",
+    cues: ["Bras tendus et épaules poussées tout du long", "Ce sont les abdos qui montent les hanches", "Sur chaussettes ou serviette sous les pieds : encore plus dur"],
     props: [],
     poses: [
-      { h:[48,170], e:[70,176], s:[93,182], p:[130,186], k:[166,174], f:[200,160], hd:[81,182] },
-      { h:[46,152], e:[68,160], s:[92,168], p:[130,186], k:[166,184], f:[200,180], hd:[80,163] }
+      { h:[80,190], e:[80,169], s:[80,148], p:[134,160], k:[166,174], f:[196,188], hd:[68,144] },
+      { h:[80,190], e:[84,171], s:[90,154], p:[128,110], k:[162,148], f:[196,188], hd:[84,165] }
     ],
-    seq: [[0,.05,.55],[1,.05,.55]]
+    seq: [[0,.3,1],[1,.4,1]]
   }
 };
 EX.handWalk.minPhase = 2;
@@ -519,7 +520,7 @@ function baseSession(w, type) {
   const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
   const warm = [
     item("wrists", "3 min", "", "Rotations de poignets puis bascules"),
-    item("hollow", S(3) + " × " + R(20, 40, pi === 0 ? t : 1) + " s", "repos 30 s", "")
+    item("bearCrawl", S(3) + " × " + R(20, 40, pi === 0 ? t : 1) + " s", "repos 30 s", "Avant puis arrière")
   ];
   let main = [];
   const holdTarget = Math.round(targetAt(w, "hold") / 5) * 5;
@@ -653,18 +654,18 @@ function baseSession(w, type) {
 const VARIANTS = {
   forceA: [
     { name: "Classique", desc: "Séries classiques, repos complet entre les séries." },
-    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "declinePU", hollow: "hollowRock" } },
+    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "declinePU", bearCrawl: "plankPike" } },
     { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause, et le pike passe en mains surélevées.", superset: true, swap: { pike: "pikeDef" }, warmAdd: () => item("frog", "3 × 15 s", "", "Pour réveiller les poignets") }
   ],
   balance: [
     { name: "Classique", desc: "Entrées, tenues au mur et tentatives en libre." },
-    { name: "Formes", desc: "On joue avec la forme des jambes : groupé, fente, droit. Ça apprend à corriger avec le bassin.", swap: { shoulderTap: "shapes", wallChest: "wallBack", hollow: "hollowRock" } },
+    { name: "Formes", desc: "On joue avec la forme des jambes : groupé, fente, droit. Ça apprend à corriger avec le bassin.", swap: { shoulderTap: "shapes", wallChest: "wallBack", bearCrawl: "plankPike" } },
     { name: "Terrain de jeu", desc: "Frog stand en échauffement, et marche sur les mains dès que tu es prêt.", swap: { shoulderTap: "handWalk", heelPull: "shapes" }, warmAdd: () => item("frog", "3 × 15 s", "", "") }
   ],
   forceB: [
     { name: "Classique", desc: "Répétitions faciles, beaucoup de qualité." },
     { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true, swap: { dips: "declinePU" } },
-    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, hollow rocks.", swap: { pike: "pikeDef", dips: "declinePU", hollow: "hollowRock", shoulderTap: "shapes" } }
+    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, planche → pike.", swap: { pike: "pikeDef", dips: "declinePU", bearCrawl: "plankPike", shoulderTap: "shapes" } }
   ],
   long: [
     { name: "Classique", desc: "Endurance en équilibre." },
@@ -678,7 +679,8 @@ const DEFIS = [
   { ex: "handWalk", t: "Marche sur les mains", d: "Fais le plus de pas possible, 3 essais. Note ton record.", min: 2 },
   { ex: "frog", t: "Frog stand chrono", d: "Tiens le plus longtemps possible, 2 essais.", min: 0 },
   { ex: "shapes", t: "Formes enchaînées", d: "Droit → groupé → fente → droit sans redescendre (au mur si besoin).", min: 1 },
-  { ex: "hollowRock", t: "30 hollow rocks", d: "D'affilée, sans casser la forme.", min: 0 },
+  { ex: "plankPike", t: "15 planche → pike", d: "D'affilée, jambes et bras tendus.", min: 0 },
+  { ex: "bearCrawl", t: "Bear crawl 1 minute", d: "Une minute non-stop, genoux toujours décollés.", min: 0 },
   { ex: "wallWalk", t: "Wall walk au ralenti", d: "Une montée en 30 s, une descente en 30 s.", min: 0 },
   { ex: "kickup", t: "Mauvais côté", d: "5 entrées avec ta jambe la moins à l'aise.", min: 0 },
   { ex: "hsFree", t: "Bats ta semaine dernière", d: "Une seule tentative de tenue max, sans pression.", min: 0 },
@@ -945,7 +947,7 @@ function renderSession(w, d) {
         h("h3", null, d === 6 ? "Repos complet" : "Repos actif"),
         h("p", { class: "muted", style: "max-width:62ch" }, d === 6
           ? "Aucune séance. Dors bien, mange assez de protéines. Les épaules et les poignets récupèrent plus lentement que les muscles."
-          : "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de hollow body. Pas de handstand en force aujourd'hui."),
+          : "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de bear crawl. Pas de handstand en force aujourd'hui."),
         h("div", { class: "blocks" }, exRow(item("wrists", "3 min", "", "")))));
   }
   const m = SESSION_META[type], sess = buildSession(w, type), key = w + "-" + d, isDone = !!state.done[key];

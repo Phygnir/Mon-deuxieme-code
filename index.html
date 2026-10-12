@@ -112,6 +112,9 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 .day .s { font-size: 13px; color: var(--muted); line-height: 1.35; }
 .check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line); display: inline-grid; place-items: center; font-size: 12px; }
 .check.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.tag-var { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 4px; justify-self: start; }
+.defi { background: var(--accent-soft); border-radius: 8px; padding: 4px 14px 2px; }
+.defi .ex-row .fig { background: var(--surface); }
 .tag-test { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--p4); }
 
 /* Détail séance */
@@ -179,7 +182,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 <div class="wrap">
   <header>
     <div class="intro">
-      <span class="label">Programme 26 semaines · 4 séances / semaine</span>
+      <span class="label">Programme 26 semaines · 4 séances / semaine · 3 versions qui tournent</span>
       <h1>Cap Handstand</h1>
       <p class="muted">De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée. Choisis une semaine, puis un jour pour voir la séance et les mouvements.</p>
     </div>
@@ -369,8 +372,90 @@ const EX = {
       { h:[120,110], e:[104,104], s:[126,96], p:[116,140], k:[118,172], f:[98,184], hd:[133,84] }
     ],
     seq: [[0,.4,1.2],[1,.2,.9]]
+  },
+  frog: {
+    name: "Frog stand", short: "Équilibre genoux sur les coudes",
+    desc: "Accroupi, mains au sol, genoux posés sur l'arrière des bras. Penche-toi vers l'avant jusqu'à ce que les pieds décollent. Même gestion de l'équilibre par les doigts qu'en handstand, sans la peur de tomber.",
+    cues: ["Regarde devant tes mains, pas tes pieds", "Les doigts freinent la bascule avant", "Coussin devant toi les premières fois"],
+    props: [],
+    poses: [
+      { h:[120,190], e:[118,170], s:[110,152], p:[140,140], k:[118,160], f:[150,190], hd:[99,149] },
+      { h:[120,190], e:[120,168], s:[108,160], p:[142,140], k:[122,162], f:[156,148], hd:[96,164] }
+    ],
+    seq: [[0,.5,.8],[1,1.6,.8]]
+  },
+  shapes: {
+    name: "Formes de jambes", short: "Droit, groupé, fente",
+    desc: "En handstand (libre ou ventre au mur), change la forme des jambes : droit, genoux groupés, jambes en fente. Chaque forme déplace ton centre de gravité, donc tu apprends à corriger avec les doigts et le bassin.",
+    cues: ["Change de forme lentement", "Les épaules restent poussées vers le haut", "Commence face au mur si c'est trop instable"],
+    props: [],
+    poses: [
+      { h:[120,190], e:[120,168], s:[120,146], p:[120,102], k:[120,66], f:[120,30], hd:[127,158] },
+      { h:[120,190], e:[120,168], s:[120,146], p:[116,104], k:[142,84], f:[116,72], hd:[127,158] },
+      { h:[120,190], e:[120,168], s:[120,146], p:[120,104], k:[140,74], f:[156,46], k2:[102,72], f2:[88,42], hd:[127,158] }
+    ],
+    seq: [[0,.8,.8],[1,.9,.8],[0,.8,.8],[2,.9,.8]]
+  },
+  handWalk: {
+    name: "Marche sur les mains", short: "Déplacement en handstand",
+    desc: "En handstand libre, laisse le corps basculer légèrement et rattrape-toi en avançant une main, puis l'autre. Excellent pour le plaisir et pour les épaules.",
+    cues: ["Petits pas, une main à la fois", "Le bassin guide, les mains suivent", "Espace dégagé et sortie en roue maîtrisée"],
+    props: [],
+    poses: [
+      { h:[112,190], h2:[128,190], e:[114,168], e2:[126,168], s:[120,146], p:[122,102], k:[123,66], f:[124,30], hd:[127,158] },
+      { h:[112,190], h2:[134,181], e:[115,168], e2:[130,165], s:[122,146], p:[125,102], k:[126,66], f:[127,30], hd:[129,158] },
+      { h:[107,181], h2:[128,190], e:[112,166], e2:[126,168], s:[118,146], p:[119,102], k:[120,66], f:[121,30], hd:[125,158] }
+    ],
+    seq: [[0,.1,.45],[1,.1,.45],[0,.1,.45],[2,.1,.45]]
+  },
+  declinePU: {
+    name: "Pompes déclinées", short: "Pieds surélevés",
+    desc: "Pompes classiques avec les pieds sur une chaise ou une box. Plus de travail pour l'avant des épaules et les triceps qu'une pompe au sol.",
+    cues: ["Corps gainé comme une planche", "Poitrine qui descend entre les mains", "Coudes à 45° du corps"],
+    props: [{ box: [168, 126, 52, 64] }],
+    poses: [
+      { h:[70,190], e:[71,168], s:[72,146], p:[132,136], k:[160,131], f:[190,126], hd:[60,142] },
+      { h:[70,190], e:[94,178], s:[76,172], p:[134,150], k:[162,138], f:[190,126], hd:[63,170] }
+    ],
+    seq: [[0,.4,1.1],[1,.2,.9]]
+  },
+  pikeDef: {
+    name: "Pike push-up mains surélevées", short: "Pike en déficit",
+    desc: "Pike push-up avec les mains sur deux blocs ou deux livres épais : la tête descend sous le niveau des mains. Plus d'amplitude pour les épaules.",
+    cues: ["Blocs stables, mains bien à plat", "Descends lentement sous le niveau des mains", "Hanches toujours au-dessus des épaules"],
+    props: [{ box: [74, 176, 14, 14] }],
+    poses: [
+      { h:[80,176], e:[92,156], s:[104,138], p:[130,106], k:[146,148], f:[162,190], hd:[97,148] },
+      { h:[80,176], e:[98,170], s:[84,168], p:[120,120], k:[142,156], f:[162,190], hd:[63,180] }
+    ],
+    seq: [[0,.4,1.3],[1,.2,.9]]
+  },
+  wallBack: {
+    name: "Handstand dos au mur", short: "Tenue talons au mur",
+    desc: "Monte en kick-up face à la pièce, talons posés contre le mur. Plus facile que ventre au mur : idéal pour accumuler du temps la tête en bas en pensant à pousser le sol.",
+    cues: ["Mains à environ 20 cm du mur", "Rapproche le bassin du mur en rentrant les côtes", "Le moins de poids possible sur les talons"],
+    props: [{ wall: 88 }],
+    poses: [
+      { h:[112,190], e:[112,168], s:[112,146], p:[104,104], k:[97,68], f:[92,32], hd:[119,158] },
+      { h:[112,190], e:[112,167], s:[112,143], p:[105,101], k:[98,65], f:[92,29], hd:[119,155] }
+    ],
+    seq: [[0,.6,1],[1,.6,1]]
+  },
+  hollowRock: {
+    name: "Hollow rocks", short: "Bascule en hollow",
+    desc: "En position hollow body, bascule d'avant en arrière comme une barque sans casser la forme. Version dynamique du gainage.",
+    cues: ["La forme ne change pas, seul le point d'appui bouge", "Bras collés aux oreilles", "Rythme régulier"],
+    props: [],
+    poses: [
+      { h:[48,170], e:[70,176], s:[93,182], p:[130,186], k:[166,174], f:[200,160], hd:[81,182] },
+      { h:[46,152], e:[68,160], s:[92,168], p:[130,186], k:[166,184], f:[200,180], hd:[80,163] }
+    ],
+    seq: [[0,.05,.55],[1,.05,.55]]
   }
 };
+EX.handWalk.minPhase = 2;
+EX.handWalk.swapNote = "Compte les pas : une main = un pas";
+EX.shapes.swapNote = "Tiens chaque forme quelques secondes";
 
 /* ---------- Programme ---------- */
 const PHASES = [
@@ -429,7 +514,7 @@ function targetAt(w, key) {
 
 function item(ex, dose, unit, note) { return { ex, dose, unit, note }; }
 
-function buildSession(w, type) {
+function baseSession(w, type) {
   const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w);
   const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
   const warm = [
@@ -562,6 +647,85 @@ function buildSession(w, type) {
     ];
   }
   return { warm, main, test: false, holdTarget };
+}
+
+/* ---------- Variantes : 3 versions de chaque séance qui tournent d'une semaine à l'autre ---------- */
+const VARIANTS = {
+  forceA: [
+    { name: "Classique", desc: "Séries classiques, repos complet entre les séries." },
+    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "declinePU", hollow: "hollowRock" } },
+    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause, et le pike passe en mains surélevées.", superset: true, swap: { pike: "pikeDef" }, warmAdd: () => item("frog", "3 × 15 s", "", "Pour réveiller les poignets") }
+  ],
+  balance: [
+    { name: "Classique", desc: "Entrées, tenues au mur et tentatives en libre." },
+    { name: "Formes", desc: "On joue avec la forme des jambes : groupé, fente, droit. Ça apprend à corriger avec le bassin.", swap: { shoulderTap: "shapes", wallChest: "wallBack", hollow: "hollowRock" } },
+    { name: "Terrain de jeu", desc: "Frog stand en échauffement, et marche sur les mains dès que tu es prêt.", swap: { shoulderTap: "handWalk", heelPull: "shapes" }, warmAdd: () => item("frog", "3 × 15 s", "", "") }
+  ],
+  forceB: [
+    { name: "Classique", desc: "Répétitions faciles, beaucoup de qualité." },
+    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true, swap: { dips: "declinePU" } },
+    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, hollow rocks.", swap: { pike: "pikeDef", dips: "declinePU", hollow: "hollowRock", shoulderTap: "shapes" } }
+  ],
+  long: [
+    { name: "Classique", desc: "Endurance en équilibre." },
+    { name: "Chrono", desc: "Chaque série doit battre la précédente. Note tes temps.", swap: { wallChest: "wallBack" }, hsNote: "Mode chrono : essaie de battre ta série précédente" },
+    { name: "Formes", desc: "Les tenues longues, plus un bloc de jeu avec les formes de jambes.", add: () => item("shapes", "3 × 3 cycles", "", "Droit → groupé → fente, 5 s chacun") }
+  ]
+};
+const SLOT_ORDER = ["forceA", "balance", "forceB", "long"];
+
+const DEFIS = [
+  { ex: "handWalk", t: "Marche sur les mains", d: "Fais le plus de pas possible, 3 essais. Note ton record.", min: 2 },
+  { ex: "frog", t: "Frog stand chrono", d: "Tiens le plus longtemps possible, 2 essais.", min: 0 },
+  { ex: "shapes", t: "Formes enchaînées", d: "Droit → groupé → fente → droit sans redescendre (au mur si besoin).", min: 1 },
+  { ex: "hollowRock", t: "30 hollow rocks", d: "D'affilée, sans casser la forme.", min: 0 },
+  { ex: "wallWalk", t: "Wall walk au ralenti", d: "Une montée en 30 s, une descente en 30 s.", min: 0 },
+  { ex: "kickup", t: "Mauvais côté", d: "5 entrées avec ta jambe la moins à l'aise.", min: 0 },
+  { ex: "hsFree", t: "Bats ta semaine dernière", d: "Une seule tentative de tenue max, sans pression.", min: 0 },
+  { ex: "shoulderTap", t: "Tap en libre", d: "En handstand libre, décolle une main une seconde. Juste essayer.", min: 3 },
+  { ex: "declinePU", t: "Pompes déclinées max", d: "Une série, arrête 2 répétitions avant l'échec.", min: 0 },
+  { ex: "pikeDef", t: "Pike échelle express", d: "1-2-3-4-5 en mains surélevées, 15 s de repos entre chaque palier.", min: 0 },
+  { ex: "heelPull", t: "Combien de secondes ?", d: "Dos au mur, décolle les talons : 3 essais, garde le meilleur.", min: 1 }
+];
+
+function buildSession(w, type) {
+  const s = baseSession(w, type);
+  if (s.test) return s;
+  const pi = phaseIndex(w), si = SLOT_ORDER.indexOf(type);
+  const v = (DELOAD.has(w) || w >= 25) ? 0 : (w - 1 + si) % 3;
+  const V = VARIANTS[type][v];
+  const swap = it => {
+    const to = V.swap && V.swap[it.ex];
+    if (!to || (EX[to].minPhase || 0) > pi) return it;
+    return Object.assign({}, it, { ex: to, note: EX[to].swapNote || it.note });
+  };
+  s.warm = s.warm.map(swap);
+  s.main = s.main.map(swap);
+  if (V.warmAdd) s.warm.push(V.warmAdd());
+  if (V.ladder) {
+    const i = s.main.findIndex(it => /^\d+ × \d+$/.test(it.dose) && +it.dose.split(" × ")[1] >= 3);
+    if (i >= 0) {
+      const [a, reps] = s.main[i].dose.split(" × ").map(Number);
+      const b = Math.min(5, reps);
+      const k = Math.max(1, Math.round(a * reps / (b * (b + 1) / 2)));
+      s.main[i] = Object.assign({}, s.main[i], { dose: "1→" + b + (k > 1 ? " × " + k : ""), unit: "échelle", note: "1 rép., 20 s de repos, 2 rép.… jusqu'à " + b + ". " + (k > 1 ? "Repos 2 min, " : "") + (k > 1 ? "puis recommence (" + k + " échelles au total)" : "une seule échelle") });
+    }
+  }
+  if (V.superset && s.main.length >= 3) {
+    const n = s.main.length;
+    s.main[n - 2] = Object.assign({}, s.main[n - 2], { unit: "superset A", note: "Enchaîne directement avec l'exercice suivant" });
+    s.main[n - 1] = Object.assign({}, s.main[n - 1], { unit: "superset B", note: "Puis 90 s de repos et on repart sur A" });
+  }
+  if (V.circuit) {
+    s.main = s.main.map(it => it.dose.startsWith("EMOM") ? it : Object.assign({}, it, { dose: it.dose.split(" × ").pop(), unit: "circuit · " + (it.dose.includes(" × ") ? it.dose.split(" × ")[0] : 3) + " tours" }));
+  }
+  if (V.hsNote) s.main = s.main.map(it => it.ex === "hsFree" ? Object.assign({}, it, { note: V.hsNote }) : it);
+  if (V.add) s.main.push(V.add());
+  s.variant = V;
+  const inSession = new Set(s.warm.concat(s.main).map(it => it.ex));
+  const pool = DEFIS.filter(d => d.min <= pi && !inSession.has(d.ex));
+  s.defi = pool.length ? pool[(w * 5 + si * 3) % pool.length] : null;
+  return s;
 }
 
 /* ---------- État local (confort par navigateur) ---------- */
@@ -754,7 +918,7 @@ function renderWeek() {
     days.appendChild(h("button", { class: "day" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); }, "aria-label": name + " : " + m.title },
       h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "check" + (isDone ? " on" : "") }, isDone ? "✓" : "")),
       h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
-      sess.test ? h("span", { class: "tag-test" }, "Test") : null,
+      sess.test ? h("span", { class: "tag-test" }, "Test") : sess.variant && sess.variant.name !== "Classique" ? h("span", { class: "tag-var" }, sess.variant.name) : null,
       h("div", { class: "t" }, m.title),
       h("div", { class: "s" }, mains.slice(0, 3).join(" · "))));
   });
@@ -766,7 +930,7 @@ function exRow(it) {
   return h("div", { class: "ex-row" },
     makeFigure(it.ex),
     h("div", { class: "txt" },
-      h("div", { class: "name" }, ex.name),
+      h("div", { class: "name" }, it.title || ex.name),
       it.note ? h("div", { class: "note" }, it.note) : h("div", { class: "note" }, ex.short),
       h("ul", { class: "cues" }, ex.cues.slice(0, 2).map(c => h("li", null, c)))),
     h("div", { class: "dose" }, h("b", null, it.dose), it.unit ? h("span", null, it.unit) : null));
@@ -790,13 +954,19 @@ function renderSession(w, d) {
       h("div", { class: "info" },
         h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
         h("h3", null, sess.test ? (w === 26 ? "Test final" : "Test de fin de phase") : m.title),
-        h("p", { class: "muted" }, sess.test ? "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas." : m.sub)),
+        h("p", { class: "muted" }, sess.test ? "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas." : m.sub),
+        sess.variant ? h("p", null, h("span", { class: "tag-var" }, "Version " + sess.variant.name), " ", h("span", { class: "muted", style: "font-size:14px" }, sess.variant.desc)) : null),
       h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
         if (state.done[key]) delete state.done[key]; else state.done[key] = true;
         store.set("done", state.done); render();
       } }, isDone ? "✓ Séance faite" : "Marquer comme faite")),
     h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Échauffement"), sess.warm.map(exRow)),
     h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Corps de séance"), sess.main.map(exRow)));
+  if (sess.defi) {
+    box.appendChild(h("div", { class: "blocks defi" },
+      h("span", { class: "label block-title" }, "Défi bonus · facultatif, 5 min"),
+      exRow({ ex: sess.defi.ex, dose: "Bonus", unit: "si tu as encore de l'énergie", note: sess.defi.d, title: sess.defi.t })));
+  }
 
   if (sess.test) {
     const r = state.results[w] || {};
@@ -857,6 +1027,7 @@ function renderPlan() {
     rule("Quand avancer plus vite", "Si tu réussis toutes les séries d'une séance avec de la marge (une ou deux répétitions en réserve), passe aux chiffres de la semaine suivante. Ne saute jamais une semaine de décharge."),
     rule("Quand ralentir", "Si tu rates la cible deux séances de suite, répète la semaine. Si un test de fin de phase est loin de l'objectif, refais les deux dernières semaines de la phase."),
     rule("Poignets et nuque", "Échauffement poignets à chaque séance, même courte. Pour les HSPU, coussin fin ou tapis plié sous la tête, et jamais de rebond sur la nuque. Douleur articulaire = arrêt de la séance."),
+    rule("Pourquoi les séances changent", "Chaque séance existe en 3 versions (classique, puis deux variantes de format ou d'exercices) qui tournent d'une semaine à l'autre. La charge de travail reste la même : seuls le format et les mouvements changent. Les semaines de décharge et de test restent en version classique."),
     rule("La pratique en plus", "La tenue progresse surtout avec la fréquence. Les jours de repos actif, 5 tentatives de handstand libre en fin de mobilité suffisent, sans chercher l'échec."));
   return h("div", { style: "display:grid;gap:22px" },
     h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "6 mois en 5 phases"),
@@ -866,7 +1037,7 @@ function renderPlan() {
 
 function renderLib() {
   const used = {};
-  for (let w = 1; w <= 26; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
+  for (let w = 1; w <= 26; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
   return h("div", { style: "display:grid;gap:18px" },
     h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "Les " + Object.keys(EX).length + " exercices du programme"),
       h("p", { class: "muted" }, "Chaque animation montre le mouvement de profil. Le trait clair, c'est le bras ou la jambe du côté opposé.")),

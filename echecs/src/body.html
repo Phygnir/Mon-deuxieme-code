@@ -1,0 +1,53 @@
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><span class="pc wN"></span></div>
+      <div>
+        <h1>L'École des Échecs</h1>
+        <p>Apprendre, s'entraîner, jouer avec un coach</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab" role="tab" id="tab-lecons" data-mode="lecons"></button>
+        <button class="tab" role="tab" id="tab-exercices" data-mode="exercices"></button>
+        <button class="tab" role="tab" id="tab-jouer" data-mode="jouer"></button>
+        <button class="tab" role="tab" id="tab-coord" data-mode="coord"></button>
+      </nav>
+      <span class="chip" id="xp" title="Points gagnés dans les leçons, exercices et parties"></span>
+      <button class="icon-btn" id="sound-btn" aria-label="Activer ou couper le son"></button>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="board-col" id="board-col">
+      <div class="under" id="under-top"></div>
+      <div class="board-row">
+        <div class="evalbar" id="evalbar" hidden aria-hidden="true"><span id="evalbar-label">0,0</span></div>
+        <div class="board-wrap" id="board-wrap">
+          <div class="board" id="board" aria-label="Échiquier"></div>
+          <svg class="arrows" id="arrows" viewBox="0 0 8 8" aria-hidden="true">
+            <defs>
+              <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1d8a52" fill-opacity="0.9"></path>
+              </marker>
+              <marker id="ahr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#d23c30" fill-opacity="0.9"></path>
+              </marker>
+              <marker id="ahb" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#2f6fd0" fill-opacity="0.9"></path>
+              </marker>
+            </defs>
+            <g id="arrow-layer"></g>
+          </svg>
+          <div class="promo" id="promo" hidden></div>
+        </div>
+      </div>
+      <div class="under" id="under-bottom"></div>
+    </div>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+
+  <p class="foot">Astuce : clique sur une pièce puis sur sa case d'arrivée, ou fais-la glisser. Ta progression est gardée dans ce navigateur.</p>
+</div>
+<canvas id="confetti" hidden></canvas>

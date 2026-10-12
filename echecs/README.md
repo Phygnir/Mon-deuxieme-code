@@ -1,27 +1,52 @@
 # L'École des Échecs
 
-Une application pour apprendre les échecs, en français, contenue dans un seul fichier : `echecs/index.html`. Il suffit de l'ouvrir dans un navigateur, sans installation ni serveur.
+Une application pour apprendre les échecs, en français. Tout tient dans un seul fichier, `echecs/index.html` : il suffit de l'ouvrir dans un navigateur, sans installation ni serveur.
 
 ## Ce qu'elle propose
 
-- **Leçons**, réparties en 5 parcours au choix (43 leçons) :
-  - **Débutant** : les règles, pièce par pièce, avec des parcours d'étoiles. On y voit aussi l'échec, le roque, la prise en passant, la promotion, le mat et le pat.
-  - **Intermédiaire** : fourchette, clouage, enfilade, attaque à la découverte, pièces en prise, batterie dame-fou.
-  - **Avancé** : règle du carré, opposition, percée, structure de pions, pièces actives. Les finales roi + pion se jouent contre l'ordinateur et sont vérifiées par une base de données exacte.
-  - **Expert** : mats de Boden, d'Anastasie, étouffé de Philidor, la partie de l'Opéra (Morphy, 1858), le double échec de Réti (1910).
-  - **Ouvertures** : italienne, espagnole, écossaise, gambit Dame, Londres, sicilienne, française, Caro-Kann, scandinave, est-indienne, mat de Légal, défense contre le coup du berger. Chaque ouverture comprend la ligne jouée guidée, une fiche (plans des deux camps, coups typiques montrés sur l'échiquier, situations et pièges courants), deux exercices « trouve le coup typique », puis la ligne de mémoire.
-- **Exercices** : 14 problèmes classiques (mats en 1 et en 2, fourchettes, enfilade, clouage, finales roi + dame et roi + tour).
-- **Jouer** : une partie contre l'ordinateur (4 niveaux) avec un coach en temps réel :
-  - avant ton coup, il explique le coup adverse, signale tes pièces menacées et les menaces de mat, et donne le coup de théorie si vous êtes dans une ouverture connue ;
-  - quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup (excellent, bon, imprécis, gaffe) ;
-  - après ton coup, il donne un verdict avec les raisons (développement, centre, roque, fourchette, pièce en prise, menace ignorée…) et le meilleur coup ;
-  - sur une gaffe, la partie se met en pause avec la réfutation en rouge et le bon coup en vert, et tu peux reprendre ton coup.
+- **Leçons** : 61 leçons réparties en 5 parcours au choix. Chaque leçon commence par une présentation avec ses objectifs. Les étapes mêlent explications illustrées (flèches, cases marquées, encadrés « À retenir »), quiz, exercices sur l'échiquier et finales jouées contre l'ordinateur. Un bilan conclut chaque leçon.
+  - **Débutant** (18) : les règles, la notation, les parties nulles, le mat avec la dame et avec la tour.
+  - **Intermédiaire** (8) : fourchette, clouage, enfilade, découverte, pièces en prise, batterie, compter les échanges, mat du couloir. Chaque leçon de tactique se termine par des positions tirées de vraies parties.
+  - **Avancé** (9) : règle du carré, opposition, roi actif, percée, structure de pions, pièces actives, finales de Lucena et de Philidor, bon et mauvais fou.
+  - **Expert** (8) : Boden, Anastasie, Philidor, l'Opéra de Morphy, le double échec de Réti, l'Immortelle et la Toujours Jeune d'Anderssen.
+  - **Ouvertures** (18) : italienne, espagnole, écossaise, gambit Dame, Londres, gambit du roi, anglaise, sicilienne, française, Caro-Kann, scandinave, est-indienne, slave, nimzo-indienne, Pirc, Petrov, mat de Légal, défense contre le coup du berger. Pour chacune, on trouve la ligne jouée guidée puis de mémoire, une fiche (plans, coups typiques, pièges) et des exercices.
+- **Exercices** : des problèmes tirés de parties, classés par thème (pièces en prise, fourchettes, clouages, découvertes, sacrifices, mats, promotion), avec un mode « série tactique ». S'y ajoutent les 14 problèmes classiques. Sur une mauvaise réponse, le coach explique pourquoi le coup échoue.
+- **Jouer** : une partie contre l'ordinateur sur 5 niveaux (de Débutant à Maître), avec un coach en temps réel.
+  - Avant ton coup, il explique le coup adverse, montre en rouge la menace adverse (fourchette, mat…) et chiffre ce que tu perdrais si tu l'ignorais.
+  - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.
+  - Après ton coup, il donne un verdict justifié : la réponse adverse, la suite probable, le bilan matériel et le meilleur coup.
+  - Sur une erreur, la partie se met en pause et tu peux reprendre ton coup.
 - **Coordonnées** : un entraînement chronométré de 30 secondes.
 
-La progression est enregistrée dans le navigateur (`localStorage`).
+Il y a aussi des sons, l'animation des pièces, une barre d'évaluation et des points gagnés. La progression est enregistrée dans le navigateur (`localStorage`).
 
-## Technique
+## Organisation du code
 
-Le moteur d'échecs est écrit à la main en JavaScript : génération de coups vérifiée par perft, et recherche alpha-bêta avec quiescence. La finale roi + pion contre roi s'appuie sur une base exacte calculée dans le navigateur par analyse rétrograde. Toutes les positions des leçons et des exercices ont été vérifiées automatiquement : légalité, mats forcés sans solution plus courte, finales gagnantes.
+Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
+
+| Fichier | Rôle |
+|---|---|
+| `src/rules.js` | Règles du jeu (classe `Chess`), validées par perft, plus un petit solveur de mats |
+| `src/search.js` | Moteur de recherche : représentation 0x88, tables de transposition, PVS, coup nul, réductions des coups tardifs, quiescence avec parades aux échecs. Il tourne dans un Web Worker |
+| `src/content.js`, `src/lessons-extra.js` | Leçons, fiches d'ouverture, problèmes classiques |
+| `src/puzzles-data.js` | Problèmes tirés de parties (fichier généré) |
+| `src/app.js` | Interface : échiquier, leçons, exercices, coach, coordonnées |
+| `src/styles.css`, `src/pieces.css`, `src/body.html` | Présentation |
+
+## Vérifications
+
+```sh
+node tests/engine.test.js        # perft de référence, vitesse, tactiques (fourchettes, mats)
+node tests/coach.test.js         # le coach repère un coup qui permet une fourchette
+node tools/check-content.js      # légalité de chaque position et de chaque coup des leçons, mats, pats, finales
+```
+
+Les problèmes « tirés de parties » sont produits en trois étapes :
+
+1. `tools/mine2.js` fait jouer le moteur contre lui-même en injectant des erreurs plausibles.
+2. `tools/verify-puzzles.js` analyse chaque position en profondeur et ne garde que celles où un seul coup gagne, à chaque étape de la solution.
+3. `tools/build-puzzles.js` génère `src/puzzles-data.js`.
+
+## Crédits
 
 Les pièces viennent du jeu « cburnett » de Colin M. L. Burnett (licence GPLv2+), celui qu'utilisent Lichess et Wikipédia.

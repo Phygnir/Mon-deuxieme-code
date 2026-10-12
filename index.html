@@ -65,6 +65,12 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 .start { display: grid; gap: 4px; }
 .start input { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
 
+/* Sélecteur de programme */
+.prog-switch { display: inline-flex; gap: 2px; padding: 3px; background: var(--sunk); border-radius: 10px; justify-self: start; margin-bottom: 6px; }
+.prog-switch button { border: 0; background: transparent; padding: 6px 16px; border-radius: 8px; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
+.prog-switch button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 18%, transparent); }
+.log select { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+
 /* Objectifs */
 .goals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; }
@@ -82,7 +88,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 
 /* Frise des semaines */
 .timeline { display: grid; gap: 8px; }
-.weeks { display: grid; grid-template-columns: repeat(26, minmax(0, 1fr)); gap: 3px; }
+.weeks { display: grid; grid-template-columns: repeat(26, minmax(0, 1fr)); gap: 12px 3px; }
 .wk { position: relative; border: 0; border-radius: 5px; height: 42px; padding: 0; background: color-mix(in srgb, var(--pc) 22%, var(--surface)); color: var(--ink); font-family: var(--font-display); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .wk.deload { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--pc) 22%, var(--surface)) 0 4px, var(--surface) 4px 8px); }
 .wk.sel { background: var(--pc); color: var(--surface); }
@@ -182,9 +188,13 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 <div class="wrap">
   <header>
     <div class="intro">
-      <span class="label">Programme 26 semaines · 4 séances / semaine · 3 versions qui tournent</span>
-      <h1>Cap Handstand</h1>
-      <p class="muted">De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée. Choisis une semaine, puis un jour pour voir la séance et les mouvements.</p>
+      <div class="prog-switch" role="tablist" aria-label="Programme">
+        <button role="tab" data-prog="hs">Handstand</button>
+        <button role="tab" data-prog="pl">Planche</button>
+      </div>
+      <span class="label" id="eyebrow"></span>
+      <h1 id="prog-title">Cap Handstand</h1>
+      <p class="muted" id="prog-intro"></p>
     </div>
     <label class="start">
       <span class="label">Début du programme (un lundi)</span>
@@ -196,7 +206,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="week" aria-selected="true">Semaine</button>
-    <button role="tab" data-tab="plan" aria-selected="false">Progression 6 mois</button>
+    <button role="tab" data-tab="plan" aria-selected="false" id="plan-tab">Progression</button>
     <button role="tab" data-tab="lib" aria-selected="false">Exercices</button>
   </nav>
 
@@ -459,7 +469,7 @@ EX.handWalk.swapNote = "Compte les pas : une main = un pas";
 EX.shapes.swapNote = "Tiens chaque forme quelques secondes";
 
 /* ---------- Programme ---------- */
-const PHASES = [
+const HS_PHASES = [
   { name: "Fondations", from: 1, to: 6, color: "--p1",
     goal: "Corps aligné au mur et épaules solides.",
     detail: "Tenue ventre au mur jusqu'à 60 s, pike push-ups propres, premières descentes lentes en HSPU.",
@@ -481,12 +491,13 @@ const PHASES = [
     detail: "Volume réduit pour arriver frais, puis test final le samedi de la semaine 26.",
     hold: 120, hspu: 10 }
 ];
-const START = { hold: 20, hspu: 1 };
-const TEST_WEEKS = new Set([6, 12, 18, 24, 26]);
-const DELOAD = new Set([6, 12, 18, 24]);
+const HS_START = { hold: 20, hspu: 1 };
+const HS_TEST_WEEKS = new Set([6, 12, 18, 24, 26]);
+const HS_DELOAD = new Set([6, 12, 18, 24]);
+let PHASES, START, TEST_WEEKS, DELOAD, SLOT, SESSION_META, VARIANTS, SLOT_ORDER, DEFIS, PROG, NW;
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
-const SLOT = { 0: "forceA", 1: "balance", 3: "forceB", 5: "long" };
-const SESSION_META = {
+const HS_SLOT = { 0: "forceA", 1: "balance", 3: "forceB", 5: "long" };
+const HS_SESSION_META = {
   forceA: { title: "Force — HSPU", sub: "Pousser à la verticale", min: 45 },
   balance: { title: "Équilibre", sub: "Technique de tenue", min: 40 },
   forceB: { title: "Force — volume", sub: "Répétitions faciles, beaucoup de qualité", min: 40 },
@@ -515,7 +526,7 @@ function targetAt(w, key) {
 
 function item(ex, dose, unit, note) { return { ex, dose, unit, note }; }
 
-function baseSession(w, type) {
+function hsBaseSession(w, type) {
   const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w);
   const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
   const warm = [
@@ -651,7 +662,7 @@ function baseSession(w, type) {
 }
 
 /* ---------- Variantes : 3 versions de chaque séance qui tournent d'une semaine à l'autre ---------- */
-const VARIANTS = {
+const HS_VARIANTS = {
   forceA: [
     { name: "Classique", desc: "Séries classiques, repos complet entre les séries." },
     { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "declinePU", bearCrawl: "plankPike" } },
@@ -673,9 +684,9 @@ const VARIANTS = {
     { name: "Formes", desc: "Les tenues longues, plus un bloc de jeu avec les formes de jambes.", add: () => item("shapes", "3 × 3 cycles", "", "Droit → groupé → fente, 5 s chacun") }
   ]
 };
-const SLOT_ORDER = ["forceA", "balance", "forceB", "long"];
+const HS_SLOT_ORDER = ["forceA", "balance", "forceB", "long"];
 
-const DEFIS = [
+const HS_DEFIS = [
   { ex: "handWalk", t: "Marche sur les mains", d: "Fais le plus de pas possible, 3 essais. Note ton record.", min: 2 },
   { ex: "frog", t: "Frog stand chrono", d: "Tiens le plus longtemps possible, 2 essais.", min: 0 },
   { ex: "shapes", t: "Formes enchaînées", d: "Droit → groupé → fente → droit sans redescendre (au mur si besoin).", min: 1 },
@@ -691,10 +702,10 @@ const DEFIS = [
 ];
 
 function buildSession(w, type) {
-  const s = baseSession(w, type);
+  const s = PROG.base(w, type);
   if (s.test) return s;
   const pi = phaseIndex(w), si = SLOT_ORDER.indexOf(type);
-  const v = (DELOAD.has(w) || w >= 25) ? 0 : (w - 1 + si) % 3;
+  const v = (DELOAD.has(w) || w >= PROG.peakFrom) ? 0 : (w - 1 + si) % 3;
   const V = VARIANTS[type][v];
   const swap = it => {
     const to = V.swap && V.swap[it.ex];
@@ -719,10 +730,14 @@ function buildSession(w, type) {
     s.main[n - 1] = Object.assign({}, s.main[n - 1], { unit: "superset B", note: "Puis 90 s de repos et on repart sur A" });
   }
   if (V.circuit) {
-    s.main = s.main.map(it => it.dose.startsWith("EMOM") ? it : Object.assign({}, it, { dose: it.dose.split(" × ").pop(), unit: "circuit · " + (it.dose.includes(" × ") ? it.dose.split(" × ")[0] : 3) + " tours" }));
+    s.main = s.main.map(it => (it.dose.startsWith("EMOM") || it.unit === "cumulées") ? it : Object.assign({}, it, { dose: it.dose.split(" × ").pop(), unit: "circuit · " + (it.dose.includes(" × ") ? it.dose.split(" × ")[0] : 3) + " tours" }));
   }
   if (V.hsNote) s.main = s.main.map(it => it.ex === "hsFree" ? Object.assign({}, it, { note: V.hsNote }) : it);
-  if (V.add) s.main.push(V.add());
+  if (V.cluster && s.main.length) {
+    const it = s.main[0], m = it.dose.match(/^(\d+) × (\d+) s$/);
+    if (m) { const hs = Math.max(2, Math.round(+m[2] * 0.4)); s.main[0] = Object.assign({}, it, { dose: m[1] + " × (3 × " + hs + " s)", unit: "clusters", note: "3 tenues de " + hs + " s séparées de 10 s de repos = 1 série. Repos 2–3 min entre les séries" }); }
+  }
+  if (V.add) s.main.push(V.add(w));
   s.variant = V;
   const inSession = new Set(s.warm.concat(s.main).map(it => it.ex));
   const pool = DEFIS.filter(d => d.min <= pi && !inSession.has(d.ex));
@@ -730,21 +745,376 @@ function buildSession(w, type) {
   return s;
 }
 
+/* ---------- Programme handstand : configuration ---------- */
+const PROGRAMS = {};
+PROGRAMS.hs = {
+  id: "hs", prefix: "caphs:", title: "Cap Handstand", duration: "6 mois",
+  weeks: 26, peakFrom: 25,
+  phases: HS_PHASES, start: HS_START, tests: HS_TEST_WEEKS, deload: HS_DELOAD, slot: HS_SLOT, meta: HS_SESSION_META,
+  variants: HS_VARIANTS, order: HS_SLOT_ORDER, defis: HS_DEFIS, base: hsBaseSession,
+  eyebrow: "Programme 26 semaines · 4 séances / semaine · 3 versions qui tournent",
+  intro: "De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
+  deloadLegend: "Semaine de décharge + test",
+  weekText: (w, P) => DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins pour récupérer, et test le samedi." :
+    w === 26 ? "Dernière semaine : séances légères, test final samedi." : P.goal + " " + P.detail,
+  restShort: "10 min de mobilité épaules et poignets",
+  restLong: "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de bear crawl. Pas de handstand en force aujourd'hui.",
+  target: (w, k) => targetAt(w, k),
+  best: res => { let hold = 0, hspu = 0; Object.values(res).forEach(r => { if (+r.hold > hold) hold = +r.hold; if (+r.hspu > hspu) hspu = +r.hspu; }); return { hold, hspu }; },
+  goals: (w, best) => {
+    const hold = Math.round(targetAt(w, "hold") / 5) * 5, rep = Math.round(targetAt(w, "hspu"));
+    return [
+      { label: "Tenue visée · semaine " + w, val: hold < 60 ? hold : fmtS(hold).replace(" s", ""), unit: hold < 60 ? "s" : "", pct: hold - 20, from: "20 s", to: "2 min",
+        extra: best.hold ? "Ton record : " + fmtS(best.hold) : "Pas encore de test enregistré" },
+      { label: "HSPU d'affilée · semaine " + w, val: rep, unit: rep > 1 ? "répétitions" : "répétition", pct: (rep - 1) / 9 * 100, from: "1", to: "10",
+        extra: best.hspu ? "Ton record : " + best.hspu : "Pas encore de test enregistré" }
+    ];
+  },
+  logFields: [{ key: "hold", label: "Meilleure tenue (s)" }, { key: "hspu", label: "HSPU d'affilée" }],
+  logGoal: w => "Objectif de la semaine " + w + " : " + fmtS(Math.round(targetAt(w, "hold") / 5) * 5) + " et " + Math.round(targetAt(w, "hspu")) + " HSPU.",
+  phaseLine: p => fmtS(p.hold) + " · " + p.hspu + " HSPU",
+  chart: {
+    left: { key: "hold", max: 120, ticks: [0, 30, 60, 90, 120], fmt: v => v + " s", legend: "Tenue visée (axe gauche)" },
+    right: { key: "hspu", max: 10, ticks: [0, 2, 4, 6, 8, 10], fmt: v => v, legend: "HSPU visés (axe droit)" },
+    xTicks: [1, 6, 12, 18, 24, 26]
+  },
+  planTitle: "6 mois en 5 phases",
+  planIntro: "Chaque phase dure 6 semaines : 5 semaines de progression puis une semaine plus légère qui se termine par un test. Les deux dernières semaines servent à arriver frais au test final.",
+  rules: [
+    ["Quand avancer plus vite", "Si tu réussis toutes les séries d'une séance avec de la marge (une ou deux répétitions en réserve), passe aux chiffres de la semaine suivante. Ne saute jamais une semaine de décharge."],
+    ["Quand ralentir", "Si tu rates la cible deux séances de suite, répète la semaine. Si un test de fin de phase est loin de l'objectif, refais les deux dernières semaines de la phase."],
+    ["Poignets et nuque", "Échauffement poignets à chaque séance, même courte. Pour les HSPU, coussin fin ou tapis plié sous la tête, et jamais de rebond sur la nuque. Douleur articulaire = arrêt de la séance."],
+    ["Pourquoi les séances changent", "Chaque séance existe en 3 versions (classique, puis deux variantes de format ou d'exercices) qui tournent d'une semaine à l'autre. La charge de travail reste la même : seuls le format et les mouvements changent. Les semaines de décharge et de test restent en version classique."],
+    ["La pratique en plus", "La tenue progresse surtout avec la fréquence. Les jours de repos actif, 5 tentatives de handstand libre en fin de mobilité suffisent, sans chercher l'échec."]
+  ]
+};
+
+/* ---------- Exercices planche (parallettes à x=108, prise à y=168) ---------- */
+Object.assign(EX, {
+  lean: {
+    name: "Planche lean", short: "Bascule vers l'avant",
+    desc: "En position de pompe bras tendus, doigts tournés vers l'extérieur ou l'arrière, avance les épaules loin devant les mains et tiens. C'est la base de toute la planche : plus tu penches, plus c'est dur.",
+    cues: ["Bras verrouillés, coudes tournés vers l'avant", "Dos rond (protraction) : pousse le sol", "Penche jusqu'à sentir les poignets travailler, pas plus"],
+    props: [],
+    poses: [
+      { h:[110,190], e:[109,169], s:[108,148], p:[156,160], k:[186,172], f:[214,184], hd:[96,145] },
+      { h:[110,190], e:[103,170], s:[96,150], p:[146,162], k:[178,174], f:[212,186], hd:[84,147] }
+    ],
+    seq: [[0,.4,1.4],[1,1.6,1.2]]
+  },
+  pppu: {
+    name: "Pompes pseudo planche", short: "PPPU",
+    desc: "Pompes en restant penché comme au planche lean : les épaules restent devant les mains pendant toute la répétition. Le meilleur exercice de force dynamique pour la planche.",
+    cues: ["Garde le même lean en bas qu'en haut", "Coudes près du corps, vers l'arrière", "Remonte en poussant le dos rond"],
+    props: [],
+    poses: [
+      { h:[110,190], e:[103,170], s:[96,150], p:[146,162], k:[178,174], f:[212,186], hd:[84,147] },
+      { h:[110,190], e:[120,176], s:[96,174], p:[146,180], k:[178,183], f:[212,186], hd:[83,172] }
+    ],
+    seq: [[0,.3,1.3],[1,.2,.9]]
+  },
+  scapPU: {
+    name: "Pompes scapulaires", short: "Protraction en planche",
+    desc: "En planche bras tendus, laisse la poitrine descendre entre les omoplates, puis pousse le sol pour arrondir le haut du dos. Seules les omoplates bougent. C'est la position d'épaules de la planche.",
+    cues: ["Bras tendus en permanence", "Amplitude maximale des omoplates", "Tiens 1 s en haut, dos bien rond"],
+    props: [],
+    poses: [
+      { h:[100,190], e:[100,169], s:[100,148], p:[150,158], k:[182,170], f:[214,184], hd:[88,146] },
+      { h:[100,190], e:[100,166], s:[100,142], p:[150,155], k:[182,169], f:[214,184], hd:[88,139] }
+    ],
+    seq: [[0,.3,.8],[1,.6,.8]]
+  },
+  tuckPl: {
+    name: "Tuck planche", short: "Genoux sous la poitrine",
+    desc: "Sur les parallettes, bras tendus, penche-toi et décolle les pieds en gardant les genoux serrés sous la poitrine, dos rond. La position la plus facile, utilisée ici en échauffement et en volume.",
+    cues: ["Dos rond, épaules poussées vers le sol", "Hanches à hauteur des épaules ou plus haut", "Bras tendus, jamais pliés"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[104,148], s:[100,128], p:[132,112], k:[116,136], f:[140,140], hd:[88,128] },
+      { h:[108,168], e:[104,148], s:[99,129], p:[132,113], k:[116,137], f:[140,142], hd:[87,129] }
+    ],
+    seq: [[0,.8,1],[1,.8,1]]
+  },
+  advTuck: {
+    name: "Advanced tuck planche", short: "Dos plat, genoux ouverts",
+    desc: "Comme la tuck planche, mais le dos est plat et les hanches s'éloignent des mains : les cuisses descendent à la verticale. Ta position actuelle, et la base de tout le programme.",
+    cues: ["Dos plat, à l'horizontale", "Hanches au niveau des épaules", "Penche plus pour compenser le poids des jambes"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[104,148], s:[100,128], p:[146,128], k:[134,160], f:[164,154], hd:[87,126] },
+      { h:[108,168], e:[104,148], s:[99,129], p:[146,127], k:[134,159], f:[164,152], hd:[86,127] }
+    ],
+    seq: [[0,.8,1],[1,.8,1]]
+  },
+  oneLeg: {
+    name: "Planche une jambe", short: "Une jambe tendue",
+    desc: "Depuis l'advanced tuck, tends une jambe vers l'arrière, l'autre reste groupée. Alterne la jambe tendue à chaque série. L'étape entre l'advanced tuck et la straddle.",
+    cues: ["La jambe tendue reste dans l'alignement du dos", "Bassin à plat, il ne tourne pas", "Change de jambe à chaque série"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[104,148], s:[100,128], p:[146,128], k:[134,160], f:[164,154], hd:[87,126] },
+      { h:[108,168], e:[103,148], s:[99,128], p:[144,128], k:[178,127], f:[212,126], k2:[134,160], f2:[162,154], hd:[86,126] }
+    ],
+    seq: [[0,.5,1],[1,1.6,1]]
+  },
+  straddle: {
+    name: "Straddle planche", short: "Jambes écartées",
+    desc: "Corps à l'horizontale, jambes tendues et très écartées. Écarter les jambes rapproche le centre de gravité des mains : c'est la planche « complète » la plus accessible.",
+    cues: ["Jambes aussi écartées que possible", "Fesses serrées, pointes de pieds tendues", "Épaules bien devant les mains"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[103,148], s:[98,128], p:[142,128], k:[176,127], f:[208,126], k2:[174,136], f2:[204,144], hd:[85,126] },
+      { h:[108,168], e:[103,148], s:[97,129], p:[142,129], k:[176,128], f:[208,128], k2:[174,137], f2:[204,146], hd:[84,127] }
+    ],
+    seq: [[0,.8,1],[1,.8,1]]
+  },
+  halfLay: {
+    name: "Half-lay planche", short: "Hanches tendues, genoux pliés",
+    desc: "Hanches complètement tendues comme en full planche, mais genoux pliés à 90°, pieds vers le sol. Le levier le plus proche de la full planche.",
+    cues: ["Hanches tendues, pas cassées", "Genoux serrés, pieds vers le bas", "Lean maximal"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[103,148], s:[98,128], p:[142,128], k:[176,128], f:[178,160], hd:[85,126] },
+      { h:[108,168], e:[103,148], s:[97,129], p:[142,129], k:[176,129], f:[178,161], hd:[84,127] }
+    ],
+    seq: [[0,.8,1],[1,.8,1]]
+  },
+  fullPl: {
+    name: "Full planche", short: "L'objectif",
+    desc: "Corps entièrement tendu à l'horizontale, jambes serrées, uniquement sur les mains. Le mouvement cible du programme.",
+    cues: ["Une seule ligne des épaules aux pieds", "Lean maximal, bras verrouillés", "Tentatives courtes et propres, jamais en force brute"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[102,148], s:[96,128], p:[142,128], k:[178,128], f:[214,128], hd:[83,126] },
+      { h:[108,168], e:[102,148], s:[95,129], p:[142,129], k:[178,129], f:[214,130], hd:[82,127] }
+    ],
+    seq: [[0,.8,1],[1,.8,1]]
+  },
+  atPU: {
+    name: "Pompes en advanced tuck", short: "Push-up en planche",
+    desc: "En advanced tuck sur les parallettes, plie les bras pour descendre puis repousse, sans poser les pieds. Construit la force de la planche en mouvement.",
+    cues: ["Le dos reste plat en bas", "Coudes serrés vers l'arrière", "Commence par des négatifs si besoin"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[104,148], s:[100,128], p:[146,128], k:[134,160], f:[164,154], hd:[87,126] },
+      { h:[108,168], e:[124,150], s:[98,156], p:[144,158], k:[134,184], f:[162,180], hd:[85,154] }
+    ],
+    seq: [[0,.4,1.3],[1,.2,1]]
+  },
+  lsit: {
+    name: "L-sit", short: "Compression sur parallettes",
+    desc: "Sur les parallettes, bras tendus, décolle les fesses et tends les jambes à l'horizontale devant toi. Renforce la compression et les épaules en appui, utiles pour la planche et les presses.",
+    cues: ["Épaules poussées vers le bas", "Jambes tendues et serrées", "Trop dur : une jambe pliée"],
+    props: [{ para: [120, 168] }],
+    poses: [
+      { h:[120,168], e:[120,148], s:[120,128], p:[124,164], k:[88,162], f:[52,160], hd:[119,114] },
+      { h:[120,168], e:[120,148], s:[120,127], p:[124,163], k:[88,164], f:[52,166], hd:[119,113] }
+    ],
+    seq: [[0,.8,1.2],[1,.6,1.2]]
+  },
+  pullUp: {
+    name: "Tractions", short: "Barre de traction",
+    desc: "Suspendu à la barre, monte le menton au-dessus de la barre puis redescends bras tendus. Le tirage équilibre tout le travail de poussée et protège les coudes et les épaules.",
+    cues: ["Pars bras complètement tendus", "Poitrine vers la barre", "Descente contrôlée, 2 s"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[122,152], f:[134,178], hd:[114,64] },
+      { h:[120,30], e:[134,56], s:[120,44], p:[122,88], k:[124,122], f:[136,148], hd:[114,22] }
+    ],
+    seq: [[0,.4,1],[1,.3,1.3]]
+  },
+  legRaise: {
+    name: "Relevés de jambes suspendu", short: "Compression à la barre",
+    desc: "Suspendu à la barre, monte les jambes tendues jusqu'à l'horizontale (ou plus haut), puis redescends sans balancer. Gainage et compression.",
+    cues: ["Pas d'élan : redescends lentement", "Épaules actives, pas suspendues passivement", "Trop dur : genoux pliés"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[120,152], f:[120,184], hd:[114,64] },
+      { h:[120,30], e:[120,52], s:[121,74], p:[124,116], k:[88,114], f:[54,110], hd:[115,64] }
+    ],
+    seq: [[0,.3,1.1],[1,.4,1.3]]
+  }
+});
+
+/* ---------- Programme planche : 52 semaines ---------- */
+const PL_POS = ["Advanced tuck", "Une jambe", "Straddle", "Half-lay", "Full planche"];
+const PL_POS_EX = ["advTuck", "oneLeg", "straddle", "halfLay", "fullPl"];
+const PL_PHASES = [
+  { name: "Advanced tuck", from: 1, to: 12, color: "--p1", pos: 0, hf: 10, ht: 20,
+    goal: "Advanced tuck propre pendant 20 s.", detail: "Dos plat, leans profonds, pompes pseudo planche. Premières tentatives sur une jambe à partir de la semaine 7." },
+  { name: "Une jambe", from: 13, to: 24, color: "--p2", pos: 1, hf: 4, ht: 10,
+    goal: "Planche une jambe 10 s de chaque côté.", detail: "Les pompes en advanced tuck arrivent, et les premières tentatives de straddle." },
+  { name: "Straddle", from: 25, to: 36, color: "--p3", pos: 2, hf: 3, ht: 10,
+    goal: "Straddle planche 10 s.", detail: "La première vraie planche à l'horizontale. On entretient l'advanced tuck et l'une jambe en volume." },
+  { name: "Half-lay", from: 37, to: 48, color: "--p4", pos: 3, hf: 3, ht: 8,
+    goal: "Half-lay 8 s, straddle solide.", detail: "Hanches tendues, genoux pliés : le dernier levier avant la full. Tentatives de full planche en fin de séance." },
+  { name: "Full planche", from: 49, to: 52, color: "--p5", pos: 4, hf: 2, ht: 5,
+    goal: "Première full planche, 2 à 5 s.", detail: "Volume réduit, tentatives fraîches et test final le vendredi de la semaine 52." }
+];
+const PL_DELOAD = new Set([6, 12, 18, 24, 30, 36, 42, 48]);
+const PL_TEST_WEEKS = new Set([12, 24, 36, 48, 52]);
+const PL_SLOT = { 0: "heavy", 2: "dyn", 4: "vol" };
+const PL_SESSION_META = {
+  heavy: { title: "Tenues lourdes", sub: "La position la plus dure du moment, séries courtes et fraîches", min: 50 },
+  dyn: { title: "Force dynamique", sub: "Pompes en planche et tirage", min: 50 },
+  vol: { title: "Volume", sub: "Beaucoup de secondes dans les positions plus faciles", min: 45 }
+};
+function plHold(w) { const p = PL_PHASES[phaseIndex(w)]; return R(p.hf, p.ht, rampT(w)); }
+
+function plBaseSession(w, type) {
+  const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w), P = PL_PHASES[pi];
+  const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
+  const tp = PL_POS_EX[P.pos], prev = P.pos ? PL_POS_EX[P.pos - 1] : "tuckPl", next = PL_POS_EX[Math.min(4, P.pos + 1)];
+  const hold = plHold(w), side = P.pos === 1 ? " par jambe" : "";
+  const warm = [
+    item("wrists", "3 min", "", "Poignets en extension, doigts vers l'arrière"),
+    item("scapPU", S(2) + " × 10", "", "Épaules prêtes pour la protraction"),
+    item("lean", "2 × 15 s", "léger", "Lean modéré, juste pour chauffer")
+  ];
+  if (TEST_WEEKS.has(w) && type === "vol") {
+    return { warm: warm.concat([item("tuckPl", "2 × 5 s", "", "Échauffement spécifique")]), main: [
+      item(tp, "3", "essais", "Meilleure tenue propre dans la position de la phase, 3 min de repos entre les essais"),
+      P.pos < 4 ? item(next, "2", "essais", "Pour voir où tu en es dans la position suivante") : null
+    ].filter(Boolean), test: true };
+  }
+  let main = [];
+  if (type === "heavy") {
+    main = [
+      item(tp, S(5) + " × " + Math.max(2, hold - 2) + " s", "repos 2–3 min", "Arrête la série dès que la forme se casse" + (side ? ". Alterne les jambes" : "")),
+      item("lean", S(3) + " × " + R(20, 30, t) + " s", "repos 90 s", "Lean profond, doigts vers l'extérieur"),
+      item("pullUp", S(3) + " × " + R(6, 10, t), "repos 2 min", "Équilibre tirage / poussée"),
+      item("lsit", S(3) + " × " + R(10, 20, t) + " s", "repos 60 s", "")
+    ];
+    if ((pi === 0 && w >= 7) || (pi > 0 && pi < 4)) main.splice(1, 0, item(next, "5 × 1–3 s", "tentatives", "Juste toucher la position, en fin de partie lourde"));
+    if (pi === 4) main = [
+      item("halfLay", S(4) + " × 4 s", "repos 3 min", "Entretien du levier précédent"),
+      item("fullPl", w === 52 ? "3 × 1–2 s" : "6 × 1–3 s", "tentatives", "Très frais, 3 min de repos"),
+      item("pullUp", "3 × 6", "repos 2 min", "")
+    ];
+  }
+  if (type === "dyn") {
+    if (pi === 0) main = [
+      item("pppu", S(4) + " × " + R(6, 10, t), "repos 2 min", "Lean maintenu en bas"),
+      item("atPU", S(3) + " × " + R(1, 3, t), "négatifs", "Descente lente de 4 s, remonte sur les pieds"),
+      item("dips", S(3) + " × " + R(8, 12, t), "repos 90 s", "Buste penché en avant"),
+      item("legRaise", S(3) + " × " + R(6, 10, t), "repos 60 s", "")
+    ];
+    else if (pi === 1) main = [
+      item("atPU", S(4) + " × " + R(2, 5, t), "repos 2–3 min", "Dos plat en bas"),
+      item("pppu", S(3) + " × " + R(8, 12, t), "repos 2 min", "Plus de lean que le mois dernier"),
+      item("pullUp", S(3) + " × " + R(8, 10, t), "repos 2 min", ""),
+      item("legRaise", S(3) + " × " + R(8, 12, t), "repos 60 s", "")
+    ];
+    else main = [
+      item("atPU", S(4) + " × " + R(4, 6, t), "repos 2–3 min", ""),
+      item("pppu", S(3) + " × " + R(10, 12, t), "repos 2 min", "Pieds surélevés si trop facile"),
+      item("dips", S(3) + " × " + R(10, 15, t), "repos 90 s", ""),
+      item("pullUp", S(3) + " × " + R(8, 12, t), "repos 2 min", "")
+    ];
+    if (pi === 4) main = main.slice(0, 2).map(it => Object.assign({}, it, { dose: "3 × " + it.dose.split(" × ")[1] }));
+  }
+  if (type === "vol") {
+    main = [
+      item(prev, R(40, 60, t) + " s", "cumulées", "Position plus facile, séries de 5 à 10 s"),
+      item(tp, "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", Math.max(2, Math.round(hold / 2)) + " s / min" + side, "Une tenue courte au début de chaque minute"),
+      item("lean", S(3) + " × " + R(15, 25, t) + " s", "sur parallettes", "Pieds au sol, mains sur les parallettes"),
+      item("pullUp", S(3) + " × " + R(5, 8, t), "tempo 3-1-1", "3 s de descente"),
+      item("bearCrawl", "2 × 40 s", "", "Finisher")
+    ];
+    if (pi === 4) main = main.slice(0, 3);
+  }
+  return { warm, main, test: false };
+}
+
+const PL_VARIANTS = {
+  heavy: [
+    { name: "Classique", desc: "Tenues complètes, repos long." },
+    { name: "Clusters", desc: "Chaque série devient 3 tenues plus courtes séparées de 10 s : plus de secondes de qualité.", cluster: true },
+    { name: "Contraste", desc: "Après le bloc lourd, une tenue max dans la position plus facile pour finir les épaules.", add: w => { const P = PL_PHASES[phaseIndex(w)]; return item(P.pos ? PL_POS_EX[P.pos - 1] : "tuckPl", "1 × max", "contraste", "Tenue max propre dans la position plus facile"); }, swap: { pullUp: "legRaise" } }
+  ],
+  dyn: [
+    { name: "Classique", desc: "Séries classiques, repos complet." },
+    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "pppu" } },
+    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true }
+  ],
+  vol: [
+    { name: "Classique", desc: "Volume dans les positions faciles, EMOM dans la position de la phase." },
+    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true },
+    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : pompes pseudo planche, relevés de jambes, planche → pike.", swap: { lean: "pppu", pullUp: "legRaise", bearCrawl: "plankPike" } }
+  ]
+};
+const PL_DEFIS = [
+  { ex: "frog", t: "Frog stand chrono", d: "Tiens le plus longtemps possible, 2 essais.", min: 0 },
+  { ex: "lsit", t: "L-sit chrono", d: "Une seule tenue max, jambes tendues.", min: 0 },
+  { ex: "tuckPl", t: "Tuck ↔ advanced tuck", d: "Alterne 3 s groupé et 3 s dos plat, sans poser les pieds. Combien de cycles ?", min: 0 },
+  { ex: "lean", t: "Lean 30 s", d: "Le lean le plus profond que tu puisses tenir 30 s.", min: 0 },
+  { ex: "pppu", t: "PPPU max", d: "Une série, arrête 2 répétitions avant l'échec.", min: 0 },
+  { ex: "pullUp", t: "Tractions max", d: "Une série propre, menton au-dessus de la barre.", min: 0 },
+  { ex: "plankPike", t: "15 planche → pike", d: "D'affilée, jambes et bras tendus.", min: 0 },
+  { ex: "hsFree", t: "Handstand chrono", d: "Une tentative de tenue max : l'équilibre sur les mains sert aussi la planche.", min: 0 },
+  { ex: "oneLeg", t: "Une jambe, côté faible", d: "2 tentatives sur ta jambe la moins à l'aise.", min: 1 },
+  { ex: "straddle", t: "Straddle surprise", d: "3 tentatives de 1 s. Juste pour sentir.", min: 1 },
+  { ex: "legRaise", t: "Relevés jusqu'à la barre", d: "Jambes tendues jusqu'à toucher la barre : combien d'affilée ?", min: 2 }
+];
+
+PROGRAMS.pl = {
+  id: "pl", prefix: "cappl:", title: "Cap Planche", duration: "12 mois",
+  weeks: 52, peakFrom: 49,
+  phases: PL_PHASES, start: {}, tests: PL_TEST_WEEKS, deload: PL_DELOAD, slot: PL_SLOT, meta: PL_SESSION_META,
+  variants: PL_VARIANTS, order: ["heavy", "dyn", "vol"], defis: PL_DEFIS, base: plBaseSession,
+  eyebrow: "Programme 52 semaines · 3 séances / semaine · parallettes + barre",
+  intro: "De l'advanced tuck à la première full planche, étape par étape : une jambe, straddle, half-lay. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
+  deloadLegend: "Semaine de décharge (test en fin de phase)",
+  weekText: (w, P) => TEST_WEEKS.has(w) ? (w === 52 ? "Dernière semaine : séances légères, test final vendredi." : "Semaine de décharge : environ 40 % de volume en moins, et test de fin de phase le vendredi.") :
+    DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins. Les tendons du coude et du biceps en ont besoin." : P.goal + " " + P.detail,
+  restShort: "Mobilité poignets et épaules, 10 min",
+  restLong: "Optionnel, 10 minutes : poignets en extension, étirement des épaules, 2 × 30 s de bear crawl. La planche sollicite beaucoup les tendons du biceps : un jour de repos entre deux séances, c'est obligatoire.",
+  target: (w, k) => {
+    if (w <= 0) return k === "pos" ? 0 : 8;
+    const pi = phaseIndex(w), P = PL_PHASES[pi];
+    return k === "pos" ? P.pos : R(P.hf, P.ht, rampT(w));
+  },
+  best: res => {
+    let pos = -1, hold = 0;
+    Object.values(res).forEach(r => { const p = +r.pos, hd = +r.hold || 0; if (!hd) return; if (p > pos || (p === pos && hd > hold)) { pos = p; hold = hd; } });
+    return { pos, hold };
+  },
+  goals: (w, best) => {
+    const P = PL_PHASES[phaseIndex(w)], hold = plHold(w);
+    const rec = best.pos >= 0 ? "Ton record : " + PL_POS[best.pos].toLowerCase() + ", " + best.hold + " s" : "Pas encore de test enregistré";
+    return [
+      { label: "Position visée · semaine " + w, val: PL_POS[P.pos], unit: "", pct: P.pos / 4 * 100 + 4, from: "Advanced tuck", to: "Full planche", extra: rec },
+      { label: "Tenue visée dans cette position", val: hold, unit: "s" + (P.pos === 1 ? " par jambe" : ""), pct: hold / P.ht * 100, from: "0 s", to: P.ht + " s en fin de phase", extra: "Phase " + (phaseIndex(w) + 1) + " · " + P.name }
+    ];
+  },
+  logFields: [{ key: "pos", label: "Position", options: PL_POS, def: 0 }, { key: "hold", label: "Meilleure tenue (s)" }],
+  logGoal: w => { const P = PL_PHASES[phaseIndex(w)]; return "Objectif de la semaine " + w + " : " + PL_POS[P.pos].toLowerCase() + " pendant " + plHold(w) + " s."; },
+  phaseLine: p => PL_POS[p.pos] + " · " + p.ht + " s",
+  chart: {
+    left: { key: "hold", max: 20, ticks: [0, 5, 10, 15, 20], fmt: v => v + " s", legend: "Tenue visée dans la position (axe gauche)" },
+    right: { key: "pos", needs: "hold", max: 4, ticks: [0, 1, 2, 3, 4], fmt: v => PL_POS[v], legend: "Position visée (axe droit)" },
+    xTicks: [1, 12, 24, 36, 48, 52]
+  },
+  planTitle: "12 mois en 5 positions",
+  planIntro: "Chaque phase vise une position plus dure. Toutes les 6 semaines, une semaine plus légère protège les tendons, et chaque fin de phase se termine par un test le vendredi. La tenue visée redescend à chaque nouvelle position : c'est normal.",
+  rules: [
+    ["Quand passer à la position suivante", "Si tu tiens la position de la phase 2 secondes au-dessus de l'objectif, avec un dos propre, tu peux commencer la phase suivante plus tôt. Une tenue moche ne compte pas."],
+    ["Quand ralentir", "Si la tenue stagne trois séances de suite, répète la semaine. Si le test de fin de phase est loin de l'objectif, refais les 4 dernières semaines de la phase. Rester plus longtemps sur une position, c'est normal."],
+    ["Coudes et biceps", "La planche charge beaucoup le tendon du biceps. Bras toujours verrouillés, jamais deux séances planche à la suite, et arrêt immédiat si le coude ou l'avant du bras fait mal."],
+    ["Avec le programme handstand", "Les deux programmes en même temps, c'est trop de poussée. Le plus simple : enchaîner la planche après les 6 mois de handstand, ou garder seulement les séances Équilibre du handstand en parallèle."],
+    ["Pourquoi les séances changent", "Chaque séance existe en 3 versions qui tournent d'une semaine à l'autre : classique, puis deux variantes de format ou d'exercices. La charge reste la même. Les semaines de décharge et de test restent en version classique."]
+  ]
+};
+
 /* ---------- État local (confort par navigateur) ---------- */
 const store = {
-  get(k, d) { try { const v = localStorage.getItem("caphs:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem("caphs:" + k, JSON.stringify(v)); } catch (e) {} }
+  get(k, d) { try { const v = localStorage.getItem((PROG ? PROG.prefix : "cap:") + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem((PROG ? PROG.prefix : "cap:") + k, JSON.stringify(v)); } catch (e) {} }
 };
 function mondayOf(d) { const x = new Date(d); x.setHours(12, 0, 0, 0); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; }
 function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
 
-const state = {
-  tab: "week",
-  start: store.get("start", iso(mondayOf(new Date()))),
-  done: store.get("done", {}),
-  results: store.get("results", {}),
-  week: 1, day: 0
-};
+const state = { tab: "week", start: null, done: {}, results: {}, week: 1, day: 0 };
 function currentWeek() {
   const s = new Date(state.start + "T12:00:00"), now = new Date(); now.setHours(12, 0, 0, 0);
   const diff = Math.floor((now - s) / 86400000);
@@ -752,8 +1122,8 @@ function currentWeek() {
 }
 function initPosition() {
   const c = currentWeek();
-  state.week = Math.min(26, Math.max(1, c.week));
-  state.day = c.week >= 1 && c.week <= 26 ? c.day : 0;
+  state.week = Math.min(NW, Math.max(1, c.week));
+  state.day = c.week >= 1 && c.week <= NW ? c.day : 0;
 }
 function dateOf(w, d) { const s = new Date(state.start + "T12:00:00"); s.setDate(s.getDate() + (w - 1) * 7 + d); return s; }
 const fmtDate = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
@@ -767,13 +1137,15 @@ function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); f
 function makeFigure(id, cls) {
   const ex = EX[id];
   const svg = el("svg", { viewBox: "0 0 240 200", class: "fig " + (cls || ""), role: "img", "aria-label": "Animation : " + ex.name });
-  const hasBars = ex.props.some(p => p.bars);
+  const hasBars = ex.props.some(p => p.bars || p.pullbar);
   if (!hasBars) el("line", { x1: 8, y1: 190, x2: 232, y2: 190, class: "pr" }, svg);
   else el("line", { x1: 8, y1: 194, x2: 232, y2: 194, class: "pr", "stroke-dasharray": "4 5" }, svg);
   ex.props.forEach(p => {
     if (p.wall) el("line", { x1: p.wall, y1: 6, x2: p.wall, y2: 190, class: "pr" }, svg);
     if (p.box) el("rect", { x: p.box[0], y: p.box[1], width: p.box[2], height: p.box[3], rx: 2, class: "prf" }, svg);
     if (p.pad) el("rect", { x: p.pad[0], y: p.pad[1], width: p.pad[2], height: p.pad[3], rx: 2, class: "prf" }, svg);
+    if (p.para) { const [x, y] = p.para; el("line", { x1: x - 13, y1: y + 2, x2: x - 17, y2: 190, class: "pr" }, svg); el("line", { x1: x + 13, y1: y + 2, x2: x + 17, y2: 190, class: "pr" }, svg); el("line", { x1: x - 17, y1: y + 2, x2: x + 17, y2: y + 2, class: "pr", "stroke-width": 5, "stroke-linecap": "round" }, svg); }
+    if (p.pullbar) { el("line", { x1: 50, y1: p.pullbar, x2: 190, y2: p.pullbar, class: "pr", "stroke-width": 4, "stroke-linecap": "round" }, svg); }
     if (p.bars) { el("line", { x1: 70, y1: p.bars, x2: 180, y2: p.bars, class: "pr", "stroke-width": 4 }, svg); el("line", { x1: 80, y1: p.bars, x2: 80, y2: 194, class: "pr" }, svg); el("line", { x1: 170, y1: p.bars, x2: 170, y2: 194, class: "pr" }, svg); }
   });
   const L = (c) => el("line", { class: c }, svg);
@@ -840,30 +1212,23 @@ const pc = i => "--pc: var(" + PHASES[i].color + ")";
 
 function renderGoals() {
   const w = state.week;
-  const hold = Math.round(targetAt(w, "hold") / 5) * 5, rep = Math.round(targetAt(w, "hspu"));
-  const best = bestResults();
-  const g = (lab, val, unit, pct, from, to, extra) => h("div", { class: "goal" },
+  const g = (o) => h("div", { class: "goal" },
     h("div", { class: "goal-top" },
-      h("span", { class: "label" }, lab),
-      h("span", { class: "muted", style: "font-size:13px" }, extra)),
-    h("div", { class: "goal-big" }, val, " ", h("small", null, unit)),
-    h("div", { class: "track" }, h("i", { style: "width:" + Math.max(3, Math.min(100, pct)) + "%" })),
-    h("div", { class: "track-scale" }, h("span", null, from), h("span", null, to)));
-  $("#goals").replaceChildren(
-    g("Tenue visée · semaine " + w, hold < 60 ? hold : fmtS(hold).replace(" s", ""), hold < 60 ? "s" : "", (hold - 20) / 100 * 100, "20 s", "2 min",
-      best.hold ? "Ton record : " + fmtS(best.hold) : "Pas encore de test enregistré"),
-    g("HSPU d'affilée · semaine " + w, rep, rep > 1 ? "répétitions" : "répétition", (rep - 1) / 9 * 100, "1", "10",
-      best.hspu ? "Ton record : " + best.hspu : "Pas encore de test enregistré")
-  );
-}
-function bestResults() {
-  let hold = 0, hspu = 0;
-  Object.values(state.results).forEach(r => { if (+r.hold > hold) hold = +r.hold; if (+r.hspu > hspu) hspu = +r.hspu; });
-  return { hold, hspu };
+      h("span", { class: "label" }, o.label),
+      h("span", { class: "muted", style: "font-size:13px" }, o.extra)),
+    h("div", { class: "goal-big" }, o.val, " ", h("small", null, o.unit)),
+    h("div", { class: "track" }, h("i", { style: "width:" + Math.max(3, Math.min(100, o.pct)) + "%" })),
+    h("div", { class: "track-scale" }, h("span", null, o.from), h("span", null, o.to)));
+  $("#goals").replaceChildren(...PROG.goals(w, PROG.best(state.results)).map(g));
 }
 
 function render() {
   figures = [];
+  document.querySelectorAll(".prog-switch button").forEach(b => b.setAttribute("aria-selected", b.dataset.prog === PROG.id));
+  $("#eyebrow").textContent = PROG.eyebrow;
+  $("#prog-title").textContent = PROG.title;
+  $("#prog-intro").textContent = PROG.intro;
+  $("#plan-tab").textContent = "Progression " + PROG.duration;
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === state.tab));
   renderGoals();
   const v = $("#view");
@@ -875,11 +1240,11 @@ function render() {
 function renderTimeline() {
   const now = currentWeek().week;
   const weeks = h("div", { class: "weeks", role: "group", "aria-label": "Semaines du programme" });
-  for (let w = 1; w <= 26; w++) {
+  for (let w = 1; w <= NW; w++) {
     const pi = phaseIndex(w);
     weeks.appendChild(h("button", {
       class: "wk" + (DELOAD.has(w) ? " deload" : "") + (w === state.week ? " sel" : "") + (w === now ? " now" : ""),
-      style: pc(pi), title: "Semaine " + w + " · " + PHASES[pi].name + (DELOAD.has(w) ? " · décharge + test" : ""),
+      style: pc(pi), title: "Semaine " + w + " · " + PHASES[pi].name + (DELOAD.has(w) ? " · décharge" : "") + (TEST_WEEKS.has(w) ? " + test" : ""),
       "aria-pressed": w === state.week,
       onclick: () => { state.week = w; state.day = 0; render(); }
     }, w));
@@ -887,7 +1252,7 @@ function renderTimeline() {
   return h("div", { class: "timeline" }, weeks,
     h("div", { class: "legend" },
       PHASES.map((p, i) => h("span", { style: pc(i) }, h("i"), p.name)),
-      h("span", null, h("i", { class: "stripe" }), "Semaine de décharge + test"),
+      h("span", null, h("i", { class: "stripe" }), PROG.deloadLegend),
       h("span", null, "● semaine en cours")));
 }
 
@@ -897,11 +1262,10 @@ function renderWeek() {
     h("div", { class: "info" },
       h("div", null, h("span", { class: "pill", style: pc(pi) }, h("i"), "Phase " + (pi + 1) + " · " + P.name)),
       h("h2", null, "Semaine " + w + " · " + fmtDate(dateOf(w, 0)) + " – " + fmtDate(dateOf(w, 6))),
-      h("p", { class: "muted" }, DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins pour récupérer, et test le samedi." :
-        w === 26 ? "Dernière semaine : séances légères, test final samedi." : P.goal + " " + P.detail)),
+      h("p", { class: "muted" }, PROG.weekText(w, P))),
     h("div", { class: "nav" },
       h("button", { disabled: w === 1, onclick: () => { state.week--; state.day = 0; render(); } }, "← Semaine " + (w - 1 || "")),
-      h("button", { disabled: w === 26, onclick: () => { state.week++; state.day = 0; render(); } }, "Semaine " + (w + 1 <= 26 ? w + 1 : "") + " →")));
+      h("button", { disabled: w === NW, onclick: () => { state.week++; state.day = 0; render(); } }, "Semaine " + (w + 1 <= NW ? w + 1 : "") + " →")));
 
   const days = h("div", { class: "days" });
   DAYS.forEach((name, d) => {
@@ -912,7 +1276,7 @@ function renderWeek() {
       days.appendChild(h("button", { class: "day rest" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); } },
         h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)))),
         h("div", { class: "t muted" }, d === 6 ? "Repos complet" : "Repos actif"),
-        h("div", { class: "s" }, d === 6 ? "Rien. La force se construit pendant la récup." : "10 min de mobilité épaules et poignets")));
+        h("div", { class: "s" }, d === 6 ? "Rien. La force se construit pendant la récup." : PROG.restShort)));
       return;
     }
     const m = SESSION_META[type], sess = buildSession(w, type);
@@ -947,7 +1311,7 @@ function renderSession(w, d) {
         h("h3", null, d === 6 ? "Repos complet" : "Repos actif"),
         h("p", { class: "muted", style: "max-width:62ch" }, d === 6
           ? "Aucune séance. Dors bien, mange assez de protéines. Les épaules et les poignets récupèrent plus lentement que les muscles."
-          : "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de bear crawl. Pas de handstand en force aujourd'hui."),
+          : PROG.restLong),
         h("div", { class: "blocks" }, exRow(item("wrists", "3 min", "", "")))));
   }
   const m = SESSION_META[type], sess = buildSession(w, type), key = w + "-" + d, isDone = !!state.done[key];
@@ -955,7 +1319,7 @@ function renderSession(w, d) {
     h("div", { class: "session-head" },
       h("div", { class: "info" },
         h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
-        h("h3", null, sess.test ? (w === 26 ? "Test final" : "Test de fin de phase") : m.title),
+        h("h3", null, sess.test ? (w === NW ? "Test final" : "Test de fin de phase") : m.title),
         h("p", { class: "muted" }, sess.test ? "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas." : m.sub),
         sess.variant ? h("p", null, h("span", { class: "tag-var" }, "Version " + sess.variant.name), " ", h("span", { class: "muted", style: "font-size:14px" }, sess.variant.desc)) : null),
       h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
@@ -972,40 +1336,38 @@ function renderSession(w, d) {
 
   if (sess.test) {
     const r = state.results[w] || {};
-    const save = () => { state.results[w] = { hold: $("#res-hold").value, hspu: $("#res-hspu").value }; store.set("results", state.results); renderGoals(); };
+    const save = () => { const o = {}; PROG.logFields.forEach(f => { o[f.key] = $("#res-" + f.key).value; }); state.results[w] = o; store.set("results", state.results); renderGoals(); };
     box.appendChild(h("div", { class: "log" },
-      h("label", { for: "res-hold" }, "Meilleure tenue (s)", h("input", { id: "res-hold", type: "number", min: 0, inputmode: "numeric", value: r.hold || "", oninput: save })),
-      h("label", { for: "res-hspu" }, "HSPU d'affilée", h("input", { id: "res-hspu", type: "number", min: 0, inputmode: "numeric", value: r.hspu || "", oninput: save })),
-      h("p", { class: "muted", style: "font-size:13px;max-width:44ch" }, "Objectif de la semaine " + w + " : " + fmtS(Math.round(targetAt(w, "hold") / 5) * 5) + " et " + Math.round(targetAt(w, "hspu")) + " HSPU. Tes résultats apparaissent dans l'onglet Progression.")));
+      PROG.logFields.map(f => h("label", { for: "res-" + f.key }, f.label,
+        f.options
+          ? h("select", { id: "res-" + f.key, onchange: save }, f.options.map((o, i) => h("option", { value: i, selected: String(r[f.key] ?? f.def) === String(i) }, o)))
+          : h("input", { id: "res-" + f.key, type: "number", min: 0, inputmode: "numeric", value: r[f.key] || "", oninput: save }))),
+      h("p", { class: "muted", style: "font-size:13px;max-width:44ch" }, PROG.logGoal(w) + " Tes résultats apparaissent dans l'onglet Progression.")));
   }
   return box;
 }
 
 function renderChart() {
-  const W = 640, H = 250, L = 44, Rt = 44, T = 16, B = 34;
-  const x = w => L + (w - 0) / 26 * (W - L - Rt);
-  const yH = s => T + (1 - s / 120) * (H - T - B);
-  const yR = r => T + (1 - r / 10) * (H - T - B);
-  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Courbes d'objectifs sur 26 semaines" });
-  // bandes de phase
-  PHASES.forEach((p, i) => {
-    el("rect", { x: x(p.from - 1), y: T, width: x(p.to) - x(p.from - 1), height: H - T - B, fill: "var(" + p.color + ")", opacity: .09 }, svg);
+  const C = PROG.chart, W = 640, H = 250, L = 64, Rt = 84, T = 16, B = 34;
+  const x = w => L + w / NW * (W - L - Rt);
+  const yL = v => T + (1 - v / C.left.max) * (H - T - B);
+  const yR = v => T + (1 - v / C.right.max) * (H - T - B);
+  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Courbes d'objectifs sur " + NW + " semaines" });
+  PHASES.forEach(p => el("rect", { x: x(p.from - 1), y: T, width: x(p.to) - x(p.from - 1), height: H - T - B, fill: "var(" + p.color + ")", opacity: .09 }, svg));
+  C.left.ticks.forEach(v => {
+    el("line", { x1: L, x2: W - Rt, y1: yL(v), y2: yL(v), stroke: "var(--line)" }, svg);
+    const t = el("text", { x: L - 8, y: yL(v) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = C.left.fmt(v);
   });
-  [0, 30, 60, 90, 120].forEach(s => {
-    el("line", { x1: L, x2: W - Rt, y1: yH(s), y2: yH(s), stroke: "var(--line)" }, svg);
-    const t = el("text", { x: L - 8, y: yH(s) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = s + " s";
-  });
-  [0, 2, 4, 6, 8, 10].forEach(r => { const t = el("text", { x: W - Rt + 8, y: yR(r) + 4, "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = r; });
-  [1, 6, 12, 18, 24, 26].forEach(w => { const t = el("text", { x: x(w), y: H - B + 18, "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = "S" + w; });
-  let dH = "", dR = "";
-  for (let w = 0; w <= 26; w++) { dH += (w ? "L" : "M") + x(w) + " " + yH(targetAt(w, "hold")); dR += (w ? "L" : "M") + x(w) + " " + yR(targetAt(w, "hspu")); }
-  el("path", { d: dH, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, svg);
+  C.right.ticks.forEach(v => { const t = el("text", { x: W - Rt + 8, y: yR(v) + 4, "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = C.right.fmt(v); });
+  C.xTicks.forEach(w => { const t = el("text", { x: x(w), y: H - B + 18, "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = "S" + w; });
+  let dL = "", dR = "";
+  for (let w = 0; w <= NW; w++) { dL += (w ? "L" : "M") + x(w) + " " + yL(PROG.target(w, C.left.key)); dR += (w ? "L" : "M") + x(w) + " " + yR(PROG.target(w, C.right.key)); }
+  el("path", { d: dL, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, svg);
   el("path", { d: dR, fill: "none", stroke: "var(--p3)", "stroke-width": 2.5, "stroke-dasharray": "6 4" }, svg);
   Object.entries(state.results).forEach(([w, r]) => {
-    if (+r.hold) el("circle", { cx: x(+w), cy: yH(Math.min(130, +r.hold)), r: 5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
-    if (+r.hspu) el("rect", { x: x(+w) - 5, y: yR(Math.min(11, +r.hspu)) - 5, width: 10, height: 10, fill: "var(--p3)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    if (r[C.left.key] !== "" && r[C.left.key] != null && +r[C.left.key] >= 0 && !(C.left.key === "hold" && !+r.hold)) el("circle", { cx: x(+w), cy: yL(Math.min(C.left.max * 1.05, +r[C.left.key])), r: 5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    if ((!C.right.needs || +r[C.right.needs]) && r[C.right.key] !== "" && r[C.right.key] != null && +r[C.right.key] >= 0 && !(C.right.key === "hspu" && !+r.hspu)) el("rect", { x: x(+w) - 5, y: yR(Math.min(C.right.max * 1.05, +r[C.right.key])) - 5, width: 10, height: 10, fill: "var(--p3)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
   });
-  el("circle", { cx: x(26), cy: yH(120), r: 4, fill: "var(--accent)" }, svg);
   return svg;
 }
 
@@ -1015,35 +1377,30 @@ function renderPlan() {
     h("h3", null, p.name),
     h("p", { style: "font-weight:600" }, p.goal),
     h("p", { class: "muted", style: "font-size:14px" }, p.detail),
-    h("p", { class: "num", style: "font-size:20px;margin-top:4px" }, fmtS(p.hold) + " · " + p.hspu + " HSPU"))));
+    h("p", { class: "num", style: "font-size:20px;margin-top:4px" }, PROG.phaseLine(p)))));
   const chart = h("div", { class: "chart-box" },
     h("div", { class: "goal-top" },
       h("h3", null, "Objectifs semaine par semaine"),
       h("div", { class: "legend" },
-        h("span", { style: "--pc: var(--accent)" }, h("i"), "Tenue visée (axe gauche)"),
-        h("span", { style: "--pc: var(--p3)" }, h("i"), "HSPU visés (axe droit)"),
+        h("span", { style: "--pc: var(--accent)" }, h("i"), PROG.chart.left.legend),
+        h("span", { style: "--pc: var(--p3)" }, h("i"), PROG.chart.right.legend),
         h("span", null, "● ■ tes tests"))),
     h("div", { class: "chart-scroll" }, renderChart()));
   const rule = (t, p) => h("div", { class: "card" }, h("h3", null, t), h("p", { class: "muted" }, p));
-  const rules = h("div", { class: "rules" },
-    rule("Quand avancer plus vite", "Si tu réussis toutes les séries d'une séance avec de la marge (une ou deux répétitions en réserve), passe aux chiffres de la semaine suivante. Ne saute jamais une semaine de décharge."),
-    rule("Quand ralentir", "Si tu rates la cible deux séances de suite, répète la semaine. Si un test de fin de phase est loin de l'objectif, refais les deux dernières semaines de la phase."),
-    rule("Poignets et nuque", "Échauffement poignets à chaque séance, même courte. Pour les HSPU, coussin fin ou tapis plié sous la tête, et jamais de rebond sur la nuque. Douleur articulaire = arrêt de la séance."),
-    rule("Pourquoi les séances changent", "Chaque séance existe en 3 versions (classique, puis deux variantes de format ou d'exercices) qui tournent d'une semaine à l'autre. La charge de travail reste la même : seuls le format et les mouvements changent. Les semaines de décharge et de test restent en version classique."),
-    rule("La pratique en plus", "La tenue progresse surtout avec la fréquence. Les jours de repos actif, 5 tentatives de handstand libre en fin de mobilité suffisent, sans chercher l'échec."));
+  const rules = h("div", { class: "rules" }, PROG.rules.map(r => rule(r[0], r[1])));
   return h("div", { style: "display:grid;gap:22px" },
-    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "6 mois en 5 phases"),
-      h("p", { class: "muted" }, "Chaque phase dure 6 semaines : 5 semaines de progression puis une semaine plus légère qui se termine par un test. Les deux dernières semaines servent à arriver frais au test final.")),
+    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, PROG.planTitle),
+      h("p", { class: "muted" }, PROG.planIntro)),
     phases, chart, rules);
 }
 
 function renderLib() {
   const used = {};
-  for (let w = 1; w <= 26; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
+  for (let w = 1; w <= NW; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
   return h("div", { style: "display:grid;gap:18px" },
-    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "Les " + Object.keys(EX).length + " exercices du programme"),
+    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "Les " + Object.keys(used).length + " exercices du programme"),
       h("p", { class: "muted" }, "Chaque animation montre le mouvement de profil. Le trait clair, c'est le bras ou la jambe du côté opposé.")),
-    h("div", { class: "lib" }, Object.keys(EX).map(id => {
+    h("div", { class: "lib" }, Object.keys(EX).filter(id => used[id]).map(id => {
       const ex = EX[id];
       return h("article", { class: "card" },
         makeFigure(id),
@@ -1055,9 +1412,19 @@ function renderLib() {
 }
 
 /* ---------- Démarrage ---------- */
+function setProgram(id) {
+  PROG = PROGRAMS[id] || PROGRAMS.hs;
+  ({ phases: PHASES, start: START, tests: TEST_WEEKS, deload: DELOAD, slot: SLOT, meta: SESSION_META, variants: VARIANTS, order: SLOT_ORDER, defis: DEFIS, weeks: NW } = PROG);
+  state.start = store.get("start", iso(mondayOf(new Date())));
+  state.done = store.get("done", {});
+  state.results = store.get("results", {});
+  $("#start-date").value = state.start;
+  try { localStorage.setItem("cap:prog", PROG.id); } catch (e) {}
+  initPosition();
+}
 document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { state.tab = b.dataset.tab; render(); }));
+document.querySelectorAll(".prog-switch button").forEach(b => b.addEventListener("click", () => { if (b.dataset.prog !== PROG.id) { setProgram(b.dataset.prog); render(); } }));
 const sd = $("#start-date");
-sd.value = state.start;
 sd.addEventListener("change", () => {
   if (!sd.value) return;
   state.start = iso(mondayOf(new Date(sd.value + "T12:00:00")));
@@ -1065,7 +1432,9 @@ sd.addEventListener("change", () => {
   store.set("start", state.start);
   initPosition(); render();
 });
-initPosition();
+let savedProg = "hs";
+try { savedProg = localStorage.getItem("cap:prog") || "hs"; } catch (e) {}
+setProgram(savedProg);
 render();
 </script>
 

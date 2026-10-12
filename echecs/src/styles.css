@@ -208,6 +208,10 @@ button { font: inherit; color: inherit; }
 .path { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px; text-align: left; border: 1px solid var(--line); background: var(--surface-2); border-radius: 16px; padding: 16px; cursor: pointer; transition: transform .15s, box-shadow .15s, border-color .15s; min-height: 140px; }
 .path:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .path.wide { grid-column: 1 / -1; }
+.paths.compact { grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); }
+.paths.compact .path { min-height: 0; padding: 13px; }
+.paths.compact .path-name { font-size: 1.05rem; }
+.paths.compact .path-desc { font-size: 0.84rem; }
 .path-title { display: flex; align-items: center; gap: 10px; }
 .path-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; flex: none; background: linear-gradient(135deg, var(--sq-dark) 0 50%, var(--sq-light) 50% 100%); box-shadow: inset 0 0 0 2px var(--frame); }
 .path-ico .pc { width: 78%; height: 78%; filter: none; }

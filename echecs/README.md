@@ -10,7 +10,7 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - **Avancé** (9) : règle du carré, opposition, roi actif, percée, structure de pions, pièces actives, finales de Lucena et de Philidor, bon et mauvais fou.
   - **Expert** (8) : Boden, Anastasie, Philidor, l'Opéra de Morphy, le double échec de Réti, l'Immortelle et la Toujours Jeune d'Anderssen.
   - **Ouvertures** (18) : italienne, espagnole, écossaise, gambit Dame, Londres, gambit du roi, anglaise, sicilienne, française, Caro-Kann, scandinave, est-indienne, slave, nimzo-indienne, Pirc, Petrov, mat de Légal, défense contre le coup du berger. Pour chacune, on trouve la ligne jouée guidée puis de mémoire, une fiche (plans, coups typiques, pièges) et des exercices.
-- **Exercices** : des problèmes tirés de parties, classés par thème (pièces en prise, fourchettes, clouages, découvertes, sacrifices, mats, promotion), avec un mode « série tactique ». S'y ajoutent les 14 problèmes classiques. Sur une mauvaise réponse, le coach explique pourquoi le coup échoue.
+- **Exercices** : 120 problèmes tirés de parties, classés par thème (pièces en prise, fourchettes, clouages, découvertes, sacrifices, mats, promotion), avec un mode « série tactique ». S'y ajoutent les 14 problèmes classiques. Sur une mauvaise réponse, le coach explique pourquoi le coup échoue.
 - **Jouer** : une partie contre l'ordinateur sur 5 niveaux (de Débutant à Maître), avec un coach en temps réel.
   - Avant ton coup, il explique le coup adverse, montre en rouge la menace adverse (fourchette, mat…) et chiffre ce que tu perdrais si tu l'ignorais.
   - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.

@@ -35,7 +35,7 @@ const L_DEBUT = [
   ]},
   { id: "pion", t: "Le pion", d: "Avance tout droit, prend en diagonale", g: "p", steps: [
     { k: "info", fen: "8/8/8/8/8/8/4P3/8 w - - 0 1", show: "e2", x: "Le <strong>pion</strong> avance tout droit d'une case. Lors de son premier coup, il peut avancer de deux cases. Il ne recule jamais." },
-    { k: "move", fen: "4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", accept: ["e2e4"], x: "Avance le pion de deux cases.", ok: "Bien : e2-e4, le coup d'ouverture le plus joué au monde." },
+    { k: "move", fen: START, accept: ["e2e4"], x: "Avance le pion e de deux cases.", ok: "Bien : e2-e4, le coup d'ouverture le plus joué au monde." },
     { k: "move", fen: "4k3/8/8/3p4/4P3/8/8/4K3 w - - 0 1", accept: ["e4d5"], x: "Le pion ne prend pas comme il avance : il capture <strong>en diagonale</strong>, d'une case vers l'avant. Prends le pion noir.", ok: "Exact : exd5." }
   ]},
   { id: "capture", t: "Capturer", d: "La valeur des pièces", g: "q", steps: [

@@ -789,7 +789,7 @@ function puzzleList() {
     </div>
     ${nextSeries ? `<div class="row"><button class="btn primary big" id="series">${ICON.puzzle}Série tactique : problème suivant</button></div>` : MINED_P.length ? `<div class="fb ok">Tous les problèmes tirés de parties sont résolus !</div>` : ""}
     <p class="group-title">Par thème</p>
-    <div class="paths">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
+    <div class="paths compact">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
       <button class="path" data-theme="${t.id}">
         <span class="path-head"><span class="path-title"><span class="path-ico" aria-hidden="true">${pieceEl(t.g.toUpperCase())}</span><span class="path-name">${t.t}</span></span></span>
         <span class="path-desc">${t.d}</span>

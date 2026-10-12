@@ -7,7 +7,7 @@
 <title>L'École des Échecs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Symbols+2&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 /* Layout : l'échiquier à gauche comme sur une table de club, le carnet du coach à droite ; une seule colonne sur téléphone. */
 :root {
@@ -34,7 +34,6 @@
   --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --font-pieces: "Noto Sans Symbols 2", "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -64,7 +63,8 @@ button { font: inherit; color: inherit; }
 /* En-tête */
 .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 22px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand-mark { width: 44px; height: 44px; border-radius: 10px; background: var(--frame); display: grid; place-items: center; font-family: var(--font-pieces); font-size: 30px; color: #f4f1e4; line-height: 1; }
+.brand-mark { width: 44px; height: 44px; border-radius: 10px; background: var(--sq-dark); display: grid; place-items: center; box-shadow: inset 0 0 0 3px var(--frame); }
+.brand-mark .pc { width: 78%; height: 78%; }
 .brand h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
 .brand p { margin: 0; font-size: 0.82rem; color: var(--muted); }
 .tabs { display: flex; flex-wrap: wrap; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
@@ -92,9 +92,21 @@ button { font: inherit; color: inherit; }
 .sq.flash-ok::after { background: rgba(40,170,90,.7); }
 .sq.flash-bad::after { background: rgba(220,50,40,.7); }
 @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
-.pc { font-family: var(--font-pieces); font-size: 30px; font-size: 10.6cqi; line-height: 1; pointer-events: none; position: relative; z-index: 1; transform: translateY(-2%); }
-.pc.w { color: #fbf9f0; -webkit-text-stroke: 0.028em #1c211d; paint-order: stroke fill; text-shadow: 0 0.04em 0.05em rgba(0,0,0,.35); }
-.pc.b { color: #1a1d1a; text-shadow: 0 0 0.02em rgba(255,255,255,.35), 0 0.04em 0.05em rgba(0,0,0,.3); }
+/* Pièces : jeu « cburnett » de Colin M. L. Burnett (GPLv2+), celui de Lichess et Wikipédia */
+.pc { display: block; width: 92%; height: 92%; background-size: contain; background-repeat: no-repeat; background-position: center; pointer-events: none; position: relative; z-index: 1; filter: drop-shadow(0 1.5px 1px rgba(0,0,0,.28)); }
+.pc.mini { display: inline-block; width: 1.35em; height: 1.35em; filter: none; vertical-align: middle; }
+.pc.wP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
+.pc.wB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==")}
+.pc.wN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==")}
+.pc.wR{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy0zdi00aDIxdjRIMTJ6bS0xLTIyVjloNHYyaDVWOWg1djJoNVY5aDR2NSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMzQgMTRsLTMgM0gxNGwtMy0zIi8+PHBhdGggZD0iTTMxIDE3djEyLjVIMTRWMTciIHN0cm9rZS1saW5lY2FwPSJidXR0IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMxIDI5LjVsMS41IDIuNWgtMjBsMS41LTIuNSIvPjxwYXRoIGQ9Ik0xMSAxNGgyMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4=")}
+.pc.wQ{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik04IDEyYTIgMiAwIDEgMS00IDAgMiAyIDAgMSAxIDQgMHptMTYuNS00LjVhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAwek00MSAxMmEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTE2IDguNWEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTMzIDlhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAweiIvPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi0xMi03IDExVjExbC01LjUgMTMuNS0zLTE1LTMgMTUtNS41LTE0VjI1TDcgMTRsMiAxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTkgMjZjMCAyIDEuNSAyIDIuNSA0IDEgMS41IDEgMSAuNSAzLjUtMS41IDEtMS41IDIuNS0xLjUgMi41LTEuNSAxLjUuNSAyLjUuNSAyLjUgNi41IDEgMTYuNSAxIDIzIDAgMCAwIDEuNS0xIDAtMi41IDAgMCAuNS0xLjUtMS0yLjUtLjUtMi41LS41LTIgLjUtMy41IDEtMiAyLjUtMiAyLjUtNC04LjUtMS41LTE4LjUtMS41LTI3IDB6IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPjxwYXRoIGQ9Ik0xMS41IDMwYzMuNS0xIDE4LjUtMSAyMiAwTTEyIDMzLjVjNi0xIDE1LTEgMjEgMCIgZmlsbD0ibm9uZSIvPjwvZz48L3N2Zz4=")}
+.pc.wK{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjZNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTIyLjUgMjVzNC41LTcuNSAzLTEwLjVjMCAwLTEtMi41LTMtMi41cy0zIDIuNS0zIDIuNWMtMS41IDMgMyAxMC41IDMgMTAuNSIgZmlsbD0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTEuNSAzN2M1LjUgMy41IDE1LjUgMy41IDIxIDB2LTdzOS00LjUgNi0xMC41Yy00LTYuNS0xMy41LTMuNS0xNiA0VjI3di0zLjVjLTMuNS03LjUtMTMtMTAuNS0xNi00LTMgNiA1IDEwIDUgMTBWMzd6IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTExLjUgMzBjNS41LTMgMTUuNS0zIDIxIDBtLTIxIDMuNWM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwIi8+PC9nPjwvc3ZnPg==")}
+.pc.bP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
+.pc.bB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48L2c+PC9zdmc+")}
+.pc.bN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iIzAwMCIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjZWNlY2VjIiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMjQuNTUgMTAuNGwtLjQ1IDEuNDUuNS4xNWMzLjE1IDEgNS42NSAyLjQ5IDcuOSA2Ljc1UzM1Ljc1IDI5LjA2IDM1LjI1IDM5bC0uMDUuNWgyLjI1bC4wNS0uNWMuNS0xMC4wNi0uODgtMTYuODUtMy4yNS0yMS4zNC0yLjM3LTQuNDktNS43OS02LjY0LTkuMTktNy4xNmwtLjUxLS4xeiIgZmlsbD0iI2VjZWNlYyIgc3Ryb2tlPSJub25lIi8+PC9nPjwvc3ZnPg==")}
+.pc.bR{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy41LTdsMS41LTIuNWgxN2wxLjUgMi41aC0yMHptLS41IDR2LTRoMjF2NEgxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTE0IDI5LjV2LTEzaDE3djEzSDE0eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTQgMTYuNUwxMSAxNGgyM2wtMyAyLjVIMTR6TTExIDE0VjloNHYyaDVWOWg1djJoNVY5aDR2NUgxMXoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTEyIDM1LjVoMjFtLTIwLTRoMTltLTE4LTJoMTdtLTE3LTEzaDE3TTExIDE0aDIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4=")}
+.pc.bQ{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIHN0cm9rZT0ibm9uZSI+PGNpcmNsZSBjeD0iNiIgY3k9IjEyIiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMTQiIGN5PSI5IiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMjIuNSIgY3k9IjgiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzMSIgY3k9IjkiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzOSIgY3k9IjEyIiByPSIyLjc1Ii8+PC9nPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi41LTEyLjVMMzEgMjVsLS4zLTE0LjEtNS4yIDEzLjYtMy0xNC41LTMgMTQuNS01LjItMTMuNkwxNCAyNSA2LjUgMTMuNSA5IDI2eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNOSAyNmMwIDIgMS41IDIgMi41IDQgMSAxLjUgMSAxIC41IDMuNS0xLjUgMS0xLjUgMi41LTEuNSAyLjUtMS41IDEuNS41IDIuNS41IDIuNSA2LjUgMSAxNi41IDEgMjMgMCAwIDAgMS41LTEgMC0yLjUgMCAwIC41LTEuNS0xLTIuNS0uNS0yLjUtLjUtMiAuNS0zLjUgMS0yIDIuNS0yIDIuNS00LTguNS0xLjUtMTguNS0xLjUtMjcgMHoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTExIDM4LjVhMzUgMzUgMSAwIDAgMjMgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMTEgMjlhMzUgMzUgMSAwIDEgMjMgMG0tMjEuNSAyLjVoMjBtLTIxIDNhMzUgMzUgMSAwIDAgMjIgMG0tMjMgM2EzNSAzNSAxIDAgMCAyNCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiLz48L2c+PC9zdmc+")}
+.pc.bK{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjYiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMjIuNSAyNXM0LjUtNy41IDMtMTAuNWMwIDAtMS0yLjUtMy0yLjVzLTMgMi41LTMgMi41Yy0xLjUgMyAzIDEwLjUgMyAxMC41IiBmaWxsPSIjMDAwIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjxwYXRoIGQ9Ik0xMS41IDM3YzUuNSAzLjUgMTUuNSAzLjUgMjEgMHYtN3M5LTQuNSA2LTEwLjVjLTQtNi41LTEzLjUtMy41LTE2IDRWMjd2LTMuNWMtMy41LTcuNS0xMy0xMC41LTE2LTQtMyA2IDUgMTAgNSAxMFYzN3oiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMyIDI5LjVzOC41LTQgNi4wMy05LjY1QzM0LjE1IDE0IDI1IDE4IDIyLjUgMjQuNWwuMDEgMi4xLS4wMS0yLjFDMjAgMTggOS45MDYgMTQgNi45OTcgMTkuODVjLTIuNDk3IDUuNjUgNC44NTMgOSA0Ljg1MyA5IiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMTEuNSAzMGM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwbS0yMSAzLjVjNS41LTMgMTUuNS0zIDIxIDAiIHN0cm9rZT0iI2VjZWNlYyIvPjwvZz48L3N2Zz4=")}
 .pc.ghosted { opacity: 0.25; }
 .dot { position: absolute; width: 30%; height: 30%; border-radius: 50%; background: rgba(18,40,24,.28); z-index: 2; pointer-events: none; }
 .ring { position: absolute; inset: 5%; border-radius: 50%; border: 0.75cqi solid rgba(18,40,24,.32); z-index: 2; pointer-events: none; }
@@ -106,17 +118,19 @@ button { font: inherit; color: inherit; }
 .sq.l .co { color: var(--sq-dark); }
 .sq.d .co { color: var(--sq-light); }
 .arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-.drag-ghost { position: fixed; z-index: 50; pointer-events: none; font-family: var(--font-pieces); line-height: 1; transform: translate(-50%, -55%); }
+.drag-ghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -50%); }
+.drag-ghost .pc { width: 100%; height: 100%; filter: drop-shadow(0 6px 6px rgba(0,0,0,.35)); }
 .promo { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: rgba(10,14,11,.55); }
 .promo-box { display: flex; gap: 8px; background: var(--surface); border-radius: 12px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
 .promo-box button { width: 16cqi; height: 16cqi; border-radius: 10px; border: 1px solid var(--line); background: var(--sq-light); cursor: pointer; display: grid; place-items: center; }
 .promo-box button:hover { background: var(--sq-light-hl); }
-.promo-box .pc { font-size: 12cqi; }
+.promo-box .pc { width: 85%; height: 85%; }
 
 /* Sous l'échiquier */
 .under { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 28px; font-size: 0.9rem; color: var(--muted); }
-.captured { font-family: var(--font-pieces); font-size: 1.25rem; letter-spacing: -0.12em; color: var(--ink); }
-.captured b { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0; margin-left: 6px; color: var(--muted); }
+.captured { display: inline-flex; align-items: center; font-size: 1.05rem; }
+.captured .pc.mini { margin-right: -0.5em; }
+.captured b { font-family: var(--font-mono); font-size: 0.8rem; margin-left: 0.8em; color: var(--muted); }
 
 /* Panneau */
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
@@ -148,12 +162,34 @@ button { font: inherit; color: inherit; }
 .item:hover { background: var(--bg); border-color: var(--line); }
 .item .num { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--line); }
 .item.done .num { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.item .glyph { font-family: var(--font-pieces); font-size: 1.3rem; }
+.item .glyph { display: grid; place-items: center; }
+.item .glyph .pc.mini { width: 1.9rem; height: 1.9rem; }
 .item .ti { font-weight: 700; display: block; }
 .item .de { font-size: 0.85rem; color: var(--muted); display: block; }
 .pill { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
 .pill.done { background: var(--good-bg); color: var(--good); border-color: transparent; }
 .group-title { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.11em; font-weight: 700; color: var(--muted); margin: 8px 0 2px 10px; }
+
+/* Parcours */
+.paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 10px; }
+.path { display: flex; flex-direction: column; gap: 8px; text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 14px; cursor: pointer; }
+.path:hover { border-color: var(--accent); }
+.path.done { border-color: var(--accent); }
+.path.wide { grid-column: 1 / -1; }
+@media (max-width: 880px) { body.lists .board-col { display: none; } }
+.path-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.path-name { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; letter-spacing: -0.01em; }
+.path-desc { font-size: 0.88rem; color: var(--muted); min-height: 2.6em; }
+.path-foot { display: flex; align-items: center; gap: 10px; }
+.path-count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meter { flex: 1; height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); }
+.lvl { display: inline-flex; gap: 3px; }
+.lvl i { width: 7px; height: 14px; border-radius: 2px; background: var(--line); }
+.lvl i.on { background: var(--accent); }
+.line-moves { font-family: var(--font-mono); font-size: 0.92rem; line-height: 1.8; padding: 10px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
+.line-moves .n { color: var(--muted); }
+.line-moves .cur { color: var(--accent); font-weight: 700; }
 
 /* Partie */
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
@@ -204,7 +240,7 @@ button { font: inherit; color: inherit; }
 <div class="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true">&#9822;&#xFE0E;</div>
+      <div class="brand-mark" aria-hidden="true"><span class="pc wN"></span></div>
       <div>
         <h1>L'École des Échecs</h1>
         <p>Apprendre, s'entraîner, jouer avec un coach</p>
@@ -601,14 +637,13 @@ function forcedMate(g, k) {
 /*ENGINE-END*/
 
 // ---------- Contenu pédagogique ----------
-const GLYPH = { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" };
 const FR_LETTER = { K: "R", Q: "D", R: "T", B: "F", N: "C" };
 const NAME = { p: "pion", n: "cavalier", b: "fou", r: "tour", q: "dame", k: "roi" };
 const POSS = { p: "ton", n: "ton", b: "ton", r: "ta", q: "ta", k: "ton" };
 const frSan = s => s.replace(/[KQRBN]/g, ch => FR_LETTER[ch]);
-const glyph = p => `<span class="pc ${colorOf(p)}">${GLYPH[p.toLowerCase()]}︎</span>`;
+const pieceEl = (p, cls = "") => `<span class="pc ${colorOf(p)}${p.toUpperCase()}${cls ? " " + cls : ""}"></span>`;
 
-const LESSONS = [
+const L_DEBUT = [
   { id: "plateau", t: "L'échiquier", d: "Les cases, les colonnes, les rangées", g: "k", steps: [
     { k: "info", fen: EMPTY, x: "L'échiquier compte <strong>64 cases</strong>. Les colonnes vont de <strong>a</strong> à <strong>h</strong>, les rangées de <strong>1</strong> à <strong>8</strong>. Chaque case a un nom : sa colonne puis sa rangée, comme <strong>e4</strong>." },
     { k: "info", fen: START, x: "Voici la position de départ. Pour bien poser l'échiquier, la case en bas à droite (<strong>h1</strong>) doit être claire. La dame se place sur sa couleur : dame blanche sur <strong>d1</strong>, dame noire sur <strong>d8</strong>. Les Blancs jouent toujours le premier coup." },
@@ -650,7 +685,7 @@ const LESSONS = [
     { k: "info", fen: "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", x: "Quand le roi est attaqué, on dit qu'il est <strong>en échec</strong>. Il faut immédiatement parer : <strong>déplacer le roi</strong>, <strong>prendre la pièce</strong> qui attaque, ou <strong>s'interposer</strong>. Il est interdit de laisser son roi en échec." },
     { k: "move", fen: "4k3/8/8/8/8/8/8/R5K1 w - - 0 1", goal: "check", x: "Donne échec au roi noir avec ta tour.", ok: "Échec ! Le roi noir doit maintenant bouger." },
     { k: "move", fen: "4k3/8/8/8/8/8/4q3/3QK3 w - - 0 1", accept: ["d1e2", "e1e2"], x: "Ton roi est en échec par la dame noire. Pare en <strong>prenant</strong> l'attaquant.", ok: "Parfait, la menace a disparu et tu as gagné une dame." },
-    { k: "move", fen: "4r1k1/8/8/8/8/8/3B4/4K3 w - - 0 1", accept: ["d2e3"], x: "La tour noire met ton roi en échec. Pare en <strong>interposant</strong> ton fou.", ok: "Bien joué : le fou fait barrière." }
+    { k: "move", fen: "4r1k1/8/8/8/8/8/3B1P2/4K3 w - - 0 1", accept: ["d2e3"], x: "La tour noire met ton roi en échec. Pare en <strong>interposant</strong> ton fou.", ok: "Bien joué : le fou fait barrière, et le pion f2 le protège." }
   ]},
   { id: "roque", t: "Le roque", d: "Mettre son roi à l'abri", g: "r", steps: [
     { k: "info", fen: "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1", x: "Le <strong>roque</strong> est un coup spécial : le roi glisse de deux cases vers une tour, et la tour passe de l'autre côté du roi. Conditions : ni le roi ni la tour n'ont bougé, aucune pièce entre eux, et le roi n'est pas en échec et ne traverse pas de case attaquée." },
@@ -666,7 +701,7 @@ const LESSONS = [
   { id: "mat", t: "Échec et mat", d: "Gagner la partie, éviter le pat", g: "k", steps: [
     { k: "info", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", x: "Si le roi est en échec et qu'<strong>aucun coup</strong> ne le sauve, c'est <strong>échec et mat</strong> : la partie est gagnée. Si un joueur n'est pas en échec mais n'a <strong>aucun coup légal</strong>, c'est <strong>pat</strong> : partie nulle." },
     { k: "move", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", goal: "mate", x: "Fais mat en un coup. Les pions noirs enferment leur propre roi.", ok: "Mat du couloir ! Un grand classique." },
-    { k: "move", fen: "k7/8/1K6/8/8/8/8/7Q w - - 0 1", goal: "mate", x: "Fais mat avec la dame. Attention : si le roi noir n'a plus de coup sans être en échec, c'est pat.", ok: "Mat ! Le roi blanc protège les cases de fuite." }
+    { k: "move", fen: "k7/8/1K6/8/8/8/7Q/8 w - - 0 1", goal: "mate", x: "Fais mat avec la dame. Attention : si le roi noir n'a plus de coup sans être en échec, c'est pat.", ok: "Mat ! Le roi blanc protège les cases de fuite." }
   ]},
   { id: "ouverture", t: "Bien commencer", d: "Les trois principes de l'ouverture", g: "n", steps: [
     { k: "move", fen: START, accept: ["e2e4", "d2d4"], x: "Principe n°1 : <strong>occupe le centre</strong>. Avance un pion central de deux cases.", ok: "Le centre est à toi." },
@@ -675,6 +710,163 @@ const LESSONS = [
     { k: "move", fen: "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", accept: ["e1g1"], x: "Principe n°3 : <strong>mets ton roi à l'abri</strong>. Roque.", ok: "Ton roi est en sécurité, ta tour entre dans le jeu. Tu connais les bases : direction la section Exercices !" }
   ]}
 ];
+// ---------- Parcours : intermédiaire, avancé, expert, ouvertures ----------
+const L_INTER = [
+  { id: "fourchette", t: "La fourchette", d: "Attaquer deux cibles d'un coup", g: "n", steps: [
+    { k: "info", fen: "r3k3/2N5/8/8/8/8/8/4K3 b - - 0 1", x: "Une <strong>fourchette</strong>, c'est une pièce qui attaque deux cibles en même temps. L'adversaire ne peut en sauver qu'une. Ici le cavalier c7 attaque le roi et la tour : la tour est perdue." },
+    { k: "line", fen: "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", side: "w", moves: ["b5c7", "e8d7", "c7a8"], x: "Trouve la fourchette du cavalier, puis encaisse.", notes: { 0: "Échec et attaque sur la tour : c'est une fourchette royale.", 2: "La tour tombe. +5 points." } },
+    { k: "line", fen: "r5k1/8/8/8/8/8/5PPP/3Q2K1 w - - 0 1", side: "w", moves: ["d1d5", "g8h7", "d5a8"], x: "La dame aussi fait des fourchettes. Attaque le roi et la tour en même temps.", notes: { 0: "Échec sur la diagonale d5-g8, et la tour a8 est visée par l'autre diagonale.", 2: "Tour gagnée." } },
+    { k: "line", fen: "4k3/8/8/3r1r2/8/4P3/8/4K3 w - - 0 1", side: "w", moves: ["e3e4", "d5d6", "e4f5"], x: "Même un pion peut faire une fourchette. Attaque les deux tours.", notes: { 0: "Le pion attaque d5 et f5. Une tour va tomber.", 2: "Une tour pour un pion : excellente affaire." } }
+  ]},
+  { id: "clouage", t: "Le clouage", d: "Immobiliser une pièce devant plus précieux", g: "b", steps: [
+    { k: "info", fen: "4k3/8/2n5/1B6/8/8/8/4K3 w - - 0 1", x: "Une pièce est <strong>clouée</strong> quand elle ne peut pas bouger sans exposer une pièce plus importante derrière elle. Ici le cavalier c6 ne peut pas bouger : il exposerait son roi. C'est un clouage <strong>absolu</strong>." },
+    { k: "line", fen: "4k3/8/8/4n3/8/5P2/8/4RK2 w - - 0 1", side: "w", moves: ["f3f4", "e8d7", "f4e5"], x: "Le cavalier e5 est cloué par ta tour. Attaque-le avec une pièce de moindre valeur.", notes: { 0: "Le cavalier ne peut pas fuir : il est cloué sur la colonne e.", 2: "Le cavalier tombe. Une pièce clouée est une cible idéale." } },
+    { k: "line", fen: "4k3/8/8/4q3/8/8/5KPP/R7 w - - 0 1", side: "w", moves: ["a1e1", "e5e1", "f2e1"], x: "Cloue la dame noire contre son roi.", notes: { 0: "La dame est clouée : elle ne peut que rester sur la colonne e.", 2: "Une dame (9) contre une tour (5)." } }
+  ]},
+  { id: "enfilade", t: "L'enfilade", d: "Le clouage à l'envers", g: "r", steps: [
+    { k: "info", fen: "8/8/8/q2k4/8/8/8/6KR w - - 0 1", x: "L'<strong>enfilade</strong> ressemble au clouage, mais la pièce la plus précieuse est devant. Quand elle s'écarte, celle de derrière est prise. Ici, un échec sur la 5e rangée vise le roi... et la dame cachée derrière lui." },
+    { k: "line", fen: "8/8/8/q2k4/8/8/8/6KR w - - 0 1", side: "w", moves: ["h1h5", "d5d4", "h5a5"], x: "Joue l'enfilade.", notes: { 0: "Échec ! Le roi doit quitter la rangée.", 2: "Et la dame tombe." } },
+    { k: "line", fen: "8/1q6/8/3k4/8/8/8/4KB2 w - - 0 1", side: "w", moves: ["f1g2", "d5c5", "g2b7"], x: "Avec un fou cette fois, sur la grande diagonale.", notes: { 0: "Le roi est en échec sur la diagonale h1-a8. La dame est juste derrière.", 2: "Dame gagnée." } }
+  ]},
+  { id: "decouverte", t: "L'attaque à la découverte", d: "Une pièce bouge, une autre attaque", g: "q", steps: [
+    { k: "info", fen: "q3k3/8/8/8/4B3/8/8/4RK2 w - - 0 1", x: "Ta tour e1 vise le roi noir, mais ton fou e4 lui bouche la vue. Si le fou bouge, la tour donne échec : c'est un <strong>échec à la découverte</strong>. Le fou peut alors aller où il veut, même sur une case attaquée." },
+    { k: "move", fen: "q3k3/8/8/8/4B3/8/8/4RK2 w - - 0 1", accept: ["e4a8"], x: "Démasque ta tour en gagnant quelque chose avec le fou.", no: "Cherche ce que le fou peut prendre en quittant la colonne e.", ok: "Fxa8 avec échec à la découverte : la dame noire est gagnée." },
+    { k: "info", fen: "4k3/8/8/8/8/8/8/4K3 w - - 0 1", x: "Encore plus fort : le <strong>double échec</strong>. La pièce qui bouge donne elle aussi échec. On ne peut ni prendre deux pièces ni s'interposer deux fois : le roi est obligé de bouger. Tu le verras en action dans le parcours Expert." }
+  ]},
+  { id: "enprise", t: "Pièces en prise", d: "Repérer ce qui n'est pas défendu", g: "p", steps: [
+    { k: "info", fen: "r3k2r/ppp2ppp/2n5/3q4/8/2N5/PPPP1PPP/R1BQKB1R w KQkq - 0 1", x: "Avant chaque coup, pose-toi la question : <strong>quelles pièces adverses ne sont pas défendues ?</strong> Ce sont les cibles les plus faciles pour une fourchette ou une capture." },
+    { k: "pick", fen: "r3k2r/ppp2ppp/2n5/3q4/8/2N5/PPPP1PPP/R1BQKB1R w KQkq - 0 1", answers: ["d5"], x: "Une seule pièce noire est à la fois <strong>attaquée</strong> par toi et <strong>sans défense</strong>. Clique dessus.", no: "Cherche une pièce que ton cavalier attaque et qu'aucune pièce noire ne protège.", ok: "Exact : la dame d5 est attaquée par le cavalier c3 et rien ne la protège." },
+    { k: "move", fen: "r3k2r/ppp2ppp/2n5/3q4/8/2N5/PPPP1PPP/R1BQKB1R w KQkq - 0 1", accept: ["c3d5"], x: "Prends-la.", ok: "Cxd5 : +9 points. Les débutants perdent la plupart de leurs parties sur ce genre d'oubli." }
+  ]},
+  { id: "batterie", t: "La batterie dame-fou", d: "Le mat en h7", g: "q", steps: [
+    { k: "info", fen: "5rk1/5ppp/8/7Q/8/3B4/5PPP/6K1 w - - 0 1", x: "Quand la dame et un fou visent la même case, on parle de <strong>batterie</strong>. Le roque noir est défendu par le seul pion h7 : si la dame y arrive protégée par le fou, c'est souvent mat." },
+    { k: "move", fen: "5rk1/5ppp/8/7Q/8/3B4/5PPP/6K1 w - - 0 1", goal: "mate", x: "Fais mat en un coup.", ok: "Dxh7# : le roi ne peut pas prendre la dame, défendue par le fou d3." }
+  ]}
+];
+
+const L_AVANCE = [
+  { id: "carre", t: "La règle du carré", d: "Ton roi peut-il rattraper le pion ?", g: "k", steps: [
+    { k: "info", fen: "7k/8/8/4K3/p7/8/8/8 w - - 0 1", x: "Pour savoir si un roi rattrape un pion, trace un <strong>carré</strong> entre le pion et sa case de promotion. Ici le pion a4 va en a1 : le carré va de a4 à d1. Si le roi peut entrer dans ce carré, il rattrape le pion." },
+    { k: "move", fen: "7k/8/8/4K3/p7/8/8/8 w - - 0 1", accept: ["e5d4"], x: "Joue le seul coup qui fait entrer ton roi dans le carré du pion.", no: "Ton roi doit atteindre une case du carré a1-a4-d4-d1 dès maintenant.", ok: "Rd4 ! Après ...a3 Rc3 a2 Rb2, le pion est arrêté." }
+  ]},
+  { id: "opposition", t: "L'opposition", d: "La clé des finales de pions", g: "k", steps: [
+    { k: "info", fen: "8/8/8/4k3/8/4K3/4P3/8 w - - 0 1", x: "Quand deux rois se font face avec une case entre eux, ils sont en <strong>opposition</strong>. Celui qui doit jouer est obligé de céder du terrain. Ici les Blancs ont le trait : ils doivent reculer, et la partie est nulle." },
+    { k: "kpk", fen: "8/8/8/4k3/8/3K4/4P3/8 w - - 0 1", x: "Prends l'opposition, puis mène ton pion à dame. Je joue les Noirs." },
+    { k: "kpk", fen: "8/8/4k3/8/3K4/8/4P3/8 w - - 0 1", x: "Même idée, deux rangées plus haut. Le roi passe <strong>devant</strong> son pion." },
+    { k: "info", fen: "4k3/8/4K3/4P3/8/8/8/8 w - - 0 1", x: "À retenir : si ton roi atteint la <strong>6e rangée devant son pion</strong>, la finale est toujours gagnée (sauf avec un pion de la colonne a ou h), quel que soit le camp qui a le trait." },
+    { k: "kpk", fen: "4k3/8/4K3/4P3/8/8/8/8 w - - 0 1", x: "Gagne cette position. Attention au pat !" }
+  ]},
+  { id: "percee", t: "La percée", d: "Créer un pion passé", g: "p", steps: [
+    { k: "info", fen: "7k/ppp5/8/PPP5/8/8/8/7K w - - 0 1", x: "Un <strong>pion passé</strong> n'a plus aucun pion adverse devant lui, ni sur les colonnes voisines. Rien ne peut l'arrêter, sauf les pièces. Ici, trois pions contre trois et des rois trop loin : il existe une <strong>percée</strong> gagnante." },
+    { k: "line", fen: "7k/ppp5/8/PPP5/8/8/8/7K w - - 0 1", side: "w", moves: ["b5b6", "c7b6", "a5a6", "b7a6", "c5c6", "h8g7", "c6c7", "g7f7", "c7c8q"], x: "Sacrifie un pion pour en faire passer un autre.", notes: { 0: "b6 ! Le pion du milieu attaque a7 et c7.", 2: "Si ...cxb6, alors a6 ! et le pion c passera.", 4: "c6 : ce pion est maintenant passé, le roi noir est trop loin.", 8: "Dame ! La percée a fonctionné." } }
+  ]},
+  { id: "structure", t: "La structure de pions", d: "Isolé, doublé, passé", g: "p", steps: [
+    { k: "info", fen: "4k3/pp3p1p/5p2/3P4/8/8/PP4PP/4K3 w - - 0 1", x: "Les pions ne reculent jamais : leurs faiblesses sont définitives. Un pion <strong>doublé</strong> est derrière un autre pion de sa couleur. Un pion <strong>isolé</strong> n'a aucun pion ami sur les colonnes voisines. Un pion <strong>passé</strong> n'a plus de pion adverse devant lui, ni sur sa colonne ni sur les colonnes voisines." },
+    { k: "pick", fen: "4k3/pp3p1p/5p2/3P4/8/8/PP4PP/4K3 w - - 0 1", answers: ["f7", "f6"], all: true, x: "Clique sur les <strong>pions noirs doublés</strong>.", ok: "Oui, f7 et f6 sont sur la même colonne : ils se gênent." },
+    { k: "pick", fen: "4k3/pp3p1p/5p2/3P4/8/8/PP4PP/4K3 w - - 0 1", answers: ["d5"], x: "Clique sur le <strong>pion blanc passé</strong>.", no: "Regarde devant chaque pion blanc : y a-t-il un pion noir sur sa colonne ou les colonnes voisines ?", ok: "Le pion d5 n'a aucun pion noir en c, d ou e devant lui : il est passé, et c'est un atout énorme en finale." }
+  ]},
+  { id: "pieces-actives", t: "Pièces actives", d: "Colonnes ouvertes et avant-postes", g: "r", steps: [
+    { k: "info", fen: "3r2k1/pp3ppp/2n5/8/8/2N5/PP3PPP/R4RK1 w - - 0 1", x: "Une <strong>colonne ouverte</strong> n'a plus aucun pion. C'est l'autoroute des tours. Ici, la colonne d est ouverte et les Noirs l'ont déjà prise : il faut la contester." },
+    { k: "move", fen: "3r2k1/pp3ppp/2n5/8/8/2N5/PP3PPP/R4RK1 w - - 0 1", accept: ["f1d1", "a1d1"], x: "Conteste la colonne d avec une de tes tours.", ok: "Tour en d1 : tu contestes la colonne. Une tour sur une colonne ouverte vaut bien plus qu'une tour enfermée." },
+    { k: "info", fen: "r4rk1/pp3ppp/3p4/2pNp3/4P3/8/PPP2PPP/R4RK1 w - - 0 1", x: "Un <strong>avant-poste</strong> est une case avancée qu'aucun pion adverse ne peut attaquer. Le cavalier d5 en est l'exemple parfait : il est protégé par e4 et aucun pion noir ne peut le chasser." }
+  ]}
+];
+
+const L_EXPERT = [
+  { id: "calcul", t: "Calculer comme un fort joueur", d: "Échecs, captures, menaces", g: "q", steps: [
+    { k: "info", fen: "5r1k/6pp/8/3Q2N1/2B5/8/8/6K1 w - - 0 1", x: "Les forts joueurs examinent d'abord les coups <strong>forcés</strong> : les échecs, puis les captures, puis les menaces. Même un coup qui semble absurde, comme sacrifier sa dame, mérite d'être calculé s'il donne échec." },
+    { k: "mate", fen: "5r1k/6pp/8/3Q2N1/2B5/8/8/6K1 w - - 0 1", n: 2, x: "Mat en 2. Commence par l'échec le plus violent." }
+  ]},
+  { id: "boden", t: "Le mat de Boden", d: "Deux fous en croix", g: "b", steps: [
+    { k: "info", fen: "2kr4/pp1n4/2n5/8/5B2/2Q5/8/5BK1 w - - 0 1", x: "Le roi noir a roqué côté dame. Tes deux fous peuvent former une croix sur ses cases de fuite : c'est le <strong>mat de Boden</strong>, du nom d'un joueur anglais du XIXe siècle. Il faut d'abord ouvrir la diagonale a6-c8." },
+    { k: "mate", fen: "2kr4/pp1n4/2n5/8/5B2/2Q5/8/5BK1 w - - 0 1", n: 2, x: "Mat en 2." }
+  ]},
+  { id: "anastasie", t: "Le mat d'Anastasie", d: "Cavalier et tour sur la colonne h", g: "n", steps: [
+    { k: "info", fen: "5r1k/4N1pp/8/7Q/8/3R4/8/6K1 w - - 0 1", x: "Le cavalier e7 contrôle g8 et g6. Si le roi noir se retrouve en h7 et qu'une tour arrive sur la colonne h, il n'a plus aucune case. Pour l'attirer en h7, il faut un sacrifice." },
+    { k: "mate", fen: "5r1k/4N1pp/8/7Q/8/3R4/8/6K1 w - - 0 1", n: 2, x: "Mat en 2." }
+  ]},
+  { id: "philidor", t: "Le mat étouffé", d: "Le legs de Philidor", g: "n", steps: [
+    { k: "info", fen: "5r1k/6pp/8/6N1/2Q5/8/8/6K1 w - - 0 1", x: "Le <strong>mat étouffé</strong> : le roi est entouré de ses propres pièces et un cavalier lui porte le coup final. La combinaison complète utilise un échec double puis un sacrifice de dame. Elle est connue depuis le XVe siècle." },
+    { k: "mate", fen: "5r1k/6pp/8/6N1/2Q5/8/8/6K1 w - - 0 1", n: 4, x: "Mat en 4. Indice : le cavalier saute, revient, et la dame se sacrifie en g8." }
+  ]},
+  { id: "opera", t: "La partie de l'Opéra", d: "Morphy, Paris 1858", g: "q", steps: [
+    { k: "info", fen: "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 17", x: "1858, à l'Opéra de Paris. Paul Morphy joue contre le duc de Brunswick et le comte Isouard, qui se consultent. Morphy a tout sacrifié pour développer ses pièces plus vite. Il reste à porter le coup final, l'un des plus célèbres de l'histoire." },
+    { k: "mate", fen: "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 17", n: 2, x: "Mat en 2, comme Morphy." }
+  ]},
+  { id: "doubleechec", t: "Le double échec", d: "Réti – Tartakower, Vienne 1910", g: "b", steps: [
+    { k: "info", fen: "rnb1kb1r/pp3ppp/2p5/4q3/4n3/3Q4/PPPB1PPP/2KR1BNR w kq - 0 9", x: "Vienne, 1910. Richard Réti, avec les Blancs, vient de voir le cavalier noir prendre en e4. Sa tour d1 est cachée derrière sa dame et son fou. Un <strong>double échec</strong> ne se pare qu'en bougeant le roi : c'est l'arme la plus forte des combinaisons." },
+    { k: "line", fen: "rnb1kb1r/pp3ppp/2p5/4q3/4n3/3Q4/PPPB1PPP/2KR1BNR w kq - 0 9", side: "w", moves: ["d3d8", "e8d8", "d2g5", "d8c7", "g5d8"], x: "Mat en 3 : rejoue la combinaison de Réti. Commence par sacrifier ta dame.", notes: { 0: "Dd8+ !! La dame se sacrifie pour attirer le roi sur la colonne d.", 2: "Fg5++ : double échec, du fou et de la tour d1. Le roi doit bouger.", 4: "Fd8# ! Si 10...Re8, alors 11.Td8#." } }
+  ]}
+];
+
+// Ouvertures : chaque leçon = une présentation, la ligne guidée, puis la même ligne de mémoire.
+function opening(id, t, d, side, intro, moves, notes) {
+  return { id, t, d, g: side === "w" ? "n" : "p", side, steps: [
+    { k: "info", fen: START, x: intro },
+    { k: "line", fen: START, side, moves, notes, guide: true, x: `Joue les coups ${side === "w" ? "des Blancs" : "des Noirs"} en suivant la flèche. Je joue l'autre camp.` },
+    { k: "line", fen: START, side, moves, notes, x: "Maintenant, de mémoire. Après deux erreurs, la flèche réapparaît." }
+  ]};
+}
+const L_OUV = [
+  opening("italienne", "La partie italienne", "1.e4 e5 2.Cf3 Cc6 3.Fc4", "w",
+    "L'une des plus vieilles ouvertures, jouée depuis le XVIe siècle. Idée : développer vite, viser le point faible f7 et construire un centre de pions avec c3 et d4.",
+    ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4", "f8c5", "c2c3", "g8f6", "d2d4", "e5d4", "c3d4", "c5b4", "c1d2"],
+    { 0: "1.e4 prend le centre et libère la dame et le fou.", 2: "2.Cf3 développe une pièce et attaque le pion e5.", 3: "2...Cc6 défend e5.", 4: "3.Fc4 vise f7, que seul le roi noir défend.", 5: "3...Fc5 : les Noirs visent f2 de la même façon.", 6: "4.c3 prépare d4 pour bâtir un grand centre.", 8: "5.d4 ouvre le centre.", 11: "6...Fb4+ gagne du temps avec un échec.", 12: "7.Fd2 pare l'échec en développant. Les Blancs ont le beau centre e4-d4." }),
+  opening("espagnole", "La partie espagnole", "1.e4 e5 2.Cf3 Cc6 3.Fb5", "w",
+    "L'ouverture préférée des champions du monde depuis 150 ans, aussi appelée Ruy Lopez. Le fou attaque le défenseur du pion e5 et met une pression durable sur le centre noir.",
+    ["e2e4", "e7e5", "g1f3", "b8c6", "f1b5", "a7a6", "b5a4", "g8f6", "e1g1", "f8e7", "f1e1", "b7b5", "a4b3", "d7d6", "c2c3", "e8g8", "h2h3"],
+    { 4: "3.Fb5 attaque le cavalier qui défend e5.", 5: "3...a6 : la défense Morphy. Le fou doit choisir.", 6: "4.Fa4 garde la pression sur c6.", 8: "5.O-O : le roi à l'abri d'abord. Le pion e4 est indirectement protégé.", 10: "6.Te1 protège e4 pour de bon.", 12: "7.Fb3 : le fou reste sur la diagonale qui vise f7.", 14: "8.c3 prépare d4 et offre la case c2 au fou.", 16: "9.h3 empêche ...Fg4, qui clouerait le cavalier. C'est la position clé de l'espagnole fermée." }),
+  opening("ecossaise", "La partie écossaise", "1.e4 e5 2.Cf3 Cc6 3.d4", "w",
+    "Une ouverture directe : les Blancs ouvrent le centre dès le 3e coup. Facile à jouer, très appréciée de Kasparov.",
+    ["e2e4", "e7e5", "g1f3", "b8c6", "d2d4", "e5d4", "f3d4", "g8f6", "d4c6", "b7c6", "e4e5"],
+    { 4: "3.d4 : on ouvre le centre tout de suite.", 5: "3...exd4 : il faut prendre, sinon e5 tombe.", 6: "4.Cxd4 : le cavalier reprend et trône au centre.", 7: "4...Cf6 attaque e4.", 8: "5.Cxc6 : on échange avant d'avancer.", 9: "5...bxc6 : les Noirs reprennent vers le centre.", 10: "6.e5 chasse le cavalier f6 et gagne de l'espace." }),
+  opening("gambitdame", "Le gambit Dame", "1.d4 d5 2.c4", "w",
+    "La grande ouverture du pion dame. Le pion c4 attaque d5 : ce n'est pas un vrai sacrifice, car les Blancs récupèrent facilement le pion.",
+    ["d2d4", "d7d5", "c2c4", "e7e6", "b1c3", "g8f6", "c1g5", "f8e7", "e2e3", "e8g8", "g1f3"],
+    { 0: "1.d4 : ce pion central est déjà protégé par la dame.", 2: "2.c4 : le gambit Dame.", 3: "2...e6 : les Noirs refusent le gambit et tiennent d5.", 4: "3.Cc3 ajoute une pression sur d5.", 6: "4.Fg5 cloue le cavalier f6, défenseur de d5.", 7: "4...Fe7 défait le clouage.", 8: "5.e3 ouvre la route au fou f1.", 10: "6.Cf3 : les Blancs vont roquer et placer leurs tours au centre." }),
+  opening("londres", "Le système de Londres", "1.d4 d5 2.Ff4", "w",
+    "Un système plus qu'une ouverture : on joue presque toujours la même structure, quoi que fassent les Noirs. Idéal pour commencer avec 1.d4.",
+    ["d2d4", "d7d5", "c1f4", "g8f6", "e2e3", "e7e6", "g1f3", "c7c5", "c2c3", "b8c6", "b1d2", "f8d6", "f4g3"],
+    { 2: "2.Ff4 : le fou sort AVANT e3, sinon il serait enfermé.", 4: "3.e3 solidifie d4 et libère le fou f1.", 6: "4.Cf3 développe.", 8: "5.c3 : la pyramide c3-d4-e3, très solide.", 10: "6.Cbd2 : le cavalier soutient e4 et f3.", 12: "7.Fg3 : on garde le fou plutôt que de l'échanger contre d6." }),
+  opening("sicilienne", "La défense sicilienne", "1.e4 c5", "b",
+    "La réponse la plus combative à 1.e4, l'arme de Fischer et de Kasparov. Les Noirs ne copient pas les Blancs : la partie devient déséquilibrée et riche.",
+    ["e2e4", "c7c5", "g1f3", "d7d6", "d2d4", "c5d4", "f3d4", "g8f6", "b1c3", "a7a6"],
+    { 1: "1...c5 contrôle d4 sans copier les Blancs.", 3: "2...d6 prépare ...Cf6 sans permettre e5.", 4: "3.d4 : les Blancs ouvrent le jeu.", 5: "3...cxd4 : un pion de côté contre un pion central. Les Noirs auront plus de pions au centre.", 7: "4...Cf6 attaque e4 et oblige Cc3.", 9: "5...a6 : la variante Najdorf. Elle contrôle b5 et prépare ...e5 ou ...b5." }),
+  opening("francaise", "La défense française", "1.e4 e6", "b",
+    "Une défense solide : les Noirs préparent ...d5 et attaquent ensuite la chaîne de pions blancs à sa base.",
+    ["e2e4", "e7e6", "d2d4", "d7d5", "e4e5", "c7c5", "c2c3", "b8c6", "g1f3", "d8b6"],
+    { 1: "1...e6 prépare ...d5.", 3: "2...d5 attaque e4.", 4: "3.e5 : la variante d'avance. Les Blancs gagnent de l'espace.", 5: "3...c5 ! On attaque la base de la chaîne de pions blancs : d4.", 7: "4...Cc6 ajoute une pression sur d4.", 9: "5...Db6 : troisième attaque sur d4, et la dame vise b2." }),
+  opening("carokann", "La défense Caro-Kann", "1.e4 c6", "b",
+    "Cousine de la française, mais le fou c8 peut sortir avant ...e6. Très solide, appréciée de Karpov et de Carlsen.",
+    ["e2e4", "c7c6", "d2d4", "d7d5", "b1c3", "d5e4", "c3e4", "c8f5", "e4g3", "f5g6"],
+    { 1: "1...c6 prépare ...d5 en laissant la diagonale du fou c8 ouverte.", 3: "2...d5 conteste le centre.", 5: "3...dxe4 : on prend au centre.", 7: "4...Ff5 : le fou sort AVANT ...e6. C'est tout l'esprit de la Caro-Kann.", 8: "5.Cg3 attaque le fou.", 9: "5...Fg6 : le fou recule mais reste actif." }),
+  opening("scandinave", "La défense scandinave", "1.e4 d5", "b",
+    "Les Noirs attaquent e4 dès le premier coup. Simple à apprendre, avec des plans clairs.",
+    ["e2e4", "d7d5", "e4d5", "d8d5", "b1c3", "d5a5", "d2d4", "g8f6", "g1f3", "c7c6"],
+    { 1: "1...d5 attaque e4 immédiatement.", 3: "2...Dxd5 : la dame reprend, même si elle sort tôt.", 4: "3.Cc3 attaque la dame avec gain de temps.", 5: "3...Da5 : la dame se met à l'abri et cloue parfois le cavalier c3.", 7: "4...Cf6 développe.", 9: "5...c6 offre la case c7 à la dame et contrôle b5 et d5." }),
+  opening("estindienne", "La défense est-indienne", "1.d4 Cf6 2.c4 g6", "b",
+    "Les Noirs laissent les Blancs prendre le centre... pour mieux l'attaquer ensuite. Une défense dynamique, l'arme de Fischer et de Kasparov contre 1.d4.",
+    ["d2d4", "g8f6", "c2c4", "g7g6", "b1c3", "f8g7", "e2e4", "d7d6", "g1f3", "e8g8", "f1e2", "e7e5"],
+    { 1: "1...Cf6 contrôle e4 sans occuper le centre.", 3: "2...g6 prépare le fianchetto du fou.", 5: "3...Fg7 : le fou sur la grande diagonale, pièce maîtresse de l'Est-indienne.", 6: "4.e4 : les Blancs prennent tout le centre.", 7: "4...d6 empêche e5.", 9: "5...O-O : le roi à l'abri avant d'agir.", 11: "6...e5 ! Les Noirs frappent le centre. Plan typique : ...Cc6, ...Ch5 et ...f5." }),
+  opening("pieges", "Le mat de Légal", "Un piège célèbre de 1750", "w",
+    "Le <strong>mat de Légal</strong>, joué à Paris vers 1750 au café de la Régence. Les Blancs sacrifient leur dame pour mater avec trois pièces mineures. Retiens surtout la leçon : avant de prendre une dame offerte, vérifie les échecs adverses.",
+    ["e2e4", "e7e5", "g1f3", "d7d6", "f1c4", "c8g4", "b1c3", "g7g6", "f3e5", "g4d1", "c4f7", "e8e7", "c3d5"],
+    { 5: "3...Fg4 cloue le cavalier f3... en apparence.", 7: "4...g6 ? Les Noirs ne voient pas le danger.", 8: "5.Cxe5 !! Le clouage n'était pas absolu : on abandonne la dame.", 9: "5...Fxd1 ? Les Noirs prennent la dame...", 10: "6.Fxf7+ chasse le roi.", 12: "7.Cd5# ! Trois pièces mineures font mat. Leçon : ne prends pas une dame sans vérifier les échecs." }),
+  opening("berger", "Se défendre du coup du berger", "1.e4 e5 2.Fc4 Cc6 3.Dh5", "b",
+    "Beaucoup de débutants tentent le coup du berger : la dame et le fou attaquent f7. Voici comment le parer proprement, en développant.",
+    ["e2e4", "e7e5", "f1c4", "b8c6", "d1h5", "g7g6", "h5f3", "g8f6", "g1e2", "f8g7"],
+    { 4: "3.Dh5 menace Dxf7#.", 5: "3...g6 ! On chasse la dame et on bloque la diagonale. Surtout pas ...Cf6?? Dxf7#.", 6: "4.Df3 menace encore f7.", 7: "4...Cf6 : le cavalier défend en se développant.", 9: "5...Fg7 : les Noirs sont bien développés, la dame blanche est sortie trop tôt." })
+];
+
+const PATHS = [
+  { id: "debutant", t: "Débutant", d: "Les règles du jeu, pièce par pièce", lessons: L_DEBUT },
+  { id: "intermediaire", t: "Intermédiaire", d: "Les motifs tactiques de base", lessons: L_INTER },
+  { id: "avance", t: "Avancé", d: "Finales et stratégie", lessons: L_AVANCE },
+  { id: "expert", t: "Expert", d: "Combinaisons et mats célèbres", lessons: L_EXPERT },
+  { id: "ouvertures", t: "Ouvertures", d: "Les 12 ouvertures et pièges essentiels", lessons: L_OUV }
+];
+const LESSONS = PATHS.flatMap(p => p.lessons);
+
 
 const PUZZLES = [
   { id: "p1", t: "Le mat du couloir", th: "Mat en 1", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", goal: "mate", n: 1, line: ["a1a8"] },
@@ -682,7 +874,7 @@ const PUZZLES = [
   { id: "p3", t: "Mat à l'étouffée", th: "Mat en 1", fen: "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1", goal: "mate", n: 1, line: ["g5f7"] },
   { id: "p4", t: "L'escalier", th: "Mat en 1", fen: "1k6/7R/8/8/8/8/8/6RK w - - 0 1", goal: "mate", n: 1, line: ["g1g8"] },
   { id: "p5", t: "Le mat arabe", th: "Mat en 1", fen: "7k/7p/5N2/8/8/8/8/6RK w - - 0 1", goal: "mate", n: 1, line: ["g1g8"] },
-  { id: "p6", t: "Roi et dame", th: "Mat en 1", fen: "k7/8/1K6/8/8/8/8/7Q w - - 0 1", goal: "mate", n: 1, line: ["h1h8"] },
+  { id: "p6", t: "Roi et dame", th: "Mat en 1", fen: "k7/8/1K6/8/8/8/7Q/8 w - - 0 1", goal: "mate", n: 1, line: ["h2h8"] },
   { id: "p7", t: "La fourchette royale", th: "Gain de matériel", fen: "q3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", goal: "gain", line: ["b5c7", "e8e7", "c7a8"], x: "Un coup de cavalier attaque deux pièces à la fois." },
   { id: "p8", t: "La fourchette de pion", th: "Gain de matériel", fen: "4k3/8/8/2n1b3/8/3P4/8/4K3 w - - 0 1", goal: "gain", line: ["d3d4", "c5e6", "d4e5"], x: "Le plus petit soldat peut attaquer deux pièces." },
   { id: "p9", t: "L'enfilade", th: "Gain de matériel", fen: "8/1q6/8/3k4/8/8/8/4KB2 w - - 0 1", goal: "gain", line: ["f1g2", "d5c5", "g2b7"], x: "Fais échec : quand le roi s'écarte, ce qui est derrière lui tombe." },
@@ -695,7 +887,7 @@ const PUZZLES = [
 
 // ---------- Sauvegarde ----------
 const STORE_KEY = "ecole-echecs-v1";
-let save = { lessons: {}, puzzles: {}, coordBest: 0, record: { w: 0, d: 0, l: 0 }, play: null, mode: "lecons" };
+let save = { lessons: {}, puzzles: {}, coordBest: 0, record: { w: 0, d: 0, l: 0 }, play: null, mode: "lecons", path: null };
 try { const raw = localStorage.getItem(STORE_KEY); if (raw) save = Object.assign(save, JSON.parse(raw)); } catch (e) {}
 const persist = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(save)); } catch (e) {} };
 
@@ -721,7 +913,7 @@ function render() {
     if (B.flash && B.flash.sq === sq) cls.push(B.flash.cls);
     let inner = "";
     const p = g.b[sq];
-    if (p) inner += `<span class="pc ${colorOf(p)}${B.dragFrom === sq ? " ghosted" : ""}">${GLYPH[p.toLowerCase()]}︎</span>`;
+    if (p) inner += pieceEl(p, B.dragFrom === sq ? "ghosted" : "");
     if (B.stars.has(sq)) inner += `<span class="star">★</span>`;
     if (targets.has(sq)) inner += p || targets.get(sq).flags === "e" ? `<span class="ring"></span>` : `<span class="dot"></span>`;
     if (B.coords) {
@@ -749,13 +941,13 @@ function renderCaptured() {
   const init = { p: 8, n: 2, b: 2, r: 2, q: 1 };
   const cnt = { w: {}, b: {} };
   for (const p of B.game.b) if (p) { const c = colorOf(p), t = p.toLowerCase(); cnt[c][t] = (cnt[c][t] || 0) + 1; }
-  const lost = c => "qrbnp".split("").map(t => GLYPH[t].repeat(Math.max(0, init[t] - (cnt[c][t] || 0)))).join("");
+  const lost = c => "qrbnp".split("").map(t => pieceEl(c === "w" ? t.toUpperCase() : t, "mini").repeat(Math.max(0, init[t] - (cnt[c][t] || 0)))).join("");
   const mat = c => Object.entries(cnt[c]).reduce((s, [t, n]) => s + ({ p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 }[t]) * n, 0);
   const diff = mat("w") - mat("b");
   const line = (me) => {
     const opp = me === "w" ? "b" : "w";
     const d = me === "w" ? diff : -diff;
-    return `<span class="captured"><span class="pc ${opp}" style="font-size:inherit">${lost(opp)}</span>${d > 0 ? `<b>+${d}</b>` : ""}</span>`;
+    return `<span class="captured">${lost(opp)}${d > 0 ? `<b>+${d}</b>` : ""}</span>`;
   };
   const bottomSide = B.flip ? "b" : "w";
   const label = c => (c === "w" ? "Blancs" : "Noirs");
@@ -770,7 +962,7 @@ function sqFromPoint(x, y) {
 function isLegal(from, to) { return B.game.moves(from).some(m => m.to === to); }
 function askPromo(color) {
   return new Promise(res => {
-    promoEl.innerHTML = `<div class="promo-box">${"qrbn".split("").map(t => `<button data-p="${t}" aria-label="${NAME[t]}"><span class="pc ${color}">${GLYPH[t]}︎</span></button>`).join("")}</div>`;
+    promoEl.innerHTML = `<div class="promo-box">${"qrbn".split("").map(t => `<button data-p="${t}" aria-label="${NAME[t]}">${pieceEl(color === "w" ? t.toUpperCase() : t)}</button>`).join("")}</div>`;
     promoEl.hidden = false;
     promoEl.onclick = e => { const btn = e.target.closest("button"); if (!btn) return; promoEl.hidden = true; res(btn.dataset.p); };
   });
@@ -811,7 +1003,8 @@ wrapEl.addEventListener("pointerdown", e => {
     const size = boardEl.getBoundingClientRect().width / 8;
     const ghost = document.createElement("div");
     ghost.className = "drag-ghost";
-    ghost.innerHTML = `<span class="pc ${colorOf(p)}" style="font-size:${size * 0.9}px">${GLYPH[p.toLowerCase()]}︎</span>`;
+    ghost.innerHTML = pieceEl(p);
+    ghost.style.width = ghost.style.height = size * 1.08 + "px";
     ghost.style.left = e.clientX + "px"; ghost.style.top = e.clientY + "px";
     ghost.hidden = true;
     document.body.appendChild(ghost);
@@ -844,6 +1037,7 @@ function resetBoard(fen, opts = {}) {
   B.game = new Chess(fen || START);
   B.flip = !!opts.flip; B.sel = null; B.last = null; B.stars = new Set(); B.arrows = []; B.marks = new Set();
   B.coords = opts.coords !== false; B.dots = true; B.locked = !!opts.locked; B.canMove = opts.canMove || (() => true);
+  document.body.classList.toggle("lists", !!opts.list);
   B.onMove = opts.onMove || null; B.onSquare = opts.onSquare || null; B.showCaptured = !!opts.captured; B.flash = null;
   promoEl.hidden = true;
   render();
@@ -858,95 +1052,247 @@ function setMode(mode) {
   clearTimers();
   save.mode = mode; persist();
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.mode === mode ? "true" : "false"));
-  if (mode === "lecons") lessonList();
+  if (mode === "lecons") { if (save.path) lessonList(save.path); else pathList(); }
   else if (mode === "exercices") puzzleList();
   else if (mode === "jouer") playView();
   else coordView();
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
 
-// ---------- Leçons ----------
-const L = { lesson: null, i: 0, moves: 0, done: false };
-function lessonList() {
-  L.lesson = null;
-  resetBoard(START, { locked: true });
-  const nDone = LESSONS.filter(l => save.lessons[l.id]).length;
-  const next = LESSONS.find(l => !save.lessons[l.id]);
+// ---------- Finale roi + pion : base exacte calculée par analyse rétrograde ----------
+// Pion blanc uniquement. Valeur : 1 = gain blanc, 2 = nulle. Calculée à la première utilisation (~0,5 s).
+const KPK = (() => {
+  let res = null;
+  const dist = (a, b) => Math.max(Math.abs((a >> 3) - (b >> 3)), Math.abs((a & 7) - (b & 7)));
+  const id = (stm, wk, bk, p) => ((stm * 64 + wk) * 64 + bk) * 64 + p;
+  const pawnHits = (p, s) => (s >> 3) === (p >> 3) - 1 && Math.abs((s & 7) - (p & 7)) === 1;
+  const around = k => { const o = []; for (let dr = -1; dr <= 1; dr++) for (let df = -1; df <= 1; df++) { if (!dr && !df) continue; const r = (k >> 3) + dr, f = (k & 7) + df; if (r >= 0 && r < 8 && f >= 0 && f < 8) o.push(r * 8 + f); } return o; };
+  function init(stm, wk, bk, p) {
+    const pr = p >> 3;
+    if (pr === 0 || pr === 7 || wk === bk || wk === p || bk === p || dist(wk, bk) <= 1) return 3;
+    if (stm === 0 && pawnHits(p, bk)) return 3;
+    if (stm === 0 && pr === 1) { const q = p - 8; if (q !== wk && q !== bk && (dist(bk, q) > 1 || dist(wk, q) === 1)) return 1; }
+    if (stm === 1) {
+      let moves = 0;
+      for (const s of around(bk)) {
+        if (dist(s, wk) <= 1 || (s !== p && pawnHits(p, s))) continue;
+        moves++;
+        if (s === p) return 2;
+      }
+      if (!moves) return 2;
+    }
+    return 0;
+  }
+  function classify(stm, wk, bk, p) {
+    let any = false;
+    if (stm === 0) {
+      for (const s of around(wk)) { if (s === p || dist(s, bk) <= 1) continue; const v = res[id(1, s, bk, p)]; if (v === 1) return 1; if (!v) any = true; }
+      const pr = p >> 3, q = p - 8;
+      if (pr > 1 && q !== wk && q !== bk) {
+        let v = res[id(1, wk, bk, q)]; if (v === 1) return 1; if (!v) any = true;
+        const q2 = p - 16;
+        if (pr === 6 && q2 !== wk && q2 !== bk) { v = res[id(1, wk, bk, q2)]; if (v === 1) return 1; if (!v) any = true; }
+      }
+      return any ? 0 : 2;
+    }
+    for (const s of around(bk)) { if (dist(s, wk) <= 1 || s === p || pawnHits(p, s)) continue; const v = res[id(0, wk, s, p)]; if (v === 2) return 2; if (!v) any = true; }
+    return any ? 0 : 1;
+  }
+  function build() {
+    res = new Uint8Array(2 * 64 * 64 * 64);
+    for (let stm = 0; stm < 2; stm++) for (let wk = 0; wk < 64; wk++) for (let bk = 0; bk < 64; bk++) for (let p = 0; p < 64; p++) res[id(stm, wk, bk, p)] = init(stm, wk, bk, p);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let stm = 0; stm < 2; stm++) for (let wk = 0; wk < 64; wk++) for (let bk = 0; bk < 64; bk++) for (let p = 8; p < 56; p++) {
+        const i = id(stm, wk, bk, p);
+        if (res[i]) continue;
+        const v = classify(stm, wk, bk, p);
+        if (v) { res[i] = v; changed = true; }
+      }
+    }
+  }
+  // Gagné pour les Blancs ? (position avec un seul pion blanc)
+  return { win(g) { if (!res) build(); const p = g.b.indexOf("P"); if (p < 0) return false; return res[id(g.turn === "w" ? 0 : 1, g.king("w"), g.king("b"), p)] === 1; } };
+})();
+
+// ---------- Leçons et parcours ----------
+const L = { path: null, lesson: null, i: 0, moves: 0, done: false };
+const pathOf = les => PATHS.find(p => p.lessons.includes(les));
+const pathDone = p => p.lessons.filter(l => save.lessons[l.id]).length;
+const LEVEL_DOTS = { debutant: 1, intermediaire: 2, avance: 3, expert: 4 };
+function lessonIcon(l) { return pieceEl(l.side === "b" ? l.g : l.g.toUpperCase(), "mini"); }
+function pathList() {
+  L.lesson = null; L.path = null;
+  resetBoard(START, { locked: true, list: true });
+  const total = LESSONS.length, done = LESSONS.filter(l => save.lessons[l.id]).length;
   panel.innerHTML = `
-    <p class="eyebrow">Parcours débutant · ${nDone}/${LESSONS.length} terminées</p>
-    <h2>Apprends les règles, une pièce après l'autre</h2>
-    <p class="lead">Chaque leçon est courte et se joue directement sur l'échiquier. Fais-les dans l'ordre : chacune s'appuie sur la précédente.</p>
-    <div class="progress">${LESSONS.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
-    ${next ? `<div class="row"><button class="btn primary" data-start="${next.id}">${nDone ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">Toutes les leçons sont terminées. Passe aux exercices ou défie l'ordinateur !</div>`}
-    <div class="list">${LESSONS.map((l, i) => `
+    <p class="eyebrow">Parcours · ${done}/${total} leçons terminées</p>
+    <h2>Choisis ton parcours</h2>
+    <p class="lead">Commence là où tu en es. Chaque parcours se suit dans l'ordre, et tu peux passer de l'un à l'autre quand tu veux.</p>
+    <div class="paths">${PATHS.map(p => {
+      const d = pathDone(p), n = p.lessons.length, lvl = LEVEL_DOTS[p.id];
+      return `<button class="path${d === n ? " done" : ""}${lvl ? "" : " wide"}" data-path="${p.id}">
+        <span class="path-head"><span class="path-name">${p.t}</span>${lvl ? `<span class="lvl" aria-label="Difficulté ${lvl} sur 4">${[1, 2, 3, 4].map(k => `<i class="${k <= lvl ? "on" : ""}"></i>`).join("")}</span>` : `<span class="pill">Répertoire</span>`}</span>
+        <span class="path-desc">${p.d}</span>
+        <span class="path-foot"><span class="meter"><i style="width:${Math.round(d / n * 100)}%"></i></span><span class="path-count">${d}/${n}</span></span>
+      </button>`;
+    }).join("")}</div>`;
+  panel.querySelectorAll("[data-path]").forEach(b => b.addEventListener("click", () => lessonList(b.dataset.path)));
+}
+function lessonList(pathId) {
+  const path = PATHS.find(p => p.id === pathId);
+  if (!path) return pathList();
+  L.path = path; L.lesson = null;
+  save.path = path.id; persist();
+  resetBoard(START, { locked: true, list: true });
+  const d = pathDone(path), next = path.lessons.find(l => !save.lessons[l.id]);
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between">
+      <button class="btn" id="back">← Parcours</button>
+      <span class="pill${d === path.lessons.length ? " done" : ""}">${d}/${path.lessons.length} terminées</span>
+    </div>
+    <p class="eyebrow">Parcours ${path.t}</p>
+    <h2>${path.d}</h2>
+    <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
+    ${next ? `<div class="row"><button class="btn primary" data-start="${next.id}">${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
+    <div class="list">${path.lessons.map((l, i) => `
       <button class="item${save.lessons[l.id] ? " done" : ""}" data-start="${l.id}">
         <span class="num">${save.lessons[l.id] ? "✓" : i + 1}</span>
         <span><span class="ti">${l.t}</span><span class="de">${l.d}</span></span>
-        <span class="glyph" aria-hidden="true">${GLYPH[l.g]}︎</span>
+        <span class="glyph" aria-hidden="true">${lessonIcon(l)}</span>
       </button>`).join("")}</div>`;
+  $("#back").onclick = pathList;
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
 }
 function startLesson(id, i = 0) {
-  L.lesson = LESSONS.find(l => l.id === id); L.i = i;
+  L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson); L.i = i;
   loadStep();
 }
 function loadStep() {
   clearTimers();
-  const les = L.lesson, st = les.steps[L.i];
-  L.moves = 0; L.done = st.k === "info"; L.targets = null;
-  const opts = { canMove: () => true, onMove: lessonMove };
-  if (st.k === "info") { opts.locked = true; }
-  if (st.k === "stars") { opts.canMove = sq => colorOf(B.game.b[sq]) === "w"; }
+  const st = L.lesson.steps[L.i];
+  Object.assign(L, { moves: 0, done: st.k === "info", targets: null, ply: 0, errors: 0, userMoves: 0, note: null, sans: [], found: new Set(), fb: null });
+  const own = sq => colorOf(B.game.b[sq]) === B.game.turn;
+  const opts = { canMove: own, onMove: lessonMove };
+  if (st.k === "info") opts.locked = true;
+  if (st.k === "stars") opts.canMove = sq => colorOf(B.game.b[sq]) === "w";
   if (st.k === "square") { opts.onSquare = lessonSquare; opts.coords = false; L.targets = st.targets.slice(); L.found = 0; }
+  if (st.k === "pick") opts.onSquare = lessonPick;
+  if (st.k === "line") { opts.flip = st.side === "b"; opts.canMove = sq => colorOf(B.game.b[sq]) === st.side; }
+  if (st.k === "kpk") opts.canMove = sq => colorOf(B.game.b[sq]) === "w";
   resetBoard(st.fen, opts);
-  if (st.k === "stars") { st.stars.forEach(s => B.stars.add(sqIdx(s))); }
-  if (st.show) { B.sel = sqIdx(st.show); }
+  if (st.k === "stars") st.stars.forEach(s => B.stars.add(sqIdx(s)));
+  if (st.show) B.sel = sqIdx(st.show);
   render();
   lessonPanel();
+  if (st.k === "line") lineAdvance();
 }
-function lessonPanel(fb) {
-  const les = L.lesson, st = les.steps[L.i], last = L.i === les.steps.length - 1;
+function lessonPanel() {
+  const les = L.lesson, st = les.steps[L.i], last = L.i === les.steps.length - 1, path = L.path;
   let extra = "";
   if (st.k === "stars") extra = `<p class="lead">Coups joués : <b>${L.moves}</b> · objectif : ${st.par} coup${st.par > 1 ? "s" : ""}</p>`;
   if (st.k === "square" && !L.done) extra = `<div class="target" aria-live="assertive">${L.targets[0]}</div><p class="lead">Trouvées : ${L.found}/${st.targets.length}. Les coordonnées sont cachées : retrouve-les de tête.</p>`;
+  if (st.k === "pick" && st.all && !L.done) extra = `<p class="lead">Trouvées : ${L.found.size}/${st.answers.length}</p>`;
+  if (st.k === "line" && L.sans.length) {
+    const f = (st.fen || START).split(" "), startBlack = f[1] === "b", first = (+f[5] || 1) - 1;
+    const parts = [];
+    L.sans.forEach((s, i) => {
+      const ply = i + (startBlack ? 1 : 0);
+      if (ply % 2 === 0) parts.push(`<span class="n">${first + ply / 2 + 1}.</span>`);
+      else if (i === 0) parts.push(`<span class="n">${first + (ply + 1) / 2}...</span>`);
+      parts.push(`<span class="${i === L.sans.length - 1 ? "cur" : ""}">${frSan(s)}</span>`);
+    });
+    extra = `<div class="line-moves">${parts.join(" ")}</div>`;
+  }
+  const canHint = !L.done && ["line", "mate", "kpk"].includes(st.k) && !(st.k === "line" && st.guide);
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between">
-      <button class="btn" id="back">← Leçons</button>
+      <button class="btn" id="back">← ${path.t}</button>
       <span class="pill">Étape ${L.i + 1}/${les.steps.length}</span>
     </div>
     <div class="progress">${les.steps.map((s, i) => `<span class="${i < L.i || (i === L.i && L.done) ? "on" : ""}"></span>`).join("")}</div>
-    <p class="eyebrow">Leçon ${LESSONS.indexOf(les) + 1}</p>
+    <p class="eyebrow">${path.t} · leçon ${path.lessons.indexOf(les) + 1}/${path.lessons.length}</p>
     <h2>${les.t}</h2>
     <p class="text">${st.x}</p>
     ${extra}
-    ${fb ? `<div class="fb ${fb.c}">${fb.t}</div>` : ""}
+    ${L.note ? `<div class="fb info">${L.note}</div>` : ""}
+    ${L.fb ? `<div class="fb ${L.fb.c}">${L.fb.t}</div>` : ""}
     <div class="row">
       ${L.done ? `<button class="btn primary" id="next">${last ? "Terminer la leçon" : "Continuer →"}</button>` : ""}
+      ${canHint ? `<button class="btn" id="lhint">Indice</button>` : ""}
       ${st.k !== "info" ? `<button class="btn" id="retry">Recommencer l'étape</button>` : ""}
     </div>`;
-  $("#back").onclick = lessonList;
+  $("#back").onclick = () => lessonList(path.id);
   const nx = $("#next"); if (nx) { nx.onclick = nextStep; nx.focus({ preventScroll: true }); }
   const rt = $("#retry"); if (rt) rt.onclick = loadStep;
+  const lh = $("#lhint"); if (lh) lh.onclick = lessonHint;
 }
+function setFb(c, t) { L.fb = c ? { c, t } : null; lessonPanel(); }
 function nextStep() {
   const les = L.lesson;
   if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
   save.lessons[les.id] = true; persist();
-  const idx = LESSONS.indexOf(les), nxt = LESSONS[idx + 1];
+  const path = L.path, idx = path.lessons.indexOf(les), nxt = path.lessons[idx + 1];
+  const pi = PATHS.indexOf(path), nextPath = PATHS[pi + 1];
   B.locked = true;
   panel.innerHTML = `
-    <p class="eyebrow">Leçon terminée</p>
+    <p class="eyebrow">Leçon terminée · ${path.t}</p>
     <h2>Bravo, « ${les.t} » est acquis</h2>
-    <p class="lead">${LESSONS.filter(l => save.lessons[l.id]).length} leçon(s) sur ${LESSONS.length} terminée(s).</p>
+    <p class="lead">${pathDone(path)} leçon(s) sur ${path.lessons.length} terminée(s) dans ce parcours.</p>
     <div class="row">
-      ${nxt ? `<button class="btn primary" id="nl">Leçon suivante : ${nxt.t}</button>` : `<button class="btn primary" id="ex">Passer aux exercices</button>`}
-      <button class="btn" id="bl">Toutes les leçons</button>
+      ${nxt ? `<button class="btn primary" id="nl">Leçon suivante : ${nxt.t}</button>` : nextPath ? `<button class="btn primary" id="np">Parcours suivant : ${nextPath.t}</button>` : `<button class="btn primary" id="ex">Passer aux exercices</button>`}
+      <button class="btn" id="bl">Retour au parcours</button>
     </div>`;
-  if (nxt) $("#nl").onclick = () => startLesson(nxt.id); else $("#ex").onclick = () => setMode("exercices");
-  $("#bl").onclick = lessonList;
+  if (nxt) $("#nl").onclick = () => startLesson(nxt.id);
+  else if (nextPath) $("#np").onclick = () => lessonList(nextPath.id);
+  else $("#ex").onclick = () => setMode("exercices");
+  $("#bl").onclick = () => lessonList(path.id);
 }
-function lessonMove(m) {
+function stepDone(text) { L.done = true; B.locked = true; B.arrows = []; render(); setFb("ok", text); }
+function rejectMove(text, delay = 1100) {
+  B.locked = true; L.errors++;
+  setFb("bad", text);
+  later(() => { B.game.undo(); B.last = null; B.locked = false; render(); }, delay);
+}
+// Joue automatiquement les coups de l'autre camp dans une ligne
+function lineAdvance() {
   const st = L.lesson.steps[L.i], g = B.game;
+  if (L.ply >= st.moves.length) { stepDone(st.guide ? "Ligne jouée ! Passe à l'étape suivante pour la rejouer de mémoire." : st.fen === START ? "Parfait, tu connais cette ligne par cœur." : "Combinaison réussie !"); return; }
+  if (g.turn === st.side) {
+    B.locked = false;
+    if (st.guide || L.errors >= 2) { const m = g.find(st.moves[L.ply]); if (m) B.arrows = [[m.from, m.to]]; }
+    render();
+    return;
+  }
+  B.locked = true;
+  later(() => {
+    const m = g.find(st.moves[L.ply]);
+    L.sans.push(g.san(m));
+    commit(m, true);
+    if (st.notes && st.notes[L.ply]) L.note = st.notes[L.ply];
+    L.ply++;
+    lessonPanel();
+    lineAdvance();
+  }, 520);
+}
+function lessonHint() {
+  const st = L.lesson.steps[L.i], g = B.game;
+  if (B.locked) return;
+  let m = null;
+  if (st.k === "line") m = g.find(st.moves[L.ply]);
+  if (st.k === "mate") m = mateIn(g, st.n - L.userMoves);
+  if (st.k === "kpk") {
+    const wins = g.moves().filter(x => { if (x.promo) return x.promo === "Q"; g.make(x, true); const w = KPK.win(g); g.undo(); return w; });
+    m = wins.find(x => x.piece === "P") || wins[0];
+  }
+  if (!m) return;
+  L.errors = Math.max(L.errors, 2);
+  B.arrows = [[m.from, m.to]]; render();
+}
+function lessonMove(m, san) {
+  const st = L.lesson.steps[L.i], g = B.game, u = uci(m);
+  B.arrows = [];
   if (st.k === "stars") {
     g.turn = "w"; g.ep = -1;
     L.moves++;
@@ -955,26 +1301,74 @@ function lessonMove(m) {
     if (!B.stars.size) {
       L.done = true; B.locked = true;
       const rating = L.moves <= st.par ? 3 : L.moves === st.par + 1 ? 2 : 1;
-      lessonPanel({ c: rating === 3 ? "ok" : "warn", t: `${"★".repeat(rating)}${"☆".repeat(3 - rating)} &nbsp;${rating === 3 ? "Parcours parfait !" : `Réussi en ${L.moves} coups. Possible en ${st.par} : réessaie si tu veux.`}` });
+      setFb(rating === 3 ? "ok" : "warn", `${"★".repeat(rating)}${"☆".repeat(3 - rating)} &nbsp;${rating === 3 ? "Parcours parfait !" : `Réussi en ${L.moves} coups. Possible en ${st.par} : réessaie si tu veux.`}`);
     } else lessonPanel();
     return;
   }
   if (st.k === "move") {
-    const u = uci(m), status = g.status();
+    const status = g.status();
     let ok = false;
     if (st.accept && st.accept.length) ok = st.accept.some(a => u === a || (a.length === 4 && u.startsWith(a)));
     if (st.goal === "check") ok = g.inCheck();
     if (st.goal === "mate") ok = status === "mate";
-    if (ok) {
-      L.done = true; B.locked = true;
-      lessonPanel({ c: "ok", t: st.ok || "Bravo !" });
+    if (ok) return stepDone(st.ok || "Bravo !");
+    let msg = st.no || "Ce n'est pas le coup attendu. Relis la consigne et réessaie.";
+    if (status === "stalemate") msg = "Pat ! Le roi noir n'est pas en échec mais ne peut plus bouger : c'est nul. Essaie un autre coup.";
+    return rejectMove(msg);
+  }
+  if (st.k === "line") {
+    const exp = st.moves[L.ply];
+    if (u === exp || (exp.length === 4 && u.startsWith(exp))) {
+      L.sans.push(san);
+      L.note = st.notes && st.notes[L.ply] ? st.notes[L.ply] : null;
+      L.ply++;
+      setFb(null);
+      lineAdvance();
     } else {
-      B.locked = true;
-      let msg = st.no || "Ce n'est pas le coup attendu. Relis la consigne et réessaie.";
-      if (status === "stalemate") msg = "Pat ! Le roi noir n'est pas en échec mais ne peut plus bouger : c'est nul. Essaie un autre coup.";
-      lessonPanel({ c: "bad", t: msg });
-      later(() => { g.undo(); B.last = null; B.locked = false; render(); }, 1100);
+      const want = (() => { g.undo(); const mm = g.find(exp); const s = mm ? frSan(g.san(mm)) : exp; g.make(m); return s; })();
+      rejectMove(st.guide ? `Suis la flèche : ici on joue ${want}.` : L.errors >= 1 ? `Dans cette ligne, on joue ${want}. La flèche te le montre.` : "Ce n'est pas le coup de la ligne. Réessaie.", 1000);
+      if (!st.guide && L.errors >= 2) later(() => { const mm = g.find(exp); if (mm) { B.arrows = [[mm.from, mm.to]]; render(); } }, 1050);
     }
+    return;
+  }
+  if (st.k === "mate") {
+    if (g.status() === "mate") { L.userMoves++; return stepDone(L.errors ? "Mat ! Bien joué." : "Mat, trouvé du premier coup !"); }
+    if (!forcedMate(g, st.n - L.userMoves - 1)) return rejectMove("Ce coup laisse le roi s'échapper. Cherche les échecs et les sacrifices.");
+    L.userMoves++;
+    B.locked = true;
+    setFb("ok", "Bon coup ! Le roi noir se défend...");
+    later(() => {
+      const r = think(g, { depth: 3, time: 700 });
+      commit(r.move, true);
+      B.locked = false;
+      setFb("info", "À toi, termine le travail.");
+    }, 550);
+    return;
+  }
+  if (st.k === "kpk") {
+    if (m.promo) {
+      if (m.promo === "Q" || m.promo === "R") return stepDone("Le pion devient dame : la finale est gagnée !");
+      return rejectMove("Un fou ou un cavalier seul ne peut pas mater. Promeus en dame.");
+    }
+    if (!KPK.win(g)) {
+      const st2 = g.status();
+      return rejectMove(st2 === "stalemate" ? "Pat ! Le roi noir n'a plus de coup : partie nulle. Laisse-lui une case." : "Ce coup laisse filer le gain : la position devient nulle. Pense à l'opposition et garde ton roi devant le pion.", 1300);
+    }
+    B.locked = true;
+    setFb(null);
+    later(() => {
+      // Le roi noir cherche la meilleure défense : rester près du pion et de sa case de promotion
+      const p = g.b.indexOf("P"), qsq = p & 7;
+      let best = null, bestS = -Infinity;
+      for (const r of g.moves()) {
+        const d = Math.max(Math.abs((r.to >> 3) - (p >> 3)), Math.abs((r.to & 7) - (p & 7))) + Math.max(r.to >> 3, Math.abs((r.to & 7) - qsq));
+        const s = -d + Math.random() * 0.5;
+        if (s > bestS) { bestS = s; best = r; }
+      }
+      commit(best, true);
+      B.locked = false;
+      L.errors = 0;
+    }, 420);
   }
 }
 function lessonSquare(sq) {
@@ -983,11 +1377,24 @@ function lessonSquare(sq) {
   if (sqName(sq) === L.targets[0]) {
     flashSq(sq, "flash-ok");
     L.targets.shift(); L.found++;
-    if (!L.targets.length) { L.done = true; B.coords = true; render(); lessonPanel({ c: "ok", t: "Tu sais lire l'échiquier. Pour t'entraîner encore, va dans l'onglet Coordonnées." }); }
-    else lessonPanel();
+    if (!L.targets.length) { L.done = true; B.coords = true; render(); setFb("ok", "Tu sais lire l'échiquier. Pour t'entraîner encore, va dans l'onglet Coordonnées."); }
+    else setFb(null);
   } else {
     flashSq(sq, "flash-bad");
-    lessonPanel({ c: "bad", t: `Ça, c'est ${sqName(sq)}. Cherche ${st.targets[L.found]}.` });
+    setFb("bad", `Ça, c'est ${sqName(sq)}. Cherche ${st.targets[L.found]}.`);
+  }
+}
+function lessonPick(sq) {
+  const st = L.lesson.steps[L.i], name = sqName(sq);
+  if (L.done) return;
+  if (st.answers.includes(name)) {
+    flashSq(sq, "flash-ok");
+    L.found.add(name); B.marks.add(sq);
+    if (!st.all || L.found.size === st.answers.length) { L.done = true; render(); setFb("ok", st.ok || "Exact !"); }
+    else setFb("ok", "Oui ! Il en reste.");
+  } else {
+    flashSq(sq, "flash-bad");
+    setFb("bad", st.no || "Non, regarde mieux.");
   }
 }
 
@@ -995,7 +1402,7 @@ function lessonSquare(sq) {
 const P = { cur: null, i: 0, userMoves: 0, errors: 0, hint: 0, solved: false };
 function puzzleList() {
   P.cur = null;
-  resetBoard(START, { locked: true });
+  resetBoard(START, { locked: true, list: true });
   const nDone = PUZZLES.filter(p => save.puzzles[p.id]).length;
   const groups = [...new Set(PUZZLES.map(p => p.th))];
   panel.innerHTML = `

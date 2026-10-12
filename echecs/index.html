@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--ARTIFACT-START-->
+<title>L'École des Échecs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Symbols+2&display=swap">
+<style>
+/* Layout : l'échiquier à gauche comme sur une table de club, le carnet du coach à droite ; une seule colonne sur téléphone. */
+:root {
+  --bg: #e7ebe4;
+  --surface: #f6f8f3;
+  --ink: #16201a;
+  --muted: #56655b;
+  --line: #cdd6cb;
+  --accent: #1d6b45;
+  --accent-ink: #ffffff;
+  --accent-soft: #d6e8dc;
+  --good: #1f7a4a;
+  --good-bg: #dcefe2;
+  --warn: #8a5a00;
+  --warn-bg: #f6e8c6;
+  --bad: #a3271f;
+  --bad-bg: #f7dcd8;
+  --sq-light: #ebe6d0;
+  --sq-dark: #6e8f5d;
+  --sq-light-hl: #f3e58a;
+  --sq-dark-hl: #b7b84a;
+  --frame: #2f3d33;
+  --star: #e0a100;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-pieces: "Noto Sans Symbols 2", "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111613; --surface: #19201b; --ink: #e4ebe5; --muted: #95a59a; --line: #2c3730;
+    --accent: #4fb380; --accent-ink: #0d1510; --accent-soft: #1f3a2b;
+    --good: #6fd29a; --good-bg: #173324; --warn: #e8b850; --warn-bg: #352a12; --bad: #f08a80; --bad-bg: #3a1a17;
+    --sq-light: #d9d4bd; --sq-dark: #5d7b4e; --sq-light-hl: #e6d877; --sq-dark-hl: #a3a43e; --frame: #0a0e0b; --star: #f2b51c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #19201b; --ink: #e4ebe5; --muted: #95a59a; --line: #2c3730;
+  --accent: #4fb380; --accent-ink: #0d1510; --accent-soft: #1f3a2b;
+  --good: #6fd29a; --good-bg: #173324; --warn: #e8b850; --warn-bg: #352a12; --bad: #f08a80; --bad-bg: #3a1a17;
+  --sq-light: #d9d4bd; --sq-dark: #5d7b4e; --sq-light-hl: #e6d877; --sq-dark-hl: #a3a43e; --frame: #0a0e0b; --star: #f2b51c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.app { max-width: 1140px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 48px; }
+
+/* En-tête */
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 22px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { width: 44px; height: 44px; border-radius: 10px; background: var(--frame); display: grid; place-items: center; font-family: var(--font-pieces); font-size: 30px; color: #f4f1e4; line-height: 1; }
+.brand h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+.brand p { margin: 0; font-size: 0.82rem; color: var(--muted); }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+.tab { border: 0; background: transparent; padding: 8px 14px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 0.92rem; color: var(--muted); }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* Grille principale */
+.main { display: grid; grid-template-columns: minmax(0, 580px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 880px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.board-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* Échiquier */
+.board-wrap { position: relative; width: 100%; max-width: 580px; aspect-ratio: 1; container-type: inline-size; border: 7px solid var(--frame); border-radius: 8px; background: var(--frame); box-shadow: 0 10px 30px -14px rgba(0,0,0,.45); touch-action: none; user-select: none; -webkit-user-select: none; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; border-radius: 2px; overflow: hidden; }
+.sq { position: relative; display: grid; place-items: center; cursor: pointer; }
+.sq.l { background: var(--sq-light); }
+.sq.d { background: var(--sq-dark); }
+.sq.l.hl { background: var(--sq-light-hl); }
+.sq.d.hl { background: var(--sq-dark-hl); }
+.sq.sel { box-shadow: inset 0 0 0 4px rgba(29,107,69,.85); }
+.sq.check { background: radial-gradient(circle, #ff5a48 0%, #e0352a 35%, rgba(224,53,42,0) 75%), var(--sq-light); }
+.sq.d.check { background: radial-gradient(circle, #ff5a48 0%, #e0352a 35%, rgba(224,53,42,0) 75%), var(--sq-dark); }
+.sq.flash-ok::after, .sq.flash-bad::after { content: ""; position: absolute; inset: 0; animation: flash .45s ease-out forwards; }
+.sq.flash-ok::after { background: rgba(40,170,90,.7); }
+.sq.flash-bad::after { background: rgba(220,50,40,.7); }
+@keyframes flash { from { opacity: 1; } to { opacity: 0; } }
+.pc { font-family: var(--font-pieces); font-size: 30px; font-size: 10.6cqi; line-height: 1; pointer-events: none; position: relative; z-index: 1; transform: translateY(-2%); }
+.pc.w { color: #fbf9f0; -webkit-text-stroke: 0.028em #1c211d; paint-order: stroke fill; text-shadow: 0 0.04em 0.05em rgba(0,0,0,.35); }
+.pc.b { color: #1a1d1a; text-shadow: 0 0 0.02em rgba(255,255,255,.35), 0 0.04em 0.05em rgba(0,0,0,.3); }
+.pc.ghosted { opacity: 0.25; }
+.dot { position: absolute; width: 30%; height: 30%; border-radius: 50%; background: rgba(18,40,24,.28); z-index: 2; pointer-events: none; }
+.ring { position: absolute; inset: 5%; border-radius: 50%; border: 0.75cqi solid rgba(18,40,24,.32); z-index: 2; pointer-events: none; }
+.star { position: absolute; font-size: 7cqi; color: var(--star); text-shadow: 0 1px 0 rgba(0,0,0,.35); pointer-events: none; animation: twinkle 2.4s ease-in-out infinite; }
+@keyframes twinkle { 50% { transform: scale(1.12) rotate(8deg); } }
+.co { position: absolute; font-family: var(--font-mono); font-weight: 700; font-size: 2.1cqi; line-height: 1; pointer-events: none; }
+.co.f { right: 6%; bottom: 5%; }
+.co.r { left: 6%; top: 6%; }
+.sq.l .co { color: var(--sq-dark); }
+.sq.d .co { color: var(--sq-light); }
+.arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+.drag-ghost { position: fixed; z-index: 50; pointer-events: none; font-family: var(--font-pieces); line-height: 1; transform: translate(-50%, -55%); }
+.promo { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: rgba(10,14,11,.55); }
+.promo-box { display: flex; gap: 8px; background: var(--surface); border-radius: 12px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.promo-box button { width: 16cqi; height: 16cqi; border-radius: 10px; border: 1px solid var(--line); background: var(--sq-light); cursor: pointer; display: grid; place-items: center; }
+.promo-box button:hover { background: var(--sq-light-hl); }
+.promo-box .pc { font-size: 12cqi; }
+
+/* Sous l'échiquier */
+.under { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 28px; font-size: 0.9rem; color: var(--muted); }
+.captured { font-family: var(--font-pieces); font-size: 1.25rem; letter-spacing: -0.12em; color: var(--ink); }
+.captured b { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0; margin-left: 6px; color: var(--muted); }
+
+/* Panneau */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.11em; font-weight: 700; color: var(--accent); margin: 0; }
+.panel h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; letter-spacing: -0.02em; line-height: 1.1; margin: 0; text-wrap: balance; }
+.panel h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin: 0; }
+.lead { margin: 0; color: var(--muted); max-width: 62ch; }
+.text { margin: 0; font-size: 1.04rem; max-width: 62ch; }
+.text strong { color: var(--accent); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { border: 1px solid var(--line); background: var(--bg); padding: 9px 15px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.92rem; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .45; cursor: default; }
+.fb { border-radius: 10px; padding: 11px 14px; font-weight: 700; font-size: 0.97rem; }
+.fb.ok { background: var(--good-bg); color: var(--good); }
+.fb.bad { background: var(--bad-bg); color: var(--bad); }
+.fb.warn { background: var(--warn-bg); color: var(--warn); }
+.fb.info { background: var(--accent-soft); color: var(--ink); font-weight: 400; }
+.fb small { display: block; font-weight: 400; color: var(--ink); margin-top: 3px; }
+.progress { display: flex; gap: 5px; }
+.progress span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+.progress span.on { background: var(--accent); }
+
+/* Listes leçons / exercices */
+.list { display: flex; flex-direction: column; gap: 6px; }
+.item { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left; border: 1px solid transparent; background: transparent; border-radius: 11px; padding: 9px 10px; cursor: pointer; }
+.item:hover { background: var(--bg); border-color: var(--line); }
+.item .num { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--line); }
+.item.done .num { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.item .glyph { font-family: var(--font-pieces); font-size: 1.3rem; }
+.item .ti { font-weight: 700; display: block; }
+.item .de { font-size: 0.85rem; color: var(--muted); display: block; }
+.pill { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+.pill.done { background: var(--good-bg); color: var(--good); border-color: transparent; }
+.group-title { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.11em; font-weight: 700; color: var(--muted); margin: 8px 0 2px 10px; }
+
+/* Partie */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
+.seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--muted); }
+.settings { display: flex; flex-wrap: wrap; gap: 14px 22px; }
+.moves { font-family: var(--font-mono); font-size: 0.9rem; max-height: 220px; overflow-y: auto; display: grid; grid-template-columns: 2.6em minmax(0, 6.5em) minmax(0, 6.5em); gap: 2px 8px; padding: 10px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.moves .n { color: var(--muted); }
+.moves .cur { color: var(--accent); font-weight: 700; }
+.moves:empty::before { content: "Les coups s'afficheront ici, en notation française (C = cavalier, F = fou, T = tour, D = dame, R = roi)."; grid-column: 1 / -1; color: var(--muted); font-family: var(--font-body); font-size: 0.86rem; }
+.balance { display: flex; flex-direction: column; gap: 5px; }
+.balance-bar { height: 10px; border-radius: 6px; background: #1f2420; overflow: hidden; border: 1px solid var(--line); }
+.balance-bar i { display: block; height: 100%; background: #f4f1e4; transition: width .4s ease; }
+.balance small { color: var(--muted); font-size: 0.84rem; }
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 0.92rem; }
+.switch input { width: 18px; height: 18px; accent-color: var(--accent); }
+.stats { display: flex; gap: 18px; font-size: 0.86rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stats b { color: var(--ink); font-family: var(--font-mono); }
+
+/* Coordonnées */
+.target { font-family: var(--font-mono); font-weight: 700; font-size: 4.2rem; line-height: 1; letter-spacing: -0.02em; color: var(--accent); }
+.scorebox { display: flex; gap: 26px; font-variant-numeric: tabular-nums; }
+.scorebox div { display: flex; flex-direction: column; }
+.scorebox b { font-family: var(--font-mono); font-size: 1.6rem; }
+.scorebox span { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+.target-mini { font-family: var(--font-mono); font-weight: 700; font-size: 1.5rem; line-height: 1; color: var(--accent); }
+.timer { height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.timer i { display: block; height: 100%; background: var(--accent); }
+
+.foot { margin-top: 28px; font-size: 0.82rem; color: var(--muted); }
+.kbd { font-family: var(--font-mono); font-size: 0.85em; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .star { animation: none; }
+  .sq.flash-ok::after, .sq.flash-bad::after { animation-duration: .01s; }
+  .balance-bar i { transition: none; }
+}
+@media (max-width: 480px) {
+  .panel { padding: 16px; }
+  .panel h2 { font-size: 1.45rem; }
+  .tab { padding: 7px 10px; font-size: 0.86rem; }
+  .board-wrap { border-width: 4px; }
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">&#9822;&#xFE0E;</div>
+      <div>
+        <h1>L'École des Échecs</h1>
+        <p>Apprendre, s'entraîner, jouer avec un coach</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-lecons" data-mode="lecons">Leçons</button>
+      <button class="tab" role="tab" id="tab-exercices" data-mode="exercices">Exercices</button>
+      <button class="tab" role="tab" id="tab-jouer" data-mode="jouer">Jouer</button>
+      <button class="tab" role="tab" id="tab-coord" data-mode="coord">Coordonnées</button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <div class="board-col">
+      <div class="under" id="under-top"></div>
+      <div class="board-wrap" id="board-wrap">
+        <div class="board" id="board" aria-label="Échiquier"></div>
+        <svg class="arrows" id="arrows" viewBox="0 0 8 8" aria-hidden="true">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#1d8a52" fill-opacity="0.85"></path>
+            </marker>
+          </defs>
+          <g id="arrow-layer"></g>
+        </svg>
+        <div class="promo" id="promo" hidden></div>
+      </div>
+      <div class="under" id="under-bottom"></div>
+    </div>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+
+  <p class="foot">Astuce : clique sur une pièce puis sur sa case d'arrivée, ou fais-la glisser. Ta progression est gardée dans ce navigateur.</p>
+</div>
+
+<script>
+"use strict";
+/*ENGINE-START*/
+const FILES = "abcdefgh";
+const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const EMPTY = "8/8/8/8/8/8/8/8 w - - 0 1";
+const sqName = i => FILES[i & 7] + (8 - (i >> 3));
+const sqIdx = s => (8 - parseInt(s[1], 10)) * 8 + FILES.indexOf(s[0]);
+const colorOf = p => (p ? (p === p.toUpperCase() ? "w" : "b") : null);
+const KN = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+const KG = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const DG = [[-1,-1],[-1,1],[1,-1],[1,1]];
+const OR = [[-1,0],[1,0],[0,-1],[0,1]];
+const uci = m => sqName(m.from) + sqName(m.to) + (m.promo ? m.promo.toLowerCase() : "");
+
+class Chess {
+  constructor(fen) { this.load(fen || START); }
+  load(fen) {
+    const [pos, turn, cas, ep, half, full] = fen.trim().split(/\s+/);
+    this.b = new Array(64).fill(null);
+    let i = 0;
+    for (const ch of pos) {
+      if (ch === "/") continue;
+      if (/\d/.test(ch)) i += +ch; else this.b[i++] = ch;
+    }
+    this.turn = turn || "w";
+    this.castle = cas && cas !== "-" ? cas : "";
+    this.ep = ep && ep !== "-" ? sqIdx(ep) : -1;
+    this.half = +half || 0;
+    this.full = +full || 1;
+    this.hist = [];
+    this.keys = [this.key()];
+  }
+  key() { let s = ""; for (const p of this.b) s += p || "."; return s + this.turn + this.castle + this.ep; }
+  fen() {
+    let s = "";
+    for (let r = 0; r < 8; r++) {
+      let e = 0;
+      for (let f = 0; f < 8; f++) {
+        const p = this.b[r * 8 + f];
+        if (!p) e++; else { if (e) { s += e; e = 0; } s += p; }
+      }
+      if (e) s += e;
+      if (r < 7) s += "/";
+    }
+    return `${s} ${this.turn} ${this.castle || "-"} ${this.ep >= 0 ? sqName(this.ep) : "-"} ${this.half} ${this.full}`;
+  }
+  king(c) { return this.b.indexOf(c === "w" ? "K" : "k"); }
+  attacked(sq, by) {
+    const b = this.b, r = sq >> 3, f = sq & 7, w = by === "w";
+    const P = w ? "P" : "p", N = w ? "N" : "n", B = w ? "B" : "b", R = w ? "R" : "r", Q = w ? "Q" : "q", K = w ? "K" : "k";
+    const pr = w ? r + 1 : r - 1;
+    if (pr >= 0 && pr < 8) {
+      if (f > 0 && b[pr * 8 + f - 1] === P) return true;
+      if (f < 7 && b[pr * 8 + f + 1] === P) return true;
+    }
+    for (const [dr, df] of KN) { const rr = r + dr, ff = f + df; if (rr >= 0 && rr < 8 && ff >= 0 && ff < 8 && b[rr * 8 + ff] === N) return true; }
+    for (const [dr, df] of KG) { const rr = r + dr, ff = f + df; if (rr >= 0 && rr < 8 && ff >= 0 && ff < 8 && b[rr * 8 + ff] === K) return true; }
+    for (const [dr, df] of DG) {
+      let rr = r + dr, ff = f + df;
+      while (rr >= 0 && rr < 8 && ff >= 0 && ff < 8) { const p = b[rr * 8 + ff]; if (p) { if (p === B || p === Q) return true; break; } rr += dr; ff += df; }
+    }
+    for (const [dr, df] of OR) {
+      let rr = r + dr, ff = f + df;
+      while (rr >= 0 && rr < 8 && ff >= 0 && ff < 8) { const p = b[rr * 8 + ff]; if (p) { if (p === R || p === Q) return true; break; } rr += dr; ff += df; }
+    }
+    return false;
+  }
+  inCheck(c = this.turn) { const k = this.king(c); return k >= 0 && this.attacked(k, c === "w" ? "b" : "w"); }
+  pseudo(c = this.turn) {
+    const out = [], b = this.b, opp = c === "w" ? "b" : "w";
+    for (let s = 0; s < 64; s++) {
+      const p = b[s];
+      if (!p || colorOf(p) !== c) continue;
+      const t = p.toLowerCase(), r = s >> 3, f = s & 7;
+      const add = (to, flags, promo) => out.push({ from: s, to, piece: p, captured: flags === "e" ? (c === "w" ? "p" : "P") : b[to], promo, flags });
+      if (t === "p") {
+        const dir = c === "w" ? -1 : 1, start = c === "w" ? 6 : 1, last = c === "w" ? 0 : 7;
+        const addP = (to, fl) => { if ((to >> 3) === last) { for (const pr of "qrnb") add(to, fl, c === "w" ? pr.toUpperCase() : pr); } else add(to, fl); };
+        const nr = r + dir;
+        if (nr < 0 || nr > 7) continue;
+        const one = nr * 8 + f;
+        if (!b[one]) {
+          addP(one, "n");
+          const two = (r + 2 * dir) * 8 + f;
+          if (r === start && !b[two]) add(two, "b");
+        }
+        for (const df of [-1, 1]) {
+          const ff = f + df;
+          if (ff < 0 || ff > 7) continue;
+          const to = nr * 8 + ff;
+          if (b[to] && colorOf(b[to]) === opp) addP(to, "c");
+          else if (to === this.ep && !b[to]) add(to, "e");
+        }
+      } else if (t === "n" || t === "k") {
+        for (const [dr, df] of (t === "n" ? KN : KG)) {
+          const rr = r + dr, ff = f + df;
+          if (rr < 0 || rr > 7 || ff < 0 || ff > 7) continue;
+          const to = rr * 8 + ff, q = b[to];
+          if (!q) add(to, "n"); else if (colorOf(q) === opp) add(to, "c");
+        }
+      } else {
+        const dirs = t === "b" ? DG : t === "r" ? OR : DG.concat(OR);
+        for (const [dr, df] of dirs) {
+          let rr = r + dr, ff = f + df;
+          while (rr >= 0 && rr < 8 && ff >= 0 && ff < 8) {
+            const to = rr * 8 + ff, q = b[to];
+            if (!q) add(to, "n");
+            else { if (colorOf(q) === opp) add(to, "c"); break; }
+            rr += dr; ff += df;
+          }
+        }
+      }
+    }
+    // Roque
+    if (c === "w" && b[60] === "K") {
+      if (this.castle.includes("K") && b[63] === "R" && !b[61] && !b[62] && !this.attacked(60, "b") && !this.attacked(61, "b") && !this.attacked(62, "b"))
+        out.push({ from: 60, to: 62, piece: "K", captured: null, flags: "k" });
+      if (this.castle.includes("Q") && b[56] === "R" && !b[59] && !b[58] && !b[57] && !this.attacked(60, "b") && !this.attacked(59, "b") && !this.attacked(58, "b"))
+        out.push({ from: 60, to: 58, piece: "K", captured: null, flags: "q" });
+    }
+    if (c === "b" && b[4] === "k") {
+      if (this.castle.includes("k") && b[7] === "r" && !b[5] && !b[6] && !this.attacked(4, "w") && !this.attacked(5, "w") && !this.attacked(6, "w"))
+        out.push({ from: 4, to: 6, piece: "k", captured: null, flags: "k" });
+      if (this.castle.includes("q") && b[0] === "r" && !b[3] && !b[2] && !b[1] && !this.attacked(4, "w") && !this.attacked(3, "w") && !this.attacked(2, "w"))
+        out.push({ from: 4, to: 2, piece: "k", captured: null, flags: "q" });
+    }
+    return out;
+  }
+  moves(from) {
+    const c = this.turn, res = [];
+    for (const m of this.pseudo(c)) {
+      if (from != null && m.from !== from) continue;
+      this.make(m, true);
+      if (!this.inCheck(c)) res.push(m);
+      this.undo();
+    }
+    return res;
+  }
+  make(m, fast) {
+    const b = this.b, c = colorOf(m.piece);
+    this.hist.push({ m, castle: this.castle, ep: this.ep, half: this.half, full: this.full, k: !fast });
+    b[m.to] = m.promo || m.piece;
+    b[m.from] = null;
+    if (m.flags === "e") b[m.to + (c === "w" ? 8 : -8)] = null;
+    if (m.flags === "k") { const rf = c === "w" ? 63 : 7, rt = c === "w" ? 61 : 5; b[rt] = b[rf]; b[rf] = null; }
+    if (m.flags === "q") { const rf = c === "w" ? 56 : 0, rt = c === "w" ? 59 : 3; b[rt] = b[rf]; b[rf] = null; }
+    let cs = this.castle;
+    if (cs) {
+      if (m.piece === "K") cs = cs.replace(/[KQ]/g, "");
+      if (m.piece === "k") cs = cs.replace(/[kq]/g, "");
+      for (const s of [m.from, m.to]) {
+        if (s === 63) cs = cs.replace("K", "");
+        if (s === 56) cs = cs.replace("Q", "");
+        if (s === 7) cs = cs.replace("k", "");
+        if (s === 0) cs = cs.replace("q", "");
+      }
+      this.castle = cs;
+    }
+    this.ep = m.flags === "b" ? (m.from + m.to) / 2 : -1;
+    this.half = (m.piece === "P" || m.piece === "p" || m.captured) ? 0 : this.half + 1;
+    if (c === "b") this.full++;
+    this.turn = c === "w" ? "b" : "w";
+    if (!fast) this.keys.push(this.key());
+  }
+  undo() {
+    const h = this.hist.pop();
+    if (!h) return null;
+    const m = h.m, b = this.b, c = colorOf(m.piece);
+    if (h.k) this.keys.pop();
+    b[m.from] = m.piece;
+    b[m.to] = null;
+    if (m.flags === "e") b[m.to + (c === "w" ? 8 : -8)] = m.captured;
+    else if (m.captured) b[m.to] = m.captured;
+    if (m.flags === "k") { const rf = c === "w" ? 63 : 7, rt = c === "w" ? 61 : 5; b[rf] = b[rt]; b[rt] = null; }
+    if (m.flags === "q") { const rf = c === "w" ? 56 : 0, rt = c === "w" ? 59 : 3; b[rf] = b[rt]; b[rt] = null; }
+    this.turn = c; this.castle = h.castle; this.ep = h.ep; this.half = h.half; this.full = h.full;
+    return m;
+  }
+  san(m) {
+    let s;
+    if (m.flags === "k") s = "O-O";
+    else if (m.flags === "q") s = "O-O-O";
+    else {
+      const t = m.piece.toUpperCase();
+      if (t === "P") s = (m.captured ? FILES[m.from & 7] + "x" : "") + sqName(m.to) + (m.promo ? "=" + m.promo.toUpperCase() : "");
+      else {
+        const others = this.moves().filter(o => o.piece === m.piece && o.to === m.to && o.from !== m.from);
+        let d = "";
+        if (others.length) {
+          const sameFile = others.some(o => (o.from & 7) === (m.from & 7));
+          const sameRank = others.some(o => (o.from >> 3) === (m.from >> 3));
+          d = !sameFile ? FILES[m.from & 7] : !sameRank ? String(8 - (m.from >> 3)) : sqName(m.from);
+        }
+        s = t + d + (m.captured ? "x" : "") + sqName(m.to);
+      }
+    }
+    this.make(m, true);
+    if (this.inCheck()) s += this.moves().length ? "+" : "#";
+    this.undo();
+    return s;
+  }
+  insufficient() {
+    const rest = this.b.filter(p => p && p !== "K" && p !== "k");
+    if (!rest.length) return true;
+    return rest.length === 1 && /[nbNB]/.test(rest[0]);
+  }
+  status() {
+    if (!this.moves().length) return this.inCheck() ? "mate" : "stalemate";
+    if (this.half >= 100) return "fifty";
+    if (this.insufficient()) return "insufficient";
+    const k = this.keys[this.keys.length - 1];
+    if (this.keys.filter(x => x === k).length >= 3) return "repetition";
+    return null;
+  }
+  find(u) { return this.moves().find(m => uci(m) === u || (u.length === 4 && uci(m) === u + "q")) || null; }
+}
+
+// ---------- Évaluation et recherche ----------
+const VAL = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
+const PST = {
+  p: [0,0,0,0,0,0,0,0, 50,50,50,50,50,50,50,50, 10,10,20,30,30,20,10,10, 5,5,10,25,25,10,5,5, 0,0,0,20,20,0,0,0, 5,-5,-10,0,0,-10,-5,5, 5,10,10,-20,-20,10,10,5, 0,0,0,0,0,0,0,0],
+  n: [-50,-40,-30,-30,-30,-30,-40,-50, -40,-20,0,0,0,0,-20,-40, -30,0,10,15,15,10,0,-30, -30,5,15,20,20,15,5,-30, -30,0,15,20,20,15,0,-30, -30,5,10,15,15,10,5,-30, -40,-20,0,5,5,0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50],
+  b: [-20,-10,-10,-10,-10,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,10,10,5,0,-10, -10,5,5,10,10,5,5,-10, -10,0,10,10,10,10,0,-10, -10,10,10,10,10,10,10,-10, -10,5,0,0,0,0,5,-10, -20,-10,-10,-10,-10,-10,-10,-20],
+  r: [0,0,0,0,0,0,0,0, 5,10,10,10,10,10,10,5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, 0,0,0,5,5,0,0,0],
+  q: [-20,-10,-10,-5,-5,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,5,5,5,0,-10, -5,0,5,5,5,5,0,-5, 0,0,5,5,5,5,0,-5, -10,5,5,5,5,5,0,-10, -10,0,5,0,0,0,0,-10, -20,-10,-10,-5,-5,-10,-10,-20],
+  k: [-30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -20,-30,-30,-40,-40,-30,-30,-20, -10,-20,-20,-20,-20,-20,-20,-10, 20,20,0,0,0,0,20,20, 20,30,10,0,0,10,30,20],
+  ke: [-50,-40,-30,-20,-20,-30,-40,-50, -30,-20,-10,0,0,-10,-20,-30, -30,-10,20,30,30,20,-10,-30, -30,-10,30,40,40,30,-10,-30, -30,-10,30,40,40,30,-10,-30, -30,-10,20,30,30,20,-10,-30, -30,-30,0,0,0,0,-30,-30, -50,-30,-30,-30,-30,-30,-30,-50]
+};
+function evaluate(g) {
+  let s = 0, nw = 0, nb = 0, wk = -1, bk = -1;
+  const b = g.b;
+  for (let i = 0; i < 64; i++) {
+    const p = b[i];
+    if (!p) continue;
+    const t = p.toLowerCase(), w = p !== t;
+    if (t === "k") { if (w) wk = i; else bk = i; continue; }
+    if (t !== "p") { if (w) nw += VAL[t]; else nb += VAL[t]; }
+    const v = VAL[t] + PST[t][w ? i : i ^ 56];
+    s += w ? v : -v;
+  }
+  const end = nw <= 1300 && nb <= 1300;
+  const kt = end ? PST.ke : PST.k;
+  if (wk >= 0) s += kt[wk];
+  if (bk >= 0) s -= kt[bk ^ 56];
+  // Finale gagnée : pousser le roi adverse vers le bord et rapprocher son propre roi
+  if (end && wk >= 0 && bk >= 0 && Math.abs(s) > 400) {
+    const strongW = s > 0, ek = strongW ? bk : wk, ok = strongW ? wk : bk;
+    const er = ek >> 3, ef = ek & 7;
+    const cd = Math.max(3 - er, er - 4) + Math.max(3 - ef, ef - 4);
+    const kd = Math.abs(er - (ok >> 3)) + Math.abs(ef - (ok & 7));
+    const bonus = cd * 12 + (14 - kd) * 5;
+    s += strongW ? bonus : -bonus;
+  }
+  return s;
+}
+const MATE = 100000;
+const TIMEOUT = { timeout: true };
+const moveOrder = m => (m.captured ? 10 * VAL[m.captured.toLowerCase()] - VAL[m.piece.toLowerCase()] / 10 + 1000 : 0) + (m.promo ? 800 : 0);
+
+function think(g, opts = {}) {
+  const depth = opts.depth || 3, time = opts.time || 1500, noise = opts.noise || 0;
+  const t0 = Date.now();
+  let nodes = 0;
+  const h0 = g.hist.length;
+  const root = g.moves();
+  if (!root.length) return null;
+  if (opts.random && Math.random() < opts.random) return { move: root[(Math.random() * root.length) | 0], score: 0 };
+  const sort = ms => ms.sort((a, b) => moveOrder(b) - moveOrder(a));
+  function qs(alpha, beta, d) {
+    if ((++nodes & 1023) === 0 && Date.now() - t0 > time) throw TIMEOUT;
+    const stand = (g.turn === "w" ? 1 : -1) * evaluate(g);
+    if (stand >= beta) return beta;
+    if (stand > alpha) alpha = stand;
+    if (d >= 6) return alpha;
+    const c = g.turn;
+    const ms = sort(g.pseudo(c).filter(m => m.captured || m.promo));
+    for (const m of ms) {
+      g.make(m, true);
+      if (g.inCheck(c)) { g.undo(); continue; }
+      const v = -qs(-beta, -alpha, d + 1);
+      g.undo();
+      if (v >= beta) return beta;
+      if (v > alpha) alpha = v;
+    }
+    return alpha;
+  }
+  function ab(d, alpha, beta, ply) {
+    if ((++nodes & 1023) === 0 && Date.now() - t0 > time) throw TIMEOUT;
+    const chk = g.inCheck();
+    if (d <= 0 && (!chk || d < -2)) return qs(alpha, beta, 0);
+    const ms = g.moves();
+    if (!ms.length) return chk ? -MATE + ply : 0;
+    if (g.half >= 100) return 0;
+    sort(ms);
+    for (const m of ms) {
+      g.make(m, true);
+      const v = -ab(d - 1, -beta, -alpha, ply + 1);
+      g.undo();
+      if (v >= beta) return beta;
+      if (v > alpha) alpha = v;
+    }
+    return alpha;
+  }
+  let order = sort(root.slice()), result = null;
+  for (let d = 1; d <= depth; d++) {
+    try {
+      let alpha = -Infinity;
+      const scored = [];
+      for (const m of order) {
+        g.make(m, true);
+        const v = noise > 0 ? -ab(d - 1, -Infinity, Infinity, 1) : -ab(d - 1, -Infinity, -alpha, 1);
+        g.undo();
+        scored.push({ m, v });
+        if (v > alpha) alpha = v;
+      }
+      scored.sort((a, b) => b.v - a.v);
+      order = scored.map(x => x.m);
+      let pick = scored[0];
+      if (noise > 0 && pick.v < MATE - 1000) {
+        let bestN = -Infinity;
+        for (const x of scored) { const n = x.v + (Math.random() * 2 - 1) * noise; if (n > bestN) { bestN = n; pick = x; } }
+      }
+      result = { move: pick.m, score: pick.v, best: scored[0].m, bestScore: scored[0].v, depth: d };
+      if (scored[0].v > MATE - 1000) break;
+    } catch (e) {
+      if (e !== TIMEOUT) throw e;
+      while (g.hist.length > h0) g.undo();
+      break;
+    }
+    if (Date.now() - t0 > time * 0.45) break;
+  }
+  return result;
+}
+// Le camp au trait peut-il mater en n coups au plus ?
+function mateIn(g, n) {
+  for (const m of g.moves()) {
+    g.make(m, true);
+    const ok = forcedMate(g, n - 1);
+    g.undo();
+    if (ok) return m;
+  }
+  return null;
+}
+// Après le coup de l'attaquant : est-ce mat, ou mat forcé en k coups quoi que réponde le défenseur ?
+function forcedMate(g, k) {
+  const rep = g.moves();
+  if (!rep.length) return g.inCheck();
+  if (k <= 0) return false;
+  for (const r of rep) {
+    g.make(r, true);
+    const ok = !!mateIn(g, k);
+    g.undo();
+    if (!ok) return false;
+  }
+  return true;
+}
+/*ENGINE-END*/
+
+// ---------- Contenu pédagogique ----------
+const GLYPH = { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" };
+const FR_LETTER = { K: "R", Q: "D", R: "T", B: "F", N: "C" };
+const NAME = { p: "pion", n: "cavalier", b: "fou", r: "tour", q: "dame", k: "roi" };
+const POSS = { p: "ton", n: "ton", b: "ton", r: "ta", q: "ta", k: "ton" };
+const frSan = s => s.replace(/[KQRBN]/g, ch => FR_LETTER[ch]);
+const glyph = p => `<span class="pc ${colorOf(p)}">${GLYPH[p.toLowerCase()]}︎</span>`;
+
+const LESSONS = [
+  { id: "plateau", t: "L'échiquier", d: "Les cases, les colonnes, les rangées", g: "k", steps: [
+    { k: "info", fen: EMPTY, x: "L'échiquier compte <strong>64 cases</strong>. Les colonnes vont de <strong>a</strong> à <strong>h</strong>, les rangées de <strong>1</strong> à <strong>8</strong>. Chaque case a un nom : sa colonne puis sa rangée, comme <strong>e4</strong>." },
+    { k: "info", fen: START, x: "Voici la position de départ. Pour bien poser l'échiquier, la case en bas à droite (<strong>h1</strong>) doit être claire. La dame se place sur sa couleur : dame blanche sur <strong>d1</strong>, dame noire sur <strong>d8</strong>. Les Blancs jouent toujours le premier coup." },
+    { k: "square", fen: EMPTY, targets: ["e4", "a1", "h8", "d5", "c7", "f2"], x: "À toi : clique sur la case demandée." }
+  ]},
+  { id: "tour", t: "La tour", d: "En ligne droite · vaut 5 points", g: "r", steps: [
+    { k: "info", fen: "8/8/8/8/3R4/8/8/8 w - - 0 1", show: "d4", x: "La <strong>tour</strong> se déplace en ligne droite, à l'horizontale ou à la verticale, d'autant de cases qu'elle veut. Elle ne saute jamais par-dessus une autre pièce. Les points montrent ses cases possibles." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/R7 w - - 0 1", stars: ["a8", "h8", "h1"], par: 3, x: "Ramasse toutes les étoiles avec la tour, en un minimum de coups." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/R7 w - - 0 1", stars: ["d1", "d5", "g5", "g8"], par: 4, x: "Encore un parcours. Vise le score parfait." }
+  ]},
+  { id: "fou", t: "Le fou", d: "En diagonale · vaut 3 points", g: "b", steps: [
+    { k: "info", fen: "8/8/8/8/3B4/8/8/8 w - - 0 1", show: "d4", x: "Le <strong>fou</strong> se déplace en diagonale, aussi loin qu'il veut. Il reste toujours sur la même couleur de case : chaque camp a un fou de cases claires et un fou de cases foncées." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/2B5 w - - 0 1", stars: ["e3", "g5", "d8"], par: 3, x: "Ramasse les étoiles avec le fou." }
+  ]},
+  { id: "dame", t: "La dame", d: "Tour + fou · vaut 9 points", g: "q", steps: [
+    { k: "info", fen: "8/8/8/8/3Q4/8/8/8 w - - 0 1", show: "d4", x: "La <strong>dame</strong> combine la tour et le fou : lignes droites et diagonales. C'est la pièce la plus forte. Ne la sors pas trop tôt, elle se ferait chasser." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/3Q4 w - - 0 1", stars: ["h5", "e8", "a4"], par: 3, x: "Trois étoiles, trois coups de dame." }
+  ]},
+  { id: "roi", t: "Le roi", d: "Une case à la fois · la pièce à protéger", g: "k", steps: [
+    { k: "info", fen: "8/8/8/8/3K4/8/8/8 w - - 0 1", show: "d4", x: "Le <strong>roi</strong> avance d'une seule case, dans toutes les directions. Il ne peut jamais aller sur une case attaquée. Le but de la partie : piéger le roi adverse." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/4K3 w - - 0 1", stars: ["e3", "f4", "g4"], par: 4, x: "Promène le roi jusqu'aux étoiles." }
+  ]},
+  { id: "cavalier", t: "Le cavalier", d: "En L, il saute · vaut 3 points", g: "n", steps: [
+    { k: "info", fen: "8/8/8/2PPP3/2PNP3/2PPP3/8/8 w - - 0 1", show: "d4", x: "Le <strong>cavalier</strong> bouge en <strong>L</strong> : deux cases dans une direction, puis une sur le côté. C'est la seule pièce qui saute par-dessus les autres. Ici, entouré de pions, il peut quand même sortir." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/1N6 w - - 0 1", stars: ["c3", "d5", "f6"], par: 3, x: "Saute d'étoile en étoile." },
+    { k: "stars", fen: "8/8/8/8/8/8/8/6N1 w - - 0 1", stars: ["g3", "h5", "f4"], par: 4, x: "Plus difficile : certaines étoiles sont voisines, le cavalier doit faire un détour." }
+  ]},
+  { id: "pion", t: "Le pion", d: "Avance tout droit, prend en diagonale", g: "p", steps: [
+    { k: "info", fen: "8/8/8/8/8/8/4P3/8 w - - 0 1", show: "e2", x: "Le <strong>pion</strong> avance tout droit d'une case. Lors de son premier coup, il peut avancer de deux cases. Il ne recule jamais." },
+    { k: "move", fen: "4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", accept: ["e2e4"], x: "Avance le pion de deux cases.", ok: "Bien : e2-e4, le coup d'ouverture le plus joué au monde." },
+    { k: "move", fen: "4k3/8/8/3p4/4P3/8/8/4K3 w - - 0 1", accept: ["e4d5"], x: "Le pion ne prend pas comme il avance : il capture <strong>en diagonale</strong>, d'une case vers l'avant. Prends le pion noir.", ok: "Exact : exd5." }
+  ]},
+  { id: "capture", t: "Capturer", d: "La valeur des pièces", g: "q", steps: [
+    { k: "info", fen: START, x: "Pour capturer, on pose sa pièce sur la case d'une pièce adverse, qui sort du jeu. Retiens les valeurs : <strong>pion 1</strong>, <strong>cavalier 3</strong>, <strong>fou 3</strong>, <strong>tour 5</strong>, <strong>dame 9</strong>. Le roi ne se capture jamais." },
+    { k: "move", fen: "4k3/8/8/3q4/8/8/8/3RK3 w - - 0 1", accept: ["d1d5"], x: "La dame noire n'est protégée par rien. Prends-la avec ta tour.", ok: "+9 points ! Une pièce non protégée s'appelle une pièce « en prise »." },
+    { k: "move", fen: "4k3/8/4p3/1b1p4/8/2N5/8/4K3 w - - 0 1", accept: ["c3b5"], x: "Ton cavalier peut capturer deux pièces. Une seule capture est gratuite. Laquelle ?", no: "Le pion d5 est protégé par le pion e6 : tu donnerais ton cavalier (3 points) pour un pion (1 point).", ok: "Bien vu : le fou b5 n'était pas défendu, +3 points. Avant de prendre, demande-toi toujours si l'adversaire peut reprendre." }
+  ]},
+  { id: "echec", t: "L'échec", d: "Attaquer le roi, et se défendre", g: "k", steps: [
+    { k: "info", fen: "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", x: "Quand le roi est attaqué, on dit qu'il est <strong>en échec</strong>. Il faut immédiatement parer : <strong>déplacer le roi</strong>, <strong>prendre la pièce</strong> qui attaque, ou <strong>s'interposer</strong>. Il est interdit de laisser son roi en échec." },
+    { k: "move", fen: "4k3/8/8/8/8/8/8/R5K1 w - - 0 1", goal: "check", x: "Donne échec au roi noir avec ta tour.", ok: "Échec ! Le roi noir doit maintenant bouger." },
+    { k: "move", fen: "4k3/8/8/8/8/8/4q3/3QK3 w - - 0 1", accept: ["d1e2", "e1e2"], x: "Ton roi est en échec par la dame noire. Pare en <strong>prenant</strong> l'attaquant.", ok: "Parfait, la menace a disparu et tu as gagné une dame." },
+    { k: "move", fen: "4r1k1/8/8/8/8/8/3B4/4K3 w - - 0 1", accept: ["d2e3"], x: "La tour noire met ton roi en échec. Pare en <strong>interposant</strong> ton fou.", ok: "Bien joué : le fou fait barrière." }
+  ]},
+  { id: "roque", t: "Le roque", d: "Mettre son roi à l'abri", g: "r", steps: [
+    { k: "info", fen: "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1", x: "Le <strong>roque</strong> est un coup spécial : le roi glisse de deux cases vers une tour, et la tour passe de l'autre côté du roi. Conditions : ni le roi ni la tour n'ont bougé, aucune pièce entre eux, et le roi n'est pas en échec et ne traverse pas de case attaquée." },
+    { k: "move", fen: "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1", accept: ["e1g1"], x: "Fais le <strong>petit roque</strong> : clique sur le roi, puis sur g1.", ok: "Petit roque, noté O-O. La tour h1 est arrivée en f1." },
+    { k: "move", fen: "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1", accept: ["e1c1"], x: "Maintenant le <strong>grand roque</strong>, côté dame.", ok: "Grand roque, noté O-O-O." }
+  ]},
+  { id: "passant", t: "La prise en passant", d: "La règle que tout le monde oublie", g: "p", steps: [
+    { k: "move", fen: "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 2", accept: ["e5d6"], x: "Le pion noir vient d'avancer de deux cases (d7-d5) et se retrouve à côté de ton pion e5. Tu peux le prendre <strong>comme s'il n'avait avancé que d'une case</strong>, en allant en d6. Ce droit ne dure qu'un coup !", ok: "Prise en passant réussie : exd6 e.p." }
+  ]},
+  { id: "promotion", t: "La promotion", d: "Le pion devient dame", g: "p", steps: [
+    { k: "move", fen: "4k3/1P6/8/8/8/8/8/4K3 w - - 0 1", accept: ["b7b8q"], x: "Un pion qui atteint la dernière rangée se transforme en <strong>dame</strong>, tour, fou ou cavalier. Mène ton pion en b8 et choisis la dame.", no: "On choisit presque toujours la dame : c'est la pièce la plus forte.", ok: "Nouvelle dame, et en plus c'est échec !" }
+  ]},
+  { id: "mat", t: "Échec et mat", d: "Gagner la partie, éviter le pat", g: "k", steps: [
+    { k: "info", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", x: "Si le roi est en échec et qu'<strong>aucun coup</strong> ne le sauve, c'est <strong>échec et mat</strong> : la partie est gagnée. Si un joueur n'est pas en échec mais n'a <strong>aucun coup légal</strong>, c'est <strong>pat</strong> : partie nulle." },
+    { k: "move", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", goal: "mate", x: "Fais mat en un coup. Les pions noirs enferment leur propre roi.", ok: "Mat du couloir ! Un grand classique." },
+    { k: "move", fen: "k7/8/1K6/8/8/8/8/7Q w - - 0 1", goal: "mate", x: "Fais mat avec la dame. Attention : si le roi noir n'a plus de coup sans être en échec, c'est pat.", ok: "Mat ! Le roi blanc protège les cases de fuite." }
+  ]},
+  { id: "ouverture", t: "Bien commencer", d: "Les trois principes de l'ouverture", g: "n", steps: [
+    { k: "move", fen: START, accept: ["e2e4", "d2d4"], x: "Principe n°1 : <strong>occupe le centre</strong>. Avance un pion central de deux cases.", ok: "Le centre est à toi." },
+    { k: "move", fen: "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2", accept: ["g1f3", "b1c3"], x: "Principe n°2 : <strong>développe tes pièces</strong>. Sors un cavalier vers le centre.", ok: "Les cavaliers d'abord, ils visent le centre." },
+    { k: "move", fen: "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3", accept: ["f1c4", "f1b5"], x: "Sors maintenant ton fou de cases claires sur une diagonale active.", ok: "Bien, le fou vise le côté roi adverse." },
+    { k: "move", fen: "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", accept: ["e1g1"], x: "Principe n°3 : <strong>mets ton roi à l'abri</strong>. Roque.", ok: "Ton roi est en sécurité, ta tour entre dans le jeu. Tu connais les bases : direction la section Exercices !" }
+  ]}
+];
+
+const PUZZLES = [
+  { id: "p1", t: "Le mat du couloir", th: "Mat en 1", fen: "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", goal: "mate", n: 1, line: ["a1a8"] },
+  { id: "p2", t: "Le coup du berger", th: "Mat en 1", fen: "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 2 3", goal: "mate", n: 1, line: ["f3f7"] },
+  { id: "p3", t: "Mat à l'étouffée", th: "Mat en 1", fen: "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1", goal: "mate", n: 1, line: ["g5f7"] },
+  { id: "p4", t: "L'escalier", th: "Mat en 1", fen: "1k6/7R/8/8/8/8/8/6RK w - - 0 1", goal: "mate", n: 1, line: ["g1g8"] },
+  { id: "p5", t: "Le mat arabe", th: "Mat en 1", fen: "7k/7p/5N2/8/8/8/8/6RK w - - 0 1", goal: "mate", n: 1, line: ["g1g8"] },
+  { id: "p6", t: "Roi et dame", th: "Mat en 1", fen: "k7/8/1K6/8/8/8/8/7Q w - - 0 1", goal: "mate", n: 1, line: ["h1h8"] },
+  { id: "p7", t: "La fourchette royale", th: "Gain de matériel", fen: "q3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", goal: "gain", line: ["b5c7", "e8e7", "c7a8"], x: "Un coup de cavalier attaque deux pièces à la fois." },
+  { id: "p8", t: "La fourchette de pion", th: "Gain de matériel", fen: "4k3/8/8/2n1b3/8/3P4/8/4K3 w - - 0 1", goal: "gain", line: ["d3d4", "c5e6", "d4e5"], x: "Le plus petit soldat peut attaquer deux pièces." },
+  { id: "p9", t: "L'enfilade", th: "Gain de matériel", fen: "8/1q6/8/3k4/8/8/8/4KB2 w - - 0 1", goal: "gain", line: ["f1g2", "d5c5", "g2b7"], x: "Fais échec : quand le roi s'écarte, ce qui est derrière lui tombe." },
+  { id: "p10", t: "Le clouage", th: "Gain de matériel", fen: "4k3/8/8/4q3/8/8/5KPP/R7 w - - 0 1", goal: "gain", line: ["a1e1", "e5e1", "f2e1"], x: "Une pièce placée devant son roi ne peut plus bouger librement." },
+  { id: "p11", t: "L'échelle", th: "Mat en 2", fen: "7k/8/8/8/8/8/R7/1R4K1 w - - 0 1", goal: "mate", n: 2, line: ["a2a7", "h8g8", "b1b8"] },
+  { id: "p12", t: "Le sacrifice de Philidor", th: "Mat en 2", fen: "5r1k/6pp/8/3Q2N1/2B5/8/8/6K1 w - - 0 1", goal: "mate", n: 2, line: ["d5g8", "f8g8", "g5f7"] },
+  { id: "p13", t: "Mater avec la dame", th: "Finale", fen: "8/8/8/4k3/8/8/8/3QK3 w - - 0 1", goal: "convert", x: "Roi et dame contre roi seul. Repousse le roi noir vers un bord, rapproche ton roi, puis mate. Attention au pat !" },
+  { id: "p14", t: "Mater avec la tour", th: "Finale", fen: "8/8/8/4k3/8/8/8/R3K3 w - - 0 1", goal: "convert", x: "Plus technique : la tour coupe le roi noir rangée après rangée, ton roi vient l'aider." }
+];
+
+// ---------- Sauvegarde ----------
+const STORE_KEY = "ecole-echecs-v1";
+let save = { lessons: {}, puzzles: {}, coordBest: 0, record: { w: 0, d: 0, l: 0 }, play: null, mode: "lecons" };
+try { const raw = localStorage.getItem(STORE_KEY); if (raw) save = Object.assign(save, JSON.parse(raw)); } catch (e) {}
+const persist = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(save)); } catch (e) {} };
+
+// ---------- Échiquier interactif ----------
+const $ = s => document.querySelector(s);
+const boardEl = $("#board"), wrapEl = $("#board-wrap"), arrowLayer = $("#arrow-layer"), promoEl = $("#promo"), panel = $("#panel");
+const B = {
+  game: new Chess(START), flip: false, sel: null, last: null, stars: new Set(), arrows: [], marks: new Set(),
+  coords: true, dots: true, locked: true, canMove: () => false, onMove: null, onSquare: null, flash: null, dragFrom: null
+};
+function render() {
+  const g = B.game, html = [];
+  const targets = new Map();
+  if (B.sel != null && B.dots) for (const m of g.moves(B.sel)) targets.set(m.to, m);
+  const chk = g.inCheck() ? g.king(g.turn) : -1;
+  for (let vi = 0; vi < 64; vi++) {
+    const sq = B.flip ? 63 - vi : vi, r = sq >> 3, f = sq & 7;
+    const cls = ["sq", (r + f) % 2 ? "d" : "l"];
+    if (B.last && (B.last[0] === sq || B.last[1] === sq)) cls.push("hl");
+    if (B.marks.has(sq)) cls.push("hl");
+    if (B.sel === sq) cls.push("sel");
+    if (sq === chk) cls.push("check");
+    if (B.flash && B.flash.sq === sq) cls.push(B.flash.cls);
+    let inner = "";
+    const p = g.b[sq];
+    if (p) inner += `<span class="pc ${colorOf(p)}${B.dragFrom === sq ? " ghosted" : ""}">${GLYPH[p.toLowerCase()]}︎</span>`;
+    if (B.stars.has(sq)) inner += `<span class="star">★</span>`;
+    if (targets.has(sq)) inner += p || targets.get(sq).flags === "e" ? `<span class="ring"></span>` : `<span class="dot"></span>`;
+    if (B.coords) {
+      if (vi >= 56) inner += `<span class="co f">${FILES[f]}</span>`;
+      if (vi % 8 === 0) inner += `<span class="co r">${8 - r}</span>`;
+    }
+    html.push(`<div class="${cls.join(" ")}" data-sq="${sq}" role="gridcell" aria-label="${sqName(sq)}${p ? " " + NAME[p.toLowerCase()] + (colorOf(p) === "w" ? " blanc" : " noir") : ""}"></div>`.replace("></div>", `>${inner}</div>`));
+  }
+  boardEl.innerHTML = html.join("");
+  drawArrows();
+  renderCaptured();
+}
+function center(sq) { const v = B.flip ? 63 - sq : sq; return [(v & 7) + 0.5, (v >> 3) + 0.5]; }
+function drawArrows() {
+  arrowLayer.innerHTML = B.arrows.map(([a, b]) => {
+    const [x1, y1] = center(a), [x2, y2] = center(b);
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+    const ex = x2 - (dx / len) * 0.38, ey = y2 - (dy / len) * 0.38;
+    return `<line x1="${x1}" y1="${y1}" x2="${ex}" y2="${ey}" stroke="#1d8a52" stroke-opacity="0.85" stroke-width="0.17" stroke-linecap="round" marker-end="url(#ah)"></line>`;
+  }).join("");
+}
+function renderCaptured() {
+  const top = $("#under-top"), bot = $("#under-bottom");
+  if (!B.showCaptured) { top.innerHTML = ""; bot.innerHTML = ""; return; }
+  const init = { p: 8, n: 2, b: 2, r: 2, q: 1 };
+  const cnt = { w: {}, b: {} };
+  for (const p of B.game.b) if (p) { const c = colorOf(p), t = p.toLowerCase(); cnt[c][t] = (cnt[c][t] || 0) + 1; }
+  const lost = c => "qrbnp".split("").map(t => GLYPH[t].repeat(Math.max(0, init[t] - (cnt[c][t] || 0)))).join("");
+  const mat = c => Object.entries(cnt[c]).reduce((s, [t, n]) => s + ({ p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 }[t]) * n, 0);
+  const diff = mat("w") - mat("b");
+  const line = (me) => {
+    const opp = me === "w" ? "b" : "w";
+    const d = me === "w" ? diff : -diff;
+    return `<span class="captured"><span class="pc ${opp}" style="font-size:inherit">${lost(opp)}</span>${d > 0 ? `<b>+${d}</b>` : ""}</span>`;
+  };
+  const bottomSide = B.flip ? "b" : "w";
+  const label = c => (c === "w" ? "Blancs" : "Noirs");
+  top.innerHTML = `<span>${label(bottomSide === "w" ? "b" : "w")}</span>${line(bottomSide === "w" ? "b" : "w")}`;
+  bot.innerHTML = `<span>${label(bottomSide)}</span>${line(bottomSide)}`;
+}
+function sqFromPoint(x, y) {
+  const el = document.elementFromPoint(x, y);
+  const cell = el && el.closest && el.closest(".sq");
+  return cell ? +cell.dataset.sq : null;
+}
+function isLegal(from, to) { return B.game.moves(from).some(m => m.to === to); }
+function askPromo(color) {
+  return new Promise(res => {
+    promoEl.innerHTML = `<div class="promo-box">${"qrbn".split("").map(t => `<button data-p="${t}" aria-label="${NAME[t]}"><span class="pc ${color}">${GLYPH[t]}︎</span></button>`).join("")}</div>`;
+    promoEl.hidden = false;
+    promoEl.onclick = e => { const btn = e.target.closest("button"); if (!btn) return; promoEl.hidden = true; res(btn.dataset.p); };
+  });
+}
+async function tryMove(from, to) {
+  const cands = B.game.moves(from).filter(m => m.to === to);
+  if (!cands.length) return false;
+  let m = cands[0];
+  if (cands.length > 1) {
+    B.locked = true;
+    const p = await askPromo(B.game.turn);
+    B.locked = false;
+    m = cands.find(x => x.promo.toLowerCase() === p);
+  }
+  commit(m);
+  return true;
+}
+function commit(m, silent) {
+  const san = B.game.san(m);
+  B.game.make(m);
+  B.sel = null; B.last = [m.from, m.to]; B.arrows = []; B.marks.clear();
+  render();
+  if (B.onMove && !silent) B.onMove(m, san);
+}
+// Glisser-déposer et clic
+let drag = null;
+wrapEl.addEventListener("pointerdown", e => {
+  if (e.button !== 0) return;
+  const sq = sqFromPoint(e.clientX, e.clientY);
+  if (sq == null) return;
+  if (B.onSquare) { B.onSquare(sq); return; }
+  if (B.locked) return;
+  if (B.sel != null && B.sel !== sq && isLegal(B.sel, sq)) { tryMove(B.sel, sq); return; }
+  const p = B.game.b[sq];
+  if (p && colorOf(p) === B.game.turn && B.canMove(sq)) {
+    const wasSel = B.sel === sq;
+    B.sel = sq;
+    const size = boardEl.getBoundingClientRect().width / 8;
+    const ghost = document.createElement("div");
+    ghost.className = "drag-ghost";
+    ghost.innerHTML = `<span class="pc ${colorOf(p)}" style="font-size:${size * 0.9}px">${GLYPH[p.toLowerCase()]}︎</span>`;
+    ghost.style.left = e.clientX + "px"; ghost.style.top = e.clientY + "px";
+    ghost.hidden = true;
+    document.body.appendChild(ghost);
+    drag = { from: sq, wasSel, ghost, x: e.clientX, y: e.clientY, moved: false };
+    try { wrapEl.setPointerCapture(e.pointerId); } catch (err) {}
+    render();
+  } else { B.sel = null; render(); }
+});
+wrapEl.addEventListener("pointermove", e => {
+  if (!drag) return;
+  if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6) {
+    drag.moved = true; drag.ghost.hidden = false; B.dragFrom = drag.from; render();
+  }
+  drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+});
+const endDrag = e => {
+  if (!drag) return;
+  const d = drag; drag = null;
+  d.ghost.remove();
+  B.dragFrom = null;
+  const to = e.type === "pointerup" ? sqFromPoint(e.clientX, e.clientY) : null;
+  if (d.moved && to != null && to !== d.from && isLegal(d.from, to)) { tryMove(d.from, to); return; }
+  if (!d.moved && to === d.from && d.wasSel) B.sel = null;
+  render();
+};
+wrapEl.addEventListener("pointerup", endDrag);
+wrapEl.addEventListener("pointercancel", endDrag);
+
+function resetBoard(fen, opts = {}) {
+  B.game = new Chess(fen || START);
+  B.flip = !!opts.flip; B.sel = null; B.last = null; B.stars = new Set(); B.arrows = []; B.marks = new Set();
+  B.coords = opts.coords !== false; B.dots = true; B.locked = !!opts.locked; B.canMove = opts.canMove || (() => true);
+  B.onMove = opts.onMove || null; B.onSquare = opts.onSquare || null; B.showCaptured = !!opts.captured; B.flash = null;
+  promoEl.hidden = true;
+  render();
+}
+function flashSq(sq, cls) { B.flash = { sq, cls }; render(); setTimeout(() => { if (B.flash && B.flash.sq === sq) { B.flash = null; render(); } }, 450); }
+
+// ---------- Navigation ----------
+let timers = [];
+const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+function clearTimers() { timers.forEach(clearTimeout); timers = []; if (C.iv) { clearInterval(C.iv); C.iv = null; } }
+function setMode(mode) {
+  clearTimers();
+  save.mode = mode; persist();
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.mode === mode ? "true" : "false"));
+  if (mode === "lecons") lessonList();
+  else if (mode === "exercices") puzzleList();
+  else if (mode === "jouer") playView();
+  else coordView();
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
+
+// ---------- Leçons ----------
+const L = { lesson: null, i: 0, moves: 0, done: false };
+function lessonList() {
+  L.lesson = null;
+  resetBoard(START, { locked: true });
+  const nDone = LESSONS.filter(l => save.lessons[l.id]).length;
+  const next = LESSONS.find(l => !save.lessons[l.id]);
+  panel.innerHTML = `
+    <p class="eyebrow">Parcours débutant · ${nDone}/${LESSONS.length} terminées</p>
+    <h2>Apprends les règles, une pièce après l'autre</h2>
+    <p class="lead">Chaque leçon est courte et se joue directement sur l'échiquier. Fais-les dans l'ordre : chacune s'appuie sur la précédente.</p>
+    <div class="progress">${LESSONS.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
+    ${next ? `<div class="row"><button class="btn primary" data-start="${next.id}">${nDone ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">Toutes les leçons sont terminées. Passe aux exercices ou défie l'ordinateur !</div>`}
+    <div class="list">${LESSONS.map((l, i) => `
+      <button class="item${save.lessons[l.id] ? " done" : ""}" data-start="${l.id}">
+        <span class="num">${save.lessons[l.id] ? "✓" : i + 1}</span>
+        <span><span class="ti">${l.t}</span><span class="de">${l.d}</span></span>
+        <span class="glyph" aria-hidden="true">${GLYPH[l.g]}︎</span>
+      </button>`).join("")}</div>`;
+  panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
+}
+function startLesson(id, i = 0) {
+  L.lesson = LESSONS.find(l => l.id === id); L.i = i;
+  loadStep();
+}
+function loadStep() {
+  clearTimers();
+  const les = L.lesson, st = les.steps[L.i];
+  L.moves = 0; L.done = st.k === "info"; L.targets = null;
+  const opts = { canMove: () => true, onMove: lessonMove };
+  if (st.k === "info") { opts.locked = true; }
+  if (st.k === "stars") { opts.canMove = sq => colorOf(B.game.b[sq]) === "w"; }
+  if (st.k === "square") { opts.onSquare = lessonSquare; opts.coords = false; L.targets = st.targets.slice(); L.found = 0; }
+  resetBoard(st.fen, opts);
+  if (st.k === "stars") { st.stars.forEach(s => B.stars.add(sqIdx(s))); }
+  if (st.show) { B.sel = sqIdx(st.show); }
+  render();
+  lessonPanel();
+}
+function lessonPanel(fb) {
+  const les = L.lesson, st = les.steps[L.i], last = L.i === les.steps.length - 1;
+  let extra = "";
+  if (st.k === "stars") extra = `<p class="lead">Coups joués : <b>${L.moves}</b> · objectif : ${st.par} coup${st.par > 1 ? "s" : ""}</p>`;
+  if (st.k === "square" && !L.done) extra = `<div class="target" aria-live="assertive">${L.targets[0]}</div><p class="lead">Trouvées : ${L.found}/${st.targets.length}. Les coordonnées sont cachées : retrouve-les de tête.</p>`;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between">
+      <button class="btn" id="back">← Leçons</button>
+      <span class="pill">Étape ${L.i + 1}/${les.steps.length}</span>
+    </div>
+    <div class="progress">${les.steps.map((s, i) => `<span class="${i < L.i || (i === L.i && L.done) ? "on" : ""}"></span>`).join("")}</div>
+    <p class="eyebrow">Leçon ${LESSONS.indexOf(les) + 1}</p>
+    <h2>${les.t}</h2>
+    <p class="text">${st.x}</p>
+    ${extra}
+    ${fb ? `<div class="fb ${fb.c}">${fb.t}</div>` : ""}
+    <div class="row">
+      ${L.done ? `<button class="btn primary" id="next">${last ? "Terminer la leçon" : "Continuer →"}</button>` : ""}
+      ${st.k !== "info" ? `<button class="btn" id="retry">Recommencer l'étape</button>` : ""}
+    </div>`;
+  $("#back").onclick = lessonList;
+  const nx = $("#next"); if (nx) { nx.onclick = nextStep; nx.focus({ preventScroll: true }); }
+  const rt = $("#retry"); if (rt) rt.onclick = loadStep;
+}
+function nextStep() {
+  const les = L.lesson;
+  if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
+  save.lessons[les.id] = true; persist();
+  const idx = LESSONS.indexOf(les), nxt = LESSONS[idx + 1];
+  B.locked = true;
+  panel.innerHTML = `
+    <p class="eyebrow">Leçon terminée</p>
+    <h2>Bravo, « ${les.t} » est acquis</h2>
+    <p class="lead">${LESSONS.filter(l => save.lessons[l.id]).length} leçon(s) sur ${LESSONS.length} terminée(s).</p>
+    <div class="row">
+      ${nxt ? `<button class="btn primary" id="nl">Leçon suivante : ${nxt.t}</button>` : `<button class="btn primary" id="ex">Passer aux exercices</button>`}
+      <button class="btn" id="bl">Toutes les leçons</button>
+    </div>`;
+  if (nxt) $("#nl").onclick = () => startLesson(nxt.id); else $("#ex").onclick = () => setMode("exercices");
+  $("#bl").onclick = lessonList;
+}
+function lessonMove(m) {
+  const st = L.lesson.steps[L.i], g = B.game;
+  if (st.k === "stars") {
+    g.turn = "w"; g.ep = -1;
+    L.moves++;
+    B.stars.delete(m.to);
+    render();
+    if (!B.stars.size) {
+      L.done = true; B.locked = true;
+      const rating = L.moves <= st.par ? 3 : L.moves === st.par + 1 ? 2 : 1;
+      lessonPanel({ c: rating === 3 ? "ok" : "warn", t: `${"★".repeat(rating)}${"☆".repeat(3 - rating)} &nbsp;${rating === 3 ? "Parcours parfait !" : `Réussi en ${L.moves} coups. Possible en ${st.par} : réessaie si tu veux.`}` });
+    } else lessonPanel();
+    return;
+  }
+  if (st.k === "move") {
+    const u = uci(m), status = g.status();
+    let ok = false;
+    if (st.accept && st.accept.length) ok = st.accept.some(a => u === a || (a.length === 4 && u.startsWith(a)));
+    if (st.goal === "check") ok = g.inCheck();
+    if (st.goal === "mate") ok = status === "mate";
+    if (ok) {
+      L.done = true; B.locked = true;
+      lessonPanel({ c: "ok", t: st.ok || "Bravo !" });
+    } else {
+      B.locked = true;
+      let msg = st.no || "Ce n'est pas le coup attendu. Relis la consigne et réessaie.";
+      if (status === "stalemate") msg = "Pat ! Le roi noir n'est pas en échec mais ne peut plus bouger : c'est nul. Essaie un autre coup.";
+      lessonPanel({ c: "bad", t: msg });
+      later(() => { g.undo(); B.last = null; B.locked = false; render(); }, 1100);
+    }
+  }
+}
+function lessonSquare(sq) {
+  const st = L.lesson.steps[L.i];
+  if (L.done) return;
+  if (sqName(sq) === L.targets[0]) {
+    flashSq(sq, "flash-ok");
+    L.targets.shift(); L.found++;
+    if (!L.targets.length) { L.done = true; B.coords = true; render(); lessonPanel({ c: "ok", t: "Tu sais lire l'échiquier. Pour t'entraîner encore, va dans l'onglet Coordonnées." }); }
+    else lessonPanel();
+  } else {
+    flashSq(sq, "flash-bad");
+    lessonPanel({ c: "bad", t: `Ça, c'est ${sqName(sq)}. Cherche ${st.targets[L.found]}.` });
+  }
+}
+
+// ---------- Exercices ----------
+const P = { cur: null, i: 0, userMoves: 0, errors: 0, hint: 0, solved: false };
+function puzzleList() {
+  P.cur = null;
+  resetBoard(START, { locked: true });
+  const nDone = PUZZLES.filter(p => save.puzzles[p.id]).length;
+  const groups = [...new Set(PUZZLES.map(p => p.th))];
+  panel.innerHTML = `
+    <p class="eyebrow">Tactique · ${nDone}/${PUZZLES.length} résolus</p>
+    <h2>Les motifs que tout joueur doit connaître</h2>
+    <p class="lead">Mats, fourchettes, clouages et finales de base. Chaque exercice t'apprend un motif que tu reverras dans tes parties.</p>
+    <div class="progress">${PUZZLES.map(p => `<span class="${save.puzzles[p.id] ? "on" : ""}"></span>`).join("")}</div>
+    ${groups.map(gr => `<p class="group-title">${gr}</p><div class="list">${PUZZLES.filter(p => p.th === gr).map(p => `
+      <button class="item${save.puzzles[p.id] ? " done" : ""}" data-p="${p.id}">
+        <span class="num">${save.puzzles[p.id] ? "✓" : PUZZLES.indexOf(p) + 1}</span>
+        <span><span class="ti">${p.t}</span><span class="de">${goalText(p)}</span></span>
+        <span class="pill${save.puzzles[p.id] ? " done" : ""}">${save.puzzles[p.id] ? "Résolu" : "À faire"}</span>
+      </button>`).join("")}</div>`).join("")}`;
+  panel.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => startPuzzle(b.dataset.p)));
+}
+function goalText(p) {
+  const side = p.fen.split(" ")[1] === "w" ? "Les Blancs" : "Les Noirs";
+  if (p.goal === "mate") return `${side} jouent et font mat en ${p.n}.`;
+  if (p.goal === "gain") return `${side} jouent et gagnent du matériel.`;
+  return `${side} jouent et matent le roi seul.`;
+}
+function startPuzzle(id) {
+  clearTimers();
+  P.cur = PUZZLES.find(p => p.id === id); P.i = 0; P.userMoves = 0; P.errors = 0; P.hint = 0; P.solved = false; P.fb = null;
+  const color = P.cur.fen.split(" ")[1];
+  resetBoard(P.cur.fen, { flip: color === "b", canMove: sq => colorOf(B.game.b[sq]) === color, onMove: puzzleMove, captured: P.cur.goal !== "mate" });
+  puzzlePanel();
+}
+function puzzlePanel() {
+  const p = P.cur, idx = PUZZLES.indexOf(p), nxt = PUZZLES[idx + 1];
+  const fb = P.fb;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between">
+      <button class="btn" id="back">← Exercices</button>
+      <span class="pill">${p.th}</span>
+    </div>
+    <p class="eyebrow">Exercice ${idx + 1}/${PUZZLES.length}</p>
+    <h2>${p.t}</h2>
+    <p class="text"><strong>${goalText(p)}</strong>${p.x ? " " + p.x : ""}</p>
+    ${p.goal === "convert" ? `<p class="lead">Coups joués : <b>${P.userMoves}</b></p>` : ""}
+    ${fb ? `<div class="fb ${fb.c}">${fb.t}</div>` : ""}
+    <div class="row">
+      ${P.solved ? (nxt ? `<button class="btn primary" id="next">Exercice suivant →</button>` : `<button class="btn primary" id="list">Retour à la liste</button>`) : `<button class="btn" id="hint">${P.hint ? "Montrer le coup" : "Indice"}</button>`}
+      <button class="btn" id="retry">Recommencer</button>
+    </div>`;
+  $("#back").onclick = puzzleList;
+  $("#retry").onclick = () => startPuzzle(p.id);
+  const h = $("#hint"); if (h) h.onclick = puzzleHint;
+  const n = $("#next"); if (n) { n.onclick = () => startPuzzle(nxt.id); n.focus({ preventScroll: true }); }
+  const l = $("#list"); if (l) l.onclick = puzzleList;
+}
+function puzzleBestMove() {
+  const p = P.cur, g = B.game;
+  if (p.goal === "mate") return mateIn(g, p.n - P.userMoves);
+  if (p.goal === "gain") return g.find(p.line[P.i]);
+  const r = think(g, { depth: 4, time: 700 });
+  return r && r.move;
+}
+function puzzleHint() {
+  if (B.locked) return;
+  const m = puzzleBestMove();
+  if (!m) return;
+  P.hint++;
+  if (P.hint === 1) { B.marks = new Set([m.from]); P.fb = { c: "info", t: `Indice : la pièce à jouer est ${POSS[m.piece.toLowerCase()]} ${NAME[m.piece.toLowerCase()]} en ${sqName(m.from)}.` }; }
+  else { B.marks = new Set(); B.arrows = [[m.from, m.to]]; P.fb = { c: "info", t: "Voici le coup. Joue-le pour continuer." }; }
+  render(); puzzlePanel();
+}
+function puzzleSolved() {
+  P.solved = true; B.locked = true;
+  save.puzzles[P.cur.id] = true; persist();
+  const clean = !P.errors && !P.hint;
+  P.fb = { c: "ok", t: clean ? "Résolu du premier coup, bravo !" : "Résolu ! Tu retiendras le motif." };
+  puzzlePanel();
+}
+function puzzleMove(m) {
+  const p = P.cur, g = B.game, u = uci(m);
+  if (p.goal === "convert") return convertMove();
+  let ok;
+  if (p.goal === "mate") ok = g.status() === "mate" || forcedMate(g, p.n - P.userMoves - 1);
+  else ok = u === p.line[P.i] || (p.line[P.i].length === 4 && u.startsWith(p.line[P.i]));
+  if (!ok) {
+    P.errors++; B.locked = true;
+    P.fb = { c: "bad", t: "Pas tout à fait. Cherche les échecs, les captures et les menaces, puis réessaie." };
+    puzzlePanel();
+    later(() => { g.undo(); B.last = null; B.locked = false; render(); }, 900);
+    return;
+  }
+  P.userMoves++; P.i++;
+  if (g.status() === "mate" || (p.goal === "gain" && P.i >= p.line.length)) return puzzleSolved();
+  B.locked = true;
+  P.fb = { c: "ok", t: "Bon coup ! Attends la réponse..." };
+  puzzlePanel();
+  later(() => {
+    let r = p.goal === "gain" ? g.find(p.line[P.i]) : null;
+    if (!r) { const t = think(g, { depth: 3, time: 600 }); r = t && t.move; }
+    P.i++;
+    commit(r, true);
+    B.locked = false;
+    P.fb = { c: "info", t: "À toi. Termine le travail." };
+    puzzlePanel();
+  }, 550);
+}
+function convertMove() {
+  const g = B.game;
+  P.userMoves++;
+  const st = g.status();
+  if (st === "mate") { P.fb = null; puzzleSolved(); P.fb = { c: "ok", t: `Mat en ${P.userMoves} coups. Technique maîtrisée !` }; puzzlePanel(); return; }
+  if (st) {
+    B.locked = true;
+    P.fb = { c: "bad", t: st === "stalemate" ? "Pat ! Le roi noir n'a plus de coup mais n'est pas en échec : nulle. Laisse-lui toujours une case." : "La pièce a été perdue, c'est nul. Recommence." };
+    puzzlePanel(); return;
+  }
+  B.locked = true; P.fb = null; puzzlePanel();
+  later(() => {
+    const t = think(g, { depth: 3, time: 500 });
+    commit(t.move, true);
+    const s2 = g.status();
+    if (s2) { P.fb = { c: "bad", t: "Le roi noir a pris ta pièce : nulle. Garde ta pièce protégée et recommence." }; B.locked = true; puzzlePanel(); return; }
+    B.locked = false;
+  }, 380);
+}
+
+// ---------- Jouer contre l'ordinateur ----------
+const LEVELS = [
+  { name: "Débutant", cfg: { depth: 1, noise: 220, random: 0.2, time: 400 } },
+  { name: "Facile", cfg: { depth: 2, noise: 70, time: 700 } },
+  { name: "Moyen", cfg: { depth: 3, noise: 15, time: 1100 } },
+  { name: "Fort", cfg: { depth: 6, noise: 0, time: 1800 } }
+];
+const PL = Object.assign({ color: "w", level: 1, coach: true, log: [], over: null, coachMsg: null, bal: 0 }, save.play || {});
+let thinking = false;
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, log: PL.log, over: PL.over }; persist(); }
+function rebuildGame() {
+  const g = new Chess(START);
+  for (const e of PL.log) { const m = g.find(e.u); if (!m) break; g.make(m); }
+  B.game = g;
+  const lm = g.hist[g.hist.length - 1];
+  B.last = lm ? [lm.m.from, lm.m.to] : null;
+}
+function playView() {
+  resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true });
+  rebuildGame();
+  B.locked = !!PL.over;
+  render();
+  playPanel();
+  if (!PL.over && B.game.turn !== PL.color) aiMove();
+}
+function newGame(color) {
+  PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
+  PL.log = []; PL.over = null; PL.coachMsg = null; PL.bal = 0;
+  savePlay();
+  playView();
+}
+function playPanel() {
+  const g = B.game, lvl = LEVELS[PL.level];
+  let status;
+  if (PL.over) status = { c: PL.over.c, t: PL.over.t };
+  else if (thinking) status = { c: "info", t: `L'ordinateur (${lvl.name}) réfléchit...` };
+  else status = { c: "info", t: g.turn === PL.color ? (g.inCheck() ? "<b>Échec !</b> Protège ton roi." : "À toi de jouer.") : "Au tour de l'ordinateur." };
+  const rows = [];
+  for (let i = 0; i < PL.log.length; i += 2) {
+    const cur = j => (j === PL.log.length - 1 ? ' class="cur"' : "");
+    rows.push(`<span class="n">${i / 2 + 1}.</span><span${cur(i)}>${frSan(PL.log[i].san)}</span><span${cur(i + 1)}>${PL.log[i + 1] ? frSan(PL.log[i + 1].san) : ""}</span>`);
+  }
+  const balPct = Math.max(4, Math.min(96, 50 + 50 * Math.tanh(PL.bal / 600)));
+  const rec = save.record;
+  panel.innerHTML = `
+    <p class="eyebrow">Partie contre l'ordinateur</p>
+    <div class="settings">
+      <div class="field"><span>Niveau</span><div class="seg" role="group" aria-label="Niveau">${LEVELS.map((l, i) => `<button aria-pressed="${i === PL.level}" data-lvl="${i}">${l.name}</button>`).join("")}</div></div>
+      <div class="field"><span>Nouvelle partie avec</span><div class="row">
+        <button class="btn" data-new="w">Les Blancs</button><button class="btn" data-new="b">Les Noirs</button><button class="btn" data-new="r">Au hasard</button>
+      </div></div>
+    </div>
+    <div class="fb ${status.c}">${status.t}</div>
+    ${PL.coach && PL.coachMsg ? `<div class="fb ${PL.coachMsg.c}">${PL.coachMsg.t}${PL.coachMsg.s ? `<small>${PL.coachMsg.s}</small>` : ""}</div>` : ""}
+    <div class="row">
+      <button class="btn" id="hint" ${PL.over || thinking || g.turn !== PL.color ? "disabled" : ""}>Indice</button>
+      <button class="btn" id="undo" ${thinking || !PL.log.length ? "disabled" : ""}>Reprendre le coup</button>
+      <button class="btn" id="flip">Retourner</button>
+      ${PL.over ? "" : `<button class="btn" id="resign" ${!PL.log.length ? "disabled" : ""}>Abandonner</button>`}
+    </div>
+    <label class="switch"><input type="checkbox" id="coach" ${PL.coach ? "checked" : ""}> Coach : commente chacun de mes coups</label>
+    ${PL.coach ? `<div class="balance"><div class="balance-bar" title="Balance de la partie"><i style="width:${balPct}%"></i></div><small>${balanceText()}</small></div>` : ""}
+    <div class="moves" id="moves">${rows.join("")}</div>
+    <div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>`;
+  const mv = $("#moves"); mv.scrollTop = mv.scrollHeight;
+  panel.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { PL.level = +b.dataset.lvl; savePlay(); playPanel(); });
+  panel.querySelectorAll("[data-new]").forEach(b => b.onclick = () => { if (!thinking) newGame(b.dataset.new); });
+  $("#hint").onclick = playHint;
+  $("#undo").onclick = playUndo;
+  $("#flip").onclick = () => { B.flip = !B.flip; render(); };
+  const rs = $("#resign"); if (rs) rs.onclick = () => endGame("l", "Tu as abandonné. La prochaine sera la bonne !");
+  $("#coach").onchange = e => { PL.coach = e.target.checked; savePlay(); playPanel(); };
+}
+function balanceText() {
+  const v = PL.bal;
+  if (Math.abs(v) > MATE - 1000) return v > 0 ? "Les Blancs ont un mat forcé." : "Les Noirs ont un mat forcé.";
+  const pawns = (Math.abs(v) / 100).toFixed(1).replace(".", ",");
+  if (Math.abs(v) < 40) return "Position équilibrée.";
+  return `Avantage ${v > 0 ? "Blancs" : "Noirs"} : environ ${pawns} pion${Math.abs(v) >= 150 ? "s" : ""}.`;
+}
+function playHint() {
+  if (thinking || PL.over) return;
+  const r = think(B.game, { depth: 4, time: 900 });
+  if (!r) return;
+  B.arrows = [[r.best.from, r.best.to]];
+  PL.coachMsg = { c: "info", t: `Indice : ${frSan(B.game.san(r.best))}`, s: "La flèche montre le coup conseillé." };
+  render(); playPanel();
+}
+function playUndo() {
+  if (thinking || !PL.log.length) return;
+  PL.log.pop();
+  while (PL.log.length && (PL.log.length % 2 === 0 ? "w" : "b") !== PL.color) PL.log.pop();
+  PL.over = null; PL.coachMsg = null;
+  savePlay();
+  rebuildGame(); B.locked = false; B.sel = null; B.arrows = [];
+  render(); playPanel();
+  if (B.game.turn !== PL.color) aiMove();
+}
+function endGame(res, text) {
+  PL.over = { r: res, c: res === "w" ? "ok" : res === "d" ? "warn" : "bad", t: text };
+  save.record[res]++;
+  B.locked = true;
+  savePlay(); playPanel();
+}
+function checkOver() {
+  const g = B.game, st = g.status();
+  if (!st) return false;
+  if (st === "mate") {
+    const userWon = g.turn !== PL.color;
+    endGame(userWon ? "w" : "l", userWon ? "Échec et mat ! Tu as gagné." : "Échec et mat. L'ordinateur gagne cette fois-ci.");
+  } else {
+    const why = { stalemate: "Pat", fifty: "Règle des 50 coups", insufficient: "Matériel insuffisant pour mater", repetition: "Triple répétition" }[st];
+    endGame("d", `Partie nulle : ${why}.`);
+  }
+  return true;
+}
+function coachReview(m, san) {
+  const g = B.game, me = PL.color, sign = me === "w" ? 1 : -1;
+  g.undo();
+  const before = think(g, { depth: 2, time: 500 });
+  g.make(m);
+  let after;
+  const replies = g.moves();
+  if (!replies.length) after = g.inCheck() ? MATE : 0;
+  else { const r = think(g, { depth: 1, time: 300 }); after = -r.score; }
+  PL.bal = sign * after;
+  const best = before.best, bestSan = frSan((() => { g.undo(); const s = g.san(best); g.make(m); return s; })());
+  const loss = before.bestScore - after;
+  const isBest = uci(best) === uci(m);
+  if (before.bestScore > MATE - 1000 && after < MATE - 1000) return { c: "warn", t: "Tu avais un mat !", s: `${bestSan} matait directement.` };
+  if (isBest || loss < 40) return { c: "ok", t: isBest ? `${frSan(san)} : excellent coup.` : `${frSan(san)} : bon coup.` };
+  // Pièces laissées en prise
+  let hang = null;
+  for (const r of replies) {
+    if (!r.captured || colorOf(r.captured) !== me) continue;
+    const tv = VAL[r.captured.toLowerCase()], av = VAL[r.piece.toLowerCase()];
+    if ((!g.attacked(r.to, me) || av < tv) && (!hang || tv > hang.v)) hang = { v: tv, t: r.captured.toLowerCase(), sq: r.to };
+  }
+  const why = hang ? `Attention : ${POSS[hang.t]} ${NAME[hang.t]} en ${sqName(hang.sq)} peut être pris${hang.t === "q" || hang.t === "r" ? "e" : ""}. ` : "";
+  if (loss >= 250) return { c: "bad", t: `${frSan(san)} : gaffe.`, s: `${why}Il fallait jouer ${bestSan}.` };
+  if (loss >= 90) return { c: "warn", t: `${frSan(san)} : imprécision.`, s: `${why}Meilleur : ${bestSan}.` };
+  return { c: "ok", t: `${frSan(san)} : coup correct.`, s: `${bestSan} était un peu plus précis.` };
+}
+function playMove(m, san) {
+  PL.log.push({ u: uci(m), san });
+  PL.coachMsg = null;
+  if (PL.coach) { try { PL.coachMsg = coachReview(m, san); } catch (e) { PL.coachMsg = null; } }
+  savePlay();
+  if (checkOver()) return;
+  aiMove();
+}
+function aiMove() {
+  thinking = true; B.locked = true; playPanel();
+  later(() => {
+    const g = B.game;
+    const r = think(g, LEVELS[PL.level].cfg);
+    thinking = false;
+    if (!r) { checkOver(); return; }
+    const san = g.san(r.move);
+    PL.log.push({ u: uci(r.move), san });
+    g.make(r.move);
+    B.last = [r.move.from, r.move.to]; B.sel = null;
+    B.locked = false;
+    savePlay();
+    render();
+    if (!checkOver()) playPanel();
+  }, 350);
+}
+
+// ---------- Coordonnées ----------
+const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false };
+const DURATION = 30000;
+function coordView() {
+  C.running = false;
+  resetBoard(EMPTY, { flip: C.side === "b", coords: C.coords, onSquare: coordClick });
+  coordPanel();
+}
+function newTarget() { let t; do { t = (Math.random() * 64) | 0; } while (sqName(t) === C.target); C.target = sqName(t); }
+function coordPanel(done) {
+  $("#under-top").innerHTML = C.running ? `<span>Clique sur</span><span class="target-mini" id="ctarget-mini">${C.target}</span>` : "";
+  panel.innerHTML = `
+    <p class="eyebrow">Entraînement · 30 secondes</p>
+    <h2>Lis l'échiquier sans réfléchir</h2>
+    <p class="lead">Une case s'affiche, clique-la le plus vite possible. Connaître les coordonnées par cœur aide à lire les livres, les vidéos et à noter tes parties.</p>
+    ${C.running ? `<div class="target" id="ctarget">${C.target}</div><div class="timer"><i id="ctimer" style="width:100%"></i></div>` : ""}
+    <div class="scorebox"><div><b id="cscore">${C.score}</b><span>Score</span></div><div><b>${C.miss}</b><span>Erreurs</span></div><div><b>${save.coordBest}</b><span>Record</span></div></div>
+    ${done ? `<div class="fb ${done.c}">${done.t}</div>` : ""}
+    ${C.running ? "" : `
+      <div class="settings">
+        <div class="field"><span>Vu depuis</span><div class="seg" role="group"><button aria-pressed="${C.side === "w"}" data-side="w">Les Blancs</button><button aria-pressed="${C.side === "b"}" data-side="b">Les Noirs</button></div></div>
+        <div class="field"><span>Aide</span><label class="switch"><input type="checkbox" id="ccoords" ${C.coords ? "checked" : ""}> Afficher les coordonnées</label></div>
+      </div>
+      <div class="row"><button class="btn primary" id="cstart">${done ? "Rejouer" : "Démarrer"}</button></div>`}`;
+  panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { C.side = b.dataset.side; B.flip = C.side === "b"; render(); coordPanel(); });
+  const cc = $("#ccoords"); if (cc) cc.onchange = e => { C.coords = e.target.checked; B.coords = C.coords; render(); };
+  const cs = $("#cstart"); if (cs) cs.onclick = coordStart;
+}
+function coordStart() {
+  C.running = true; C.score = 0; C.miss = 0; C.target = null; newTarget();
+  C.end = Date.now() + DURATION;
+  coordPanel();
+  C.iv = setInterval(() => {
+    const left = C.end - Date.now();
+    const bar = $("#ctimer"); if (bar) bar.style.width = Math.max(0, left / DURATION * 100) + "%";
+    if (left <= 0) {
+      clearInterval(C.iv); C.iv = null; C.running = false;
+      const rec = C.score > save.coordBest;
+      if (rec) { save.coordBest = C.score; persist(); }
+      coordPanel({ c: rec ? "ok" : "info", t: rec ? `Nouveau record : ${C.score} cases !` : `${C.score} cases trouvées. Ton record : ${save.coordBest}.` });
+    }
+  }, 100);
+}
+function coordClick(sq) {
+  if (!C.running) return;
+  if (sqName(sq) === C.target) { C.score++; flashSq(sq, "flash-ok"); newTarget(); }
+  else { C.miss++; flashSq(sq, "flash-bad"); }
+  const t = $("#ctarget"); if (t) t.textContent = C.target;
+  const tm = $("#ctarget-mini"); if (tm) tm.textContent = C.target;
+  const s = $("#cscore"); if (s) s.textContent = C.score;
+  const misses = panel.querySelectorAll(".scorebox b")[1]; if (misses) misses.textContent = C.miss;
+}
+
+setMode(["lecons", "exercices", "jouer", "coord"].includes(save.mode) ? save.mode : "lecons");
+</script>
+<!--ARTIFACT-END-->
+</html>

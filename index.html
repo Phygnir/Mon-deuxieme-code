@@ -1,0 +1,1117 @@
+<title>Taupe PSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<style>
+/* Layout : cahier Seyès. Rail d'intercalaires à gauche, page réglée avec marge rouge à droite ; les fiches sont des bristols. En sombre, la page devient un tableau noir. */
+:root{
+  --paper:#eef0f7; --sheet:#fbfcfe; --card:#ffffff;
+  --ink:#17215a; --ink-2:#525a86; --ink-3:#8a90b3;
+  --line:#e6e9f5; --line-strong:#cfd4ee; --margin:#e5737b;
+  --mark:#f8e45c; --pen:#c4313b;
+  --maths:#2456d3; --phys:#c0306a; --chim:#0b8466; --si:#b25a07; --info:#6d3bc6; --autre:#5b6488;
+  --good:#1d8a4b; --warn:#b26f10; --bad:#c4313b;
+  --shadow:0 1px 0 rgba(23,33,90,.05),0 14px 30px -18px rgba(23,33,90,.45);
+  --f-display:"STIX Two Text","Times New Roman",Georgia,serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#131a17; --sheet:#1a231f; --card:#212c27;
+  --ink:#eceee6; --ink-2:#aab4a9; --ink-3:#76827a;
+  --line:rgba(236,238,230,.04); --line-strong:rgba(236,238,230,.09); --margin:rgba(255,128,120,.38);
+  --mark:rgba(236,214,84,.34); --pen:#ff9a8c;
+  --maths:#86a7ff; --phys:#ff86b0; --chim:#52d3aa; --si:#f2a755; --info:#b89bff; --autre:#a9b1cf;
+  --good:#5fd28d; --warn:#f0b65a; --bad:#ff8a80;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 18px 34px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#131a17; --sheet:#1a231f; --card:#212c27;
+  --ink:#eceee6; --ink-2:#aab4a9; --ink-3:#76827a;
+  --line:rgba(236,238,230,.04); --line-strong:rgba(236,238,230,.09); --margin:rgba(255,128,120,.38);
+  --mark:rgba(236,214,84,.34); --pen:#ff9a8c;
+  --maths:#86a7ff; --phys:#ff86b0; --chim:#52d3aa; --si:#f2a755; --info:#b89bff; --autre:#a9b1cf;
+  --good:#5fd28d; --warn:#f0b65a; --bad:#ff8a80;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 18px 34px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.005em}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--maths);outline-offset:2px;border-radius:6px}
+.muted{color:var(--ink-2)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.hl{background:linear-gradient(176deg,transparent 52%,var(--mark) 52%,var(--mark) 90%,transparent 90%);padding-inline:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.pen{font-family:var(--f-hand);color:var(--pen);font-size:26px;line-height:1.1;font-weight:600}
+
+/* ---------- Structure ---------- */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:30px;padding-block:28px 22px;padding-left:18px}
+.brand{display:flex;flex-direction:column;gap:2px;padding-right:18px}
+.brand b{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:38px;line-height:1;letter-spacing:-.02em}
+.brand b i{font-style:normal;color:var(--pen)}
+.brand span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.tabs{display:flex;flex-direction:column;gap:4px}
+.tab{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px 0 0 12px;text-decoration:none;color:var(--ink-2);font-weight:600;position:relative;transition:background .15s,color .15s}
+.tab svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tab:hover{color:var(--ink);background:color-mix(in srgb,var(--sheet) 55%,transparent)}
+.tab[aria-current="page"]{background:var(--sheet);color:var(--ink);box-shadow:-1px 0 0 var(--line-strong),0 -1px 0 var(--line-strong),0 1px 0 var(--line-strong)}
+.tab[aria-current="page"]::before{content:"";position:absolute;left:-18px;top:10px;bottom:10px;width:5px;border-radius:0 4px 4px 0;background:var(--tc,var(--ink))}
+.tab .badge{margin-left:auto;font-family:var(--f-mono);font-size:11px;background:var(--ink);color:var(--sheet);padding:1px 7px;border-radius:999px}
+.rail-foot{margin-top:auto;padding-right:18px;font-size:12px;color:var(--ink-3)}
+.rail-foot .pen{font-size:20px;display:block;margin-bottom:4px}
+
+main{position:relative;min-width:0;background-color:var(--sheet);
+  background-image:linear-gradient(to bottom,var(--line-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px);
+  background-size:100% 32px,100% 8px,32px 100%;
+  box-shadow:-1px 0 0 var(--line-strong);
+  padding-block:44px 96px;padding-left:96px;padding-right:clamp(16px,4vw,56px)}
+main::before{content:"";position:absolute;top:0;bottom:0;left:56px;width:2px;background:var(--margin)}
+.view{max-width:1040px;display:flex;flex-direction:column;gap:36px}
+.view[hidden]{display:none!important}
+.mbrand{display:none}
+.head{display:flex;flex-direction:column;gap:6px}
+.head h1{font-size:34px;line-height:1.1}
+.head p{color:var(--ink-2);max-width:62ch}
+
+/* ---------- Controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);border-radius:999px;padding:10px 20px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.ghost{background:var(--card);color:var(--ink);border-color:var(--line-strong)}
+.btn.small{padding:6px 14px;font-size:13px}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--card);border-radius:999px;padding:6px 14px 6px 10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink))}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:var(--c,var(--ink));background:color-mix(in srgb,var(--c,var(--ink)) 13%,var(--card))}
+.chip .n{font-family:var(--f-mono);font-weight:500;font-size:11px;color:var(--ink-3)}
+.panel{background:var(--card);border:1px solid var(--line-strong);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel h2{font-size:21px}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+label.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.input{width:100%;border:1px solid var(--line-strong);background:var(--sheet);border-radius:10px;padding:9px 12px;font-weight:400;color:var(--ink)}
+textarea.input{resize:vertical;min-height:84px;font-family:var(--f-mono);font-size:13px;line-height:1.5}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.tag::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--c)}
+
+/* ---------- Accueil ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}
+.hero h1{font-style:italic;font-weight:500;font-size:clamp(68px,11vw,136px);line-height:.92;letter-spacing:-.03em;margin-top:10px}
+.hero .sub{margin-top:14px;font-size:17px;max-width:52ch}
+.hero .pen{max-width:15ch;transform:rotate(-3deg);text-align:right;padding-bottom:18px}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid var(--ink);border-bottom:1px solid var(--line-strong)}
+.stat{padding:16px 18px 18px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line-strong)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat b{font-family:var(--f-display);font-size:40px;font-weight:500;line-height:1.05;font-variant-numeric:tabular-nums lining-nums}
+.stat b small{font-size:18px;color:var(--ink-2);font-weight:500}
+.stat span{font-size:13px;color:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px}
+.subj-list{display:flex;flex-direction:column;gap:14px}
+.subj-row{display:grid;grid-template-columns:118px minmax(0,1fr) 52px;gap:12px;align-items:center}
+.subj-row .nm{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.subj-row .nm::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--c)}
+.bars{display:flex;flex-direction:column;gap:5px}
+.bar{height:8px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,transparent);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:inherit;background:var(--c);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.prog{height:4px}
+.bar.prog>i{background:repeating-linear-gradient(-45deg,var(--c) 0 3px,color-mix(in srgb,var(--c) 45%,transparent) 3px 6px)}
+.subj-row .pct{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink-2)}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--ink-2);flex-wrap:wrap}
+.legend i{display:inline-block;width:18px;height:6px;border-radius:9px;background:var(--ink-2);vertical-align:middle;margin-right:6px}
+.legend i.h{height:4px;background:repeating-linear-gradient(-45deg,var(--ink-2) 0 3px,transparent 3px 6px)}
+.heat-wrap{overflow-x:auto;padding-bottom:4px}
+.heat{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:4px;width:max-content}
+.heat i{border-radius:3px;background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.heat i[data-l="1"]{background:color-mix(in srgb,var(--maths) 30%,transparent)}
+.heat i[data-l="2"]{background:color-mix(in srgb,var(--maths) 55%,transparent)}
+.heat i[data-l="3"]{background:color-mix(in srgb,var(--maths) 80%,transparent)}
+.heat i[data-l="4"]{background:var(--ink)}
+.heat i.today{outline:1.5px solid var(--pen);outline-offset:1px}
+.heat i.future{background:transparent}
+.heat-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--ink-2);flex-wrap:wrap}
+.heat-scale{display:flex;align-items:center;gap:4px}
+.heat-scale i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* ---------- Bristol ---------- */
+.bristol{--rule:color-mix(in srgb,var(--maths) 16%,transparent);position:relative;background-color:var(--card);
+  background-image:linear-gradient(var(--pen),var(--pen)),repeating-linear-gradient(to bottom,transparent 0 31px,var(--rule) 31px 32px);
+  background-size:100% 2px,100% 100%;background-position:0 58px,0 59px;background-repeat:no-repeat,no-repeat;
+  border-radius:6px;box-shadow:var(--shadow);border:1px solid var(--line-strong)}
+.bristol-head{height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-inline:26px}
+.bristol-head .chap{font-size:13px;color:var(--ink-2);font-style:italic;font-family:var(--f-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.bristol-body{padding:22px 26px 26px;font-size:19px;line-height:32px;font-family:var(--f-display);overflow-wrap:anywhere}
+.bristol-body code{font-family:var(--f-mono);font-size:.82em;background:color-mix(in srgb,var(--info) 12%,transparent);padding:1px 5px;border-radius:4px}
+.bristol-body mjx-container[display="true"]{margin:.4em 0!important}
+.bristol-body mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+
+.stage{display:flex;flex-direction:column;gap:22px;align-items:stretch;max-width:760px}
+.counters{display:flex;gap:18px;font-size:13px;color:var(--ink-2);flex-wrap:wrap;align-items:center}
+.counters b{font-family:var(--f-mono);font-weight:500;color:var(--ink)}
+.counters .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:1px}
+.flip{perspective:1600px;cursor:pointer;outline:none}
+.flip:focus-visible .card3d{outline:2px solid var(--maths);outline-offset:6px;border-radius:8px}
+.card3d{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1)}
+.card3d>.bristol{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:300px;display:flex;flex-direction:column}
+.card3d>.back{transform:rotateY(180deg)}
+.flip.on .card3d{transform:rotateY(180deg)}
+.bristol .hint{margin-top:auto;padding:0 26px 18px;font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bristol .askq{font-size:15px;line-height:24px;color:var(--ink-2);padding:18px 26px 0;font-family:var(--f-display);font-style:italic}
+.bristol .ans{padding-top:8px}
+kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--sheet);color:var(--ink-2)}
+.grades{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.grade{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;border:1px solid var(--line-strong);border-bottom:3px solid var(--gc);background:var(--card);border-radius:12px;padding:10px 14px 11px;cursor:pointer;transition:transform .12s,background .12s}
+.grade:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--gc) 9%,var(--card))}
+.grade b{font-size:15px}
+.grade small{font-family:var(--f-mono);font-size:12px;color:var(--ink-2)}
+.grade kbd{margin-bottom:4px}
+.grades[aria-disabled="true"]{opacity:.35;pointer-events:none}
+.done{padding:36px 30px;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.done h2{font-size:30px;font-style:italic}
+.tally{display:flex;gap:22px;flex-wrap:wrap}
+.tally div{display:flex;flex-direction:column}
+.tally b{font-family:var(--f-display);font-size:30px;font-weight:500;line-height:1}
+.tally span{font-size:12px;color:var(--ink-2)}
+.custom-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.custom-grid .full{grid-column:1/-1}
+.mine{display:flex;flex-direction:column}
+.mine li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line-strong)}
+.mine ul{list-style:none;margin:0;padding:0}
+.mine .q{font-family:var(--f-display);font-size:16px;min-width:0;overflow-wrap:anywhere}
+.linkbtn{background:none;border:0;color:var(--bad);font-size:13px;font-weight:600;cursor:pointer;padding:4px 6px}
+
+/* ---------- Programme ---------- */
+.prog-top{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ptab{display:flex;flex-direction:column;gap:8px;align-items:flex-start;border:1px solid var(--line-strong);background:var(--card);border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;border-top:4px solid var(--c)}
+.ptab[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 11%,var(--card));border-color:var(--c)}
+.ptab b{font-size:14px}
+.ptab .bar{width:100%;height:5px}
+.ptab small{font-family:var(--f-mono);font-size:12px;color:var(--ink-2)}
+.chapters{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.chapters li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:14px;align-items:center;min-height:56px;padding-block:8px;border-bottom:1px solid var(--line-strong)}
+.chapters .num{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.chapters .t{font-family:var(--f-display);font-size:18px;line-height:1.3}
+.chapters .t small{display:block;font-family:var(--f-body);font-size:12px;color:var(--ink-2);margin-top:2px}
+.lvl{display:flex;gap:5px;align-items:center}
+.lvl button{width:30px;height:22px;border-radius:6px;border:1px solid var(--line-strong);background:var(--sheet);cursor:pointer;padding:0}
+.lvl button.f{background:var(--c);border-color:var(--c)}
+.lvl button:hover{border-color:var(--c)}
+.lvl-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+
+/* ---------- Chrono ---------- */
+.chrono{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:40px;align-items:center}
+.dial{position:relative;width:min(100%,420px);aspect-ratio:1;justify-self:center;max-width:100%}
+.dial svg{width:100%;height:100%;display:block}
+.dial .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.dial .time{font-family:var(--f-mono);font-size:clamp(44px,9vw,72px);font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.dial .lbl{font-family:var(--f-display);font-style:italic;font-size:18px;color:var(--ink-2)}
+.ring-bg{stroke:color-mix(in srgb,var(--ink) 9%,transparent)}
+.ring{stroke:var(--pen);transition:stroke-dashoffset .3s linear}
+.tick{stroke:var(--ink-3)}
+.tick.major{stroke:var(--ink)}
+.presets{display:flex;flex-direction:column;gap:8px}
+.preset{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;border:1px solid var(--line-strong);background:var(--card);border-radius:12px;padding:12px 16px;cursor:pointer;text-align:left}
+.preset[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.preset b{font-size:15px}
+.preset .mono{font-size:13px;color:var(--ink-2);align-self:center}
+.preset small{grid-column:1/-1;color:var(--ink-2);font-size:12.5px}
+.today-focus{display:flex;gap:28px;flex-wrap:wrap;border-top:2px solid var(--ink);padding-top:14px}
+.today-focus b{font-family:var(--f-display);font-size:30px;font-weight:500;display:block;line-height:1.1}
+.today-focus span{font-size:13px;color:var(--ink-2)}
+
+/* ---------- Réglages ---------- */
+.settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.confirm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--sheet);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;transition:.25s;pointer-events:none;z-index:50;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:980px){
+  .grid2,.settings{grid-template-columns:minmax(0,1fr)}
+  .chrono{grid-template-columns:minmax(0,1fr)}
+  .prog-top{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;z-index:20;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:var(--sheet);border-top:1px solid var(--line-strong);gap:0}
+  .brand,.rail-foot{display:none}
+  .tabs{flex-direction:row;width:100%;gap:2px}
+  .tab{flex:1;flex-direction:column;gap:3px;padding:7px 2px;border-radius:10px;font-size:11px;min-width:0}
+  .tab[aria-current="page"]{box-shadow:none;background:color-mix(in srgb,var(--tc,var(--ink)) 13%,transparent)}
+  .tab[aria-current="page"]::before{display:none}
+  .tab .badge{position:absolute;top:2px;right:calc(50% - 22px);font-size:10px;padding:0 5px}
+  main{padding-left:34px;padding-right:16px;padding-block:24px 110px;box-shadow:none}
+  main::before{left:20px}
+  .mbrand{display:flex;align-items:baseline;gap:10px}
+  .mbrand b{font-family:var(--f-display);font-style:italic;font-size:28px;font-weight:600}
+  .mbrand b i{font-style:normal;color:var(--pen)}
+  .mbrand span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero .pen{text-align:left;padding-bottom:0;transform:rotate(-2deg)}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line-strong)}
+  .grades{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .prog-top{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .custom-grid{grid-template-columns:minmax(0,1fr)}
+  .subj-row{grid-template-columns:92px minmax(0,1fr) 44px}
+  .bristol-body{font-size:17px;padding-inline:18px}
+  .bristol-head,.bristol .hint,.bristol .askq{padding-inline:18px}
+  .lvl button{width:24px}
+  .chapters li{grid-template-columns:minmax(0,1fr) auto}
+  .chapters .num{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+</style>
+
+<div class="app">
+  <nav class="rail" aria-label="Navigation">
+    <div class="brand"><b>Taupe<i>.</i></b><span>PSI · Centrale-Supélec</span></div>
+    <div class="tabs">
+      <a class="tab" href="#accueil" data-v="accueil" style="--tc:var(--maths)"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20H14.5v-5.5h-5V20H4z"/></svg>Accueil</a>
+      <a class="tab" href="#fiches" data-v="fiches" style="--tc:var(--phys)"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="13" height="12" rx="1.5"/><path d="M7.5 4.5h11a2 2 0 0 1 2 2V15"/><path d="M6.5 11h7M6.5 14.5h5"/></svg>Fiches<span class="badge" id="due-badge" hidden></span></a>
+      <a class="tab" href="#programme" data-v="programme" style="--tc:var(--chim)"><svg viewBox="0 0 24 24"><path d="m4 6.5 1.5 1.5L8.5 5M4 12.5 5.5 14l3-3M4 18.5 5.5 20l3-3M11.5 6.5H20M11.5 12.5H20M11.5 18.5H17"/></svg>Programme</a>
+      <a class="tab" href="#chrono" data-v="chrono" style="--tc:var(--si)"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 3h5M12 3v3"/></svg>Chrono</a>
+      <a class="tab" href="#reglages" data-v="reglages" style="--tc:var(--info)"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Réglages</a>
+    </div>
+    <div class="rail-foot"><span class="pen" id="rail-note">on lâche rien</span>Tes données restent dans ce navigateur.</div>
+  </nav>
+
+  <main id="main">
+    <div class="mbrand" style="margin-bottom:22px"><b>Taupe<i>.</i></b><span>PSI · Centrale</span></div>
+    <section class="view" id="v-accueil" data-view="accueil"></section>
+    <section class="view" id="v-fiches" data-view="fiches" hidden>
+      <div class="head">
+        <p class="eyebrow">Répétition espacée</p>
+        <h1>Fiches</h1>
+        <p>Chaque fiche revient juste avant que tu l'oublies. Retourne-la, sois honnête sur ta réponse, l'algorithme s'occupe du reste.</p>
+      </div>
+      <div class="chips" id="filters" role="group" aria-label="Matière"></div>
+      <div class="stage" id="stage"></div>
+      <section class="panel" style="max-width:760px">
+        <div class="panel-head"><h2>Ajouter une fiche</h2><span class="muted" style="font-size:13px">LaTeX accepté : <code class="mono">$\vec E$</code>, <code class="mono">$$\int_0^1$$</code></span></div>
+        <form id="add-form" class="custom-grid" autocomplete="off">
+          <label class="field">Matière
+            <select class="input" id="add-s"></select>
+          </label>
+          <label class="field">Chapitre
+            <input class="input" id="add-ch" placeholder="ex. Ondes dans les plasmas" required>
+          </label>
+          <label class="field full">Question
+            <textarea class="input" id="add-q" rows="2" placeholder="ex. Pulsation plasma $\omega_p$ ?" required></textarea>
+          </label>
+          <label class="field full">Réponse
+            <textarea class="input" id="add-a" rows="3" placeholder="ex. $\omega_p^2 = \dfrac{n e^2}{m \varepsilon_0}$" required></textarea>
+          </label>
+          <div class="full row"><button class="btn" type="submit">Ajouter au paquet</button><span class="muted" style="font-size:13px">Elle entre dans tes nouvelles fiches.</span></div>
+        </form>
+        <div class="mine" id="mine"></div>
+      </section>
+    </section>
+    <section class="view" id="v-programme" data-view="programme" hidden></section>
+    <section class="view" id="v-chrono" data-view="chrono" hidden>
+      <div class="head">
+        <p class="eyebrow">Concentration</p>
+        <h1>Chrono</h1>
+        <p>Téléphone retourné, une seule matière, et on lance. Le temps de travail est compté dans tes statistiques.</p>
+      </div>
+      <div class="chrono">
+        <div class="dial">
+          <svg viewBox="0 0 300 300" aria-hidden="true">
+            <g id="ticks"></g>
+            <circle class="ring-bg" cx="150" cy="150" r="118" fill="none" stroke-width="10"/>
+            <circle class="ring" id="ring" cx="150" cy="150" r="118" fill="none" stroke-width="10" stroke-linecap="round" transform="rotate(-90 150 150)"/>
+          </svg>
+          <div class="center">
+            <span class="time" id="time">25:00</span>
+            <span class="lbl" id="time-lbl">Pomodoro</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+          <div class="presets" id="presets" role="group" aria-label="Durée"></div>
+          <div class="row">
+            <button class="btn" id="t-go" type="button">Démarrer</button>
+            <button class="btn ghost" id="t-reset" type="button">Réinitialiser</button>
+          </div>
+        </div>
+      </div>
+      <div class="today-focus" id="focus-stats"></div>
+    </section>
+    <section class="view" id="v-reglages" data-view="reglages" hidden>
+      <div class="head">
+        <p class="eyebrow">Ton cahier</p>
+        <h1>Réglages</h1>
+        <p>Tout est enregistré dans ce navigateur. Exporte régulièrement pour garder une copie ou passer sur un autre appareil.</p>
+      </div>
+      <div class="settings">
+        <section class="panel">
+          <h2>Objectif</h2>
+          <label class="field">Date des écrits de Centrale-Supélec
+            <input class="input" type="date" id="set-exam">
+          </label>
+          <label class="field">Nouvelles fiches par jour
+            <input class="input" type="number" id="set-new" min="0" max="200" step="1">
+          </label>
+          <p class="muted" style="font-size:13px">La date par défaut est indicative. Remplace-la par celle publiée sur le site du concours.</p>
+        </section>
+        <section class="panel">
+          <h2>Sauvegarde</h2>
+          <label class="field">Exporter
+            <textarea class="input" id="exp" rows="4" readonly></textarea>
+          </label>
+          <div class="row"><button class="btn ghost small" id="copy" type="button">Copier</button></div>
+          <label class="field">Importer une sauvegarde
+            <textarea class="input" id="imp" rows="3" placeholder="Colle ici le texte exporté"></textarea>
+          </label>
+          <div class="row"><button class="btn ghost small" id="import" type="button">Importer</button></div>
+        </section>
+        <section class="panel">
+          <h2>Repartir de zéro</h2>
+          <p class="muted">Efface la progression des fiches, le programme coché, l'historique et tes fiches perso.</p>
+          <div id="reset-zone"><button class="btn ghost small" id="reset" type="button" style="color:var(--bad)">Tout effacer…</button></div>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="text/plain" id="deck">
+# maths | Séries numériques
+Q: Nature de la série de Riemann $\displaystyle\sum_{n\ge1} \frac{1}{n^\alpha}$ ?
+R: Elle converge si et seulement si $\alpha > 1$.
+
+Q: Règle de d'Alembert pour $\sum u_n$ (termes non nuls) ?
+R: Si $\left|\dfrac{u_{n+1}}{u_n}\right| \to \ell$ :
+• $\ell < 1$ : convergence absolue
+• $\ell > 1$ : divergence grossière
+• $\ell = 1$ : on ne peut pas conclure.
+
+Q: Critère spécial des séries alternées ?
+R: Si $(u_n)$ est décroissante et tend vers $0$, alors $\sum (-1)^n u_n$ converge, et le reste vérifie $|R_n| \le u_{n+1}$, du signe de son premier terme.
+
+Q: Comparaison série–intégrale pour $f$ continue, positive, décroissante sur $[1,+\infty[$ ?
+R: $\displaystyle\int_n^{n+1} f \le f(n) \le \int_{n-1}^{n} f$ pour $n\ge2$, donc $\sum f(n)$ et $\displaystyle\int_1^{+\infty} f$ sont de même nature.
+
+# maths | Analyse réelle
+Q: Formule de Taylor avec reste intégral ($f$ de classe $\mathcal C^{n+1}$) ?
+R: $$f(b)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(b-a)^k+\int_a^b\frac{(b-t)^n}{n!}f^{(n+1)}(t)\,\mathrm dt$$
+
+Q: DL en $0$ de $\ln(1+x)$ à l'ordre $n$ ?
+R: $$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots+(-1)^{n-1}\frac{x^n}{n}+o(x^n)$$
+
+Q: DL en $0$ de $(1+x)^\alpha$ à l'ordre 2 ?
+R: $$(1+x)^\alpha = 1+\alpha x+\frac{\alpha(\alpha-1)}{2}x^2+o(x^2)$$
+
+# maths | Séries entières
+Q: Développement en série entière de $\arctan x$, et rayon ?
+R: $$\arctan x=\sum_{n=0}^{+\infty}\frac{(-1)^n x^{2n+1}}{2n+1},\qquad R=1$$
+
+Q: Lemme d'Abel ?
+R: Si la suite $(a_n r^n)$ est bornée pour un $r>0$, alors le rayon de convergence de $\sum a_n z^n$ vérifie $R \ge r$.
+
+Q: Régularité de la somme d'une série entière réelle de rayon $R>0$ ?
+R: Elle est $\mathcal C^\infty$ sur $]-R,R[$ ; on dérive terme à terme et la série dérivée a le même rayon $R$. De plus $a_n = \dfrac{f^{(n)}(0)}{n!}$.
+
+Q: DSE de $\dfrac{1}{1-x}$ et de $e^x$ ?
+R: $\dfrac{1}{1-x}=\displaystyle\sum_{n\ge0}x^n$ ($R=1$) et $e^x=\displaystyle\sum_{n\ge0}\frac{x^n}{n!}$ ($R=+\infty$).
+
+# maths | Intégration
+Q: Théorème de convergence dominée ?
+R: Si les $f_n$ sont continues par morceaux sur $I$, convergent simplement vers $f$ continue par morceaux, et s'il existe $\varphi$ intégrable sur $I$ avec $|f_n| \le \varphi$ pour tout $n$, alors $f$ est intégrable et $\displaystyle\int_I f_n \to \int_I f$.
+
+Q: Intégrales de Riemann : quand $\int_1^{+\infty}\frac{\mathrm dt}{t^\alpha}$ et $\int_0^{1}\frac{\mathrm dt}{t^\alpha}$ convergent-elles ?
+R: $\displaystyle\int_1^{+\infty}$ converge ssi $\alpha>1$ ; $\displaystyle\int_0^{1}$ converge ssi $\alpha<1$.
+
+Q: Valeur de l'intégrale de Gauss ?
+R: $$\int_{-\infty}^{+\infty} e^{-x^2}\,\mathrm dx=\sqrt{\pi}$$
+
+Q: Continuité d'une intégrale à paramètre $F(x)=\int_I f(x,t)\,\mathrm dt$ ?
+R: Si $x\mapsto f(x,t)$ est continue, $t\mapsto f(x,t)$ continue par morceaux, et $|f(x,t)|\le\varphi(t)$ avec $\varphi$ intégrable (domination sur tout segment suffit), alors $F$ est continue.
+
+# maths | Réduction
+Q: Théorème de Cayley–Hamilton ?
+R: Le polynôme caractéristique annule l'endomorphisme : $\chi_u(u)=0$.
+
+Q: Caractérisation de la diagonalisabilité par un polynôme annulateur ?
+R: $u$ est diagonalisable si et seulement s'il est annulé par un polynôme scindé à racines simples.
+
+Q: Caractérisation de la diagonalisabilité par les sous-espaces propres ?
+R: $\chi_u$ est scindé et, pour toute valeur propre $\lambda$, $\dim E_\lambda(u)$ est égale à la multiplicité de $\lambda$.
+
+Q: Condition suffisante simple de diagonalisabilité en dimension $n$ ?
+R: Avoir $n$ valeurs propres distinctes (le polynôme caractéristique est alors scindé à racines simples).
+
+Q: Quand une matrice est-elle trigonalisable ?
+R: Si et seulement si son polynôme caractéristique est scindé. Toute matrice de $\mathcal M_n(\mathbb C)$ est trigonalisable.
+
+# maths | Espaces euclidiens
+Q: Théorème spectral ?
+R: Tout endomorphisme symétrique d'un espace euclidien est diagonalisable en base orthonormée. Matriciellement : $S\in\mathcal S_n(\mathbb R)$ s'écrit $S=PDP^{\top}$ avec $P\in\mathcal O_n(\mathbb R)$ et $D$ diagonale réelle.
+
+Q: Inégalité de Cauchy–Schwarz et cas d'égalité ?
+R: $|\langle x,y\rangle|\le\|x\|\,\|y\|$, avec égalité si et seulement si $x$ et $y$ sont colinéaires.
+
+Q: Projeté orthogonal sur $F$ de base orthonormée $(e_1,\dots,e_p)$ ?
+R: $p_F(x)=\displaystyle\sum_{i=1}^{p}\langle x,e_i\rangle e_i$, et $d(x,F)=\|x-p_F(x)\|$.
+
+Q: Définition et propriétés d'une matrice orthogonale ?
+R: $M^{\top}M=I_n$. Ses colonnes forment une base orthonormée de $\mathbb R^n$, et $\det M=\pm1$.
+
+# maths | Calcul différentiel
+Q: Développement limité d'ordre 1 d'une fonction $f$ de classe $\mathcal C^1$ via le gradient ?
+R: $f(a+h)=f(a)+\langle\nabla f(a),h\rangle+o(\|h\|)$.
+
+Q: Condition nécessaire d'extremum local sur un ouvert ?
+R: Si $f$ ($\mathcal C^1$) admet un extremum local en $a$ intérieur, alors $\nabla f(a)=0$ : $a$ est un point critique. La réciproque est fausse (point col).
+
+Q: Règle de la chaîne pour $g(t)=f(x(t),y(t))$ ?
+R: $g'(t)=x'(t)\,\dfrac{\partial f}{\partial x}(x(t),y(t))+y'(t)\,\dfrac{\partial f}{\partial y}(x(t),y(t))$
+
+# maths | Équations différentielles
+Q: Solutions réelles de $y''+ay'+by=0$ ($a,b$ réels) ?
+R: Équation caractéristique $r^2+ar+b=0$ :
+• $\Delta>0$ : $\lambda e^{r_1t}+\mu e^{r_2t}$
+• $\Delta=0$ : $(\lambda+\mu t)e^{r_0t}$
+• $\Delta<0$, $r=\alpha\pm i\beta$ : $e^{\alpha t}(\lambda\cos\beta t+\mu\sin\beta t)$
+
+Q: Théorème de Cauchy–Lipschitz linéaire pour $y'=a(t)y+b(t)$ ?
+R: Si $a$ et $b$ sont continues sur l'intervalle $I$, alors pour tout $(t_0,y_0)\in I\times\mathbb K$ il existe une unique solution sur $I$ telle que $y(t_0)=y_0$.
+
+# maths | Probabilités
+Q: Loi géométrique $\mathcal G(p)$ : loi, espérance, variance ?
+R: $P(X=k)=(1-p)^{k-1}p$ pour $k\ge1$ ; $E(X)=\dfrac1p$ ; $V(X)=\dfrac{1-p}{p^2}$.
+
+Q: Loi de Poisson $\mathcal P(\lambda)$ : loi, espérance, variance ?
+R: $P(X=k)=e^{-\lambda}\dfrac{\lambda^k}{k!}$ ; $E(X)=V(X)=\lambda$.
+
+Q: Espérance et variance de $\mathcal B(n,p)$ ?
+R: $E(X)=np$ et $V(X)=np(1-p)$.
+
+Q: Inégalités de Markov et de Bienaymé–Tchebychev ?
+R: Markov : $X\ge0$, $a>0$ : $P(X\ge a)\le\dfrac{E(X)}{a}$.
+Bienaymé–Tchebychev : $P(|X-E(X)|\ge\varepsilon)\le\dfrac{V(X)}{\varepsilon^2}$.
+
+Q: Fonction génératrice d'une variable à valeurs dans $\mathbb N$ ?
+R: $G_X(t)=E(t^X)=\sum P(X=k)t^k$, de rayon $\ge1$. $X$ admet une espérance ssi $G_X$ est dérivable en 1, et $E(X)=G_X'(1)$. Si $X,Y$ indépendantes : $G_{X+Y}=G_XG_Y$.
+
+Q: Loi faible des grands nombres ?
+R: Si $(X_n)$ sont i.i.d. et admettent un moment d'ordre 2, d'espérance $m$, alors pour tout $\varepsilon>0$ : $P\left(\left|\dfrac{S_n}{n}-m\right|\ge\varepsilon\right)\to0$.
+
+Q: Formule des probabilités totales ?
+R: Pour un système complet d'événements $(A_i)$ : $P(B)=\displaystyle\sum_i P(B\mid A_i)\,P(A_i)$.
+
+# maths | Topologie et suites de fonctions
+Q: Que dire des normes en dimension finie ?
+R: Elles sont toutes équivalentes.
+
+Q: Limite uniforme d'une suite de fonctions continues ?
+R: Elle est continue. (La convergence simple ne suffit pas.)
+
+# phys | Électromagnétisme
+Q: Les quatre équations de Maxwell ?
+R: $\mathrm{div}\,\vec E=\dfrac{\rho}{\varepsilon_0}$ ; $\mathrm{div}\,\vec B=0$
+$\overrightarrow{\mathrm{rot}}\,\vec E=-\dfrac{\partial\vec B}{\partial t}$ ; $\overrightarrow{\mathrm{rot}}\,\vec B=\mu_0\vec j+\mu_0\varepsilon_0\dfrac{\partial\vec E}{\partial t}$
+
+Q: Théorème de Gauss ?
+R: $\displaystyle\oint\!\!\oint_S\vec E\cdot\mathrm d\vec S=\frac{Q_{\text{int}}}{\varepsilon_0}$
+
+Q: Théorème d'Ampère (magnétostatique) ?
+R: $\displaystyle\oint_{\mathcal C}\vec B\cdot\mathrm d\vec\ell=\mu_0\,I_{\text{enlacé}}$
+
+Q: Vecteur de Poynting, densité d'énergie et bilan local ?
+R: $\vec\Pi=\dfrac{\vec E\wedge\vec B}{\mu_0}$ ; $u=\dfrac{\varepsilon_0E^2}{2}+\dfrac{B^2}{2\mu_0}$ ; $\dfrac{\partial u}{\partial t}+\mathrm{div}\,\vec\Pi=-\vec j\cdot\vec E$
+
+Q: Force de Laplace sur un élément de circuit ?
+R: $\mathrm d\vec F=I\,\mathrm d\vec\ell\wedge\vec B$
+
+Q: Loi de Faraday ?
+R: $e=-\dfrac{\mathrm d\Phi}{\mathrm dt}$ (en convention générateur, orientation cohérente avec la normale).
+
+Q: Énergie stockée dans une bobine et dans un condensateur ?
+R: $\mathcal E_L=\tfrac12LI^2$ et $\mathcal E_C=\tfrac12CU^2$.
+
+# phys | Ondes
+Q: Équation de propagation de $\vec E$ dans le vide ?
+R: $\Delta\vec E-\dfrac{1}{c^2}\dfrac{\partial^2\vec E}{\partial t^2}=\vec 0$, avec $c=\dfrac{1}{\sqrt{\mu_0\varepsilon_0}}$.
+
+Q: Structure d'une OPPM dans le vide ?
+R: Transverse, et $\vec B=\dfrac{\vec u\wedge\vec E}{c}$ ($\vec u$ direction de propagation). $(\vec u,\vec E,\vec B)$ est un trièdre direct.
+
+Q: Relation de dispersion dans un plasma dilué ?
+R: $k^2=\dfrac{\omega^2-\omega_p^2}{c^2}$ avec $\omega_p^2=\dfrac{n e^2}{m\varepsilon_0}$. Pas de propagation si $\omega<\omega_p$ (onde évanescente).
+
+Q: Épaisseur de peau dans un bon conducteur ?
+R: $\delta=\sqrt{\dfrac{2}{\mu_0\gamma\omega}}$
+
+Q: Vitesse de phase et vitesse de groupe ?
+R: $v_\varphi=\dfrac{\omega}{k}$ et $v_g=\dfrac{\mathrm d\omega}{\mathrm dk}$. Le milieu est dispersif si $v_\varphi$ dépend de $\omega$.
+
+Q: Célérité des ondes sur une corde tendue ?
+R: $c=\sqrt{\dfrac{T}{\mu}}$ ($T$ tension, $\mu$ masse linéique).
+
+Q: Célérité du son dans un fluide et impédance acoustique ?
+R: $c=\dfrac{1}{\sqrt{\rho_0\chi_S}}$ et $Z=\rho_0c$.
+
+# phys | Thermodynamique
+Q: Premier principe industriel (système ouvert, régime stationnaire) ?
+R: $\Delta h+\Delta e_c+\Delta e_p=w_u+q$ (grandeurs massiques).
+
+Q: Second principe pour un écoulement stationnaire ?
+R: $\Delta s=s_e+s_c$ avec $s_e=\displaystyle\sum\frac{q_i}{T_i}$ et $s_c\ge0$ (nul si réversible).
+
+Q: Loi de Laplace et relation de Mayer ?
+R: Gaz parfait, adiabatique réversible : $PV^\gamma=\text{cste}$. Mayer : $C_{p,m}-C_{v,m}=R$.
+
+# phys | Diffusion
+Q: Loi de Fourier et équation de la chaleur (sans source) ?
+R: $\vec j_Q=-\lambda\,\overrightarrow{\mathrm{grad}}\,T$ et $\rho c\,\dfrac{\partial T}{\partial t}=\lambda\,\Delta T$.
+
+Q: Résistance thermique d'un mur, et loi de Newton ?
+R: Conduction : $R_{th}=\dfrac{L}{\lambda S}$. Conducto-convection : $\Phi=hS(T-T_{ext})$, soit $R=\dfrac{1}{hS}$.
+
+Q: Loi de Fick et temps caractéristique de diffusion ?
+R: $\vec j=-D\,\overrightarrow{\mathrm{grad}}\,n$, $\dfrac{\partial n}{\partial t}=D\,\Delta n$ ; sur une longueur $L$ : $\tau\sim\dfrac{L^2}{D}$.
+
+# phys | Mécanique des fluides
+Q: Relation de Bernoulli et ses hypothèses ?
+R: $P+\tfrac12\rho v^2+\rho gz=\text{cste}$ le long d'une ligne de courant, pour un écoulement parfait, stationnaire, incompressible et homogène.
+
+Q: Nombre de Reynolds ?
+R: $Re=\dfrac{\rho vL}{\eta}$ : rapport convection / diffusion de quantité de mouvement. $Re\ll1$ : écoulement dominé par la viscosité.
+
+Q: Loi de la statique des fluides ($z$ vers le haut) ?
+R: $\dfrac{\mathrm dP}{\mathrm dz}=-\rho g$
+
+Q: Conservation du débit en régime stationnaire ?
+R: Le débit massique $D_m=\rho vS$ est conservé ; si l'écoulement est incompressible, le débit volumique $vS$ l'est aussi.
+
+# phys | Électronique et conversion
+Q: ALI idéal en régime linéaire ?
+R: $V_+=V_-$ et $i_+=i_-=0$.
+
+Q: Filtre passe-bas du 1er ordre ?
+R: $\underline H=\dfrac{H_0}{1+j\omega/\omega_c}$ ; asymptote haute fréquence à $-20$ dB/décade, gain à $-3$ dB en $\omega_c$.
+
+Q: Forme canonique d'un oscillateur amorti ?
+R: $\ddot x+\dfrac{\omega_0}{Q}\dot x+\omega_0^2x=0$. Régime pseudo-périodique si $Q>\tfrac12$.
+
+Q: Puissance moyenne en régime sinusoïdal ?
+R: $P=U_{\text{eff}}\,I_{\text{eff}}\cos\varphi$.
+
+Q: Transformateur idéal ?
+R: $\left|\dfrac{u_2}{u_1}\right|=\dfrac{N_2}{N_1}=\left|\dfrac{i_1}{i_2}\right|$ ; il transmet la puissance sans pertes.
+
+Q: Équations de la machine à courant continu ?
+R: $e=\Phi_0\Omega$ et $\Gamma=\Phi_0 I$, d'où la conversion $eI=\Gamma\Omega$.
+
+Q: Théorème du moment cinétique (point fixe $O$, référentiel galiléen) ?
+R: $\dfrac{\mathrm d\vec L_O}{\mathrm dt}=\displaystyle\sum\vec{\mathcal M}_O(\vec F_{\text{ext}})$
+
+# chim | Thermochimie
+Q: Enthalpie libre de réaction et constante d'équilibre ?
+R: $\Delta_rG=\Delta_rG^\circ+RT\ln Q$ ; à l'équilibre $Q=K^\circ$ donc $\Delta_rG^\circ=-RT\ln K^\circ$.
+
+Q: Relation de van 't Hoff ?
+R: $\dfrac{\mathrm d\ln K^\circ}{\mathrm dT}=\dfrac{\Delta_rH^\circ}{RT^2}$
+
+Q: Potentiel chimique d'un constituant ?
+R: $\mu_i=\mu_i^\circ+RT\ln a_i$
+
+Q: Critère d'évolution spontanée ?
+R: $\Delta_rG\,\mathrm d\xi\le0$ : si $\Delta_rG<0$, la réaction évolue dans le sens direct.
+
+# chim | Électrochimie
+Q: Formule de Nernst ?
+R: $E=E^\circ+\dfrac{RT}{nF}\ln\dfrac{a_{ox}^{\alpha}}{a_{red}^{\beta}}$, soit à 298 K : $E=E^\circ+\dfrac{0{,}059}{n}\log\dfrac{a_{ox}^{\alpha}}{a_{red}^{\beta}}$.
+
+Q: Lien entre $\Delta_rG^\circ$ et les potentiels standard ?
+R: Pour $\text{Ox}_1+\text{Red}_2\to\text{Red}_1+\text{Ox}_2$ échangeant $n$ électrons : $\Delta_rG^\circ=-nF(E_1^\circ-E_2^\circ)$.
+
+Q: Masse déposée lors d'une électrolyse ?
+R: $Q=It=n_{e^-}F$, d'où $m=\dfrac{ItM}{nF}$ (rendement faradique de 100 %).
+
+Q: Principe de la protection par anode sacrificielle ?
+R: On relie le métal à protéger à un métal plus réducteur (ex. zinc pour l'acier) qui s'oxyde à sa place.
+
+Q: Que traduit une surtension sur une courbe intensité-potentiel ?
+R: Un système lent : il faut s'écarter du potentiel d'équilibre de $\eta$ pour obtenir un courant notable. Un système rapide a une surtension quasi nulle.
+
+# si | Asservissements
+Q: Premier ordre : fonction de transfert et temps de réponse à 5 % ?
+R: $H(p)=\dfrac{K}{1+\tau p}$ ; $t_{5\%}=3\tau$ ; la réponse indicielle atteint 63 % en $\tau$.
+
+Q: Second ordre : forme canonique et réglage le plus rapide ?
+R: $H(p)=\dfrac{K}{1+\dfrac{2\xi}{\omega_0}p+\dfrac{p^2}{\omega_0^2}}$. Pas de dépassement si $\xi\ge1$ ; $t_{5\%}$ minimal pour $\xi\approx0{,}69$.
+
+Q: Premier dépassement relatif d'un second ordre ($\xi<1$) ?
+R: $D_1=\exp\left(-\dfrac{\pi\xi}{\sqrt{1-\xi^2}}\right)$
+
+Q: Théorèmes de la valeur finale et initiale ?
+R: $\displaystyle\lim_{t\to+\infty}f(t)=\lim_{p\to0}pF(p)$ et $\displaystyle\lim_{t\to0^+}f(t)=\lim_{p\to+\infty}pF(p)$.
+
+Q: Condition d'erreur statique nulle pour une consigne en échelon ?
+R: Système stable à retour unitaire dont la FTBO comporte au moins une intégration (classe $\ge1$).
+
+Q: Définition de la marge de phase ?
+R: $M_\varphi=180°+\arg H_{BO}(j\omega_{c0})$, où $\omega_{c0}$ vérifie $|H_{BO}(j\omega_{c0})|=1$ (0 dB). On vise souvent $M_\varphi\ge45°$.
+
+Q: Critère de stabilité d'un système linéaire ?
+R: Stable si et seulement si tous les pôles de la FTBF sont à partie réelle strictement négative.
+
+Q: Effet d'un correcteur proportionnel-intégral $C(p)=K_p\left(1+\frac{1}{T_ip}\right)$ ?
+R: Ajoute une intégration : améliore la précision (erreur statique nulle) mais apporte un déphasage négatif aux basses fréquences, qui peut dégrader la stabilité.
+
+Q: Transformées de Laplace : dérivée, échelon, rampe ?
+R: $\mathcal L[f'](p)=pF(p)-f(0^+)$ ; échelon unitaire $\dfrac1p$ ; rampe $\dfrac1{p^2}$.
+
+# si | Mécanique
+Q: Relation de changement de point du torseur cinématique ?
+R: $\vec V(B\in2/1)=\vec V(A\in2/1)+\overrightarrow{BA}\wedge\vec\Omega(2/1)$
+
+Q: Composition des mouvements ?
+R: $\vec V(P\in3/1)=\vec V(P\in3/2)+\vec V(P\in2/1)$ et $\vec\Omega(3/1)=\vec\Omega(3/2)+\vec\Omega(2/1)$.
+
+Q: Degré d'hyperstatisme : formules cinématique et statique ?
+R: $h=m+6\gamma-N_c$ (approche cinématique, $\gamma$ nombre cyclomatique)
+$h=m+N_s-6(p-1)$ (approche statique, $p$ solides bâti compris).
+
+Q: Nombre de degrés de liberté des liaisons usuelles ?
+R: Glissière 1, pivot 1, hélicoïdale 1, pivot glissant 2, rotule 3, appui plan 3, sphère-cylindre 4, sphère-plan 5.
+
+Q: Théorème de l'énergie cinétique ?
+R: $\dfrac{\mathrm d E_c(\Sigma/R_g)}{\mathrm dt}=\mathcal P_{ext\to\Sigma/R_g}+\mathcal P_{int}$
+
+Q: Moment d'inertie d'un cylindre plein et théorème de Huygens ?
+R: $J=\tfrac12MR^2$ autour de son axe ; $J_\Delta=J_{G}+Md^2$ pour un axe parallèle à distance $d$.
+
+Q: Rapport de transmission d'un train d'engrenages simple ?
+R: $\dfrac{\omega_s}{\omega_e}=(-1)^n\dfrac{\prod Z_{menantes}}{\prod Z_{menées}}$, $n$ nombre de contacts extérieurs.
+
+# info | Algorithmique
+Q: Complexités du tri fusion, du tri rapide et du tri par insertion ?
+R: Fusion : $O(n\log n)$ toujours. Rapide : $O(n\log n)$ en moyenne, $O(n^2)$ au pire. Insertion : $O(n^2)$ au pire, $O(n)$ sur une liste déjà triée.
+
+Q: Complexité de la recherche dichotomique ?
+R: $O(\log n)$ sur une liste triée.
+
+Q: Comment prouver la terminaison et la correction d'une boucle ?
+R: Terminaison : un variant, entier naturel strictement décroissant. Correction : un invariant, vrai avant la boucle et conservé par chaque itération.
+
+Q: Principe de la programmation dynamique ?
+R: Sous-structure optimale et sous-problèmes qui se chevauchent : on stocke les résultats intermédiaires (mémoïsation descendante ou tableau ascendant) pour ne pas les recalculer.
+
+Q: Complexité des opérations sur une liste Python ?
+R: `append` et `pop()` en $O(1)$ amorti ; `insert(0, x)` et `x in L` en $O(n)$ ; accès `L[i]` en $O(1)$.
+
+Q: Dictionnaire Python : structure et coût ?
+R: Table de hachage : accès, insertion et test `k in d` en $O(1)$ en moyenne. Les clés doivent être hachables (immuables : `int`, `str`, `tuple`…).
+
+# info | Graphes
+Q: Parcours en largeur vs en profondeur ?
+R: Largeur : file, donne les plus courts chemins en nombre d'arêtes. Profondeur : pile ou récursivité. Les deux en $O(n+m)$ avec des listes d'adjacence.
+
+Q: Algorithme de Dijkstra : hypothèse et complexité ?
+R: Poids positifs. Avec une file de priorité (tas) : $O((n+m)\log n)$.
+
+# info | Bases de données
+Q: Différence entre WHERE et HAVING ?
+R: `WHERE` filtre les lignes avant le regroupement ; `HAVING` filtre les groupes après `GROUP BY` et peut porter sur des agrégats (`COUNT`, `AVG`…).
+
+Q: Syntaxe d'une jointure en SQL ?
+R: `SELECT ... FROM A JOIN B ON A.id = B.id_a`
+
+# info | Méthodes numériques
+Q: Schéma d'Euler explicite pour $y'=f(t,y)$ ?
+R: $y_{k+1}=y_k+h\,f(t_k,y_k)$ ; méthode d'ordre 1.
+
+Q: Méthode de Newton ?
+R: $x_{n+1}=x_n-\dfrac{f(x_n)}{f'(x_n)}$ ; convergence quadratique au voisinage d'une racine simple, si l'on part assez près.
+
+# info | Apprentissage
+Q: Algorithme des $k$ plus proches voisins ?
+R: Pour classer un point, on calcule sa distance à toutes les données étiquetées et on prend la classe majoritaire parmi les $k$ plus proches. Pas de phase d'entraînement ; coût $O(n)$ distances par requête.
+
+Q: Algorithme des $k$-moyennes ?
+R: On répète : affecter chaque point au centre le plus proche, puis remplacer chaque centre par la moyenne de son groupe. Converge vers un minimum local de l'inertie, qui dépend de l'initialisation.
+</script>
+
+<script>
+window.MathJax={
+  tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},
+  svg:{fontCache:"global"},
+  options:{enableMenu:false},
+  startup:{typeset:false,pageReady(){window.__mj=true;return MathJax.typesetPromise([document.getElementById("main")]).catch(()=>{})}}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* ---------- Données ---------- */
+const SUBJ={
+  maths:{name:"Mathématiques",short:"Maths"},
+  phys:{name:"Physique",short:"Physique"},
+  chim:{name:"Chimie",short:"Chimie"},
+  si:{name:"Sciences de l'ingénieur",short:"SI"},
+  info:{name:"Informatique",short:"Info"},
+  autre:{name:"Autres matières",short:"Autres"}
+};
+const col=s=>`var(--${s})`;
+const PROG={
+  maths:[["Séries numériques","comparaison, d'Alembert, séries alternées"],["Espaces vectoriels normés","normes, suites, continuité, compacité en dim. finie"],["Suites et séries de fonctions","convergences simple, uniforme, normale"],["Séries entières","rayon, DSE usuels, régularité"],["Intégration sur un intervalle","intégrabilité, comparaison"],["Intégrales à paramètre","continuité, dérivation, convergence dominée"],["Algèbre linéaire","sommes directes, matrices par blocs, polynômes d'endomorphismes"],["Réduction","diagonalisation, trigonalisation, Cayley–Hamilton"],["Espaces préhilbertiens","projection orthogonale, Gram–Schmidt"],["Endomorphismes symétriques","théorème spectral, isométries"],["Équations différentielles linéaires","ordre 1 et 2, systèmes"],["Calcul différentiel","gradient, extrema, dérivées partielles"],["Probabilités","espaces probabilisés, conditionnement"],["Variables aléatoires discrètes","lois usuelles, espérance, génératrices"]],
+  phys:[["Électronique","ALI, filtrage, oscillateurs"],["Thermodynamique industrielle","systèmes ouverts, machines"],["Diffusion thermique","Fourier, résistances thermiques"],["Diffusion de particules","Fick, bilans"],["Statique des fluides",""],["Dynamique des fluides","Bernoulli, viscosité, Reynolds"],["Bilans macroscopiques","quantité de mouvement, énergie"],["Électrostatique","Gauss, potentiel, condensateur"],["Magnétostatique","Ampère, dipôles"],["Équations de Maxwell","énergie, Poynting"],["Induction","Faraday, inductances"],["Ondes électromagnétiques","vide, plasmas, conducteurs, réflexion"],["Ondes mécaniques et sonores","corde, acoustique"],["Conversion électromécanique","MCC, machine synchrone"],["Conversion électronique de puissance","hacheurs, transformateur"]],
+  chim:[["Thermochimie","premier et second principes, ΔrH°, ΔrG°"],["Équilibres chimiques","K°, déplacements d'équilibre"],["Oxydoréduction","Nernst, diagrammes E-pH"],["Courbes intensité-potentiel","surtensions, systèmes lents/rapides"],["Piles et électrolyse",""],["Corrosion","protection, passivation"]],
+  si:[["Modélisation des systèmes","SysML, chaîne d'énergie et d'information"],["Asservissements : modélisation","Laplace, schémas-blocs"],["Stabilité","marges, critère des pôles"],["Précision et correction","PI, avance de phase"],["Cinématique","torseurs, composition des mouvements"],["Liaisons et hyperstatisme",""],["Statique","PFS, actions mécaniques"],["Dynamique","PFD, théorème de l'énergie cinétique"],["Transmission de puissance","engrenages, rendements"]],
+  info:[["Algorithmique et complexité","invariants, variants, coûts"],["Tris",""],["Récursivité",""],["Dictionnaires et hachage",""],["Graphes","parcours, Dijkstra, A*"],["Programmation dynamique",""],["Bases de données","SQL, jointures, agrégats"],["Méthodes numériques","Euler, Newton, dichotomie"],["Apprentissage","k plus proches voisins, k-moyennes"]]
+};
+const LVL=["Pas vu","Vu en cours","Su","Maîtrisé"];
+
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)}
+function parseDeck(txt){
+  const out=[];let s,ch,cur=null,mode=null;
+  for(const raw of txt.split("\n")){
+    const t=raw.trim();
+    if(t.startsWith("# ")){[s,ch]=t.slice(2).split("|").map(x=>x.trim());cur=null;continue}
+    if(t.startsWith("Q:")){cur={s,ch,q:t.slice(2).trim(),a:""};out.push(cur);mode="q";continue}
+    if(t.startsWith("R:")&&cur){cur.a=t.slice(2).trim();mode="a";continue}
+    if(!t||!cur)continue;
+    if(mode==="q")cur.q+="\n"+t;else cur.a+="\n"+t;
+  }
+  out.forEach(c=>c.id=c.s+"-"+hash(c.q));
+  return out;
+}
+const DECK=parseDeck($("#deck").textContent);
+
+/* ---------- État ---------- */
+const KEY="taupe-psi-v1";
+const fresh=()=>({v:1,exam:"2027-04-26",newPerDay:20,cards:{},custom:[],log:{},prog:{},newLog:{}});
+let S=fresh();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const today=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const daysBetween=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const MONTHS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const DAYS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const fmtDate=s=>{const d=parse(s);return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`};
+const fmtIv=n=>n<=0?"dans la séance":n<14?`${n} j`:n<60?`${Math.round(n/7)} sem`:`${Math.round(n/30)} mois`;
+const fmtMin=sec=>{const m=Math.round(sec/60);return m<60?`${m} min`:`${Math.floor(m/60)} h ${String(m%60).padStart(2,"0")}`};
+
+const allCards=()=>DECK.concat(S.custom.map(c=>({...c,custom:true})));
+function logDay(){const t=today();return S.log[t]||(S.log[t]={r:0,sec:0})}
+
+function schedule(st,g){
+  st=st?{...st}:{ef:2.5,iv:0,reps:0,lapses:0};
+  if(g===0){st.reps=0;st.iv=0;st.lapses++;st.ef=Math.max(1.3,st.ef-.2)}
+  else if(g===1){st.iv=st.reps===0?1:Math.max(1,Math.round(st.iv*1.2));st.ef=Math.max(1.3,st.ef-.15);st.reps++}
+  else if(g===2){st.iv=st.reps===0?2:st.reps===1?Math.max(4,Math.round(st.iv*st.ef)):Math.round(st.iv*st.ef);st.reps++}
+  else{st.iv=st.reps===0?4:Math.max(6,Math.round(Math.max(st.iv,1)*st.ef*1.3));st.ef+=.15;st.reps++}
+  st.iv=Math.min(st.iv,180);st.due=addDays(today(),st.iv);st.last=today();return st;
+}
+const newToday=()=>S.newLog[today()]||0;
+function counts(filter){
+  const t=today();let due=0,nw=0;
+  for(const c of allCards()){if(filter!=="all"&&c.s!==filter)continue;const st=S.cards[c.id];if(st){if(st.due<=t)due++}else nw++}
+  return {due,nw:Math.min(nw,Math.max(0,S.newPerDay-newToday()))};
+}
+function streak(){
+  let d=today(),n=0;
+  const act=k=>S.log[k]&&(S.log[k].r>0||S.log[k].sec>=60);
+  if(!act(d))d=addDays(d,-1);
+  while(act(d)){n++;d=addDays(d,-1)}
+  return n;
+}
+
+/* ---------- Rendu des maths ---------- */
+function rich(s){
+  return esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\n/g,"<br>");
+}
+function typeset(el){
+  if(window.MathJax&&MathJax.typesetPromise){try{MathJax.typesetClear&&MathJax.typesetClear([el])}catch(e){}MathJax.typesetPromise([el]).catch(()=>{})}
+}
+
+/* ---------- Toast ---------- */
+let toastT;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2200)}
+
+/* ---------- Accueil ---------- */
+function renderHome(){
+  const v=$("#v-accueil");const t=today();
+  const left=daysBetween(t,S.exam);
+  const c=counts("all");const todo=c.due+c.nw;
+  const cards=allCards();
+  const acquired=cards.filter(x=>S.cards[x.id]&&S.cards[x.id].iv>=7).length;
+  let week=0;for(let i=0;i<7;i++){const l=S.log[addDays(t,-i)];if(l)week+=l.sec||0}
+  const st=streak();const lt=S.log[t];
+  let note;
+  if(c.due>0)note=`${c.due} fiche${c.due>1?"s":""} en retard, on les règle ce soir.`;
+  else if(lt&&lt.r>0)note=`Séance faite. ${lt.r} fiche${lt.r>1?"s":""} aujourd'hui.`;
+  else if(!Object.keys(S.cards).length)note="Première séance : 20 fiches, 15 minutes.";
+  else note="Rien en retard. Un pomodoro ?";
+  $("#rail-note").textContent=st>1?`${st} jours d'affilée`:"on lâche rien";
+
+  const subjRows=["maths","phys","chim","si","info"].map(s=>{
+    const list=cards.filter(x=>x.s===s);const acq=list.filter(x=>S.cards[x.id]&&S.cards[x.id].iv>=7).length;
+    const pf=list.length?acq/list.length:0;
+    const ch=PROG[s];let sum=0;ch.forEach((_,i)=>sum+=S.prog[s+":"+i]||0);const pp=sum/(3*ch.length);
+    return `<div class="subj-row" style="--c:${col(s)}"><span class="nm">${SUBJ[s].short}</span>
+      <div class="bars"><div class="bar" title="Fiches acquises"><i style="width:${(pf*100).toFixed(1)}%"></i></div><div class="bar prog" title="Programme"><i style="width:${(pp*100).toFixed(1)}%"></i></div></div>
+      <span class="pct">${Math.round(pf*100)} %</span></div>`;
+  }).join("");
+
+  // Heatmap : 20 semaines, colonnes du lundi au dimanche
+  const now=new Date();const dow=(now.getDay()+6)%7;
+  const start=addDays(t,-dow-7*19);let cells="",active=0;
+  for(let i=0;i<140;i++){
+    const d=addDays(start,i);
+    if(d>t){cells+=`<i class="future"></i>`;continue}
+    const l=S.log[d];const score=l?(l.r+(l.sec||0)/300):0;if(score>0)active++;
+    const lv=score<=0?0:score<10?1:score<25?2:score<50?3:4;
+    const tip=l?`${fmtDate(d)} : ${l.r} fiche${l.r>1?"s":""}, ${fmtMin(l.sec||0)}`:fmtDate(d);
+    cells+=`<i data-l="${lv}" class="${d===t?"today":""}" title="${esc(tip)}"></i>`;
+  }
+
+  const pick=DECK[parseInt(hash(t),36)%DECK.length];
+
+  v.innerHTML=`
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Concours Centrale-Supélec · filière PSI</p>
+      ${left>0?`<h1><span class="hl">J−${left}</span></h1>
+      <p class="sub">avant les épreuves écrites, prévues le <strong>${fmtDate(S.exam)}</strong>. <span class="muted">Date indicative, modifiable dans Réglages.</span></p>`
+      :`<h1><span class="hl">${left===0?"Jour J":"Oraux"}</span></h1><p class="sub">${left===0?"C'est aujourd'hui. Tu es prêt.":"Les écrits sont passés. Place à la préparation des oraux."}</p>`}
+    </div>
+    <p class="pen">${esc(note)}</p>
+  </header>
+  <section class="strip" aria-label="Résumé">
+    <div class="stat"><b>${todo}</b><span>fiches au programme aujourd'hui</span></div>
+    <div class="stat"><b>${st}<small> j</small></b><span>série de jours travaillés</span></div>
+    <div class="stat"><b>${acquired}<small> / ${cards.length}</small></b><span>fiches acquises</span></div>
+    <div class="stat"><b>${fmtMin(week).replace(/ (min|h)/,"<small> $1</small>")}</b><span>de travail chronométré sur 7 jours</span></div>
+  </section>
+  <div class="row">
+    <a class="btn" href="#fiches" id="go-session">${todo?`Lancer la séance · ${todo} fiches`:"Ouvrir les fiches"}</a>
+    <a class="btn ghost" href="#chrono">Pomodoro 25′</a>
+  </div>
+  <div class="grid2">
+    <section class="panel">
+      <div class="panel-head"><h2>Maîtrise par matière</h2></div>
+      <div class="subj-list">${subjRows}</div>
+      <div class="legend"><span><i></i>fiches revues à 7 jours ou plus</span><span><i class="h"></i>programme coché</span></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>Activité</h2><span class="muted mono" style="font-size:12px">20 semaines</span></div>
+      <div class="heat-wrap"><div class="heat">${cells}</div></div>
+      <div class="heat-foot"><span>${active?`${active} jour${active>1?"s":""} actif${active>1?"s":""}`:"Ta première séance remplira cette grille."}</span>
+        <span class="heat-scale">moins <i style="background:color-mix(in srgb,var(--ink) 7%,transparent)"></i><i style="background:color-mix(in srgb,var(--maths) 30%,transparent)"></i><i style="background:color-mix(in srgb,var(--maths) 55%,transparent)"></i><i style="background:color-mix(in srgb,var(--maths) 80%,transparent)"></i><i style="background:var(--ink)"></i> plus</span></div>
+    </section>
+  </div>
+  <section style="display:flex;flex-direction:column;gap:14px;max-width:760px">
+    <div class="panel-head"><h2 style="font-size:21px">Fiche du jour</h2><span class="muted" style="font-size:13px">change chaque jour</span></div>
+    <article class="bristol" style="--c:${col(pick.s)}">
+      <div class="bristol-head"><span class="tag" style="--c:${col(pick.s)}">${SUBJ[pick.s].short}</span><span class="chap">${esc(pick.ch)}</span></div>
+      <div class="bristol-body"><div>${rich(pick.q)}</div><div style="color:var(--ink-2);margin-top:8px">${rich(pick.a)}</div></div>
+    </article>
+  </section>`;
+  $("#go-session").addEventListener("click",()=>{filter="all";sess=null});
+  typeset(v);
+}
+
+/* ---------- Fiches ---------- */
+let filter="all",sess=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function buildSession(extra){
+  const t=today();const list=allCards().filter(c=>filter==="all"||c.s===filter);
+  let q;
+  if(extra){q=list.filter(c=>S.cards[c.id]&&S.cards[c.id].due>t).sort((a,b)=>S.cards[a.id].due<S.cards[b.id].due?-1:1).slice(0,10)}
+  else{
+    const due=shuffle(list.filter(c=>S.cards[c.id]&&S.cards[c.id].due<=t));
+    const nw=list.filter(c=>!S.cards[c.id]);
+    const room=Math.max(0,S.newPerDay-newToday());
+    const picked=filter==="all"?shuffle(nw).slice(0,room):nw.slice(0,room);
+    q=due.concat(picked);
+  }
+  sess={q,on:false,tally:[0,0,0,0],n:0,extra:!!extra};
+}
+function renderFilters(){
+  const keys=["all","maths","phys","chim","si","info"];if(S.custom.some(c=>c.s==="autre"))keys.push("autre");
+  $("#filters").innerHTML=keys.map(k=>{const c=counts(k);const n=c.due+c.nw;
+    return `<button type="button" class="chip" style="--c:${k==="all"?"var(--ink)":col(k)}" aria-pressed="${filter===k}" data-f="${k}">${k==="all"?"Toutes":SUBJ[k].short}<span class="n">${n}</span></button>`}).join("");
+}
+function renderStage(){
+  if(!sess)buildSession();
+  const st=$("#stage");const c=sess.q[0];
+  const nNew=sess.q.filter(x=>!S.cards[x.id]).length,nRev=sess.q.length-nNew;
+  if(!c){
+    const tl=sess.tally;const tot=tl.reduce((a,b)=>a+b,0);
+    st.innerHTML=`<article class="bristol"><div class="bristol-head"><span class="tag" style="--c:var(--good)">Terminé</span><span class="chap">${fmtDate(today())}</span></div>
+      <div class="done"><h2>${tot?"Séance bouclée.":"Rien à réviser ici pour l'instant."}</h2>
+      ${tot?`<div class="tally"><div><b>${tot}</b><span>fiches vues</span></div><div><b style="color:var(--good)">${tl[2]+tl[3]}</b><span>bien ou facile</span></div><div><b style="color:var(--bad)">${tl[0]}</b><span>à revoir</span></div></div>`
+      :`<p class="muted">Les prochaines fiches reviendront quand ce sera utile. Tu peux en avancer quelques-unes.</p>`}
+      <div class="row"><button class="btn" type="button" id="more">Avancer 10 fiches</button>${filter!=="all"?`<button class="btn ghost" type="button" data-f="all" id="to-all">Toutes les matières</button>`:""}</div></div></article>`;
+    $("#more").onclick=()=>{buildSession(true);if(!sess.q.length){toast("Aucune fiche à avancer dans cette matière.");sess=null;buildSession()}renderStage()};
+    const ta=$("#to-all");if(ta)ta.onclick=()=>{filter="all";sess=null;renderFiches()};
+    return;
+  }
+  const prev=S.cards[c.id];
+  const ivs=[0,1,2,3].map(g=>schedule(prev,g).iv);
+  const head=`<div class="bristol-head"><span class="tag" style="--c:${col(c.s)}">${SUBJ[c.s].short}${c.custom?" · perso":""}</span><span class="chap">${esc(c.ch||"")}</span></div>`;
+  st.innerHTML=`
+    <div class="counters"><span><i class="dot" style="background:var(--maths)"></i>nouvelles <b>${nNew}</b></span><span><i class="dot" style="background:var(--pen)"></i>à revoir <b>${nRev}</b></span><span style="margin-left:auto">${prev?`revue ${prev.reps} fois`:"première fois"}</span></div>
+    <div class="flip${sess.on?" on":""}" id="flip" tabindex="0" role="button" aria-label="Retourner la fiche">
+      <div class="card3d">
+        <article class="bristol front">${head}<div class="bristol-body">${rich(c.q)}</div><div class="hint"><span>Réponds dans ta tête, puis retourne.</span><span><kbd>Espace</kbd> pour retourner</span></div></article>
+        <article class="bristol back">${head}<div class="askq">${rich(c.q)}</div><div class="bristol-body ans">${rich(c.a)}</div><div class="hint"><span>Note ta réponse</span><span><kbd>1</kbd>–<kbd>4</kbd></span></div></article>
+      </div>
+    </div>
+    <div class="grades" id="grades" aria-disabled="${!sess.on}">
+      ${[["À revoir","--bad"],["Difficile","--warn"],["Bien","--good"],["Facile","--maths"]].map(([l,cv],g)=>
+        `<button type="button" class="grade" style="--gc:var(${cv})" data-g="${g}" ${sess.on?"":"tabindex=\"-1\""}><kbd>${g+1}</kbd><b>${l}</b><small>${fmtIv(ivs[g])}</small></button>`).join("")}
+    </div>`;
+  $("#flip").onclick=flip;
+  st.querySelectorAll(".grade").forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+  typeset(st);
+}
+function flip(){if(!sess||!sess.q[0])return;sess.on=!sess.on;$("#flip").classList.toggle("on",sess.on);const g=$("#grades");g.setAttribute("aria-disabled",!sess.on);g.querySelectorAll("button").forEach(b=>sess.on?b.removeAttribute("tabindex"):b.setAttribute("tabindex","-1"))}
+function grade(g){
+  if(!sess||!sess.on)return;const c=sess.q.shift();
+  const wasNew=!S.cards[c.id];
+  S.cards[c.id]=schedule(S.cards[c.id],g);
+  if(wasNew&&!sess.extra)S.newLog[today()]=newToday()+1;
+  logDay().r++;sess.tally[g]++;sess.on=false;
+  if(g===0)sess.q.splice(Math.min(3,sess.q.length),0,c);
+  save();renderFilters();renderStage();updateBadge();
+}
+function renderMine(){
+  const m=$("#mine");
+  if(!S.custom.length){m.innerHTML=`<p class="muted" style="font-size:13px">Tes fiches perso apparaîtront ici : formules de ton prof, pièges vus en colle, citations pour le français.</p>`;return}
+  m.innerHTML=`<h3 style="font-size:17px;margin-bottom:6px">Mes fiches (${S.custom.length})</h3><ul>${S.custom.map(c=>`<li><div class="q"><span class="tag" style="--c:${col(c.s)}">${SUBJ[c.s].short}</span> ${rich(c.q)}</div><button class="linkbtn" type="button" data-del="${c.id}">Supprimer</button></li>`).join("")}</ul>`;
+  m.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;S.custom=S.custom.filter(c=>c.id!==id);delete S.cards[id];save();if(sess)sess.q=sess.q.filter(c=>c.id!==id);renderFiches();toast("Fiche supprimée")});
+  typeset(m);
+}
+function renderFiches(){renderFilters();renderStage();renderMine()}
+$("#filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;sess=null;renderFiches()});
+$("#add-s").innerHTML=Object.keys(SUBJ).map(k=>`<option value="${k}">${SUBJ[k].name}</option>`).join("");
+$("#add-form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const c={s:$("#add-s").value,ch:$("#add-ch").value.trim(),q:$("#add-q").value.trim(),a:$("#add-a").value.trim()};
+  if(!c.q||!c.a)return;
+  c.id="u-"+Date.now().toString(36);S.custom.unshift(c);save();
+  $("#add-q").value="";$("#add-a").value="";
+  if(sess&&(filter==="all"||filter===c.s))sess.q.push({...c,custom:true});
+  renderFiches();updateBadge();toast("Fiche ajoutée");
+});
+
+/* ---------- Programme ---------- */
+let progS="maths";
+function renderProg(){
+  const v=$("#v-programme");
+  let tot=0,max=0;Object.keys(PROG).forEach(s=>PROG[s].forEach((_,i)=>{tot+=S.prog[s+":"+i]||0;max+=3}));
+  const tabs=Object.keys(PROG).map(s=>{let sum=0;PROG[s].forEach((_,i)=>sum+=S.prog[s+":"+i]||0);const p=sum/(3*PROG[s].length);
+    return `<button type="button" class="ptab" style="--c:${col(s)}" aria-pressed="${progS===s}" data-s="${s}"><b>${SUBJ[s].short}</b><div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div><small>${Math.round(p*100)} % · ${PROG[s].length} chapitres</small></button>`}).join("");
+  const rows=PROG[progS].map(([t,sub],i)=>{const l=S.prog[progS+":"+i]||0;
+    return `<li style="--c:${col(progS)}"><span class="num">${String(i+1).padStart(2,"0")}</span><span class="t">${esc(t)}${sub?`<small>${esc(sub)}</small>`:""}<small style="color:var(--c);font-weight:600">${LVL[l]}</small></span>
+    <span class="lvl" role="group" aria-label="Niveau pour ${esc(t)}">${[1,2,3].map(n=>`<button type="button" class="${l>=n?"f":""}" data-i="${i}" data-n="${n}" aria-label="${LVL[n]}" title="${LVL[n]}" aria-pressed="${l===n}"></button>`).join("")}</span></li>`}).join("");
+  v.innerHTML=`
+  <div class="head"><p class="eyebrow">Programme de PSI · ${Math.round(tot/max*100)} % couvert</p><h1>Programme</h1>
+  <p>Coche ton niveau chapitre par chapitre. Un chapitre « su » se récite, un chapitre « maîtrisé » tient face à un exercice de concours inédit.</p></div>
+  <div class="prog-top">${tabs}</div>
+  <section class="panel" style="--c:${col(progS)}">
+    <div class="panel-head"><h2>${SUBJ[progS].name}</h2><div class="lvl-legend"><span>1 case : vu</span><span>2 : su</span><span>3 : maîtrisé</span><span>re-clique pour baisser</span></div></div>
+    <ul class="chapters">${rows}</ul>
+  </section>`;
+  v.querySelectorAll(".ptab").forEach(b=>b.onclick=()=>{progS=b.dataset.s;renderProg()});
+  v.querySelectorAll(".lvl button").forEach(b=>b.onclick=()=>{const k=progS+":"+b.dataset.i;const n=+b.dataset.n;const cur=S.prog[k]||0;S.prog[k]=cur===n?n-1:n;save();renderProg()});
+}
+
+/* ---------- Chrono ---------- */
+const PRESETS=[
+  {id:"pomo",name:"Pomodoro",min:25,focus:true,desc:"25 minutes sur une seule matière."},
+  {id:"long",name:"Bloc de DS",min:50,focus:true,desc:"Pour un problème long, sans interruption."},
+  {id:"oral",name:"Préparation d'oral",min:30,focus:true,desc:"Exercice inconnu, préparation puis passage à voix haute."},
+  {id:"pause",name:"Pause",min:5,focus:false,desc:"Lève-toi, bois de l'eau, pas d'écran."}
+];
+const R=118,CIRC=2*Math.PI*R;
+const T={p:PRESETS[0],total:1500,remain:1500,run:false,end:0,logged:0,iv:null};
+(function ticks(){let g="";for(let i=0;i<60;i++){const a=i/60*2*Math.PI,maj=i%5===0,r1=maj?136:139,r2=145;
+  g+=`<line class="tick${maj?" major":""}" x1="${150+r1*Math.sin(a)}" y1="${150-r1*Math.cos(a)}" x2="${150+r2*Math.sin(a)}" y2="${150-r2*Math.cos(a)}" stroke-width="${maj?2:1}" stroke-linecap="round"/>`}
+  $("#ticks").innerHTML=g;$("#ring").setAttribute("stroke-dasharray",CIRC)})();
+function drawT(){
+  const s=Math.max(0,Math.ceil(T.remain));$("#time").textContent=`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  $("#time-lbl").textContent=T.run?T.p.name:(T.remain<=0?"Terminé":T.remain<T.total?"En pause":T.p.name);
+  $("#ring").setAttribute("stroke-dashoffset",CIRC*(1-T.remain/T.total));
+  $("#ring").style.stroke=T.p.focus?"var(--pen)":"var(--chim)";
+  $("#t-go").textContent=T.run?"Pause":T.remain<T.total&&T.remain>0?"Reprendre":"Démarrer";
+  if(T.run)document.title=`${$("#time").textContent} · Taupe PSI`;else document.title="Taupe PSI";
+}
+function flushT(){if(!T.p.focus)return;const el=Math.floor(T.total-Math.max(0,T.remain));const add=el-T.logged;if(add>0){logDay().sec+=add;T.logged=el;save()}}
+function renderPresets(){
+  $("#presets").innerHTML=PRESETS.map(p=>`<button type="button" class="preset" aria-pressed="${T.p.id===p.id}" data-p="${p.id}"><b>${p.name}</b><span class="mono">${p.min}′</span><small>${p.desc}</small></button>`).join("");
+  $("#presets").querySelectorAll(".preset").forEach(b=>b.onclick=()=>{stopT();T.p=PRESETS.find(p=>p.id===b.dataset.p);resetT();renderPresets()});
+}
+function renderFocus(){
+  const t=today();const l=S.log[t];let w=0;for(let i=0;i<7;i++){const x=S.log[addDays(t,-i)];if(x)w+=x.sec||0}
+  $("#focus-stats").innerHTML=`<div><b>${fmtMin(l?l.sec:0)}</b><span>aujourd'hui</span></div><div><b>${fmtMin(w)}</b><span>sur 7 jours</span></div><div><b>${Math.floor((l?l.sec:0)/1500)}</b><span>pomodoros complets aujourd'hui</span></div>`;
+}
+let actx=null;
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(d=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);const t0=actx.currentTime+d;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(.2,t0+.02);g.gain.exponentialRampToValueAtTime(.001,t0+.28);o.start(t0);o.stop(t0+.3)})}catch(e){}}
+function tick(){T.remain=(T.end-Date.now())/1000;if(T.remain<=0){T.remain=0;flushT();stopT();beep();toast(T.p.focus?"Bloc terminé. Fais une pause.":"Pause terminée. On y retourne.");renderFocus()}drawT()}
+function startT(){if(T.remain<=0)resetT();T.run=true;T.end=Date.now()+T.remain*1000;clearInterval(T.iv);T.iv=setInterval(tick,250);try{actx=actx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}drawT()}
+function stopT(){if(T.run){T.remain=Math.max(0,(T.end-Date.now())/1000);flushT();renderFocus()}T.run=false;clearInterval(T.iv);drawT()}
+function resetT(){stopT();T.total=T.p.min*60;T.remain=T.total;T.logged=0;drawT()}
+$("#t-go").onclick=()=>T.run?stopT():startT();
+$("#t-reset").onclick=()=>{resetT();renderFocus()};
+setInterval(()=>{if(T.run)flushT()},30000);
+
+/* ---------- Réglages ---------- */
+function renderSettings(){
+  $("#set-exam").value=S.exam;$("#set-new").value=S.newPerDay;$("#exp").value=JSON.stringify(S);
+  $("#reset-zone").innerHTML=`<button class="btn ghost small" id="reset" type="button" style="color:var(--bad)">Tout effacer…</button>`;
+  $("#reset").onclick=()=>{$("#reset-zone").innerHTML=`<div class="confirm"><span>Effacer toute ta progression ?</span><button class="btn danger small" type="button" id="reset-yes">Oui, tout effacer</button><button class="btn ghost small" type="button" id="reset-no">Annuler</button></div>`;
+    $("#reset-yes").onclick=()=>{S=fresh();save();sess=null;renderSettings();updateBadge();toast("Progression effacée")};$("#reset-no").onclick=renderSettings};
+}
+$("#set-exam").addEventListener("change",e=>{if(e.target.value){S.exam=e.target.value;save();toast("Date enregistrée")}});
+$("#set-new").addEventListener("change",e=>{const n=Math.max(0,Math.min(200,parseInt(e.target.value,10)||0));S.newPerDay=n;e.target.value=n;save();sess=null;updateBadge();toast("Réglage enregistré")});
+$("#copy").onclick=()=>{const ta=$("#exp");const done=()=>toast("Sauvegarde copiée");
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select();toast("Texte sélectionné : copie-le avec Ctrl+C")});else{ta.select();toast("Texte sélectionné : copie-le avec Ctrl+C")}};
+$("#import").onclick=()=>{try{const d=JSON.parse($("#imp").value);if(!d||typeof d.cards!=="object")throw 0;S=Object.assign(fresh(),d);save();sess=null;$("#imp").value="";renderSettings();updateBadge();toast("Sauvegarde importée")}catch(e){toast("Texte invalide : colle l'export complet, sans le modifier.")}};
+
+/* ---------- Navigation ---------- */
+function updateBadge(){const c=counts("all");const n=c.due+c.nw;const b=$("#due-badge");b.hidden=!n;b.textContent=n}
+const VIEWS=["accueil","fiches","programme","chrono","reglages"];
+function route(){
+  let v=(location.hash||"").slice(1);if(!VIEWS.includes(v))v="accueil";
+  document.querySelectorAll(".view").forEach(s=>s.hidden=s.dataset.view!==v);
+  document.querySelectorAll(".tab").forEach(a=>a.dataset.v===v?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  if(v==="accueil")renderHome();
+  if(v==="fiches")renderFiches();
+  if(v==="programme")renderProg();
+  if(v==="chrono"){renderPresets();renderFocus();drawT()}
+  if(v==="reglages")renderSettings();
+  updateBadge();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+document.addEventListener("keydown",e=>{
+  if($("#v-fiches").hidden||e.target.closest("input,textarea,select")||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key===" "||e.key==="Enter"){if(e.target.closest("button:not(.flip)"))return;e.preventDefault();flip()}
+  else if(/^[1-4]$/.test(e.key)&&sess&&sess.on){e.preventDefault();grade(+e.key-1)}
+});
+route();
+})();
+</script>

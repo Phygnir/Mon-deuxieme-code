@@ -1,0 +1,890 @@
+<title>Cap Handstand</title>
+<meta name="description" content="Programme de 26 semaines pour tenir 2 min en handstand et enchaîner 10 handstand push-ups.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: en-tête avec les deux objectifs, puis onglets ; la vue Semaine empile frise des 26 semaines → grille des 7 jours → détail de la séance. */
+:root {
+  --bg: #eef2f0;
+  --surface: #ffffff;
+  --sunk: #e3e9e6;
+  --ink: #14201c;
+  --muted: #5a6964;
+  --line: #d2dbd7;
+  --accent: #0b7a63;
+  --accent-soft: #d5ece5;
+  --on-accent: #ffffff;
+  --p1: #3f74c9;
+  --p2: #0b8f75;
+  --p3: #c98a1c;
+  --p4: #cf4a3c;
+  --p5: #7a4fc4;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1513; --surface: #16201d; --sunk: #1d2925; --ink: #e4ece9; --muted: #92a29c;
+    --line: #2a3733; --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b;
+    --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1513; --surface: #16201d; --sunk: #1d2925; --ink: #e4ece9; --muted: #92a29c;
+  --line: #2a3733; --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b;
+  --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 60px; display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 700; letter-spacing: .01em; text-transform: uppercase; }
+h2 { font-size: 26px; font-weight: 600; }
+h3 { font-size: 21px; font-weight: 600; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.num { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* En-tête */
+header { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: end; justify-content: space-between; }
+header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
+.start { display: grid; gap: 4px; }
+.start input { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+
+/* Objectifs */
+.goals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; }
+.goal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.goal-big { font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.goal-big small { font-size: 18px; color: var(--muted); font-weight: 500; }
+.track { position: relative; height: 10px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.track > i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 99px; }
+.track-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Onglets */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { background: none; border: 0; padding: 10px 14px; font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+/* Frise des semaines */
+.timeline { display: grid; gap: 8px; }
+.weeks { display: grid; grid-template-columns: repeat(26, minmax(0, 1fr)); gap: 3px; }
+.wk { position: relative; border: 0; border-radius: 5px; height: 42px; padding: 0; background: color-mix(in srgb, var(--pc) 22%, var(--surface)); color: var(--ink); font-family: var(--font-display); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.wk.deload { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--pc) 22%, var(--surface)) 0 4px, var(--surface) 4px 8px); }
+.wk.sel { background: var(--pc); color: var(--surface); }
+.wk.now::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--pc); display: inline-block; }
+.legend i.stripe { background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 4px); }
+
+/* En-tête de semaine */
+.week-head { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: end; }
+.week-head .info { display: grid; gap: 4px; min-width: 0; max-width: 64ch; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; background: color-mix(in srgb, var(--pc) 18%, var(--surface)); color: var(--ink); border: 1px solid color-mix(in srgb, var(--pc) 45%, var(--surface)); }
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--pc); }
+.nav { display: flex; gap: 6px; }
+.nav button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; }
+.nav button:disabled { opacity: .4; cursor: default; }
+
+/* Jours */
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.day { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 10px 10px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.day.rest { background: transparent; border-style: dashed; }
+.day.sel { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.day .d { display: flex; justify-content: space-between; align-items: center; }
+.day .d b { font-family: var(--font-display); font-size: 18px; text-transform: uppercase; letter-spacing: .04em; }
+.day .t { font-weight: 600; line-height: 1.25; }
+.day .s { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line); display: inline-grid; place-items: center; font-size: 12px; }
+.check.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.tag-test { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--p4); }
+
+/* Détail séance */
+.session { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 16px; }
+.session-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: start; }
+.session-head .info { display: grid; gap: 4px; min-width: 0; max-width: 64ch; }
+.done-btn { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 8px; padding: 8px 14px; font-weight: 600; }
+.done-btn.on { background: var(--accent); color: var(--on-accent); }
+.blocks { display: grid; gap: 4px; }
+.block-title { margin-top: 6px; }
+.ex-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.ex-row:first-of-type { border-top: 0; }
+.ex-row .fig { width: 150px; height: 125px; background: var(--sunk); border-radius: 8px; }
+.ex-row .txt { display: grid; gap: 4px; min-width: 0; }
+.ex-row .name { font-weight: 600; font-size: 16px; }
+.ex-row .note { font-size: 14px; color: var(--muted); }
+.ex-row .cues { margin: 2px 0 0; padding-left: 18px; font-size: 14px; }
+.dose { text-align: right; display: grid; gap: 2px; justify-items: end; }
+.dose b { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dose span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.log { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; padding: 14px; background: var(--accent-soft); border-radius: 8px; }
+.log label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
+.log input { width: 120px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.rest-card { display: grid; gap: 8px; }
+
+/* Bibliothèque */
+.lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 8px; align-content: start; }
+.card .fig { width: 100%; aspect-ratio: 6 / 5; height: auto; max-width: 100%; background: var(--sunk); border-radius: 8px; }
+.card ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--sunk); color: var(--muted); }
+
+/* Progression */
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.phase { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--pc); border-radius: var(--r); padding: 14px; display: grid; gap: 6px; align-content: start; }
+.chart-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 10px; }
+.chart-scroll { overflow-x: auto; }
+.chart-scroll svg { display: block; min-width: 560px; width: 100%; height: auto; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.rules .card p { font-size: 14px; }
+
+/* Figures */
+.fig .pr { stroke: var(--muted); stroke-width: 2; fill: none; }
+.fig .prf { fill: var(--line); stroke: var(--muted); stroke-width: 1.5; }
+.fig .lb { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; opacity: .35; }
+.fig .lf { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; }
+.fig .tr { stroke: var(--ink); stroke-linecap: round; stroke-width: 10; }
+.fig .hd { fill: var(--ink); }
+
+@media (max-width: 860px) {
+  .days { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .weeks { grid-template-columns: repeat(13, minmax(0, 1fr)); row-gap: 12px; }
+}
+@media (max-width: 560px) {
+  .goals { grid-template-columns: 1fr; }
+  .days { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ex-row { grid-template-columns: 110px minmax(0, 1fr); }
+  .ex-row .fig { width: 110px; height: 92px; }
+  .dose { grid-column: 2; justify-items: start; text-align: left; }
+  .dose b { font-size: 24px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="intro">
+      <span class="label">Programme 26 semaines · 4 séances / semaine</span>
+      <h1>Cap Handstand</h1>
+      <p class="muted">De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée. Choisis une semaine, puis un jour pour voir la séance et les mouvements.</p>
+    </div>
+    <label class="start">
+      <span class="label">Début du programme (un lundi)</span>
+      <input type="date" id="start-date">
+    </label>
+  </header>
+
+  <section class="goals" id="goals" aria-label="Objectifs"></section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="week" aria-selected="true">Semaine</button>
+    <button role="tab" data-tab="plan" aria-selected="false">Progression 6 mois</button>
+    <button role="tab" data-tab="lib" aria-selected="false">Exercices</button>
+  </nav>
+
+  <main id="view"></main>
+</div>
+
+<script>
+/* ---------- Exercices : poses (coordonnées viewBox 240×200, sol y=190) ---------- */
+const EX = {
+  wrists: {
+    name: "Préparation poignets", short: "Bascule à quatre pattes",
+    desc: "À quatre pattes, mains sous les épaules, doigts écartés. Bascule doucement les épaules au-delà des doigts puis reviens.",
+    cues: ["Doigts bien écartés, pression dans le bout des doigts", "Bras tendus, mouvement lent", "Ajoute 10 rotations de poignets avant"],
+    props: [],
+    poses: [
+      { h:[100,190], e:[101,168], s:[102,146], p:[146,148], k:[150,190], f:[188,190], hd:[90,141] },
+      { h:[100,190], e:[94,170], s:[88,150], p:[134,150], k:[150,190], f:[188,190], hd:[76,145] }
+    ],
+    seq: [[0,.4,1.2],[1,.6,1.2]]
+  },
+  hollow: {
+    name: "Hollow body", short: "Gainage creux au sol",
+    desc: "Allongé sur le dos, bas du dos plaqué au sol, bras et jambes tendus décollés. C'est la forme du corps en handstand.",
+    cues: ["Bas du dos collé au sol en permanence", "Côtes rentrées, fesses serrées", "Trop dur : plie les genoux ou ramène les bras"],
+    props: [],
+    poses: [
+      { h:[46,165], e:[68,171], s:[92,178], p:[130,188], k:[166,182], f:[200,174], hd:[80,175] },
+      { h:[46,159], e:[68,166], s:[92,174], p:[130,188], k:[166,178], f:[200,168], hd:[80,170] }
+    ],
+    seq: [[0,.3,1.4],[1,.3,1.4]]
+  },
+  kickup: {
+    name: "Entrées en handstand", short: "Kick-up contrôlé",
+    desc: "Fente avant, bras tendus au-dessus de la tête, pose les mains et lance une jambe pour monter. Le but est d'arriver doucement à la verticale, sans dépasser.",
+    cues: ["Mains à une main-largeur de ton pied avant", "Jambe arrière tendue qui mène le mouvement", "Moins d'élan qu'on croit : tu dois pouvoir t'arrêter en haut"],
+    props: [],
+    poses: [
+      { h:[112,28], e:[106,51], s:[100,74], p:[98,118], k:[97,154], f:[96,190], hd:[101,60], k2:[97,154], f2:[96,190] },
+      { h:[150,190], e:[148,168], s:[146,146], p:[110,124], k:[118,158], f:[112,190], hd:[156,152], k2:[84,108], f2:[56,92] },
+      { h:[150,190], e:[150,168], s:[150,146], p:[150,102], k:[150,66], f:[150,30], hd:[157,158], k2:[150,66], f2:[150,30] }
+    ],
+    seq: [[0,.6,.7],[1,0,.6],[2,1.2,.6],[1,0,.7]]
+  },
+  wallChest: {
+    name: "Handstand face au mur", short: "Ventre au mur",
+    desc: "Monte en marchant les pieds au mur, ventre vers le mur, mains à 10–20 cm du mur. Seuls les orteils touchent. C'est l'exercice qui construit l'alignement.",
+    cues: ["Pousse le sol, épaules aux oreilles", "Côtes rentrées, fesses serrées, corps droit", "Regarde entre tes mains, pas loin devant"],
+    props: [{ wall: 146 }],
+    poses: [
+      { h:[124,190], e:[125,168], s:[126,146], p:[132,102], k:[137,66], f:[142,32], hd:[133,157] },
+      { h:[124,190], e:[125,167], s:[126,143], p:[132,100], k:[137,64], f:[142,30], hd:[133,155] }
+    ],
+    seq: [[0,.6,1],[1,.6,1]]
+  },
+  wallWalk: {
+    name: "Wall walk", short: "Montée au mur",
+    desc: "En planche, pieds contre le mur. Monte les pieds sur le mur en reculant les mains jusqu'à être presque collé, puis redescends en contrôle.",
+    cues: ["Gainage de planche tout du long", "Petits pas de mains", "Redescends aussi lentement que tu montes"],
+    props: [{ wall: 200 }],
+    poses: [
+      { h:[90,190], e:[91,170], s:[92,150], p:[140,166], k:[170,176], f:[196,188], hd:[80,146] },
+      { h:[130,190], e:[132,170], s:[134,150], p:[168,138], k:[186,120], f:[197,96], hd:[122,154] },
+      { h:[176,190], e:[177,168], s:[178,146], p:[184,102], k:[190,66], f:[196,32], hd:[185,157] }
+    ],
+    seq: [[0,.6,1.1],[1,0,1.1],[2,.9,1.1],[1,0,1.1]]
+  },
+  shoulderTap: {
+    name: "Shoulder taps au mur", short: "Transfert de poids",
+    desc: "En handstand face au mur, décolle une main pour toucher l'épaule opposée, repose, change de côté. Apprend à charger une épaule et à corriger.",
+    cues: ["Transfère le poids avant de décoller la main", "Le bassin bouge le moins possible", "Compte 1 répétition par main"],
+    props: [{ wall: 146 }],
+    poses: [
+      { h:[124,190], e:[125,168], s:[126,146], p:[132,102], k:[137,66], f:[142,32], hd:[133,157] },
+      { h:[124,190], e:[125,168], s:[125,146], p:[131,102], k:[136,66], f:[142,32], hd:[132,157], e2:[136,166], h2:[129,150] }
+    ],
+    seq: [[0,.4,.5],[1,.4,.5]]
+  },
+  heelPull: {
+    name: "Décollés de talons", short: "Équilibre dos au mur",
+    desc: "Dos au mur, talons posés. Décolle les talons du mur en appuyant dans les doigts et tiens l'équilibre le plus longtemps possible avant de reposer.",
+    cues: ["C'est les doigts qui ramènent le corps, pas les jambes", "Décolle doucement, sans élan", "Corps aligné dès que les pieds quittent le mur"],
+    props: [{ wall: 88 }],
+    poses: [
+      { h:[112,190], e:[112,168], s:[112,146], p:[104,104], k:[97,68], f:[92,32], hd:[119,158] },
+      { h:[112,190], e:[112,168], s:[112,146], p:[111,102], k:[111,66], f:[111,30], hd:[119,158] }
+    ],
+    seq: [[0,.6,1],[1,1.4,1]]
+  },
+  hsFree: {
+    name: "Handstand libre", short: "Tenue sans appui",
+    desc: "Le mouvement cible. Monte, cherche la ligne droite et tiens. Les corrections se font avec les doigts (vers l'avant) et la paume (vers l'arrière).",
+    cues: ["Pousse le sol, bras verrouillés", "Corps gainé comme en hollow", "Si tu tombes en avant : rotation et sortie en roue"],
+    props: [],
+    poses: [
+      { h:[120,190], e:[120,168], s:[120,146], p:[120,102], k:[120,66], f:[120,30], hd:[127,158] },
+      { h:[120,190], e:[120.5,168], s:[121,146], p:[123,102], k:[124,66], f:[125,30], hd:[128,158] }
+    ],
+    seq: [[0,.2,1.6],[1,.2,1.6]]
+  },
+  pike: {
+    name: "Pike push-up", short: "Pompe en V",
+    desc: "Corps en V inversé, hanches hautes. Descends la tête devant les mains pour former un triangle, puis repousse. Premier pas vers le HSPU.",
+    cues: ["Hanches au-dessus des épaules", "Tête qui va devant les mains, pas entre", "Coudes à 45°, pas écartés à plat"],
+    props: [],
+    poses: [
+      { h:[80,190], e:[92,170], s:[104,152], p:[130,116], k:[146,152], f:[162,190], hd:[97,162] },
+      { h:[80,190], e:[98,180], s:[88,170], p:[122,126], k:[142,158], f:[162,190], hd:[80,180] }
+    ],
+    seq: [[0,.4,1.2],[1,.2,.9]]
+  },
+  pikeBox: {
+    name: "Pike push-up pieds surélevés", short: "Pieds sur une box",
+    desc: "Même mouvement que le pike push-up, pieds sur une chaise ou une box. Le buste est plus vertical, donc plus proche du HSPU.",
+    cues: ["Plus les pieds sont hauts, plus c'est dur", "Garde les hanches au-dessus des épaules", "Touche légèrement le sol avec la tête"],
+    props: [{ box: [150, 150, 52, 40] }],
+    poses: [
+      { h:[80,190], e:[89,170], s:[98,148], p:[116,104], k:[144,124], f:[172,150], hd:[93,159] },
+      { h:[80,190], e:[98,182], s:[86,170], p:[106,130], k:[140,136], f:[172,150], hd:[81,181] }
+    ],
+    seq: [[0,.4,1.2],[1,.2,.9]]
+  },
+  hspuNeg: {
+    name: "HSPU négatif", short: "Descente lente au mur",
+    desc: "Dos au mur, descends la tête au sol le plus lentement possible (5 à 8 s), puis redescends les pieds et remonte. La phase excentrique construit la force.",
+    cues: ["Tête sur un coussin plié", "Descente régulière, pas de chute à la fin", "Coudes légèrement vers l'avant, pas sur les côtés"],
+    props: [{ wall: 88 }, { pad: [108, 186, 26, 4] }],
+    poses: [
+      { h:[112,190], e:[112,168], s:[112,146], p:[104,104], k:[97,68], f:[92,32], hd:[119,158] },
+      { h:[112,190], e:[100,178], s:[112,168], p:[103,126], k:[96,90], f:[92,54], hd:[119,178] }
+    ],
+    seq: [[0,.6,3.2],[1,.4,.6]]
+  },
+  hspu: {
+    name: "HSPU au mur", short: "Handstand push-up dos au mur",
+    desc: "Dos au mur, descends jusqu'à ce que la tête touche le sol (sur un coussin fin), puis repousse jusqu'aux bras tendus. C'est le mouvement de l'objectif.",
+    cues: ["Tête en avant des mains : triangle", "Pousse en ramenant la tête entre les bras en haut", "Répétitions propres, arrête avant l'échec"],
+    props: [{ wall: 88 }, { pad: [108, 186, 26, 4] }],
+    poses: [
+      { h:[112,190], e:[112,168], s:[112,146], p:[104,104], k:[97,68], f:[92,32], hd:[119,158] },
+      { h:[112,190], e:[100,178], s:[112,168], p:[103,126], k:[96,90], f:[92,54], hd:[119,178] }
+    ],
+    seq: [[0,.5,1.3],[1,.15,1]]
+  },
+  hspuDef: {
+    name: "HSPU en déficit", short: "Mains surélevées",
+    desc: "HSPU dos au mur avec les mains sur deux blocs ou parallettes : la tête descend plus bas que les mains. Amplitude plus grande, donc plus de force en amplitude normale.",
+    cues: ["Commence à 5 cm, augmente ensuite", "Blocs stables qui ne glissent pas", "Même technique qu'au HSPU normal"],
+    props: [{ wall: 88 }, { box: [102, 176, 22, 14] }],
+    poses: [
+      { h:[112,176], e:[112,154], s:[112,132], p:[104,90], k:[97,54], f:[92,18], hd:[119,144] },
+      { h:[112,176], e:[98,166], s:[112,172], p:[103,130], k:[96,94], f:[92,58], hd:[126,183] }
+    ],
+    seq: [[0,.5,1.5],[1,.15,1.1]]
+  },
+  hspuFree: {
+    name: "HSPU libre", short: "Sans mur",
+    desc: "Le niveau au-dessus : HSPU sans le mur. On le travaille en tentatives simples, quand le HSPU au mur et la tenue libre sont solides.",
+    cues: ["Uniquement si tu tiens 60 s en libre", "Descente lente, la tête cherche le triangle", "Sur tapis, avec un espace dégagé"],
+    props: [{ pad: [116, 186, 26, 4] }],
+    poses: [
+      { h:[120,190], e:[120,168], s:[120,146], p:[120,102], k:[120,66], f:[120,30], hd:[127,158] },
+      { h:[120,190], e:[108,178], s:[120,168], p:[118,124], k:[117,88], f:[117,52], hd:[128,178] }
+    ],
+    seq: [[0,.6,1.8],[1,.2,1.2]]
+  },
+  dips: {
+    name: "Dips", short: "Barres parallèles",
+    desc: "Sur des barres parallèles ou deux chaises solides, descends jusqu'à avoir les épaules au niveau des coudes, puis remonte. Renforce les triceps pour le verrouillage du HSPU.",
+    cues: ["Épaules basses, loin des oreilles", "Buste légèrement penché vers l'avant", "Descends jusqu'à 90° aux coudes"],
+    props: [{ bars: 110 }],
+    poses: [
+      { h:[120,110], e:[120,88], s:[120,66], p:[118,112], k:[116,146], f:[96,160], hd:[122,53] },
+      { h:[120,110], e:[104,104], s:[126,96], p:[116,140], k:[118,172], f:[98,184], hd:[133,84] }
+    ],
+    seq: [[0,.4,1.2],[1,.2,.9]]
+  }
+};
+
+/* ---------- Programme ---------- */
+const PHASES = [
+  { name: "Fondations", from: 1, to: 6, color: "--p1",
+    goal: "Corps aligné au mur et épaules solides.",
+    detail: "Tenue ventre au mur jusqu'à 60 s, pike push-ups propres, premières descentes lentes en HSPU.",
+    hold: 30, hspu: 2 },
+  { name: "Contrôle", from: 7, to: 12, color: "--p2",
+    goal: "Tenir 45 s en libre, 3 HSPU d'affilée.",
+    detail: "On quitte le mur pour l'équilibre (décollés de talons) et on passe aux vrais HSPU au mur, en petites séries.",
+    hold: 45, hspu: 3 },
+  { name: "Force", from: 13, to: 18, color: "--p3",
+    goal: "Tenir 70 s, 5 HSPU d'affilée.",
+    detail: "Plus de volume sur le HSPU, apparition du déficit. Les tenues libres s'allongent.",
+    hold: 70, hspu: 5 },
+  { name: "Volume", from: 19, to: 24, color: "--p4",
+    goal: "Tenir 1 min 45, 8 HSPU d'affilée.",
+    detail: "Séries longues, déficit plus profond, premières tentatives de HSPU libre.",
+    hold: 105, hspu: 8 },
+  { name: "Pic & test", from: 25, to: 26, color: "--p5",
+    goal: "2 min de handstand, 10 HSPU.",
+    detail: "Volume réduit pour arriver frais, puis test final le samedi de la semaine 26.",
+    hold: 120, hspu: 10 }
+];
+const START = { hold: 20, hspu: 1 };
+const TEST_WEEKS = new Set([6, 12, 18, 24, 26]);
+const DELOAD = new Set([6, 12, 18, 24]);
+const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const SLOT = { 0: "forceA", 1: "balance", 3: "forceB", 5: "long" };
+const SESSION_META = {
+  forceA: { title: "Force — HSPU", sub: "Pousser à la verticale", min: 45 },
+  balance: { title: "Équilibre", sub: "Technique de tenue", min: 40 },
+  forceB: { title: "Force — volume", sub: "Répétitions faciles, beaucoup de qualité", min: 40 },
+  long: { title: "Tenues longues", sub: "Endurance en équilibre", min: 45 }
+};
+
+function phaseIndex(w) { return PHASES.findIndex(p => w >= p.from && w <= p.to); }
+function rampT(w) {
+  const p = PHASES[phaseIndex(w)];
+  const last = DELOAD.has(p.to) ? p.to - 1 : p.to;
+  if (last === p.from) return 0;
+  return Math.min(1, (w - p.from) / (last - p.from));
+}
+const R = (a, b, t) => Math.round(a + (b - a) * t);
+function fmtS(s) { if (s < 60) return s + " s"; const m = Math.floor(s / 60), r = s % 60; return m + " min" + (r ? " " + String(r).padStart(2, "0") : ""); }
+
+function targetAt(w, key) {
+  // interpolation linéaire entre les jalons de fin de phase
+  const pts = [[0, START[key]]].concat(PHASES.map(p => [p.to, p[key]]));
+  for (let i = 1; i < pts.length; i++) {
+    const [w0, v0] = pts[i - 1], [w1, v1] = pts[i];
+    if (w <= w1) return v0 + (v1 - v0) * (w - w0) / (w1 - w0);
+  }
+  return pts[pts.length - 1][1];
+}
+
+function item(ex, dose, unit, note) { return { ex, dose, unit, note }; }
+
+function buildSession(w, type) {
+  const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w);
+  const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
+  const warm = [
+    item("wrists", "3 min", "", "Rotations de poignets puis bascules"),
+    item("hollow", S(3) + " × " + R(20, 40, pi === 0 ? t : 1) + " s", "repos 30 s", "")
+  ];
+  let main = [];
+  const holdTarget = Math.round(targetAt(w, "hold") / 5) * 5;
+
+  if (type === "forceA") {
+    if (pi === 0) main = [
+      item("pike", S(4) + " × " + R(6, 10, t), "repos 90 s", "Amplitude complète, tête qui touche le sol"),
+      item("pikeBox", S(3) + " × " + R(4, 8, t), "repos 2 min", "Pieds à hauteur de genoux"),
+      item("hspuNeg", S(3) + " × " + R(1, 3, t), "descente 5 s", "Remonte en descendant les pieds, pas en poussant"),
+      item("dips", S(3) + " × " + R(8, 12, t), "repos 90 s", "")
+    ];
+    else if (pi === 1) main = [
+      item("wallWalk", "2 × 1", "échauffement", "Prépare les épaules à la verticale"),
+      item("hspu", S(5) + " × " + R(2, 3, t), "repos 2 min", "Coussin fin sous la tête"),
+      item("hspuNeg", S(3) + " × 3", "descente 6 s", ""),
+      item("pikeBox", S(3) + " × " + R(8, 10, t), "repos 90 s", ""),
+      item("dips", S(3) + " × " + R(10, 14, t), "repos 90 s", "")
+    ];
+    else if (pi === 2) main = [
+      item("hspu", S(5) + " × " + R(3, 5, t), "repos 2–3 min", "Garde 1 répétition en réserve"),
+      item("hspuDef", S(4) + " × " + R(2, 4, t), "repos 2 min", "Déficit de 5 cm"),
+      item("hspuNeg", S(2) + " × 3", "descente 8 s", ""),
+      item("dips", S(4) + " × 12", "repos 90 s", "")
+    ];
+    else if (pi === 3) main = [
+      item("hspu", S(4) + " × " + R(5, 8, t), "repos 3 min", "Dernière série : max propre si tu te sens bien"),
+      item("hspuDef", S(4) + " × " + R(4, 6, t), "repos 2 min", "Déficit de 8 à 10 cm"),
+      item("hspuFree", S(5) + " × 1", "tentatives", "Seulement si la tenue libre dépasse 60 s"),
+      item("dips", S(3) + " × 15", "repos 90 s", "")
+    ];
+    else main = w === 25 ? [
+      item("hspu", "4 × 4", "repos 3 min", "Rapide et propre, loin de l'échec"),
+      item("hspuDef", "3 × 3", "repos 2 min", "")
+    ] : [
+      item("hspu", "2 × 3", "repos 3 min", "Juste pour garder le geste avant le test")
+    ];
+  }
+
+  if (type === "balance") {
+    if (pi === 0) main = [
+      item("kickup", "10", "entrées", "Alterne les jambes d'appel"),
+      item("wallChest", S(4) + " × " + R(30, 60, t) + " s", "repos 60 s", "Arrête la série dès que l'alignement se casse"),
+      item("shoulderTap", S(3) + " × " + R(6, 12, t), "repos 60 s", "Total des deux mains"),
+      item("hsFree", "10", "tentatives", "Cible " + R(15, 25, t) + " s, sortie en roue si besoin")
+    ];
+    else if (pi === 1) main = [
+      item("kickup", "8", "entrées", "Arrive à la verticale sans toucher le mur"),
+      item("heelPull", S(5) + " × " + R(5, 15, t) + " s", "repos 45 s", ""),
+      item("hsFree", S(8), "tentatives", "Cible " + R(25, 45, t) + " s"),
+      item("wallChest", S(2) + " × 60 s", "repos 90 s", "")
+    ];
+    else if (pi === 2) main = [
+      item("kickup", "6", "entrées", ""),
+      item("hsFree", S(6), "tentatives", "Cible " + R(40, 70, t) + " s"),
+      item("heelPull", S(3) + " × 20 s", "repos 45 s", ""),
+      item("shoulderTap", S(3) + " × 20", "repos 60 s", "")
+    ];
+    else if (pi === 3) main = [
+      item("kickup", "5", "entrées", ""),
+      item("hsFree", S(5), "tentatives", "Cible " + fmtS(R(60, 105, t))),
+      item("wallChest", "1 × " + fmtS(R(90, 120, t)), "", "Endurance des épaules")
+    ];
+    else main = w === 25 ? [
+      item("hsFree", "4", "tentatives", "Cible 1 min 50"),
+      item("heelPull", "3 × 20 s", "repos 45 s", "")
+    ] : [
+      item("hsFree", "3 × 45 s", "facile", "Juste pour garder les sensations")
+    ];
+  }
+
+  if (type === "forceB") {
+    if (pi === 0) main = [
+      item("wallWalk", S(3) + " × " + R(1, 3, t), "repos 90 s", ""),
+      item("pike", S(3) + " × " + R(8, 12, t), "tempo 3-1-1", "3 s de descente, 1 s en bas, montée normale"),
+      item("shoulderTap", S(3) + " × " + R(6, 10, t), "repos 60 s", "")
+    ];
+    else if (pi === 1) main = [
+      item("hspu", "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", "1 rép. / min", "Une répétition au début de chaque minute"),
+      item("pikeBox", S(3) + " × 10", "tempo 3-1-1", ""),
+      item("shoulderTap", S(3) + " × 12", "repos 60 s", "")
+    ];
+    else if (pi === 2) main = [
+      item("hspu", "EMOM " + (dl ? 6 : R(8, 10, t)) + " min", "2 rép. / min", ""),
+      item("hspuNeg", S(3) + " × 2", "descente 8 s", ""),
+      item("shoulderTap", S(3) + " × 16", "repos 60 s", "")
+    ];
+    else if (pi === 3) main = [
+      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", R(3, 4, t) + " rép. / min", ""),
+      item("pikeBox", S(3) + " × 12", "tempo 3-1-1", ""),
+      item("dips", S(3) + " × 12", "repos 90 s", "")
+    ];
+    else main = w === 25 ? [
+      item("hspu", "EMOM 8 min", "2 rép. / min", "Facile, on garde de l'énergie")
+    ] : [
+      item("wallChest", "2 × 45 s", "facile", "Séance légère : 20 min maximum")
+    ];
+  }
+
+  if (type === "long") {
+    if (dl || w === 26) {
+      return { warm, main: [
+        item("kickup", "4", "entrées", "Échauffement du test"),
+        item("hsFree", "3", "essais", "Meilleure tenue en libre, 3 min de repos entre les essais"),
+        item("hspu", "1 × max", "test", "Répétitions strictes d'affilée, tête au sol et bras tendus en haut")
+      ], test: true };
+    }
+    if (pi === 0) main = [
+      item("wallChest", R(3, 5, t) + " min", "cumulées", "Découpe comme tu veux, ex. 6 × 40 s"),
+      item("hsFree", "10", "tentatives", "Note ta meilleure tenue")
+    ];
+    else if (pi === 1) main = [
+      item("hsFree", R(4, 6, t) + " min", "cumulées", "Séries de 20 à 40 s"),
+      item("wallChest", "1 × max", "", "Une seule série longue")
+    ];
+    else if (pi === 2) main = [
+      item("hsFree", R(5, 7, t) + " min", "cumulées", "Séries de " + R(30, 60, t) + " s minimum"),
+      item("wallChest", "2 × " + fmtS(R(75, 90, t)), "repos 2 min", "")
+    ];
+    else if (pi === 3) main = [
+      item("hsFree", "3 × " + fmtS(R(75, 120, t)), "repos 3 min", "Si tu tombes, remonte et complète le temps"),
+      item("wallChest", "1 × 2 min", "", "")
+    ];
+    else main = [
+      item("hsFree", "5 min", "cumulées", "Séries faciles de 45 s")
+    ];
+  }
+  return { warm, main, test: false, holdTarget };
+}
+
+/* ---------- État local (confort par navigateur) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("caphs:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("caphs:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+function mondayOf(d) { const x = new Date(d); x.setHours(12, 0, 0, 0); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; }
+function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+
+const state = {
+  tab: "week",
+  start: store.get("start", iso(mondayOf(new Date()))),
+  done: store.get("done", {}),
+  results: store.get("results", {}),
+  week: 1, day: 0
+};
+function currentWeek() {
+  const s = new Date(state.start + "T12:00:00"), now = new Date(); now.setHours(12, 0, 0, 0);
+  const diff = Math.floor((now - s) / 86400000);
+  return { week: Math.floor(diff / 7) + 1, day: ((diff % 7) + 7) % 7 };
+}
+function initPosition() {
+  const c = currentWeek();
+  state.week = Math.min(26, Math.max(1, c.week));
+  state.day = c.week >= 1 && c.week <= 26 ? c.day : 0;
+}
+function dateOf(w, d) { const s = new Date(state.start + "T12:00:00"); s.setDate(s.getDate() + (w - 1) * 7 + d); return s; }
+const fmtDate = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+
+/* ---------- Figures animées ---------- */
+const NS = "http://www.w3.org/2000/svg";
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let figures = [];
+function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+
+function makeFigure(id, cls) {
+  const ex = EX[id];
+  const svg = el("svg", { viewBox: "0 0 240 200", class: "fig " + (cls || ""), role: "img", "aria-label": "Animation : " + ex.name });
+  const hasBars = ex.props.some(p => p.bars);
+  if (!hasBars) el("line", { x1: 8, y1: 190, x2: 232, y2: 190, class: "pr" }, svg);
+  else el("line", { x1: 8, y1: 194, x2: 232, y2: 194, class: "pr", "stroke-dasharray": "4 5" }, svg);
+  ex.props.forEach(p => {
+    if (p.wall) el("line", { x1: p.wall, y1: 6, x2: p.wall, y2: 190, class: "pr" }, svg);
+    if (p.box) el("rect", { x: p.box[0], y: p.box[1], width: p.box[2], height: p.box[3], rx: 2, class: "prf" }, svg);
+    if (p.pad) el("rect", { x: p.pad[0], y: p.pad[1], width: p.pad[2], height: p.pad[3], rx: 2, class: "prf" }, svg);
+    if (p.bars) { el("line", { x1: 70, y1: p.bars, x2: 180, y2: p.bars, class: "pr", "stroke-width": 4 }, svg); el("line", { x1: 80, y1: p.bars, x2: 80, y2: 194, class: "pr" }, svg); el("line", { x1: 170, y1: p.bars, x2: 170, y2: 194, class: "pr" }, svg); }
+  });
+  const L = (c) => el("line", { class: c }, svg);
+  const parts = {
+    a2u: L("lb"), a2l: L("lb"), l2u: L("lb"), l2l: L("lb"),
+    tr: L("tr"), lu: L("lf"), ll: L("lf"), au: L("lf"), al: L("lf"),
+    hd: el("circle", { r: 9, class: "hd" }, svg)
+  };
+  const fig = { svg, ex, parts, offset: Math.random() * 0.3 };
+  // durée du cycle
+  fig.total = ex.seq.reduce((a, s) => a + s[1] + s[2], 0);
+  draw(fig, reduceMotion ? ex.poses[ex.poses.length > 2 ? 2 : 1] : ex.poses[0]);
+  figures.push(fig);
+  return svg;
+}
+function full(p) { return Object.assign({}, p, { e2: p.e2 || p.e, h2: p.h2 || p.h, k2: p.k2 || p.k, f2: p.f2 || p.f }); }
+function setL(l, a, b) { l.setAttribute("x1", a[0]); l.setAttribute("y1", a[1]); l.setAttribute("x2", b[0]); l.setAttribute("y2", b[1]); }
+function draw(fig, pose) {
+  const P = full(pose), q = fig.parts;
+  setL(q.a2u, P.s, P.e2); setL(q.a2l, P.e2, P.h2);
+  setL(q.l2u, P.p, P.k2); setL(q.l2l, P.k2, P.f2);
+  setL(q.tr, P.s, P.p); setL(q.lu, P.p, P.k); setL(q.ll, P.k, P.f);
+  setL(q.au, P.s, P.e); setL(q.al, P.e, P.h);
+  q.hd.setAttribute("cx", P.hd[0]); q.hd.setAttribute("cy", P.hd[1]);
+}
+const ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+function lerpPose(a, b, t) {
+  const A = full(a), B = full(b), o = {};
+  for (const k in A) o[k] = [A[k][0] + (B[k][0] - A[k][0]) * t, A[k][1] + (B[k][1] - A[k][1]) * t];
+  return o;
+}
+function tick(now) {
+  const sec = now / 1000;
+  figures.forEach(f => {
+    if (!f.svg.isConnected) return;
+    const seq = f.ex.seq;
+    let t = (sec + f.offset * f.total) % f.total;
+    for (let i = 0; i < seq.length; i++) {
+      const [pi, hold, move] = seq[i];
+      if (t < hold) { draw(f, f.ex.poses[pi]); return; }
+      t -= hold;
+      if (t < move) { const next = seq[(i + 1) % seq.length][0]; draw(f, lerpPose(f.ex.poses[pi], f.ex.poses[next], ease(t / move))); return; }
+      t -= move;
+    }
+  });
+  requestAnimationFrame(tick);
+}
+if (!reduceMotion) requestAnimationFrame(tick);
+
+/* ---------- Rendu ---------- */
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  if (attrs) for (const k in attrs) {
+    if (k === "class") n.className = attrs[k];
+    else if (k === "style") n.setAttribute("style", attrs[k]);
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]);
+    else if (attrs[k] !== false && attrs[k] != null) n.setAttribute(k, attrs[k]);
+  }
+  kids.flat().forEach(c => { if (c == null || c === false) return; n.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(String(c)) : c); });
+  return n;
+}
+const pc = i => "--pc: var(" + PHASES[i].color + ")";
+
+function renderGoals() {
+  const w = state.week;
+  const hold = Math.round(targetAt(w, "hold") / 5) * 5, rep = Math.round(targetAt(w, "hspu"));
+  const best = bestResults();
+  const g = (lab, val, unit, pct, from, to, extra) => h("div", { class: "goal" },
+    h("div", { class: "goal-top" },
+      h("span", { class: "label" }, lab),
+      h("span", { class: "muted", style: "font-size:13px" }, extra)),
+    h("div", { class: "goal-big" }, val, " ", h("small", null, unit)),
+    h("div", { class: "track" }, h("i", { style: "width:" + Math.max(3, Math.min(100, pct)) + "%" })),
+    h("div", { class: "track-scale" }, h("span", null, from), h("span", null, to)));
+  $("#goals").replaceChildren(
+    g("Tenue visée · semaine " + w, hold < 60 ? hold : fmtS(hold).replace(" s", ""), hold < 60 ? "s" : "", (hold - 20) / 100 * 100, "20 s", "2 min",
+      best.hold ? "Ton record : " + fmtS(best.hold) : "Pas encore de test enregistré"),
+    g("HSPU d'affilée · semaine " + w, rep, rep > 1 ? "répétitions" : "répétition", (rep - 1) / 9 * 100, "1", "10",
+      best.hspu ? "Ton record : " + best.hspu : "Pas encore de test enregistré")
+  );
+}
+function bestResults() {
+  let hold = 0, hspu = 0;
+  Object.values(state.results).forEach(r => { if (+r.hold > hold) hold = +r.hold; if (+r.hspu > hspu) hspu = +r.hspu; });
+  return { hold, hspu };
+}
+
+function render() {
+  figures = [];
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === state.tab));
+  renderGoals();
+  const v = $("#view");
+  if (state.tab === "week") v.replaceChildren(renderWeek());
+  if (state.tab === "plan") v.replaceChildren(renderPlan());
+  if (state.tab === "lib") v.replaceChildren(renderLib());
+}
+
+function renderTimeline() {
+  const now = currentWeek().week;
+  const weeks = h("div", { class: "weeks", role: "group", "aria-label": "Semaines du programme" });
+  for (let w = 1; w <= 26; w++) {
+    const pi = phaseIndex(w);
+    weeks.appendChild(h("button", {
+      class: "wk" + (DELOAD.has(w) ? " deload" : "") + (w === state.week ? " sel" : "") + (w === now ? " now" : ""),
+      style: pc(pi), title: "Semaine " + w + " · " + PHASES[pi].name + (DELOAD.has(w) ? " · décharge + test" : ""),
+      "aria-pressed": w === state.week,
+      onclick: () => { state.week = w; state.day = 0; render(); }
+    }, w));
+  }
+  return h("div", { class: "timeline" }, weeks,
+    h("div", { class: "legend" },
+      PHASES.map((p, i) => h("span", { style: pc(i) }, h("i"), p.name)),
+      h("span", null, h("i", { class: "stripe" }), "Semaine de décharge + test"),
+      h("span", null, "● semaine en cours")));
+}
+
+function renderWeek() {
+  const w = state.week, pi = phaseIndex(w), P = PHASES[pi];
+  const head = h("div", { class: "week-head" },
+    h("div", { class: "info" },
+      h("div", null, h("span", { class: "pill", style: pc(pi) }, h("i"), "Phase " + (pi + 1) + " · " + P.name)),
+      h("h2", null, "Semaine " + w + " · " + fmtDate(dateOf(w, 0)) + " – " + fmtDate(dateOf(w, 6))),
+      h("p", { class: "muted" }, DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins pour récupérer, et test le samedi." :
+        w === 26 ? "Dernière semaine : séances légères, test final samedi." : P.goal + " " + P.detail)),
+    h("div", { class: "nav" },
+      h("button", { disabled: w === 1, onclick: () => { state.week--; state.day = 0; render(); } }, "← Semaine " + (w - 1 || "")),
+      h("button", { disabled: w === 26, onclick: () => { state.week++; state.day = 0; render(); } }, "Semaine " + (w + 1 <= 26 ? w + 1 : "") + " →")));
+
+  const days = h("div", { class: "days" });
+  DAYS.forEach((name, d) => {
+    const type = SLOT[d];
+    const key = w + "-" + d;
+    const isDone = !!state.done[key];
+    if (!type) {
+      days.appendChild(h("button", { class: "day rest" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); } },
+        h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)))),
+        h("div", { class: "t muted" }, d === 6 ? "Repos complet" : "Repos actif"),
+        h("div", { class: "s" }, d === 6 ? "Rien. La force se construit pendant la récup." : "10 min de mobilité épaules et poignets")));
+      return;
+    }
+    const m = SESSION_META[type], sess = buildSession(w, type);
+    const mains = sess.main.map(it => EX[it.ex].name);
+    days.appendChild(h("button", { class: "day" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); }, "aria-label": name + " : " + m.title },
+      h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "check" + (isDone ? " on" : "") }, isDone ? "✓" : "")),
+      h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
+      sess.test ? h("span", { class: "tag-test" }, "Test") : null,
+      h("div", { class: "t" }, m.title),
+      h("div", { class: "s" }, mains.slice(0, 3).join(" · "))));
+  });
+  return h("div", { style: "display:grid;gap:22px" }, renderTimeline(), head, days, renderSession(w, state.day));
+}
+
+function exRow(it) {
+  const ex = EX[it.ex];
+  return h("div", { class: "ex-row" },
+    makeFigure(it.ex),
+    h("div", { class: "txt" },
+      h("div", { class: "name" }, ex.name),
+      it.note ? h("div", { class: "note" }, it.note) : h("div", { class: "note" }, ex.short),
+      h("ul", { class: "cues" }, ex.cues.slice(0, 2).map(c => h("li", null, c)))),
+    h("div", { class: "dose" }, h("b", null, it.dose), it.unit ? h("span", null, it.unit) : null));
+}
+
+function renderSession(w, d) {
+  const type = SLOT[d];
+  if (!type) {
+    return h("section", { class: "session" },
+      h("div", { class: "rest-card" },
+        h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d))),
+        h("h3", null, d === 6 ? "Repos complet" : "Repos actif"),
+        h("p", { class: "muted", style: "max-width:62ch" }, d === 6
+          ? "Aucune séance. Dors bien, mange assez de protéines. Les épaules et les poignets récupèrent plus lentement que les muscles."
+          : "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de hollow body. Pas de handstand en force aujourd'hui."),
+        h("div", { class: "blocks" }, exRow(item("wrists", "3 min", "", "")))));
+  }
+  const m = SESSION_META[type], sess = buildSession(w, type), key = w + "-" + d, isDone = !!state.done[key];
+  const box = h("section", { class: "session" },
+    h("div", { class: "session-head" },
+      h("div", { class: "info" },
+        h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
+        h("h3", null, sess.test ? (w === 26 ? "Test final" : "Test de fin de phase") : m.title),
+        h("p", { class: "muted" }, sess.test ? "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas." : m.sub)),
+      h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
+        if (state.done[key]) delete state.done[key]; else state.done[key] = true;
+        store.set("done", state.done); render();
+      } }, isDone ? "✓ Séance faite" : "Marquer comme faite")),
+    h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Échauffement"), sess.warm.map(exRow)),
+    h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Corps de séance"), sess.main.map(exRow)));
+
+  if (sess.test) {
+    const r = state.results[w] || {};
+    const save = () => { state.results[w] = { hold: $("#res-hold").value, hspu: $("#res-hspu").value }; store.set("results", state.results); renderGoals(); };
+    box.appendChild(h("div", { class: "log" },
+      h("label", { for: "res-hold" }, "Meilleure tenue (s)", h("input", { id: "res-hold", type: "number", min: 0, inputmode: "numeric", value: r.hold || "", oninput: save })),
+      h("label", { for: "res-hspu" }, "HSPU d'affilée", h("input", { id: "res-hspu", type: "number", min: 0, inputmode: "numeric", value: r.hspu || "", oninput: save })),
+      h("p", { class: "muted", style: "font-size:13px;max-width:44ch" }, "Objectif de la semaine " + w + " : " + fmtS(Math.round(targetAt(w, "hold") / 5) * 5) + " et " + Math.round(targetAt(w, "hspu")) + " HSPU. Tes résultats apparaissent dans l'onglet Progression.")));
+  }
+  return box;
+}
+
+function renderChart() {
+  const W = 640, H = 250, L = 44, Rt = 44, T = 16, B = 34;
+  const x = w => L + (w - 0) / 26 * (W - L - Rt);
+  const yH = s => T + (1 - s / 120) * (H - T - B);
+  const yR = r => T + (1 - r / 10) * (H - T - B);
+  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Courbes d'objectifs sur 26 semaines" });
+  // bandes de phase
+  PHASES.forEach((p, i) => {
+    el("rect", { x: x(p.from - 1), y: T, width: x(p.to) - x(p.from - 1), height: H - T - B, fill: "var(" + p.color + ")", opacity: .09 }, svg);
+  });
+  [0, 30, 60, 90, 120].forEach(s => {
+    el("line", { x1: L, x2: W - Rt, y1: yH(s), y2: yH(s), stroke: "var(--line)" }, svg);
+    const t = el("text", { x: L - 8, y: yH(s) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = s + " s";
+  });
+  [0, 2, 4, 6, 8, 10].forEach(r => { const t = el("text", { x: W - Rt + 8, y: yR(r) + 4, "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = r; });
+  [1, 6, 12, 18, 24, 26].forEach(w => { const t = el("text", { x: x(w), y: H - B + 18, "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = "S" + w; });
+  let dH = "", dR = "";
+  for (let w = 0; w <= 26; w++) { dH += (w ? "L" : "M") + x(w) + " " + yH(targetAt(w, "hold")); dR += (w ? "L" : "M") + x(w) + " " + yR(targetAt(w, "hspu")); }
+  el("path", { d: dH, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, svg);
+  el("path", { d: dR, fill: "none", stroke: "var(--p3)", "stroke-width": 2.5, "stroke-dasharray": "6 4" }, svg);
+  Object.entries(state.results).forEach(([w, r]) => {
+    if (+r.hold) el("circle", { cx: x(+w), cy: yH(Math.min(130, +r.hold)), r: 5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    if (+r.hspu) el("rect", { x: x(+w) - 5, y: yR(Math.min(11, +r.hspu)) - 5, width: 10, height: 10, fill: "var(--p3)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+  });
+  el("circle", { cx: x(26), cy: yH(120), r: 4, fill: "var(--accent)" }, svg);
+  return svg;
+}
+
+function renderPlan() {
+  const phases = h("div", { class: "phases" }, PHASES.map((p, i) => h("div", { class: "phase", style: pc(i) },
+    h("span", { class: "label" }, "Semaines " + p.from + "–" + p.to),
+    h("h3", null, p.name),
+    h("p", { style: "font-weight:600" }, p.goal),
+    h("p", { class: "muted", style: "font-size:14px" }, p.detail),
+    h("p", { class: "num", style: "font-size:20px;margin-top:4px" }, fmtS(p.hold) + " · " + p.hspu + " HSPU"))));
+  const chart = h("div", { class: "chart-box" },
+    h("div", { class: "goal-top" },
+      h("h3", null, "Objectifs semaine par semaine"),
+      h("div", { class: "legend" },
+        h("span", { style: "--pc: var(--accent)" }, h("i"), "Tenue visée (axe gauche)"),
+        h("span", { style: "--pc: var(--p3)" }, h("i"), "HSPU visés (axe droit)"),
+        h("span", null, "● ■ tes tests"))),
+    h("div", { class: "chart-scroll" }, renderChart()));
+  const rule = (t, p) => h("div", { class: "card" }, h("h3", null, t), h("p", { class: "muted" }, p));
+  const rules = h("div", { class: "rules" },
+    rule("Quand avancer plus vite", "Si tu réussis toutes les séries d'une séance avec de la marge (une ou deux répétitions en réserve), passe aux chiffres de la semaine suivante. Ne saute jamais une semaine de décharge."),
+    rule("Quand ralentir", "Si tu rates la cible deux séances de suite, répète la semaine. Si un test de fin de phase est loin de l'objectif, refais les deux dernières semaines de la phase."),
+    rule("Poignets et nuque", "Échauffement poignets à chaque séance, même courte. Pour les HSPU, coussin fin ou tapis plié sous la tête, et jamais de rebond sur la nuque. Douleur articulaire = arrêt de la séance."),
+    rule("La pratique en plus", "La tenue progresse surtout avec la fréquence. Les jours de repos actif, 5 tentatives de handstand libre en fin de mobilité suffisent, sans chercher l'échec."));
+  return h("div", { style: "display:grid;gap:22px" },
+    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "6 mois en 5 phases"),
+      h("p", { class: "muted" }, "Chaque phase dure 6 semaines : 5 semaines de progression puis une semaine plus légère qui se termine par un test. Les deux dernières semaines servent à arriver frais au test final.")),
+    phases, chart, rules);
+}
+
+function renderLib() {
+  const used = {};
+  for (let w = 1; w <= 26; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
+  return h("div", { style: "display:grid;gap:18px" },
+    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "Les " + Object.keys(EX).length + " exercices du programme"),
+      h("p", { class: "muted" }, "Chaque animation montre le mouvement de profil. Le trait clair, c'est le bras ou la jambe du côté opposé.")),
+    h("div", { class: "lib" }, Object.keys(EX).map(id => {
+      const ex = EX[id];
+      return h("article", { class: "card" },
+        makeFigure(id),
+        h("h3", null, ex.name),
+        h("p", { class: "muted", style: "font-size:14px" }, ex.desc),
+        h("ul", null, ex.cues.map(c => h("li", null, c))),
+        h("div", { class: "chips" }, [...(used[id] || [])].sort().map(i => h("span", { class: "chip" }, PHASES[i].name))));
+    })));
+}
+
+/* ---------- Démarrage ---------- */
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { state.tab = b.dataset.tab; render(); }));
+const sd = $("#start-date");
+sd.value = state.start;
+sd.addEventListener("change", () => {
+  if (!sd.value) return;
+  state.start = iso(mondayOf(new Date(sd.value + "T12:00:00")));
+  sd.value = state.start;
+  store.set("start", state.start);
+  initPosition(); render();
+});
+initPosition();
+render();
+</script>

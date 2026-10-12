@@ -464,25 +464,25 @@ EX.shapes.swapNote = "Tiens chaque forme quelques secondes";
 /* ---------- Programme ---------- */
 const HS_PHASES = [
   { name: "Fondations", from: 1, to: 6, color: "--p1",
-    goal: "Corps aligné au mur et épaules solides.",
-    detail: "Tenue ventre au mur jusqu'à 60 s, pike push-ups propres, premières descentes lentes en HSPU.",
-    hold: 30, hspu: 2 },
+    goal: "Corps aligné au mur, 3 HSPU au mur d'affilée.",
+    detail: "Tenue ventre au mur jusqu'à 60 s. Ta force permet d'attaquer tout de suite les HSPU au mur : on soigne la technique (triangle tête-mains).",
+    hold: 30, hspu: 3 },
   { name: "Contrôle", from: 7, to: 12, color: "--p2",
-    goal: "Tenir 45 s en libre, 3 HSPU d'affilée.",
-    detail: "On quitte le mur pour l'équilibre (décollés de talons) et on passe aux vrais HSPU au mur, en petites séries.",
-    hold: 45, hspu: 3 },
+    goal: "Tenir 45 s en libre, 5 HSPU d'affilée.",
+    detail: "On quitte le mur pour l'équilibre (décollés de talons). Le HSPU passe en séries de 3 à 5, avec un premier déficit.",
+    hold: 45, hspu: 5 },
   { name: "Force", from: 13, to: 18, color: "--p3",
-    goal: "Tenir 70 s, 5 HSPU d'affilée.",
-    detail: "Plus de volume sur le HSPU, apparition du déficit. Les tenues libres s'allongent.",
-    hold: 70, hspu: 5 },
+    goal: "Tenir 70 s, 8 HSPU d'affilée.",
+    detail: "Déficit plus profond et dips lestés. Les tenues libres s'allongent.",
+    hold: 70, hspu: 8 },
   { name: "Volume", from: 19, to: 24, color: "--p4",
-    goal: "Tenir 1 min 45, 8 HSPU d'affilée.",
-    detail: "Séries longues, déficit plus profond, premières tentatives de HSPU libre.",
-    hold: 105, hspu: 8 },
+    goal: "Tenir 1 min 45, 10 HSPU d'affilée.",
+    detail: "Séries longues, déficit à 10 cm, HSPU libre en tentatives régulières.",
+    hold: 105, hspu: 10 },
   { name: "Pic & test", from: 25, to: 26, color: "--p5",
-    goal: "2 min de handstand, 10 HSPU.",
-    detail: "Volume réduit pour arriver frais, puis test final le samedi de la semaine 26.",
-    hold: 120, hspu: 10 }
+    goal: "2 min de handstand, 12 HSPU.",
+    detail: "Volume réduit pour arriver frais, puis test final le samedi de la semaine 26. 10 HSPU, c'est l'objectif ; 12, c'est le bonus.",
+    hold: 120, hspu: 12 }
 ];
 const HS_START = { hold: 20, hspu: 1 };
 const HS_TEST_WEEKS = new Set([6, 12, 18, 24, 26]);
@@ -531,35 +531,34 @@ function hsBaseSession(w, type) {
 
   if (type === "forceA") {
     if (pi === 0) main = [
-      item("pike", S(4) + " × " + R(6, 10, t), "repos 90 s", "Amplitude complète, tête qui touche le sol"),
-      item("pikeBox", S(3) + " × " + R(4, 8, t), "repos 2 min", "Pieds à hauteur de genoux"),
-      item("hspuNeg", S(3) + " × " + R(1, 3, t), "descente 5 s", "Remonte en descendant les pieds, pas en poussant"),
-      item("dips", S(3) + " × " + R(8, 12, t), "repos 90 s", "")
+      item("pikeBox", S(4) + " × " + R(6, 10, t), "repos 2 min", "Pieds à hauteur de hanches"),
+      item("hspu", S(4) + " × " + R(1, 3, t), "repos 2 min", "Coussin fin, tête en triangle avec les mains"),
+      item("hspuNeg", S(3) + " × 3", "descente 5 s", "Remonte en descendant les pieds, pas en poussant"),
+      item("dipsW", S(4) + " × " + R(5, 8, t), "lestés", "Charge pour finir à 2 répétitions de l'échec")
     ];
     else if (pi === 1) main = [
       item("wallWalk", "2 × 1", "échauffement", "Prépare les épaules à la verticale"),
-      item("hspu", S(5) + " × " + R(2, 3, t), "repos 2 min", "Coussin fin sous la tête"),
-      item("hspuNeg", S(3) + " × 3", "descente 6 s", ""),
-      item("pikeBox", S(3) + " × " + R(8, 10, t), "repos 90 s", ""),
-      item("dips", S(3) + " × " + R(10, 14, t), "repos 90 s", "")
+      item("hspu", S(5) + " × " + R(3, 5, t), "repos 2 min", "Coussin fin sous la tête"),
+      item("hspuDef", S(3) + " × " + R(2, 3, t), "repos 2 min", "Déficit de 5 cm"),
+      item("dipsW", S(4) + " × 6", "lestés", "Charge à 2 répétitions de l'échec")
     ];
     else if (pi === 2) main = [
-      item("hspu", S(5) + " × " + R(3, 5, t), "repos 2–3 min", "Garde 1 répétition en réserve"),
-      item("hspuDef", S(4) + " × " + R(2, 4, t), "repos 2 min", "Déficit de 5 cm"),
-      item("hspuNeg", S(2) + " × 3", "descente 8 s", ""),
-      item("dips", S(4) + " × 12", "repos 90 s", "")
+      item("hspu", S(5) + " × " + R(5, 7, t), "repos 2–3 min", "Garde 1 à 2 répétitions en réserve"),
+      item("hspuDef", S(4) + " × " + R(3, 5, t), "repos 2 min", "Déficit de 5 à 8 cm"),
+      item("hspuFree", S(4) + " × 1", "tentatives", "Seulement si tu tiens 60 s en libre"),
+      item("dipsW", S(4) + " × 5", "lestés", "Lourd, technique parfaite")
     ];
     else if (pi === 3) main = [
-      item("hspu", S(4) + " × " + R(5, 8, t), "repos 3 min", "Dernière série : max propre si tu te sens bien"),
-      item("hspuDef", S(4) + " × " + R(4, 6, t), "repos 2 min", "Déficit de 8 à 10 cm"),
-      item("hspuFree", S(5) + " × 1", "tentatives", "Seulement si la tenue libre dépasse 60 s"),
-      item("dips", S(3) + " × 15", "repos 90 s", "")
+      item("hspu", S(4) + " × " + R(7, 10, t), "repos 3 min", "Dernière série : max propre si tu te sens bien"),
+      item("hspuDef", S(4) + " × " + R(5, 7, t), "repos 2 min", "Déficit de 10 cm"),
+      item("hspuFree", S(5) + " × " + R(1, 2, t), "tentatives", ""),
+      item("dipsW", S(3) + " × 5", "lestés", "")
     ];
     else main = w === 25 ? [
-      item("hspu", "4 × 4", "repos 3 min", "Rapide et propre, loin de l'échec"),
-      item("hspuDef", "3 × 3", "repos 2 min", "")
+      item("hspu", "4 × 5", "repos 3 min", "Rapide et propre, loin de l'échec"),
+      item("hspuDef", "3 × 4", "repos 2 min", "")
     ] : [
-      item("hspu", "2 × 3", "repos 3 min", "Juste pour garder le geste avant le test")
+      item("hspu", "2 × 4", "repos 3 min", "Juste pour garder le geste avant le test")
     ];
   }
 
@@ -597,27 +596,28 @@ function hsBaseSession(w, type) {
 
   if (type === "forceB") {
     if (pi === 0) main = [
-      item("wallWalk", S(3) + " × " + R(1, 3, t), "repos 90 s", ""),
-      item("pike", S(3) + " × " + R(8, 12, t), "tempo 3-1-1", "3 s de descente, 1 s en bas, montée normale"),
+      item("wallWalk", S(3) + " × " + R(2, 3, t), "repos 90 s", ""),
+      item("hspu", "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", "1 rép. / min", "Une répétition au début de chaque minute"),
+      item("pikeBox", S(3) + " × 10", "tempo 3-1-1", "3 s de descente, 1 s en bas, montée normale"),
       item("shoulderTap", S(3) + " × " + R(6, 10, t), "repos 60 s", "")
     ];
     else if (pi === 1) main = [
-      item("hspu", "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", "1 rép. / min", "Une répétition au début de chaque minute"),
-      item("pikeBox", S(3) + " × 10", "tempo 3-1-1", ""),
+      item("hspu", "EMOM " + (dl ? 6 : R(8, 10, t)) + " min", "2 rép. / min", ""),
+      item("hspuNeg", S(3) + " × 3", "descente 8 s", ""),
       item("shoulderTap", S(3) + " × 12", "repos 60 s", "")
     ];
     else if (pi === 2) main = [
-      item("hspu", "EMOM " + (dl ? 6 : R(8, 10, t)) + " min", "2 rép. / min", ""),
-      item("hspuNeg", S(3) + " × 2", "descente 8 s", ""),
+      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", "3 rép. / min", ""),
+      item("hspuNeg", S(3) + " × 3", "descente 8 s", ""),
       item("shoulderTap", S(3) + " × 16", "repos 60 s", "")
     ];
     else if (pi === 3) main = [
-      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", R(3, 4, t) + " rép. / min", ""),
+      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", R(4, 5, t) + " rép. / min", ""),
       item("pikeBox", S(3) + " × 12", "tempo 3-1-1", ""),
-      item("dips", S(3) + " × 12", "repos 90 s", "")
+      item("dipsW", S(3) + " × 8", "lestés", "Charge modérée")
     ];
     else main = w === 25 ? [
-      item("hspu", "EMOM 8 min", "2 rép. / min", "Facile, on garde de l'énergie")
+      item("hspu", "EMOM 8 min", "3 rép. / min", "Facile, on garde de l'énergie")
     ] : [
       item("wallChest", "2 × 45 s", "facile", "Séance légère : 20 min maximum")
     ];
@@ -658,8 +658,8 @@ function hsBaseSession(w, type) {
 const HS_VARIANTS = {
   forceA: [
     { name: "Classique", desc: "Séries classiques, repos complet entre les séries." },
-    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "declinePU", bearCrawl: "plankPike" } },
-    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause, et le pike passe en mains surélevées.", superset: true, swap: { pike: "pikeDef" }, warmAdd: () => item("frog", "3 × 15 s", "", "Pour réveiller les poignets") }
+    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { bearCrawl: "plankPike" } },
+    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true, warmAdd: () => item("frog", "3 × 15 s", "", "Pour réveiller les poignets") }
   ],
   balance: [
     { name: "Classique", desc: "Entrées, tenues au mur et tentatives en libre." },
@@ -668,8 +668,8 @@ const HS_VARIANTS = {
   ],
   forceB: [
     { name: "Classique", desc: "Répétitions faciles, beaucoup de qualité." },
-    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true, swap: { dips: "declinePU" } },
-    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, planche → pike.", swap: { pike: "pikeDef", dips: "declinePU", bearCrawl: "plankPike", shoulderTap: "shapes" } }
+    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true, swap: { dipsW: "declinePU" } },
+    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, planche → pike.", swap: { pikeBox: "pikeDef", dipsW: "dips", bearCrawl: "plankPike", shoulderTap: "shapes" } }
   ],
   long: [
     { name: "Classique", desc: "Endurance en équilibre." },
@@ -728,7 +728,7 @@ function buildSession(w, type) {
   if (V.hsNote) s.main = s.main.map(it => it.ex === "hsFree" ? Object.assign({}, it, { note: V.hsNote }) : it);
   if (V.cluster && s.main.length) {
     const it = s.main[0], m = it.dose.match(/^(\d+) × (\d+) s$/);
-    if (m) { const hs = Math.max(2, Math.round(+m[2] * 0.4)); s.main[0] = Object.assign({}, it, { dose: m[1] + " × (3 × " + hs + " s)", unit: "clusters", note: "3 tenues de " + hs + " s séparées de 10 s de repos = 1 série. Repos 2–3 min entre les séries" }); }
+    if (m) { const hs = Math.max(2, Math.ceil(+m[2] * 0.5)); s.main[0] = Object.assign({}, it, { dose: m[1] + " × (3 × " + hs + " s)", unit: "clusters", note: "3 tenues de " + hs + " s séparées de 10 s de repos = 1 série. Repos 2–3 min entre les séries" }); }
   }
   if (V.add) s.main.push(V.add(w));
   s.variant = V;
@@ -746,7 +746,7 @@ PROGRAMS.hs = {
   phases: HS_PHASES, start: HS_START, tests: HS_TEST_WEEKS, deload: HS_DELOAD, slot: HS_SLOT, meta: HS_SESSION_META,
   variants: HS_VARIANTS, order: HS_SLOT_ORDER, defis: HS_DEFIS, base: hsBaseSession,
   eyebrow: "Programme 26 semaines · 4 séances / semaine · 3 versions qui tournent",
-  intro: "De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
+  intro: "De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée (12 en bonus). Calibré pour un profil déjà fort en muscu. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
   deloadLegend: "Semaine de décharge + test",
   weekText: (w, P) => DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins pour récupérer, et test le samedi." :
     w === 26 ? "Dernière semaine : séances légères, test final samedi." : P.goal + " " + P.detail,
@@ -759,7 +759,7 @@ PROGRAMS.hs = {
     return [
       { label: "Tenue visée · semaine " + w, val: hold < 60 ? hold : fmtS(hold).replace(" s", ""), unit: hold < 60 ? "s" : "", pct: hold - 20, from: "20 s", to: "2 min",
         extra: best.hold ? "Ton record : " + fmtS(best.hold) : "Pas encore de test enregistré" },
-      { label: "HSPU d'affilée · semaine " + w, val: rep, unit: rep > 1 ? "répétitions" : "répétition", pct: (rep - 1) / 9 * 100, from: "1", to: "10",
+      { label: "HSPU d'affilée · semaine " + w, val: rep, unit: rep > 1 ? "répétitions" : "répétition", pct: (rep - 1) / 11 * 100, from: "1", to: "12",
         extra: best.hspu ? "Ton record : " + best.hspu : "Pas encore de test enregistré" }
     ];
   },
@@ -768,7 +768,7 @@ PROGRAMS.hs = {
   phaseLine: p => fmtS(p.hold) + " · " + p.hspu + " HSPU",
   chart: {
     left: { key: "hold", max: 120, ticks: [0, 30, 60, 90, 120], fmt: v => v + " s", legend: "Tenue visée (axe gauche)" },
-    right: { key: "hspu", max: 10, ticks: [0, 2, 4, 6, 8, 10], fmt: v => v, legend: "HSPU visés (axe droit)" },
+    right: { key: "hspu", max: 12, ticks: [0, 3, 6, 9, 12], fmt: v => v, legend: "HSPU visés (axe droit)" },
     xTicks: [1, 6, 12, 18, 24, 26]
   },
   planTitle: "6 mois en 5 phases",
@@ -929,23 +929,34 @@ Object.assign(EX, {
   }
 });
 
+EX.dipsW = Object.assign({}, EX.dips, {
+  name: "Dips lestés", short: "Avec ceinture ou sac lesté",
+  desc: "Dips avec une charge à la ceinture (ou un sac à dos lesté). Tu as la base en force : la charge sert à renforcer le verrouillage des bras pour le HSPU et la planche.",
+  cues: ["Charge pour finir à 2 répétitions de l'échec", "Descends jusqu'à 90° aux coudes, pas plus bas", "Buste légèrement penché vers l'avant"]
+});
+EX.pullUpW = Object.assign({}, EX.pullUp, {
+  name: "Tractions lestées", short: "Avec ceinture lestée",
+  desc: "Tractions avec charge. Avec ton niveau (+50 kg), le tirage lourd garde l'équilibre avec toute la poussée bras tendus et protège les coudes.",
+  cues: ["Charge à RPE 8 : 2 répétitions en réserve", "Bras complètement tendus en bas", "Pas de kipping, descente contrôlée"]
+});
+
 /* ---------- Programme planche : 52 semaines ---------- */
 const PL_POS = ["Advanced tuck", "Une jambe", "Straddle", "Half-lay", "Full planche"];
 const PL_POS_EX = ["advTuck", "oneLeg", "straddle", "halfLay", "fullPl"];
 const PL_PHASES = [
-  { name: "Advanced tuck", from: 1, to: 12, color: "--p1", pos: 0, hf: 10, ht: 20,
-    goal: "Advanced tuck propre pendant 20 s.", detail: "Dos plat, leans profonds, pompes pseudo planche. Premières tentatives sur une jambe à partir de la semaine 7." },
-  { name: "Une jambe", from: 13, to: 24, color: "--p2", pos: 1, hf: 4, ht: 10,
-    goal: "Planche une jambe 10 s de chaque côté.", detail: "Les pompes en advanced tuck arrivent, et les premières tentatives de straddle." },
-  { name: "Straddle", from: 25, to: 36, color: "--p3", pos: 2, hf: 3, ht: 10,
-    goal: "Straddle planche 10 s.", detail: "La première vraie planche à l'horizontale. On entretient l'advanced tuck et l'une jambe en volume." },
-  { name: "Half-lay", from: 37, to: 48, color: "--p4", pos: 3, hf: 3, ht: 8,
-    goal: "Half-lay 8 s, straddle solide.", detail: "Hanches tendues, genoux pliés : le dernier levier avant la full. Tentatives de full planche en fin de séance." },
-  { name: "Full planche", from: 49, to: 52, color: "--p5", pos: 4, hf: 2, ht: 5,
-    goal: "Première full planche, 2 à 5 s.", detail: "Volume réduit, tentatives fraîches et test final le vendredi de la semaine 52." }
+  { name: "Advanced tuck", from: 1, to: 6, color: "--p1", pos: 0, hf: 12, ht: 20,
+    goal: "Advanced tuck propre pendant 20 s.", detail: "Tu as déjà la position et la force : 6 semaines pour la rendre solide, avec des tentatives sur une jambe dès la semaine 3." },
+  { name: "Une jambe", from: 7, to: 18, color: "--p2", pos: 1, hf: 5, ht: 12,
+    goal: "Planche une jambe 12 s de chaque côté.", detail: "Pompes en advanced tuck, dips et tractions lestés, premières tentatives de straddle." },
+  { name: "Straddle", from: 19, to: 30, color: "--p3", pos: 2, hf: 4, ht: 12,
+    goal: "Straddle planche 12 s.", detail: "La première vraie planche à l'horizontale. On entretient l'une jambe en volume." },
+  { name: "Half-lay", from: 31, to: 42, color: "--p4", pos: 3, hf: 4, ht: 10,
+    goal: "Half-lay 10 s, straddle solide.", detail: "Hanches tendues, genoux pliés : le dernier levier avant la full. Tentatives de full planche en fin de séance." },
+  { name: "Full planche", from: 43, to: 52, color: "--p5", pos: 4, hf: 2, ht: 8,
+    goal: "Full planche, 5 à 8 s.", detail: "10 semaines dans la position finale : tenues courtes et fraîches qui s'allongent, test final le vendredi de la semaine 52." }
 ];
 const PL_DELOAD = new Set([6, 12, 18, 24, 30, 36, 42, 48]);
-const PL_TEST_WEEKS = new Set([12, 24, 36, 48, 52]);
+const PL_TEST_WEEKS = new Set([6, 18, 30, 42, 52]);
 const PL_SLOT = { 0: "heavy", 2: "dyn", 4: "vol" };
 const PL_SESSION_META = {
   heavy: { title: "Tenues lourdes", sub: "La position la plus dure du moment, séries courtes et fraîches", min: 50 },
@@ -974,37 +985,37 @@ function plBaseSession(w, type) {
   if (type === "heavy") {
     main = [
       item(tp, S(5) + " × " + Math.max(2, hold - 2) + " s", "repos 2–3 min", "Arrête la série dès que la forme se casse" + (side ? ". Alterne les jambes" : "")),
-      item("lean", S(3) + " × " + R(20, 30, t) + " s", "repos 90 s", "Lean profond, doigts vers l'extérieur"),
+      item("lean", S(3) + " × " + R(25, 40, t) + " s", "repos 90 s", "Lean profond, doigts vers l'extérieur"),
       item("pullUp", S(3) + " × " + R(6, 10, t), "repos 2 min", "Équilibre tirage / poussée"),
       item("lsit", S(3) + " × " + R(10, 20, t) + " s", "repos 60 s", "")
     ];
-    if ((pi === 0 && w >= 7) || (pi > 0 && pi < 4)) main.splice(1, 0, item(next, "5 × 1–3 s", "tentatives", "Juste toucher la position, en fin de partie lourde"));
-    if (pi === 4) main = [
-      item("halfLay", S(4) + " × 4 s", "repos 3 min", "Entretien du levier précédent"),
-      item("fullPl", w === 52 ? "3 × 1–2 s" : "6 × 1–3 s", "tentatives", "Très frais, 3 min de repos"),
-      item("pullUp", "3 × 6", "repos 2 min", "")
+    if ((pi === 0 && w >= 3) || (pi > 0 && pi < 4)) main.splice(1, 0, item(next, "5 × 1–3 s", "tentatives", "Juste toucher la position, en fin de partie lourde"));
+    if (pi === 4) main = w >= 51 ? [
+      item("fullPl", w === 52 ? "3 × 2 s" : "4 × " + Math.max(2, hold - 3) + " s", "repos 3 min", "Très frais, loin de l'échec"),
+      item("halfLay", "2 × 4 s", "repos 2 min", "")
+    ] : [
+      item("fullPl", S(6) + " × " + Math.max(2, hold - 1) + " s", "repos 3 min", "Tenues courtes et parfaites, 3 min de repos"),
+      item("halfLay", S(3) + " × " + R(6, 10, t) + " s", "repos 2–3 min", "Entretien du levier précédent"),
+      item("lean", S(3) + " × 30 s", "repos 90 s", "Lean maximal"),
+      item("pullUp", "3 × 8", "repos 2 min", "")
     ];
   }
   if (type === "dyn") {
     if (pi === 0) main = [
-      item("pppu", S(4) + " × " + R(6, 10, t), "repos 2 min", "Lean maintenu en bas"),
-      item("atPU", S(3) + " × " + R(1, 3, t), "négatifs", "Descente lente de 4 s, remonte sur les pieds"),
-      item("dips", S(3) + " × " + R(8, 12, t), "repos 90 s", "Buste penché en avant"),
-      item("legRaise", S(3) + " × " + R(6, 10, t), "repos 60 s", "")
-    ];
-    else if (pi === 1) main = [
-      item("atPU", S(4) + " × " + R(2, 5, t), "repos 2–3 min", "Dos plat en bas"),
-      item("pppu", S(3) + " × " + R(8, 12, t), "repos 2 min", "Plus de lean que le mois dernier"),
-      item("pullUp", S(3) + " × " + R(8, 10, t), "repos 2 min", ""),
+      item("atPU", S(4) + " × " + R(3, 5, t), "repos 2–3 min", "Répétitions complètes, dos plat en bas"),
+      item("pppu", S(4) + " × " + R(8, 12, t), "repos 2 min", "Lean maintenu en bas, pieds surélevés si trop facile"),
+      item("dipsW", S(4) + " × " + R(5, 8, t), "lestés", "Charge à 2 répétitions de l'échec"),
+      item("pullUpW", S(4) + " × 5", "lestés", "RPE 8"),
       item("legRaise", S(3) + " × " + R(8, 12, t), "repos 60 s", "")
     ];
     else main = [
-      item("atPU", S(4) + " × " + R(4, 6, t), "repos 2–3 min", ""),
-      item("pppu", S(3) + " × " + R(10, 12, t), "repos 2 min", "Pieds surélevés si trop facile"),
-      item("dips", S(3) + " × " + R(10, 15, t), "repos 90 s", ""),
-      item("pullUp", S(3) + " × " + R(8, 12, t), "repos 2 min", "")
+      item("atPU", S(4) + " × " + R(5, 8, t), "repos 2–3 min", pi >= 2 ? "Jambes en une jambe sur la dernière série si possible" : "Dos plat en bas"),
+      item("pppu", S(4) + " × " + R(10, 12, t), "repos 2 min", "Plus de lean que le mois dernier"),
+      item("dipsW", S(4) + " × " + R(4, 6, t), "lestés", "Lourd, buste penché"),
+      item("pullUpW", S(4) + " × " + R(3, 5, t), "lestés", "RPE 8"),
+      item("legRaise", S(3) + " × " + R(10, 12, t), "repos 60 s", "")
     ];
-    if (pi === 4) main = main.slice(0, 2).map(it => Object.assign({}, it, { dose: "3 × " + it.dose.split(" × ")[1] }));
+    if (w >= 51) main = main.slice(0, 2).map(it => Object.assign({}, it, { dose: "3 × " + it.dose.split(" × ")[1] }));
   }
   if (type === "vol") {
     main = [
@@ -1014,7 +1025,7 @@ function plBaseSession(w, type) {
       item("pullUp", S(3) + " × " + R(5, 8, t), "tempo 3-1-1", "3 s de descente"),
       item("bearCrawl", "2 × 40 s", "", "Finisher")
     ];
-    if (pi === 4) main = main.slice(0, 3);
+    if (w >= 51) main = main.slice(0, 3);
   }
   return { warm, main, test: false };
 }
@@ -1027,7 +1038,7 @@ const PL_VARIANTS = {
   ],
   dyn: [
     { name: "Classique", desc: "Séries classiques, repos complet." },
-    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { dips: "pppu" } },
+    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true },
     { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true }
   ],
   vol: [
@@ -1052,18 +1063,18 @@ const PL_DEFIS = [
 
 PROGRAMS.pl = {
   id: "pl", prefix: "cappl:", title: "Cap Planche", duration: "12 mois",
-  weeks: 52, peakFrom: 49,
+  weeks: 52, peakFrom: 51,
   phases: PL_PHASES, start: {}, tests: PL_TEST_WEEKS, deload: PL_DELOAD, slot: PL_SLOT, meta: PL_SESSION_META,
   variants: PL_VARIANTS, order: ["heavy", "dyn", "vol"], defis: PL_DEFIS, base: plBaseSession,
   eyebrow: "Programme 52 semaines · 3 séances / semaine · parallettes + barre",
-  intro: "De l'advanced tuck à la première full planche, étape par étape : une jambe, straddle, half-lay. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
+  intro: "De l'advanced tuck à une full planche de 5 à 8 s, étape par étape : une jambe, straddle, half-lay. Calibré pour un profil déjà fort (dips et tractions lestés). Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
   deloadLegend: "Semaine de décharge (test en fin de phase)",
   weekText: (w, P) => TEST_WEEKS.has(w) ? (w === 52 ? "Dernière semaine : séances légères, test final vendredi." : "Semaine de décharge : environ 40 % de volume en moins, et test de fin de phase le vendredi.") :
     DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins. Les tendons du coude et du biceps en ont besoin." : P.goal + " " + P.detail,
   restShort: "Mobilité poignets et épaules, 10 min",
   restLong: "Optionnel, 10 minutes : poignets en extension, étirement des épaules, 2 × 30 s de bear crawl. La planche sollicite beaucoup les tendons du biceps : un jour de repos entre deux séances, c'est obligatoire.",
   target: (w, k) => {
-    if (w <= 0) return k === "pos" ? 0 : 8;
+    if (w <= 0) return k === "pos" ? 0 : 12;
     const pi = phaseIndex(w), P = PL_PHASES[pi];
     return k === "pos" ? P.pos : R(P.hf, P.ht, rampT(w));
   },
@@ -1091,6 +1102,7 @@ PROGRAMS.pl = {
   planTitle: "12 mois en 5 positions",
   planIntro: "Chaque phase vise une position plus dure. Toutes les 6 semaines, une semaine plus légère protège les tendons, et chaque fin de phase se termine par un test le vendredi. La tenue visée redescend à chaque nouvelle position : c'est normal.",
   rules: [
+    ["Ta force n'est pas le frein", "Avec ton niveau en muscu, ce qui limite la planche, ce sont les tendons (coude, biceps, poignets) et la position bras tendus, pas les muscles. Résiste à l'envie d'ajouter du volume de planche : la progression est déjà rapide pour des tendons."],
     ["Quand passer à la position suivante", "Si tu tiens la position de la phase 2 secondes au-dessus de l'objectif, avec un dos propre, tu peux commencer la phase suivante plus tôt. Une tenue moche ne compte pas."],
     ["Quand ralentir", "Si la tenue stagne trois séances de suite, répète la semaine. Si le test de fin de phase est loin de l'objectif, refais les 4 dernières semaines de la phase. Rester plus longtemps sur une position, c'est normal."],
     ["Coudes et biceps", "La planche charge beaucoup le tendon du biceps. Bras toujours verrouillés, jamais deux séances planche à la suite, et arrêt immédiat si le coude ou l'avant du bras fait mal."],

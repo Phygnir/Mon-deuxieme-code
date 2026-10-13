@@ -202,6 +202,7 @@ const ICON = {
   mute: svgI('<path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/>'),
   clock: svgI('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
   retry: svgI('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>'),
+  bolt: svgI('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
   trophy: svgI('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>')
 };
 // Sons synthétisés (aucun fichier) : bois pour un coup, plus sec pour une prise
@@ -253,11 +254,11 @@ function celebrate() {
     if (k < 1) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, W, H); cv.hidden = true; }
   })(t0);
 }
-// Points : 10 par leçon, 5 par exercice, 15 par victoire
-const xpTotal = () => Object.keys(save.lessons).length * 10 + Object.keys(save.puzzles).length * 5 + (save.record.w || 0) * 15;
+// Points : 10 par leçon, 5 par exercice, 2 par problème réussi, 15 par victoire
+const xpTotal = () => Object.keys(save.lessons).length * 10 + Object.keys(save.puzzles).length * 5 + (save.record.w || 0) * 15 + ((save.pz && save.pz.ok) || 0) * 2;
 function updateXp() { $("#xp").innerHTML = `${ICON.star}${xpTotal()} pts`; }
 // Étiquettes des onglets
-[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["jouer", "board", "Jouer"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
+[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
 updateSoundBtn(); updateXp();
 
 // ---------- Navigation ----------
@@ -268,6 +269,7 @@ let modeNow = null;
 function setMode(mode) {
   clearTimers();
   if (typeof PL !== "undefined") PL.gen++;
+  if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
@@ -276,6 +278,7 @@ function setMode(mode) {
   if (mode === "lecons") { if (save.path) lessonList(save.path); else pathList(); }
   else if (mode === "exercices") puzzleList();
   else if (mode === "jouer") playView();
+  else if (mode === "problemes") problemsView();
   else coordView();
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
@@ -762,7 +765,7 @@ function themeOf(tags) {
   if (tags.includes("sacrifice")) return "sacrifice";
   return "capture";
 }
-const MINED_P = (typeof MINED !== "undefined" ? MINED : []).map((m, i) => {
+const MINED_P = (typeof MINED !== "undefined" ? MINED : []).filter((m, i, all) => themeOf(m.tags) !== "capture" || all.slice(0, i).filter(x => themeOf(x.tags) === "capture").length < 70).map((m, i) => {
   const th = themeOf(m.tags);
   const userMoves = Math.ceil(m.line.length / 2);
   const diff = Math.min(3, (userMoves > 1 ? 2 : 1) + (m.tags.includes("sacrifice") || m.tags.includes("discovered") ? 1 : 0));
@@ -1467,6 +1470,334 @@ function aiMove() {
   });
 }
 
+// ---------- Problèmes : entraînement classé, série et tempête, comme sur Lichess ----------
+const PZ_THEMES = { capture: "Pièce en prise", fork: "Fourchette", pin: "Clouage", skewer: "Enfilade", discovered: "Découverte", sacrifice: "Sacrifice", mate: "Mat", promotion: "Promotion", check: "Échec" };
+function pzHash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return (h >>> 0).toString(36); }
+const PZ = (typeof MINED !== "undefined" ? MINED : []).filter(m => m.r).map(m => ({
+  id: pzHash(m.fen), fen: m.fen, before: m.before, last: m.last, line: m.line, r: m.r, tags: m.tags,
+  theme: themeOf(m.tags), side: m.fen.split(" ")[1], n: Math.ceil(m.line.length / 2)
+})).sort((a, b) => a.r - b.r);
+const PZ_BY_ID = new Map(PZ.map(p => [p.id, p]));
+if (!save.pz) save.pz = {};
+const PS = Object.assign({ r: 800, n: 0, ok: 0, hist: [], seen: {}, th: {}, streakBest: 0, stormBest: 0, diff: 0, theme: "all", auto: false, rs: [] }, save.pz);
+save.pz = PS;
+if (!PS.rs.length) PS.rs = [PS.r];
+const Q = { mode: "train", cur: null, i: 0, failed: false, done: false, rated: true, delta: null, solution: false, streak: 0, storm: null, review: false };
+const pzSide = p => (p.side === "w" ? "Blancs" : "Noirs");
+// Classement façon Elo : le facteur K diminue avec l'expérience
+function pzUpdate(p, win) {
+  const K = PS.n < 15 ? 60 : PS.n < 60 ? 32 : 20;
+  const E = 1 / (1 + Math.pow(10, (p.r - PS.r) / 400));
+  const d = Math.round(K * ((win ? 1 : 0) - E));
+  PS.r = Math.max(400, PS.r + d);
+  PS.n++; if (win) PS.ok++;
+  PS.seen[p.id] = win ? 1 : 0;
+  for (const t of new Set(p.tags.filter(t => t !== "check"))) { const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
+  PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
+  PS.rs.push(PS.r); PS.rs = PS.rs.slice(-60);
+  persist(); updateXp();
+  return d;
+}
+function pzPick(target, pool, avoid) {
+  const fresh = pool.filter(p => PS.seen[p.id] === undefined && p !== avoid);
+  const list = fresh.length ? fresh : pool.filter(p => p !== avoid);
+  if (!list.length) return null;
+  const near = list.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 8);
+  return near[(Math.random() * near.length) | 0];
+}
+const pzPool = () => (PS.theme === "all" ? PZ : PZ.filter(p => p.tags.includes(PS.theme) || p.theme === PS.theme));
+function problemsView() {
+  if (Q.mode === "storm" && Q.storm && Q.storm.running) return;
+  if (Q.mode === "streak") return streakStart();
+  if (Q.mode === "storm") return stormHome();
+  pzNext();
+}
+function pzNext() {
+  Q.mode = "train";
+  const p = pzPick(PS.r + PS.diff, pzPool(), Q.cur);
+  if (!p) { panel.innerHTML = `<p class="lead">Aucun problème disponible pour ce thème.</p>`; return; }
+  pzLoad(p, true);
+}
+// Charge un problème : position d'avant, puis le dernier coup adverse est rejoué
+function pzLoad(p, rated, fast) {
+  clearTimers();
+  Object.assign(Q, { cur: p, i: 0, failed: false, done: false, rated, delta: null, solution: false, review: !rated });
+  panelEnter();
+  resetBoard(p.before || p.fen, { flip: p.side === "b", locked: true, canMove: sq => colorOf(B.game.b[sq]) === p.side, onMove: pzMove });
+  if (p.before && p.last) later(() => { const m = B.game.find(p.last); if (m) commit(m, true); B.locked = false; pzPanel(); }, fast ? 180 : 600);
+  else B.locked = false;
+  pzPanel();
+}
+function pzMove(m) {
+  const p = Q.cur, g = B.game, u = uci(m), exp = p.line[Q.i];
+  const ok = u === exp || (exp.length === 4 && u.startsWith(exp)) || g.status() === "mate";
+  if (Q.mode === "storm") return stormMove(ok);
+  if (!ok) {
+    flashSq(m.to, "flash-bad");
+    const w = whyWrong(g, m);
+    if (!Q.failed) {
+      Q.failed = true;
+      if (Q.rated && Q.mode === "train") Q.delta = pzUpdate(p, false);
+    }
+    Q.fb = { c: "bad", t: `${ICON.flag} Ce n'est pas le bon coup.`, s: w || "Essaie autre chose, ou regarde la solution." };
+    sound("error");
+    B.locked = true;
+    if (Q.mode === "streak") { pzPanel(); later(() => { g.undo(); B.last = null; render(); streakEnd(); }, 900); return; }
+    pzPanel();
+    later(() => { g.undo(); B.last = null; B.locked = false; render(); }, 900);
+    return;
+  }
+  flashSq(m.to, "flash-ok");
+  Q.i++;
+  if (Q.i >= p.line.length || g.status() === "mate") return pzSolved();
+  Q.fb = { c: "ok", t: `${ICON.check} Meilleur coup ! Continue...` };
+  B.locked = true; pzPanel();
+  later(() => {
+    const r = g.find(p.line[Q.i]);
+    Q.i++;
+    commit(r, true);
+    B.locked = false;
+    pzPanel();
+  }, 500);
+}
+function pzSolved() {
+  const p = Q.cur;
+  Q.done = true; B.locked = true;
+  if (Q.mode === "streak") { Q.streak++; if (Q.streak > PS.streakBest) PS.streakBest = Q.streak; persist(); sound("ok"); Q.fb = { c: "ok", t: `${ICON.check} Réussi ! Série : ${Q.streak}` }; pzPanel(); later(streakNext, 700); return; }
+  if (!Q.failed && Q.rated) Q.delta = pzUpdate(p, true);
+  sound(Q.failed ? "ok" : "win");
+  Q.fb = Q.failed ? { c: "warn", t: "Problème terminé, avec une erreur." } : { c: "ok", t: `${ICON.check} Succès !` };
+  pzPanel();
+  if (PS.auto && !Q.failed) later(pzNext, 900);
+}
+// Montre la solution coup par coup (compte comme un échec)
+function pzSolution() {
+  const p = Q.cur;
+  if (Q.done) return;
+  if (!Q.failed) { Q.failed = true; if (Q.rated && Q.mode === "train") Q.delta = pzUpdate(p, false); }
+  Q.solution = true; B.locked = true;
+  const step = () => {
+    if (Q.i >= p.line.length) { Q.done = true; Q.fb = { c: "info", t: "Voici la solution complète." }; pzPanel(); return; }
+    const m = B.game.find(p.line[Q.i]);
+    if (!m) return;
+    commit(m, true);
+    if (Q.i % 2 === 0) B.arrows = [[m.from, m.to]], render();
+    Q.i++;
+    pzPanel();
+    later(step, 900);
+  };
+  step();
+}
+function pzPanel() {
+  const p = Q.cur;
+  if (!p) return;
+  if (Q.mode === "storm") return stormPanel();
+  const myTurn = !Q.done && B.game.turn === p.side;
+  const head = Q.done
+    ? `<div class="pz-head ${Q.failed ? "fail" : "win"}"><span class="pz-ico">${Q.failed ? ICON.flag : ICON.check}</span><div><b>${Q.solution ? "Solution" : Q.failed ? "Problème raté" : "Problème réussi"}</b><span>${Q.failed ? "Tu feras mieux au prochain !" : "Bravo, tu as trouvé toute la combinaison."}</span></div></div>`
+    : `<div class="pz-head"><span class="pz-side ${p.side}">${pieceEl(p.side === "w" ? "K" : "k")}</span><div><b>${myTurn ? "À toi de jouer !" : "Le coup adverse..."}</b><span>Trouve le meilleur coup pour les ${pzSide(p)}.</span></div></div>`;
+  const delta = Q.delta != null ? `<span class="delta ${Q.delta >= 0 ? "up" : "down"}">${Q.delta >= 0 ? "+" : "−"}${Math.abs(Q.delta)}</span>` : "";
+  const themes = [...new Set(p.tags.filter(t => t !== "check"))].map(t => PZ_THEMES[t]).filter(Boolean);
+  const info = Q.done ? `<div class="pz-info"><span>Problème <b>#${p.id}</b></span><span>Classement <b>${p.r}</b></span>${themes.length ? `<span>Thèmes : <b>${themes.join(", ")}</b></span>` : ""}</div>` : "";
+  const modeBar = `<div class="seg pz-modes" role="group" aria-label="Mode">${[["train", "Entraînement"], ["streak", "Série"], ["storm", "Tempête"]].map(([k, t]) => `<button data-mode-pz="${k}" aria-pressed="${Q.mode === k}">${t}</button>`).join("")}</div>`;
+  if (Q.mode === "streak") {
+    panel.innerHTML = `${modeBar}
+      <div class="pz-rating"><div><span>Série en cours</span><b>${Q.streak}</b></div><div><span>Record</span><b>${PS.streakBest}</b></div></div>
+      ${head}
+      ${Q.fb ? `<div class="fb ${Q.fb.c}">${Q.fb.t}${Q.fb.s ? `<small>${Q.fb.s}</small>` : ""}</div>` : ""}
+      <p class="lead">Des problèmes de plus en plus difficiles. La série s'arrête à la première erreur.</p>`;
+    pzBindModes(); return;
+  }
+  panel.innerHTML = `${modeBar}
+    ${head}
+    ${Q.fb ? `<div class="fb ${Q.fb.c}">${Q.fb.t}${Q.fb.s ? `<small>${Q.fb.s}</small>` : ""}</div>` : ""}
+    ${info}
+    <div class="row">
+      ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button>`
+        : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}
+    </div>
+    <div class="pz-rating">
+      <div><span>Ton classement</span><b>${PS.r}</b>${delta}</div>
+      ${sparkline(PS.rs)}
+    </div>
+    <div class="settings">
+      <div class="field"><span>Difficulté</span><div class="seg" role="group">${[[-250, "Plus facile"], [0, "Normal"], [250, "Plus difficile"]].map(([v, t]) => `<button data-diff="${v}" aria-pressed="${PS.diff === v}">${t}</button>`).join("")}</div></div>
+      <div class="field"><span>Thème</span><select id="pz-theme" class="select">${[["all", "Tous les thèmes"], ...THEMES.map(t => [t.id, t.t])].map(([v, t]) => `<option value="${v}" ${PS.theme === v ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+    </div>
+    <label class="switch"><input type="checkbox" id="pz-auto" ${PS.auto ? "checked" : ""}> Passer au suivant automatiquement après une réussite</label>
+    ${PS.hist.length ? `<p class="group-title">Derniers problèmes</p><div class="pz-hist">${PS.hist.slice(0, 20).map(h => `<button class="${h.ok ? "ok" : "ko"}" data-replay="${h.id}" title="${h.ok ? "Réussi" : "Raté"} · ${h.d >= 0 ? "+" : ""}${h.d}">${h.ok ? ICON.check : "✕"}<i>${h.d >= 0 ? "+" : "−"}${Math.abs(h.d)}</i></button>`).join("")}</div>` : ""}
+    <div class="row"><button class="btn" id="pz-dash">${ICON.trophy}Tableau de bord</button></div>`;
+  pzBindModes();
+  const nx = $("#pz-next"); if (nx) { nx.onclick = pzNext; nx.focus({ preventScroll: true }); }
+  const rt = $("#pz-retry"); if (rt) rt.onclick = () => pzLoad(p, false);
+  const so = $("#pz-sol"); if (so) so.onclick = pzSolution;
+  panel.querySelectorAll("[data-diff]").forEach(b => b.onclick = () => { PS.diff = +b.dataset.diff; persist(); pzPanel(); });
+  $("#pz-theme").onchange = e => { PS.theme = e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
+  $("#pz-auto").onchange = e => { PS.auto = e.target.checked; persist(); };
+  $("#pz-dash").onclick = pzDashboard;
+  panel.querySelectorAll("[data-replay]").forEach(b => b.onclick = () => { const x = PZ_BY_ID.get(b.dataset.replay); if (x) pzLoad(x, false); });
+}
+function pzBindModes() {
+  panel.querySelectorAll("[data-mode-pz]").forEach(b => b.onclick = () => {
+    const k = b.dataset.modePz;
+    if (Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
+    Q.mode = k;
+    if (k === "train") pzNext(); else if (k === "streak") streakStart(); else stormHome();
+  });
+}
+// Courbe d'évolution du classement (une seule série, point final mis en valeur)
+function sparkline(vals) {
+  if (vals.length < 2) return `<p class="calm" style="margin:0">Ta courbe de progression apparaîtra ici.</p>`;
+  const W = 220, H = 48, P = 5, mn = Math.min(...vals), mx = Math.max(...vals), span = Math.max(20, mx - mn);
+  const pts = vals.map((v, i) => [P + (i * (W - 2 * P)) / (vals.length - 1), H - P - ((v - mn) / span) * (H - 2 * P)]);
+  const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const last = pts[pts.length - 1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Évolution du classement, de ${vals[0]} à ${vals[vals.length - 1]}">
+    <path d="${d} L ${last[0].toFixed(1)} ${H} L ${P} ${H} Z" class="spark-area"></path>
+    <path d="${d}" class="spark-line"></path>
+    ${pts.map((p, i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="7" class="spark-hit"><title>${vals[i]}</title></circle>`).join("")}
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="4" class="spark-end"></circle>
+  </svg>`;
+}
+function pzDashboard() {
+  clearTimers();
+  resetBoard(START, { locked: true, list: true });
+  panelEnter();
+  const pct = PS.n ? Math.round((PS.ok / PS.n) * 100) : 0;
+  const rows = Object.entries(PS.th).filter(([t]) => PZ_THEMES[t]).sort((a, b) => b[1][1] - a[1][1]);
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Problèmes</button><span class="pill">${PZ.length} problèmes</span></div>
+    <p class="eyebrow">Tableau de bord</p><h2>Ta progression</h2>
+    <div class="stats-strip">
+      <div class="stat"><b>${PS.r}</b><span>Classement</span></div>
+      <div class="stat"><b>${PS.n}</b><span>Joués</span></div>
+      <div class="stat"><b>${pct}%</b><span>Réussite</span></div>
+      <div class="stat"><b>${PS.streakBest}</b><span>Record série</span></div>
+    </div>
+    <div class="pz-rating"><div><span>Évolution du classement</span><b>${PS.r}</b></div>${sparkline(PS.rs)}</div>
+    <div class="pz-rating"><div><span>Record tempête</span><b>${PS.stormBest}</b></div><p class="calm" style="margin:0">Problèmes résolus en 3 minutes.</p></div>
+    <p class="group-title">Réussite par thème</p>
+    ${rows.length ? `<div class="bars">${rows.map(([t, [ok, n]]) => { const v = Math.round((ok / n) * 100); return `<div class="bar-row" title="${PZ_THEMES[t]} : ${ok} réussis sur ${n}"><span>${PZ_THEMES[t]}</span><div class="bar"><i style="width:${Math.max(2, v)}%"></i></div><b>${v}%</b><small>${ok}/${n}</small></div>`; }).join("")}</div>
+      <p class="calm">Ton thème le plus faible est un bon point de départ : choisis-le dans le filtre « Thème ».</p>` : `<p class="calm">Joue quelques problèmes pour voir tes points forts et tes points faibles.</p>`}`;
+  $("#back").onclick = pzNext;
+}
+// --- Série : de plus en plus difficile, jusqu'à la première erreur ---
+function streakStart() {
+  Q.mode = "streak"; Q.streak = 0; Q.streakLevel = 500; Q.used = new Set();
+  streakNext();
+}
+function streakNext() {
+  const pool = PZ.filter(p => !Q.used.has(p.id));
+  const target = Q.streakLevel + Q.streak * 45;
+  const p = pool.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 4)[(Math.random() * 4) | 0] || pool[0];
+  if (!p) return streakEnd(true);
+  Q.used.add(p.id);
+  Q.fb = null;
+  pzLoad(p, false);
+  Q.mode = "streak"; Q.review = false;
+  pzPanel();
+}
+function streakEnd(all) {
+  const best = Q.streak >= PS.streakBest && Q.streak > 0;
+  if (Q.streak > PS.streakBest) PS.streakBest = Q.streak;
+  persist();
+  B.locked = true;
+  panelEnter();
+  panel.innerHTML = `
+    <div class="seg pz-modes" role="group">${[["train", "Entraînement"], ["streak", "Série"], ["storm", "Tempête"]].map(([k, t]) => `<button data-mode-pz="${k}" aria-pressed="${k === "streak"}">${t}</button>`).join("")}</div>
+    <div class="pz-head ${Q.streak ? "win" : "fail"}"><span class="pz-ico">${ICON.trophy}</span><div><b>${all ? "Tous les problèmes résolus !" : "Série terminée"}</b><span>${Q.streak} problème${Q.streak > 1 ? "s" : ""} d'affilée${best ? " : nouveau record !" : ""}</span></div></div>
+    <div class="pz-rating"><div><span>Score</span><b>${Q.streak}</b></div><div><span>Record</span><b>${PS.streakBest}</b></div></div>
+    ${Q.cur ? `<p class="lead">La solution du dernier problème commençait par <b>${sanFor(Q.cur.fen, Q.cur.line[0]).replace("...", "")}</b>.</p>` : ""}
+    <div class="row"><button class="btn primary big" id="again">${ICON.retry}Nouvelle série</button></div>`;
+  if (best && Q.streak > 2) celebrate();
+  pzBindModes();
+  $("#again").onclick = streakStart;
+}
+// --- Tempête : 3 minutes, un maximum de problèmes ---
+function stormHome() {
+  Q.mode = "storm";
+  clearTimers();
+  resetBoard(START, { locked: true });
+  panelEnter();
+  const last = Q.storm && Q.storm.result;
+  panel.innerHTML = `
+    <div class="seg pz-modes" role="group">${[["train", "Entraînement"], ["streak", "Série"], ["storm", "Tempête"]].map(([k, t]) => `<button data-mode-pz="${k}" aria-pressed="${k === "storm"}">${t}</button>`).join("")}</div>
+    <div class="pz-head"><span class="pz-ico">${ICON.clock}</span><div><b>Tempête de problèmes</b><span>3 minutes pour en résoudre un maximum.</span></div></div>
+    <ul class="goals"><li>Chaque bon coup rapporte du temps quand tu enchaînes (combo).</li><li>Une erreur coûte 10 secondes et passe au problème suivant.</li><li>Les problèmes deviennent de plus en plus difficiles.</li></ul>
+    ${last ? `<div class="pz-rating"><div><span>Dernier score</span><b>${last.score}</b></div><div><span>Meilleur combo</span><b>${last.combo}</b></div><div><span>Erreurs</span><b>${last.errors}</b></div></div>` : ""}
+    <div class="pz-rating"><div><span>Record</span><b>${PS.stormBest}</b></div></div>
+    <div class="row"><button class="btn primary big" id="go-storm">${ICON.clock}Lancer la tempête</button></div>`;
+  pzBindModes();
+  $("#go-storm").onclick = stormStart;
+}
+function stormStart() {
+  Q.mode = "storm";
+  Q.storm = { running: true, end: Date.now() + 180000, score: 0, combo: 0, best: 0, errors: 0, idx: 0, used: new Set(), iv: null };
+  Q.storm.iv = setInterval(stormTick, 200);
+  stormNext();
+}
+function stormNext() {
+  const S = Q.storm, target = 550 + S.idx * 30;
+  S.idx++;
+  const pool = PZ.filter(p => !S.used.has(p.id) && p.line.length <= 3);
+  const p = pool.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 5)[(Math.random() * 5) | 0] || pool[0];
+  if (!p) return stormEnd();
+  S.used.add(p.id);
+  pzLoad(p, false, true);
+  Q.mode = "storm";
+  stormPanel();
+}
+const COMBO_BONUS = [[5, 3], [12, 5], [20, 7], [30, 10]];
+function stormMove(ok) {
+  const S = Q.storm, g = B.game, p = Q.cur;
+  if (!ok) {
+    S.errors++; S.combo = 0; S.end -= 10000;
+    sound("error"); flashSq(B.last ? B.last[1] : 0, "flash-bad");
+    B.locked = true;
+    later(stormNext, 500);
+    stormPanel(); return;
+  }
+  S.combo++; S.best = Math.max(S.best, S.combo);
+  for (const [n, s] of COMBO_BONUS) if (S.combo === n) S.end += s * 1000;
+  if (S.combo > 30 && S.combo % 10 === 0) S.end += 10000;
+  Q.i++;
+  if (Q.i >= p.line.length || g.status() === "mate") { S.score++; sound("ok"); B.locked = true; later(stormNext, 250); stormPanel(); return; }
+  B.locked = true;
+  later(() => { const r = g.find(p.line[Q.i]); Q.i++; commit(r, true); B.locked = false; }, 200);
+  stormPanel();
+}
+function stormTick() {
+  const S = Q.storm;
+  if (!S || !S.running) return;
+  const left = S.end - Date.now();
+  if (left <= 0) return stormEnd();
+  const t = $("#storm-time"); if (t) { t.textContent = `${Math.floor(left / 60000)}:${String(Math.floor((left % 60000) / 1000)).padStart(2, "0")}`; t.classList.toggle("low", left < 20000); }
+}
+function stormPanel() {
+  const S = Q.storm, p = Q.cur;
+  if (!S || !p) return;
+  panel.innerHTML = `
+    <div class="storm-top"><div class="storm-time" id="storm-time">3:00</div><div class="storm-score"><b>${S.score}</b><span>résolus</span></div></div>
+    <div class="pz-head"><span class="pz-side ${p.side}">${pieceEl(p.side === "w" ? "K" : "k")}</span><div><b>Trouve le meilleur coup</b><span>pour les ${pzSide(p)}</span></div></div>
+    <div class="combo"><span>Combo</span><b>${S.combo}</b><div class="combo-bar"><i style="width:${Math.min(100, (S.combo / (COMBO_BONUS.find(([n]) => n > S.combo) || [S.combo + 10])[0]) * 100)}%"></i></div></div>
+    <div class="row"><button class="btn" id="storm-stop">Arrêter</button></div>`;
+  stormTick();
+  $("#storm-stop").onclick = stormEnd;
+}
+function stormEnd() {
+  const S = Q.storm;
+  if (!S || !S.running) return;
+  S.running = false; clearInterval(S.iv);
+  const record = S.score > PS.stormBest;
+  if (record) PS.stormBest = S.score;
+  persist();
+  S.result = { score: S.score, combo: S.best, errors: S.errors };
+  B.locked = true;
+  if (record && S.score > 0) { celebrate(); sound("win"); } else sound("end");
+  stormHome();
+  if (record && S.score > 0) panel.insertAdjacentHTML("afterbegin", `<div class="fb ok">${ICON.trophy} Nouveau record : ${S.score} problèmes !</div>`);
+}
+
 // ---------- Coordonnées ----------
 const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false };
 const DURATION = 30000;
@@ -1521,4 +1852,4 @@ function coordClick(sq) {
   const misses = panel.querySelectorAll(".scorebox b")[1]; if (misses) misses.textContent = C.miss;
 }
 
-setMode(["lecons", "exercices", "jouer", "coord"].includes(save.mode) ? save.mode : "lecons");
+setMode(["lecons", "exercices", "problemes", "jouer", "coord"].includes(save.mode) ? save.mode : "lecons");

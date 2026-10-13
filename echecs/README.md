@@ -11,6 +11,11 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - **Expert** (8) : Boden, Anastasie, Philidor, l'Opéra de Morphy, le double échec de Réti, l'Immortelle et la Toujours Jeune d'Anderssen.
   - **Ouvertures** (18) : italienne, espagnole, écossaise, gambit Dame, Londres, gambit du roi, anglaise, sicilienne, française, Caro-Kann, scandinave, est-indienne, slave, nimzo-indienne, Pirc, Petrov, mat de Légal, défense contre le coup du berger. Pour chacune, on trouve la ligne jouée guidée puis de mémoire, une fiche (plans, coups typiques, pièges) et des exercices.
 - **Exercices** : 120 problèmes tirés de parties, classés par thème (pièces en prise, fourchettes, clouages, découvertes, sacrifices, mats, promotion), avec un mode « série tactique ». S'y ajoutent les 14 problèmes classiques. Sur une mauvaise réponse, le coach explique pourquoi le coup échoue.
+- **Problèmes** : un entraînement inspiré des puzzles de Lichess.
+  - **Entraînement** classé : ton classement évolue après chaque problème (formule Elo), et on te propose des problèmes de ton niveau, réglables (plus facile, normal, plus difficile) et filtrables par thème.
+  - **Série** : des problèmes de plus en plus difficiles, jusqu'à la première erreur.
+  - **Tempête** : 3 minutes pour en résoudre un maximum, avec un combo qui rapporte du temps et des erreurs qui en coûtent.
+  - Un tableau de bord montre ta courbe de classement, ta réussite par thème et tes records.
 - **Jouer** : une partie contre l'ordinateur sur 5 niveaux (de Débutant à Maître), avec un coach en temps réel.
   - Avant ton coup, il explique le coup adverse, montre en rouge la menace adverse (fourchette, mat…) et chiffre ce que tu perdrais si tu l'ignorais.
   - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.
@@ -45,7 +50,10 @@ Les problèmes « tirés de parties » sont produits en trois étapes :
 
 1. `tools/mine2.js` fait jouer le moteur contre lui-même en injectant des erreurs plausibles.
 2. `tools/verify-puzzles.js` analyse chaque position en profondeur et ne garde que celles où un seul coup gagne, à chaque étape de la solution.
-3. `tools/build-puzzles.js` génère `src/puzzles-data.js`.
+3. `tools/rate-puzzles.js` estime la difficulté de chaque problème. Il mesure la profondeur à laquelle le moteur trouve la solution, puis ajoute des points pour les leurres (autres prises ou échecs), les coups calmes, la longueur et le motif.
+4. `tools/build-puzzles.js` génère `src/puzzles-data.js` : il répartit les classements par rang entre 600 et 2 100.
+
+Ces classements sont des estimations : contrairement à Lichess, ils ne viennent pas des résultats de vrais joueurs.
 
 ## Crédits
 

@@ -15,7 +15,9 @@ while (Date.now() < end) {
       const a = E.handle({ type: "analyse", fen: START, moves, time: 260 }).res;
       if (!a || !a.moves.length) break;
       if (Math.abs(a.bestScore) > 400) break;
-      const blunders = a.moves.filter(x => a.bestScore - x.score >= 200 && a.bestScore - x.score <= 900 && x.bound === 0);
+      // Erreurs plausibles : perte de 2 à 9 pions, ou coup qui permet un mat
+      const MATE = 30000;
+      const blunders = a.moves.filter(x => (a.bestScore - x.score >= 200 && a.bestScore - x.score <= 900 && x.bound === 0) || (x.score < -MATE + 200 && a.bestScore > -300));
       if (blunders.length) {
         u = blunders[(Math.random() * blunders.length) | 0].u;
         fs.appendFileSync(out, JSON.stringify({ moves: moves.concat(u) }) + "\n");

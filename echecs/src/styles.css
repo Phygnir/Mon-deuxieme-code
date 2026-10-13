@@ -480,3 +480,18 @@ input.select { font-weight: 400; }
 
 .stat b.word { font-size: 1.05rem; line-height: 1.4; }
 @media (min-width: 1240px) { #xp { display: none; } }
+.dl-steps { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.dl-lead { margin: 0; font-weight: 700; }
+.dl-steps ol { margin: 0; padding: 0; list-style: none; counter-reset: dl; display: flex; flex-direction: column; gap: 12px; }
+.dl-steps li { counter-increment: dl; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 6px 10px; align-items: start; }
+.dl-steps li::before { content: counter(dl); grid-row: span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 0.9rem; }
+.dl-steps li > span:first-of-type { font-size: 0.93rem; padding-top: 3px; }
+.dl-steps li .row { gap: 6px; }
+.dl-steps li .btn, .dl-steps li .file-btn { justify-self: start; text-decoration: none; }
+.dl-steps .calm { margin: 0; font-size: 0.86rem; }
+.file-btn { position: relative; overflow: hidden; cursor: pointer; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-size: 0; }
+.imp-note { margin: 0; font-size: 0.88rem; }
+.dl-steps a.btn:not(.primary) { color: var(--ink); }
+.dl-steps a.btn.primary { color: var(--accent-ink); }
+.ghost-link { text-align: left; }

@@ -294,26 +294,83 @@ function analyseHome() {
 // --- Dernières parties d'un joueur, via les API publiques de Lichess et Chess.com ---
 function fetchHTML() {
   if (FETCH.busy) return `<p class="calm"><i class="spin"></i> Recherche de tes parties...</p>`;
+  if (FETCH.err && FETCH.err.steps) return stepsHTML(FETCH.err.site, FETCH.err.name);
   if (FETCH.err) return `<div class="fb ${FETCH.err.c || "bad"}"><span>${FETCH.err.t}${FETCH.err.s ? `<small>${FETCH.err.s}</small>` : ""}</span></div>`;
   if (!FETCH.list) return "";
+  const note = FETCH.note ? `<p class="calm imp-note">${FETCH.note}</p>` : "";
   if (!FETCH.list.length) return `<p class="calm">Aucune partie classique trouvée récemment pour ce pseudo.</p>`;
-  return `<div class="list imp-list">${FETCH.list.map((x, i) => `
+  return `${note}<div class="list imp-list">${FETCH.list.map((x, i) => `
     <button class="item" data-fetch="${i}">
-      <span class="num">${x.res === "w" ? ICON.trophy : x.res === "d" ? "½" : ICON.flag}</span>
-      <span><span class="ti">${gameRes(x)} contre ${x.opp}${x.oppElo ? ` (${x.oppElo})` : ""}</span><span class="de">${fmtDay(x.date)} · ${x.speed} · avec les ${x.color === "w" ? "Blancs" : "Noirs"}${x.opening ? ` · ${x.opening}` : ""}</span></span>
+      <span class="num">${x.res === "w" ? ICON.trophy : x.res === "d" ? "½" : x.res === "l" ? ICON.flag : "?"}</span>
+      <span><span class="ti">${gameRes(x)} contre ${x.opp}${x.oppElo ? ` (${x.oppElo})` : ""}</span><span class="de">${[fmtDay(x.date), x.speed, `avec les ${x.color === "w" ? "Blancs" : "Noirs"}`, x.opening].filter(Boolean).join(" · ")}</span></span>
       <span class="pill${save.games.some(g => g.id === x.id) ? " done" : ""}">${save.games.some(g => g.id === x.id) ? "Importée" : "Analyser"}</span>
     </button>`).join("")}</div>`;
 }
 function bindFetch() {
   panel.querySelectorAll("[data-fetch]").forEach(b => b.onclick = () => { const x = FETCH.list[+b.dataset.fetch]; if (x) importFetched(x); });
   const pl = $("#acct-paste"); if (pl) pl.onclick = () => importView();
+  const af = $("#acct-file");
+  if (af) af.onchange = e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    f.text().then(t => { pgnToList(t, save.acct.name, "auto"); const r = $("#acct-res"); if (r) { r.innerHTML = fetchHTML(); bindFetch(); } });
+  };
+}
+// La page publiée ne peut pas toujours appeler Lichess ou Chess.com : on fait télécharger le fichier PGN,
+// que l'on relit ensuite ici
+function dlLinks(site, name) {
+  if (site === "lichess") return [[`https://lichess.org/api/games/user/${encodeURIComponent(name)}?max=30&clocks=false&evals=false&opening=true`, "Télécharger mes 30 dernières parties"]];
+  const ln = encodeURIComponent(name.toLowerCase()), d = new Date(), y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, p = m === 1 ? [y - 1, 12] : [y, m - 1];
+  const u = (yy, mm) => `https://api.chess.com/pub/player/${ln}/games/${yy}/${String(mm).padStart(2, "0")}/pgn`;
+  return [[u(y, m), "Parties de ce mois-ci"], [u(p[0], p[1]), "Parties du mois dernier"]];
+}
+function stepsHTML(site, name) {
+  const S = SITES[site].name;
+  return `<div class="dl-steps">
+    <p class="dl-lead">Cette page ne peut pas se connecter directement à ${S}. Il suffit de deux étapes :</p>
+    <ol>
+      <li><span>Télécharge le fichier de tes parties, fourni par ${S}.</span><span class="row">${dlLinks(site, name).map(([href, t], i) => `<a class="btn${i ? "" : " primary"}" href="${href}" target="_blank" rel="noopener">${ICON.upload.replace("M12 15V3M7 8l5-5 5 5", "M12 3v12M7 10l5 5 5-5")}${t}</a>`).join("")}</span></li>
+      <li><span>Choisis le fichier téléchargé (.pgn), puis la partie à analyser.</span><label class="btn primary file-btn">${ICON.upload}Choisir le fichier<input type="file" id="acct-file" accept=".pgn,.txt,application/x-chess-pgn,application/vnd.chess-pgn"></label></li>
+    </ol>
+    <p class="calm">Le fichier arrive dans tes téléchargements, aussi sur téléphone. Tu peux aussi <button class="linkish" id="acct-paste">coller le texte d'une partie</button>.</p>
+  </div>`;
+}
+// Cadence d'après l'en-tête TimeControl (« 180+2 ») : même découpage que Lichess
+function tcSpeed(tc) {
+  if (!tc || tc === "?") return "";
+  if (tc === "-" || tc.includes("/")) return "Par correspondance";
+  const [b, i] = tc.split("+").map(Number), e = (b || 0) + 40 * (i || 0);
+  return e < 30 ? "Ultrabullet" : e < 180 ? "Bullet" : e < 480 ? "Blitz" : e < 1500 ? "Rapide" : "Classique";
+}
+function pgnEntry(pg, name, side) {
+  const t = pg.tags, ln = (name || "").toLowerCase();
+  const color = side === "w" || side === "b" ? side : ln && (t.Black || "").toLowerCase() === ln ? "b" : "w";
+  const r = pg.result, res = r === "1/2-1/2" ? "d" : r === "1-0" ? (color === "w" ? "w" : "l") : r === "0-1" ? (color === "b" ? "w" : "l") : "?";
+  const d = (t.UTCDate || t.Date || "").match(/^(\d{4})\.(\d{2})\.(\d{2})$/), tm = (t.UTCTime || t.EndTime || t.StartTime || "").match(/^(\d{1,2}):(\d{2})/);
+  const date = d ? Date.UTC(+d[1], +d[2] - 1, +d[3], tm ? +tm[1] : 12, tm ? +tm[2] : 0) : Date.now();
+  const known = v => (v && v !== "?" ? v : null);
+  const eco = (t.ECOUrl || "").match(/openings\/([^"?]+)/);
+  const opening = t.Opening && t.Opening !== "?" ? t.Opening.split(":")[0] : eco ? decodeURIComponent(eco[1]).split("-").slice(0, 3).join(" ") : "";
+  const link = [t.Link, t.Site].find(v => /^https?:\/\//.test(v || "")) || null;
+  const site = /lichess\.org/.test(link || "") ? "lichess" : /chess\.com/.test(link || "") ? "chesscom" : null;
+  return { site, url: link, parsed: pg, id: "p" + pzHash((pg.fen || "") + pg.moves.map(m => m.u).join("")), color, date, res, speed: tcSpeed(t.TimeControl),
+    opening, opp: known(color === "w" ? t.Black : t.White) || "Adversaire", oppElo: known(color === "w" ? t.BlackElo : t.WhiteElo) };
+}
+// Toutes les parties d'un fichier, de la plus récente à la plus ancienne
+function pgnToList(text, name, side) {
+  let games;
+  try { games = parsePgn(text); } catch (e) { FETCH.err = { t: `${ICON.flag} Ce fichier n'a pas pu être lu.`, s: e.message }; FETCH.list = null; return false; }
+  const list = games.map(g => pgnEntry(g, name, side)).sort((a, b) => b.date - a.date).slice(0, 60);
+  FETCH.err = null; FETCH.list = list;
+  FETCH.note = `${games.length} partie${games.length > 1 ? "s" : ""} trouvée${games.length > 1 ? "s" : ""}${games.length > 60 ? " (les 60 plus récentes sont affichées)" : ""}. Choisis celle à analyser.`;
+  return true;
 }
 const SPEED = { ultraBullet: "Ultrabullet", bullet: "Bullet", blitz: "Blitz", rapid: "Rapide", classical: "Classique", correspondence: "Par correspondance", daily: "Par correspondance" };
 async function fetchGames() {
   const a = save.acct, name = $("#acct-name").value.trim();
   if (!name) { $("#acct-name").focus(); return; }
   a.name = name; persist();
-  FETCH.busy = true; FETCH.err = null; FETCH.list = null;
+  FETCH.busy = true; FETCH.err = null; FETCH.list = null; FETCH.note = null;
   const res = $("#acct-res"); res.innerHTML = fetchHTML();
   const run = FETCH.key = a.site + ":" + name + ":" + Date.now();
   let list = null, err = null;
@@ -322,7 +379,7 @@ async function fetchGames() {
     const site = SITES[a.site].name;
     err = e && e.code === 404 ? { t: `${ICON.flag} Aucun joueur « ${name} » sur ${site}.`, s: "Vérifie l'orthographe du pseudo." }
       : e && e.code === 429 ? { c: "warn", t: `${site} demande de patienter un peu.`, s: "Réessaie dans une minute." }
-      : { t: `${ICON.flag} Impossible de joindre ${site} depuis cette page.`, s: `Ta connexion, ou la page elle-même, bloque l'accès au site. Ouvre tes parties sur <a href="${SITES[a.site].home(name)}" target="_blank" rel="noopener">${site}</a>, copie le PGN de la partie et <button class="linkish" id="acct-paste">colle-le ici</button>.` };
+      : { steps: true, site: a.site, name };
   }
   if (FETCH.key !== run) return;
   FETCH.busy = false; FETCH.list = list; FETCH.err = err;
@@ -375,7 +432,7 @@ function storeGames(added) {
 function importFetched(x) {
   if (!x.parsed) { FETCH.err = { t: `${ICON.flag} Cette partie n'a pas pu être lue.` }; $("#acct-res").innerHTML = fetchHTML(); return; }
   const t = x.parsed.tags;
-  storeGames([{ id: x.id, date: x.date, color: x.color, level: null, res: x.res, src: "pgn", site: x.site, url: x.url, white: t.White || null, black: t.Black || null, fen: x.parsed.fen, log: x.parsed.moves, an: null }]);
+  storeGames([{ id: x.id, date: x.date, color: x.color, level: null, res: x.res, src: "pgn", site: x.site, url: x.url, white: t.White && t.White !== "?" ? t.White : null, black: t.Black && t.Black !== "?" ? t.Black : null, fen: x.parsed.fen, log: x.parsed.moves, an: null }]);
   analysisView(x.id);
 }
 // --- Import par copier-coller (PGN) ---
@@ -413,20 +470,15 @@ function importView(err) {
 function importGo() {
   const name = $("#pgn-name").value.trim();
   save.pgnName = name;
+  if (name && !save.acct.name) save.acct.name = name;
+  persist();
   let games;
-  try { games = parsePgn(IMP.text); } catch (e) { persist(); return importView(e.message); }
-  const lname = name.toLowerCase(), added = [];
-  for (const pg of games.slice(0, 5)) {
-    const t = pg.tags;
-    const color = IMP.side === "auto" ? (lname && (t.Black || "").toLowerCase() === lname ? "b" : "w") : IMP.side;
-    const r = pg.result, res = r === "1/2-1/2" ? "d" : r === "1-0" ? (color === "w" ? "w" : "l") : r === "0-1" ? (color === "b" ? "w" : "l") : "?";
-    const d = (t.UTCDate || t.Date || "").match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
-    const date = d ? Date.UTC(+d[1], +d[2] - 1, +d[3], 12) : Date.now();
-    const id = "p" + pzHash((pg.fen || "") + pg.moves.map(m => m.u).join(""));
-    added.push({ id, date, color, level: null, res, src: "pgn", white: t.White && t.White !== "?" ? t.White : null, black: t.Black && t.Black !== "?" ? t.Black : null, fen: pg.fen, log: pg.moves, an: null });
-  }
-  storeGames(added);
+  try { games = parsePgn(IMP.text); } catch (e) { return importView(e.message); }
   IMP.text = "";
-  analysisView(added[0].id);
-  if (games.length > 1) panel.insertAdjacentHTML("afterbegin", `<div class="fb info">${Math.min(5, games.length)} parties importées${games.length > 5 ? ` (les 5 premières sur ${games.length})` : ""}. Retrouve les autres dans l'onglet Analyse.</div>`);
+  if (games.length > 1) {
+    const list = games.map(g => pgnEntry(g, name, IMP.side)).sort((x, y) => y.date - x.date).slice(0, 60);
+    Object.assign(FETCH, { err: null, list, note: `${games.length} parties trouvées. Choisis celle à analyser.` });
+    return setMode("analyse");
+  }
+  importFetched(pgnEntry(games[0], name, IMP.side));
 }

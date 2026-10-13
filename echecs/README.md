@@ -21,6 +21,8 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.
   - Après ton coup, il donne un verdict justifié : la réponse adverse, la suite probable, le bilan matériel et le meilleur coup.
   - Sur une erreur, la partie se met en pause et tu peux reprendre ton coup.
+  - **Analyse de partie** : à la fin, le moteur revoit chaque position. On obtient une courbe d'évaluation, la précision de chaque camp et le décompte des imprécisions, erreurs et gaffes, classées selon la perte de chances de gain, comme sur Lichess. On a aussi un commentaire sur chaque coup (la réfutation, ce qu'il fallait jouer) et tes moments clés, que tu peux rejouer. Les 12 dernières parties sont gardées dans « Mes parties ».
+- **Révision espacée** : ce que tu rates revient le lendemain, puis après 3, 7, 14 et 30 jours si tu le réussis. Une erreur le renvoie au début, et après cinq réussites il est acquis. On y retrouve les problèmes et exercices ratés, les moments clés de tes parties et les ouvertures apprises. Une carte « À réviser aujourd'hui » apparaît en tête des leçons et des exercices.
 - **Coordonnées** : un entraînement chronométré de 30 secondes.
 
 Il y a aussi des sons, l'animation des pièces, une barre d'évaluation et des points gagnés. La progression est enregistrée dans le navigateur (`localStorage`).
@@ -37,6 +39,8 @@ Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
 | `src/puzzles-data.js` | Problèmes tirés de parties (fichier généré) |
 | `src/puzzles-lichess.js` | Problèmes de la base Lichess (fichier généré, facultatif) |
 | `src/app.js` | Interface : échiquier, leçons, exercices, coach, coordonnées |
+| `src/analysis.js` | Analyse de partie : évaluations, précision, moments clés |
+| `src/review.js` | Révision espacée |
 | `src/styles.css`, `src/pieces.css`, `src/body.html` | Présentation |
 
 ## Vérifications

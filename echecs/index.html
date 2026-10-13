@@ -419,6 +419,57 @@ button { font: inherit; color: inherit; }
   .cover-art { width: 64px; height: 64px; border-radius: 16px; }
   .board-col.with-eval .under { padding-left: 22px; }
 }
+
+/* ---------- Analyse de partie ---------- */
+.an-graph { display: block; width: 100%; height: 96px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.an-bg { fill: #2c3530; }
+.an-area { fill: #f3f0e4; }
+.an-mid { stroke: #8a958d; stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.an-cur { stroke: var(--accent-2); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.an-dot { stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.an-dot.q-dub { fill: #e6a117; } .an-dot.q-err { fill: #e0702a; } .an-dot.q-bad { fill: #d23c30; }
+.an-hits rect { fill: transparent; cursor: pointer; }
+.an-hits rect:hover { fill: rgba(82, 183, 131, .18); }
+.an-load { display: flex; flex-direction: column; gap: 6px; }
+.an-nav { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; gap: 6px; align-items: center; }
+.an-nav .btn { padding: 8px 10px; justify-content: center; }
+.an-ply { text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.an-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.an-side { border: 1px solid var(--line); background: var(--surface-2); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.an-side > b { font-family: var(--font-display); font-size: 1.7rem; line-height: 1.1; }
+.an-side > span:not(.an-who) { color: var(--muted); font-size: 0.82rem; }
+.an-who { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; }
+.an-who .pc { width: 1.4rem; height: 1.4rem; }
+.an-side ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 0.86rem; }
+.an-side li { display: flex; align-items: center; gap: 7px; }
+.an-side li i, .legend i.q-err { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.an-side i.q-dub { background: #e6a117; } .an-side i.q-err, .legend i.q-err { background: #e0702a; } .an-side i.q-bad { background: #d23c30; }
+.an-moment { cursor: default; grid-template-columns: 38px minmax(0, 1fr) auto; }
+.an-moment .num[data-q-dot="q-bad"] { background: var(--bad-bg); color: var(--bad); border-color: transparent; }
+.an-moment .num[data-q-dot="q-err"], .an-moment .num[data-q-dot="q-dub"] { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
+.an-acts { display: flex; gap: 6px; }
+.an-acts .btn { padding: 7px 11px; font-size: 0.86rem; }
+#an-moves span[data-go] { cursor: pointer; border-radius: 4px; }
+#an-moves span[data-go]:hover { background: var(--accent-soft); }
+@media (max-width: 520px) {
+  .an-moment { grid-template-columns: 38px minmax(0, 1fr); }
+  .an-acts { grid-column: 1 / -1; }
+}
+
+/* ---------- Révision espacée ---------- */
+.rev-card { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--gold-soft); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); }
+.rev-card b { display: block; font-family: var(--font-display); font-size: 1.08rem; }
+.rev-card span { color: var(--muted); font-size: 0.88rem; }
+.rev-card.calm-card { background: var(--surface-2); border-color: var(--line); grid-template-columns: 46px minmax(0, 1fr); }
+.rev-ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--surface); color: var(--gold); }
+.rev-card.calm-card .rev-ico { color: var(--accent); }
+.rev-ico .ico { width: 22px; height: 22px; }
+.eyebrow .lvl { margin-left: 10px; vertical-align: middle; }
+.eyebrow .lvl i { height: 10px; width: 6px; }
+@media (max-width: 520px) {
+  .rev-card { grid-template-columns: 46px minmax(0, 1fr); }
+  .rev-card .btn { grid-column: 1 / -1; justify-content: center; }
+}
 .pc.wP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
 .pc.wB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==")}
 .pc.wN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==")}
@@ -3520,6 +3571,7 @@ function pathList() {
       <div class="stat"><b>${save.record.w || 0}</b><span>Victoires</span></div>
       <div class="stat"><b>${xpTotal()}</b><span>Points</span></div>
     </div>
+    ${revCard()}
     ${next && done ? `<div class="row"><button class="btn primary big" id="resume">${ICON.arrow}Reprendre : ${next.t}</button></div>` : ""}
     <div class="paths">${PATHS.map(p => {
       const d = pathDone(p), n = p.lessons.length, lvl = LEVEL_DOTS[p.id];
@@ -3531,6 +3583,7 @@ function pathList() {
     }).join("")}</div>`;
   panel.querySelectorAll("[data-path]").forEach(b => b.addEventListener("click", () => lessonList(b.dataset.path)));
   const rs = $("#resume"); if (rs) rs.onclick = () => startLesson(next.id);
+  revBindCard();
 }
 function lessonList(pathId) {
   const path = PATHS.find(p => p.id === pathId);
@@ -3549,6 +3602,7 @@ function lessonList(pathId) {
       <div class="cover-art"><span class="pc ${PATH_EMBLEM[path.id]}"></span></div>
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
+    ${revCard(true)}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -3560,6 +3614,7 @@ function lessonList(pathId) {
       </button>`).join("")}</div>`;
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
+  revBindCard();
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -3698,6 +3753,7 @@ function nextStep() {
   if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
   const first = !save.lessons[les.id];
   save.lessons[les.id] = true; persist(); updateXp();
+  if (L_OUV.includes(les)) revAdd("ouv:" + les.id, { k: "ouv", id: les.id }, true);
   lessonRecap(first);
 }
 // Bilan de fin de leçon
@@ -3942,6 +3998,7 @@ function puzzleList() {
       <div class="stat"><b>${solvedCount(PUZZLES)}<small style="font-size:.55em;color:var(--muted)">/${PUZZLES.length}</small></b><span>Classiques</span></div>
       <div class="stat"><b>${save.streak || 0}</b><span>Série</span></div>
     </div>
+    ${revCard()}
     ${nextSeries ? `<div class="row"><button class="btn primary big" id="series">${ICON.puzzle}Série tactique : problème suivant</button></div>` : MINED_P.length ? `<div class="fb ok">Tous les problèmes tirés de parties sont résolus !</div>` : ""}
     <p class="group-title">Par thème</p>
     <div class="paths compact">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
@@ -3960,6 +4017,7 @@ function puzzleList() {
   panel.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { P.mode = "classic"; P.list = PUZZLES; startPuzzle(b.dataset.p); }));
   panel.querySelectorAll("[data-theme]").forEach(b => b.addEventListener("click", () => themeList(b.dataset.theme)));
   const s = $("#series"); if (s) s.onclick = () => { P.mode = "series"; P.list = MINED_P; startPuzzle(nextSeries.id); };
+  revBindCard();
 }
 function themeList(th) {
   const t = THEMES.find(x => x.id === th), list = MINED_P.filter(p => p.theme === th);
@@ -4040,7 +4098,7 @@ function puzzleHint() {
   if (!m) return;
   P.hint++;
   if (P.hint === 1) { B.marks = new Set([m.from]); P.fb = { c: "info", t: `Indice : la pièce à jouer est ${POSS[m.piece.toLowerCase()]} ${NAME[m.piece.toLowerCase()]} en ${sqName(m.from)}.${P.cur.goal === "line" ? ` Thème : ${P.cur.t.toLowerCase()}.` : ""}` }; }
-  else { B.marks = new Set(); B.arrows = [[m.from, m.to]]; P.fb = { c: "info", t: "Voici le coup. Joue-le pour continuer." }; }
+  else { if (P.cur.goal !== "convert") revAdd("ex:" + P.cur.id, { k: "ex", id: P.cur.id }); B.marks = new Set(); B.arrows = [[m.from, m.to]]; P.fb = { c: "info", t: "Voici le coup. Joue-le pour continuer." }; }
   render(); puzzlePanel();
 }
 function puzzleSolved() {
@@ -4077,6 +4135,7 @@ function puzzleMove(m) {
   else ok = u === p.line[P.i] || (p.line[P.i].length === 4 && u.startsWith(p.line[P.i])) || (p.goal === "line" && g.status() === "mate");
   if (!ok) {
     P.errors++; B.locked = true;
+    if (P.errors === 1 && p.goal !== "convert") revAdd("ex:" + p.id, { k: "ex", id: p.id });
     const w = whyWrong(g, m);
     P.fb = { c: "bad", t: `${w}Ce n'est pas le bon coup. Cherche d'abord les échecs, les prises et les menaces.` };
     sound("error");
@@ -4154,7 +4213,7 @@ const LEVELS = [
 ];
 const PL = Object.assign({ color: "w", level: 1, coach: true, live: true, stop: true, log: [], over: null, bal: 0 }, save.play || {});
 Object.assign(PL, { gen: 0, ana: null, anaP: null, threat: null, review: null, brief: null, paused: false, thinking: false, hint: null });
-function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal }; persist(); }
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid }; persist(); }
 const ucis = () => PL.log.map(e => e.u);
 
 // --- Outils d'analyse pour le coach ---
@@ -4352,6 +4411,7 @@ function makeBrief(oppSan, oppFacts) {
   return { items, book: bookInfo(PL.log) };
 }
 function playView() {
+  if (AN.g) { AN.run++; AN.g = null; }
   resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
   PL.gen++;
   rebuildGame();
@@ -4363,7 +4423,7 @@ function playView() {
 }
 function newGame(color) {
   PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
-  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null;
+  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
   savePlay();
   playView();
 }
@@ -4420,6 +4480,7 @@ function playPanel() {
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><p class="eyebrow">Partie avec coach</p>${book && book.name && PL.log.length ? `<span class="pill">${book.name}</span>` : ""}</div>
     <div class="fb ${status.c}">${status.t}</div>
+    ${PL.over && save.games[0] && save.games[0].id === PL.gid ? `<div class="row"><button class="btn primary big" id="analyse">${ICON.chart}Analyser la partie</button></div>` : ""}
     ${coachHTML()}
     <div class="row">
       <button class="btn" id="hint" ${PL.over || PL.thinking || PL.paused || g.turn !== PL.color ? "disabled" : ""}>${ICON.bulb}Indice</button>
@@ -4440,12 +4501,14 @@ function playPanel() {
       </div></div>
     </div>
     <div class="moves" id="moves">${rows.join("")}</div>
-    <div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>`;
+    <div class="row" style="justify-content:space-between;align-items:center"><div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>${save.games.length ? `<button class="btn" id="games">${ICON.chart}Mes parties</button>` : ""}</div>`;
   const mv = $("#moves"); mv.scrollTop = mv.scrollHeight;
   panel.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { PL.level = +b.dataset.lvl; savePlay(); playPanel(); });
   panel.querySelectorAll("[data-new]").forEach(b => b.onclick = () => newGame(b.dataset.new));
   $("#hint").onclick = playHint;
   $("#undo").onclick = playUndo;
+  const an = $("#analyse"); if (an) { an.onclick = () => analysisView(PL.gid); an.focus({ preventScroll: true }); }
+  const gl = $("#games"); if (gl) gl.onclick = gamesList;
   $("#flip").onclick = () => { B.flip = !B.flip; render(); };
   const rs = $("#resign"); if (rs) rs.onclick = () => endGame("l", "Tu as abandonné. La prochaine sera la bonne !");
   $("#coach").onchange = e => { PL.coach = e.target.checked; savePlay(); playPanel(); if (!PL.anaP && !PL.over && B.game.turn === PL.color) startTurn(); };
@@ -4496,6 +4559,7 @@ function endGame(res, text) {
   PL.gen++;
   PL.over = { r: res, c: res === "w" ? "ok" : res === "d" ? "warn" : "bad", t: text };
   save.record[res]++; updateXp();
+  archiveGame(res);
   B.locked = true; PL.thinking = false;
   savePlay(); playPanel();
   if (res === "w") celebrate();
@@ -4730,6 +4794,7 @@ function pzUpdate(p, win) {
   const d = PS.r - before;
   PS.n++; if (win) PS.ok++;
   PS.seen[p.id] = win ? 1 : 0;
+  if (!win) revAdd("pz:" + p.id, { k: "pz", id: p.id });
   for (const t of new Set(p.tags)) { if (PZ_MINOR.has(t)) continue; const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
   PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
   PS.rs.push(PS.r); PS.rs = PS.rs.slice(-80);
@@ -5099,6 +5164,465 @@ function coordClick(sq) {
   const misses = panel.querySelectorAll(".scorebox b")[1]; if (misses) misses.textContent = C.miss;
 }
 
+
+// ---------- Analyse de partie : courbe, précision, moments clés ----------
+// Les parties terminées sont gardées (save.games, les 12 dernières). Le moteur évalue chaque position,
+// puis on classe les coups selon la perte de chances de gain, comme Lichess.
+if (!save.games) save.games = [];
+const AN = { g: null, i: 0, run: 0, busy: false, sel: null };
+Object.assign(ICON, {
+  first: svgI('<path d="M18 6 12 12l6 6M7 6v12"/>'),
+  prev: svgI('<path d="M15 6l-6 6 6 6"/>'),
+  next: svgI('<path d="M9 6l6 6-6 6"/>'),
+  last: svgI('<path d="M6 6l6 6-6 6M17 6v12"/>'),
+  chart: svgI('<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>')
+});
+// Probabilité de gain (0-100) d'après l'évaluation en centipions, formule de Lichess
+const winPct = cp => (Math.abs(cp) > Engine_MATE - 200 ? (cp > 0 ? 100 : 0) : 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * Math.max(-1000, Math.min(1000, cp)))) - 1));
+const anWp = (game, k, side) => Math.round(winPct((side === "w" ? 1 : -1) * game.an.ev[k]));
+const moveAcc = drop => Math.max(0, Math.min(100, 103.1668 * Math.exp(-0.04354 * drop) - 3.1669));
+const AN_Q = [[30, "q-bad", "gaffe"], [20, "q-err", "erreur"], [10, "q-dub", "imprécision"]];
+function archiveGame(res) {
+  if (PL.log.length < 6) return;
+  const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
+  save.games = [g].concat(save.games.filter(x => x.id !== g.id)).slice(0, 12);
+  persist();
+}
+// Ligne d'ouverture connue jusqu'au coup k inclus ?
+const anBook = (log, k) => k < 20 && L_OUV.some(l => { const line = l.steps[1].moves; return k < line.length && log.slice(0, k + 1).every((e, i) => line[i] === e.u); });
+// Classement de chaque coup à partir des évaluations (point de vue des Blancs)
+function anMoves(game) {
+  const an = game.an, out = [];
+  if (!an) return out;
+  for (let k = 0; k < game.log.length; k++) {
+    if (an.ev[k] == null || an.ev[k + 1] == null) break;
+    const side = k % 2 ? "b" : "w", s = side === "w" ? 1 : -1;
+    const before = winPct(s * an.ev[k]), after = winPct(s * an.ev[k + 1]);
+    // Un coup de théorie qui perd beaucoup (piège d'ouverture) reste une erreur
+    const drop = Math.max(0, before - after), book = drop < 10 && anBook(game.log, k);
+    const best = an.best[k] === game.log[k].u;
+    const q = book || best ? null : AN_Q.find(([d]) => drop >= d);
+    out.push({ k, side, drop: book ? 0 : drop, acc: book || best ? 100 : moveAcc(drop), q: q ? q[1] : best ? "q-best" : null, word: q ? q[2] : book ? "théorie" : best ? "meilleur coup" : "bon coup", book, best });
+  }
+  return out;
+}
+function anSummary(game, moves) {
+  const res = {};
+  for (const c of ["w", "b"]) {
+    const ms = moves.filter(m => m.side === c);
+    res[c] = { acc: ms.length ? Math.round(ms.reduce((a, m) => a + m.acc, 0) / ms.length) : null, dub: ms.filter(m => m.q === "q-dub").length, err: ms.filter(m => m.q === "q-err").length, bad: ms.filter(m => m.q === "q-bad").length };
+  }
+  return res;
+}
+// Les moments clés : tes coups qui ont le plus coûté
+const anMoments = (game, moves) => moves.filter(m => m.side === game.color && m.drop >= 10).sort((a, b) => b.drop - a.drop).slice(0, 4).sort((a, b) => a.k - b.k);
+function gameAt(game, n) {
+  const g = new Chess(START);
+  for (const e of game.log.slice(0, n)) { const m = g.find(e.u); if (!m) break; g.make(m); }
+  return g;
+}
+// Évalue les positions une par une ; l'affichage se met à jour au fur et à mesure
+async function analyseGame(game) {
+  const run = ++AN.run, N = game.log.length;
+  if (!game.an || game.an.n !== N) game.an = { n: N, ev: [], best: [], pv: [] };
+  const an = game.an;
+  AN.busy = true;
+  for (let k = 0; k <= N; k++) {
+    if (an.ev[k] != null) continue;
+    const g = gameAt(game, k), st = g.status();
+    if (st) { an.ev[k] = st === "mate" ? (g.turn === "w" ? -Engine_MATE : Engine_MATE) : 0; an.best[k] = null; an.pv[k] = []; }
+    else {
+      const r = await Engine.run({ type: "search", moves: game.log.slice(0, k).map(e => e.u), time: 450 });
+      if (run !== AN.run) return;
+      const sc = r && r.move ? r.score : 0;
+      an.ev[k] = g.turn === "w" ? sc : -sc; an.best[k] = r && r.move; an.pv[k] = (r && r.pv || []).slice(0, 6);
+    }
+    if (run !== AN.run) return;
+    if (k % 8 === 0) persist();
+    if (AN.g === game && modeNow === "jouer") anPanel(true);
+  }
+  AN.busy = false;
+  an.done = true;
+  persist();
+  // Les erreurs de la partie partent en révision
+  if (typeof revAdd === "function") for (const m of anMoments(game, anMoves(game)).filter(m => m.drop >= 15).slice(0, 3)) revAdd(`mo:${game.id}:${m.k}`, anMomentItem(game, m));
+  if (AN.g === game && modeNow === "jouer") anPanel(true);
+}
+function anMomentItem(game, m) {
+  const g = gameAt(game, m.k);
+  return { k: "moment", fen: g.fen(), best: game.an.best[m.k], played: game.log[m.k].u, ev: game.an.ev[m.k], side: m.side, date: game.date, move: Math.floor(m.k / 2) + 1 };
+}
+function analysisView(id) {
+  const game = save.games.find(x => x.id === id);
+  if (!game) return playView();
+  clearTimers(); PL.gen++;
+  AN.g = game; AN.i = game.log.length; AN.sel = null;
+  resetBoard(START, { flip: game.color === "b", locked: true, captured: true, names: game.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
+  $("#evalbar").hidden = false; $("#board-col").classList.add("with-eval");
+  panelEnter();
+  anGo(AN.i);
+  if (!game.an || !game.an.done) analyseGame(game);
+}
+function anGo(i) {
+  const game = AN.g;
+  AN.i = Math.max(0, Math.min(game.log.length, i));
+  B.game = gameAt(game, AN.i);
+  const lm = B.game.hist[B.game.hist.length - 1];
+  B.last = lm ? [lm.m.from, lm.m.to] : null;
+  B.arrows = [];
+  // Après une erreur, la flèche verte montre ce qu'il fallait jouer (comme sur Lichess)
+  const mv = anMoves(game).find(m => m.k === AN.i - 1), an = game.an;
+  if (mv && mv.q && mv.q !== "q-best" && an.best[mv.k]) {
+    const g0 = gameAt(game, mv.k), bm = g0.find(an.best[mv.k]);
+    if (bm) B.arrows = [[bm.from, bm.to]];
+  }
+  const ev = an && an.ev[AN.i];
+  if (ev != null) PL.bal = ev;
+  render(); anPanel();
+}
+function anGraph(game, moves) {
+  const an = game.an, N = game.log.length, W = 300, H = 84;
+  const x = k => (N ? (k / N) * W : 0), y = k => H * (1 - winPct(an.ev[k]) / 100);
+  const known = []; for (let k = 0; k <= N && an && an.ev[k] != null; k++) known.push(k);
+  const line = known.map((k, j) => `${j ? "L" : "M"}${x(k).toFixed(1)} ${y(k).toFixed(1)}`).join(" ");
+  const area = known.length > 1 ? `${line} L${x(known[known.length - 1]).toFixed(1)} ${H} L0 ${H} Z` : "";
+  const dots = moves.filter(m => m.q && m.q !== "q-best").map(m => `<circle cx="${x(m.k + 1).toFixed(1)}" cy="${y(m.k + 1).toFixed(1)}" r="3.2" class="an-dot ${m.q}"></circle>`).join("");
+  const hits = Array.from({ length: N + 1 }, (_, k) => `<rect x="${(x(k) - W / N / 2).toFixed(1)}" y="0" width="${(W / Math.max(1, N)).toFixed(1)}" height="${H}" data-go="${k}"><title>${k ? `${Math.ceil(k / 2)}${k % 2 ? "." : "..."} ${frSan(game.log[k - 1].san)}` : "Position de départ"}</title></rect>`).join("");
+  return `<svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Courbe d'évaluation de la partie">
+    <rect width="${W}" height="${H}" class="an-bg"></rect>
+    ${area ? `<path d="${area}" class="an-area"></path>` : ""}
+    <line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" class="an-mid"></line>
+    <line x1="${x(AN.i).toFixed(1)}" x2="${x(AN.i).toFixed(1)}" y1="0" y2="${H}" class="an-cur"></line>
+    ${dots}<g class="an-hits">${hits}</g></svg>`;
+}
+// Commentaire du coup affiché : pourquoi il est faible, et ce qu'il fallait jouer
+function anComment(game, m) {
+  const an = game.an, g = gameAt(game, m.k), played = g.find(game.log[m.k].u);
+  const me = m.side === game.color, who = me ? "me" : "opp";
+  const san = frSan(game.log[m.k].san), num = `${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."}`;
+  const out = { title: `${num} ${san}`, word: m.word, c: !m.q || m.q === "q-best" ? "ok" : m.q === "q-dub" ? "warn" : "bad", lines: [] };
+  if (m.book) { out.lines.push("Coup de théorie : il fait partie d'une ouverture étudiée dans les leçons."); return out; }
+  if (!m.q || m.q === "q-best") {
+    const f = played ? pickFacts(moveFacts(g, played), GOOD, who, 2) : [];
+    out.lines.push(f.length ? f.join(" ") : m.best ? "C'est le coup que le moteur choisit aussi." : "Un coup correct, qui garde l'équilibre.");
+    return out;
+  }
+  if (played) out.lines.push(...pickFacts(moveFacts(g, played), BAD, who, 1));
+  // La réfutation : la meilleure réponse dans la position d'après
+  const after = gameAt(game, m.k + 1), pv = an.pv[m.k + 1] || [];
+  if (pv.length) {
+    const rm = after.find(pv[0]);
+    if (rm) {
+      const rf = pickFacts(moveFacts(after, rm), ["mate", "fork", "capFree", "capWin", "check", "threat", "capEven"], me ? "opp" : "me", 1);
+      const seq = lineSans(after, pv, 4);
+      out.lines.push(`${me ? "Sa meilleure réponse" : "Ta meilleure réponse était"} : <b>${seq[0]}</b>${rf.length ? " — " + lc(rf[0]) : "."}${seq.length > 1 ? ` Suite : ${seq.join(" ")}.` : ""}`);
+    }
+  }
+  out.lines.push(`${me ? "Tes" : "Ses"} chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.`);
+  const bm = an.best[m.k] && g.find(an.best[m.k]);
+  if (bm) {
+    const bf = pickFacts(moveFacts(g, bm), GOOD, who, 1), seq = lineSans(g, an.pv[m.k] || [an.best[m.k]], 3);
+    out.better = `Mieux : <b>${seq[0]}</b>${bf.length ? " — " + lc(bf[0]) : "."}${seq.length > 1 ? ` Par exemple ${seq.join(" ")}.` : ""}`;
+  }
+  // L'adversaire venait de se tromper ?
+  const prev = anMoves(game).find(x => x.k === m.k - 1);
+  if (me && prev && (prev.q === "q-err" || prev.q === "q-bad")) out.lines.unshift("L'ordinateur venait de faire une erreur : il y avait une occasion à saisir.");
+  return out;
+}
+function anPanel(progressOnly) {
+  const game = AN.g;
+  if (!game || modeNow !== "jouer") return;
+  const an = game.an, N = game.log.length, done = an && an.done;
+  const moves = anMoves(game), sum = anSummary(game, moves), moments = done ? anMoments(game, moves) : [];
+  if (progressOnly && $("#an-progress")) {
+    // Mise à jour légère pendant le calcul
+    const n = an ? an.ev.filter(v => v != null).length : 0;
+    $("#an-progress").style.width = `${Math.round((n / (N + 1)) * 100)}%`;
+    $("#an-count").textContent = `${n}/${N + 1}`;
+    $("#an-graph").innerHTML = anGraph(game, moves); anBindGraph();
+    if (!done) return;
+  }
+  const me = game.color, opp = me === "w" ? "b" : "w", resTxt = { w: "Victoire", d: "Nulle", l: "Défaite" }[game.res] || "Partie";
+  const cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
+  const rows = [];
+  for (let i = 0; i < N; i += 2) {
+    const cell = j => { if (!game.log[j]) return "<span></span>"; const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}"${j === AN.i - 1 ? ' class="cur"' : ""}${m && m.q && m.q !== "q-best" ? ` data-q="${m.q}"` : ""}>${frSan(game.log[j].san)}</span>`; };
+    rows.push(`<span class="n">${i / 2 + 1}.</span>${cell(i)}${cell(i + 1)}`);
+  }
+  const col = (c, name) => `<div class="an-side"><span class="an-who">${pieceEl(c === "w" ? "K" : "k")}${name}</span><b>${sum[c].acc != null && done ? sum[c].acc + " %" : "…"}</b><span>précision</span>
+    <ul><li><i class="q-dub"></i>${sum[c].dub} imprécision${sum[c].dub > 1 ? "s" : ""}</li><li><i class="q-err"></i>${sum[c].err} erreur${sum[c].err > 1 ? "s" : ""}</li><li><i class="q-bad"></i>${sum[c].bad} gaffe${sum[c].bad > 1 ? "s" : ""}</li></ul></div>`;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="an-back">${ICON.back}Retour</button><span class="pill">${resTxt} · ${LEVELS[game.level] ? LEVELS[game.level].name : ""} · ${Math.ceil(N / 2)} coups</span></div>
+    <p class="eyebrow">Analyse de la partie</p>
+    <h2>${done ? (moments.length ? "Les moments qui ont compté" : "Une partie bien tenue") : "Le moteur revoit ta partie"}</h2>
+    ${done ? "" : `<div class="an-load"><div class="timer"><i id="an-progress" style="width:${Math.round(((an ? an.ev.filter(v => v != null).length : 0) / (N + 1)) * 100)}%"></i></div><span class="calm"><i class="spin"></i> Positions analysées : <b id="an-count">0/${N + 1}</b></span></div>`}
+    <div id="an-graph">${anGraph(game, moves)}</div>
+    <div class="an-nav" role="group" aria-label="Navigation dans la partie">
+      <button class="btn" data-nav="first" aria-label="Début">${ICON.first}</button><button class="btn" data-nav="prev" aria-label="Coup précédent">${ICON.prev}</button>
+      <span class="an-ply">${AN.i ? `${Math.ceil(AN.i / 2)}${AN.i % 2 ? "." : "..."} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
+      <button class="btn" data-nav="next" aria-label="Coup suivant">${ICON.next}</button><button class="btn" data-nav="last" aria-label="Fin">${ICON.last}</button>
+    </div>
+    ${com ? `<div class="coach-card ${com.c}"><div class="coach-title"><span class="verdict ${com.c}">${com.word}</span><b>${com.title}</b>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
+      ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>` : ""}
+    ${done ? `<div class="an-sum">${col(me, "Toi")}${col(opp, "Ordinateur")}</div>` : ""}
+    ${moments.length ? `<p class="group-title">Tes moments clés</p><div class="list">${moments.map(m => `
+      <div class="item an-moment${AN.i === m.k + 1 ? " next" : ""}">
+        <span class="num" data-q-dot="${m.q}">${Math.floor(m.k / 2) + 1}</span>
+        <span><span class="ti">${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
+        <span class="an-acts"><button class="btn" data-go="${m.k + 1}">Voir</button><button class="btn primary" data-retry="${m.k}">${ICON.retry}Rejouer</button></span>
+      </div>`).join("")}</div><p class="calm">Ces positions reviendront dans ta révision : demain, puis à intervalles de plus en plus longs.</p>` : done ? `<div class="fb ok">${ICON.check} Aucune erreur sérieuse de ta part dans cette partie. Bravo !</div>` : ""}
+    <div class="moves" id="an-moves">${rows.join("")}</div>`;
+  anBindGraph();
+  panel.querySelectorAll("#an-moves [data-go], .an-moment [data-go]").forEach(b => b.onclick = () => anGo(+b.dataset.go));
+  panel.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => anNav(b.dataset.nav));
+  panel.querySelectorAll("[data-retry]").forEach(b => b.onclick = () => { const m = moves.find(x => x.k === +b.dataset.retry); if (m) revRunSingle(anMomentItem(game, m), () => analysisView(game.id)); });
+  $("#an-back").onclick = () => { AN.run++; AN.g = null; playView(); };
+  const c = $("#an-moves .cur"); if (c) c.scrollIntoView({ block: "nearest" });
+  updateEvalBar();
+}
+function anBindGraph() { panel.querySelectorAll(".an-hits [data-go]").forEach(r => r.onclick = () => anGo(+r.dataset.go)); }
+function anNav(d) {
+  if (!AN.g) return;
+  anGo(d === "first" ? 0 : d === "last" ? AN.g.log.length : AN.i + (d === "next" ? 1 : -1));
+}
+const anScore = v => (Math.abs(v) >= Engine_MATE ? "#" : Math.abs(v) > Engine_MATE - 200 ? (v > 0 ? "+" : "−") + "M" + Math.ceil((Engine_MATE - Math.abs(v)) / 2) : (v >= 0 ? "+" : "−") + (Math.abs(v) / 100).toFixed(1).replace(".", ","));
+document.addEventListener("keydown", e => {
+  if (!AN.g || modeNow !== "jouer" || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+  const k = { ArrowLeft: "prev", ArrowRight: "next", Home: "first", End: "last" }[e.key];
+  if (k) { e.preventDefault(); anNav(k); }
+});
+// Liste des parties récentes
+function gamesList() {
+  clearTimers(); PL.gen++; AN.run++; AN.g = null;
+  resetBoard(START, { locked: true, list: true });
+  panelEnter();
+  const fmt = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Jouer</button><span class="pill">${save.games.length} partie${save.games.length > 1 ? "s" : ""}</span></div>
+    <p class="eyebrow">Tes parties</p><h2>Revois tes dernières parties</h2>
+    <p class="lead">Le moteur repère tes erreurs, montre ce qu'il fallait jouer et calcule ta précision. Les 12 dernières parties sont gardées.</p>
+    ${save.games.length ? `<div class="list">${save.games.map(g => {
+      const s = g.an && g.an.done ? anSummary(g, anMoves(g))[g.color] : null;
+      return `<button class="item" data-game="${g.id}">
+        <span class="num">${g.res === "w" ? ICON.trophy : g.res === "d" ? "½" : ICON.flag}</span>
+        <span><span class="ti">${{ w: "Victoire", d: "Nulle", l: "Défaite" }[g.res]} avec les ${g.color === "w" ? "Blancs" : "Noirs"}</span><span class="de">${fmt(g.date)} · ${LEVELS[g.level] ? LEVELS[g.level].name : ""} · ${Math.ceil(g.log.length / 2)} coups</span></span>
+        <span class="pill${s ? " done" : ""}">${s ? `Précision ${s.acc} %` : "À analyser"}</span>
+      </button>`; }).join("")}</div>` : `<p class="calm">Termine une partie pour la retrouver ici.</p>`}`;
+  $("#back").onclick = playView;
+  panel.querySelectorAll("[data-game]").forEach(b => b.onclick = () => analysisView(b.dataset.game));
+}
+
+// ---------- Révision espacée ----------
+// Ce que tu as raté revient : le lendemain, puis après 3, 7, 14 et 30 jours si tu le réussis.
+// Une erreur renvoie l'élément au début. Sources : problèmes ratés, exercices ratés, moments clés
+// de tes parties et ouvertures apprises.
+if (!save.rev) save.rev = {};
+const REV_DAYS = [1, 3, 7, 14, 30];
+const revToday = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 864e5);
+const REV_KIND = { pz: "Problème raté", ex: "Exercice raté", moment: "Moment de ta partie", ouv: "Ouverture" };
+const REV_COUNT = { pz: ["problème raté", "problèmes ratés"], ex: ["exercice raté", "exercices ratés"], moment: ["moment de partie", "moments de partie"], ouv: ["ouverture", "ouvertures"] };
+// keep : ne pas remettre à zéro un élément déjà suivi (ex. une leçon refaite)
+function revAdd(key, item, keep) {
+  const cur = save.rev[key];
+  if (cur && keep) return;
+  if (cur) { cur.box = 0; cur.due = revToday() + 1; delete cur.done; }
+  else save.rev[key] = Object.assign({ box: 0, due: revToday() + 1, n: 0, ok: 0 }, item);
+  persist();
+}
+function revResult(key, ok) {
+  const it = save.rev[key];
+  if (!it) return;
+  it.n++;
+  if (ok) {
+    it.ok++; it.box++;
+    if (it.box >= REV_DAYS.length) it.done = revToday();
+    else it.due = revToday() + REV_DAYS[it.box];
+  } else { it.box = 0; it.due = revToday() + 1; }
+  persist(); updateXp();
+}
+const revActive = () => Object.entries(save.rev).filter(([, it]) => !it.done);
+const revDue = () => revActive().filter(([, it]) => it.due <= revToday()).sort((a, b) => a[1].due - b[1].due || a[1].box - b[1].box);
+// Carte affichée en tête des leçons et des exercices
+function revCard(dueOnly) {
+  const due = revDue(), act = revActive();
+  if (!act.length || (dueOnly && !due.length)) return "";
+  const done = Object.values(save.rev).filter(it => it.done).length;
+  if (!due.length) {
+    const next = Math.min(...act.map(([, it]) => it.due)), d = next - revToday(), n = act.filter(([, it]) => it.due === next).length;
+    return `<div class="rev-card calm-card"><span class="rev-ico">${ICON.clock}</span><div><b>Révision à jour</b><span>Prochaine révision ${d <= 1 ? "demain" : `dans ${d} jours`} : ${n} élément${n > 1 ? "s" : ""}.${done ? ` ${done} acquis pour de bon.` : ""}</span></div></div>`;
+  }
+  const kinds = {};
+  for (const [, it] of due) kinds[it.k] = (kinds[it.k] || 0) + 1;
+  return `<div class="rev-card"><span class="rev-ico">${ICON.retry}</span><div><b>À réviser aujourd'hui : ${due.length}</b><span>${Object.entries(kinds).map(([k, n]) => `${n} ${REV_COUNT[k][n > 1 ? 1 : 0]}`).join(" · ")}</span></div><button class="btn primary" id="rev-go">${ICON.arrow}Réviser</button></div>`;
+}
+function revBindCard() { const b = $("#rev-go"); if (b) b.onclick = revStart; }
+// --- Séance de révision ---
+const RS = { queue: [], i: 0, ok: 0, cur: null, single: null };
+function revStart() {
+  RS.queue = revDue().slice(0, 12).map(([key]) => key);
+  RS.i = 0; RS.ok = 0; RS.single = null; RS.back = modeNow;
+  revNext();
+}
+// Rejouer un seul élément (depuis l'analyse), sans toucher au calendrier
+function revRunSingle(item, back) { RS.single = { item, back }; RS.queue = []; RS.i = 0; revLoad(null, item); }
+function revNext() {
+  while (RS.i < RS.queue.length) {
+    const key = RS.queue[RS.i], it = save.rev[key], task = it && revTask(it);
+    if (task) return revLoad(key, it, task);
+    delete save.rev[key]; persist(); RS.queue.splice(RS.i, 1);
+  }
+  revEnd();
+}
+// Transforme un élément en tâche jouable : position de départ, coups attendus, camp du joueur
+function revTask(it) {
+  if (it.k === "pz") { const p = PZ_BY_ID.get(it.id); return p && { before: p.before, last: p.last, fen: p.fen, line: p.line, side: p.side, title: p.lichess ? `Problème Lichess · ${p.r}` : `Problème · ${p.r}` }; }
+  if (it.k === "ex") {
+    const p = ALL_PUZZLES.find(x => x.id === it.id);
+    if (!p || p.goal === "convert") return null;
+    return { before: p.before, last: p.last, fen: p.fen, line: p.line, mate: p.goal === "mate" ? p.n : 0, side: p.fen.split(" ")[1], title: p.t };
+  }
+  if (it.k === "ouv") { const l = L_OUV.find(x => x.id === it.id); return l && { fen: START, line: l.steps[1].moves, side: l.side, opening: true, title: l.t }; }
+  if (it.k === "moment") return { fen: it.fen, best: it.best, played: it.played, ev: it.ev, side: it.side, moment: true, title: `Coup ${it.move} · partie du ${new Date(it.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}` };
+  return null;
+}
+function revLoad(key, it, task) {
+  task = task || revTask(it);
+  clearTimers(); PL.gen++; AN.g = null;
+  $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
+  task.ply = 0;
+  Object.assign(RS, { key, it, t: task, failed: false, done: false, fb: null });
+  panelEnter();
+  const opts = { flip: task.side === "b", locked: true, canMove: sq => colorOf(B.game.b[sq]) === task.side, onMove: revMove };
+  if (task.before && task.last) {
+    resetBoard(task.before, opts);
+    later(() => { const m = B.game.find(task.last); if (m) commit(m, true); B.locked = false; revPanel(); }, 600);
+  } else {
+    resetBoard(task.fen, opts);
+    if (task.opening && task.side === "b") later(revAuto, 500); else B.locked = false;
+  }
+  revPanel();
+}
+// L'ordinateur joue le coup suivant de la ligne (ou sa meilleure défense dans un problème de mat)
+function revAuto() {
+  const t = RS.t, g = B.game;
+  let m = t.line && t.ply < t.line.length ? g.find(t.line[t.ply]) : null;
+  if (!m && t.mate) { const r = think(g, { depth: 3, time: 500 }); m = r && r.move; }
+  if (!m) return revFinish(true);
+  commit(m, true); t.ply++;
+  if (t.opening && t.ply >= t.line.length) return revFinish(!RS.failed);
+  B.locked = false; revPanel();
+}
+function revMove(m) {
+  const t = RS.t, g = B.game, u = uci(m);
+  if (t.moment) return revMomentMove(m, u);
+  let ok;
+  if (t.mate) ok = g.status() === "mate" || forcedMate(g, t.mate - Math.ceil((t.ply + 1) / 2));
+  else { const exp = t.line[t.ply]; ok = u === exp || (exp.length === 4 && u.startsWith(exp)) || (!t.opening && g.status() === "mate"); }
+  if (!ok) {
+    flashSq(m.to, "flash-bad"); sound("error");
+    RS.failed = true; B.locked = true;
+    const exp = t.line && t.line[t.ply];
+    RS.fb = { c: "bad", t: `${ICON.flag} ${t.opening ? "Ce n'est pas le coup de la ligne." : "Ce n'est pas le bon coup."}`, s: (whyWrong(g, m) || "") + (exp ? " La flèche montre le bon coup : joue-le pour continuer." : " Essaie encore.") };
+    revPanel();
+    later(() => {
+      g.undo(); B.last = null;
+      if (exp) { const em = g.find(exp); if (em) B.arrows = [[em.from, em.to]]; }
+      B.locked = false; render();
+    }, 800);
+    return;
+  }
+  flashSq(m.to, "flash-ok"); B.arrows = [];
+  t.ply++;
+  if (g.status() === "mate" || (!t.mate && t.ply >= t.line.length)) return revFinish(!RS.failed);
+  RS.fb = { c: "ok", t: `${ICON.check} ${t.opening ? "C'est ça." : "Bien vu ! Continue..."}` };
+  B.locked = true; revPanel();
+  later(revAuto, 450);
+}
+// Moment de partie : tout coup presque aussi bon que celui du moteur est accepté
+function revMomentMove(m, u) {
+  const t = RS.t, g = B.game;
+  B.locked = true;
+  const judge = ok => {
+    if (ok) { flashSq(m.to, "flash-ok"); return revFinish(!RS.failed, u === t.best ? "C'est le coup du moteur." : "Aussi bon que le coup du moteur."); }
+    flashSq(m.to, "flash-bad"); sound("error");
+    RS.failed = true;
+    const w = whyWrong(g, m);
+    RS.fb = { c: "bad", t: `${ICON.flag} ${u === t.played ? "C'est le coup joué dans la partie, et il coûtait cher." : "Ce coup ne suffit pas."}`, s: (w || "") + " Cherche encore, ou regarde la solution." };
+    revPanel();
+    later(() => { g.undo(); B.last = null; B.locked = false; render(); }, 900);
+  };
+  if (u === t.best || g.status() === "mate") return judge(true);
+  RS.fb = { c: "info", t: `<i class="spin"></i> Le coach vérifie ton coup...` }; revPanel();
+  const gen = RS.gen = (RS.gen || 0) + 1;
+  Engine.run({ type: "search", fen: g.fen(), time: 700 }).then(r => {
+    if (gen !== RS.gen || RS.t !== t) return;
+    const after = r && r.move ? -r.score : g.status() === "mate" ? Engine_MATE : 0;
+    const best = Math.max(t.ev * (t.side === "w" ? 1 : -1), after);
+    judge(winPct(best) - winPct(after) < 6);
+  });
+}
+function revShow() {
+  const t = RS.t, g = B.game;
+  RS.failed = true;
+  const u = t.moment ? t.best : t.line ? t.line[t.ply] : null;
+  let m = u ? g.find(u) : null;
+  if (!m && t.mate) m = mateIn(g, t.mate - Math.floor(t.ply / 2));
+  if (m) B.arrows = [[m.from, m.to]];
+  RS.fb = { c: "info", t: `${ICON.bulb} La flèche montre le coup. Joue-le pour continuer.` };
+  render(); revPanel();
+}
+function revFinish(ok, extra) {
+  RS.done = true; B.locked = true;
+  if (RS.key) { revResult(RS.key, ok); if (ok) RS.ok++; }
+  sound(ok ? "ok" : "end");
+  const it = RS.key && save.rev[RS.key];
+  const when = !it ? "" : it.done ? " Acquis pour de bon : il ne reviendra plus." : ` Prochaine révision ${REV_DAYS[it.box] === 1 ? "demain" : `dans ${REV_DAYS[it.box]} jours`}.`;
+  RS.fb = ok ? { c: "ok", t: `${ICON.check} Réussi !${extra ? " " + extra : ""}`, s: when.trim() } : { c: "warn", t: "Terminé, avec une erreur.", s: (RS.key ? "Il reviendra demain." : "") };
+  revPanel();
+}
+function revPanel() {
+  const t = RS.t, it = RS.it;
+  if (!t) return;
+  const total = RS.single ? 1 : RS.queue.length, idx = RS.single ? 1 : RS.i + 1;
+  const myTurn = !RS.done && B.game.turn === t.side;
+  const goal = t.opening ? `Rejoue de mémoire la ligne avec les ${t.side === "w" ? "Blancs" : "Noirs"}.` : t.moment ? `Tu jouais les ${t.side === "w" ? "Blancs" : "Noirs"}. Trouve mieux que dans la partie.` : t.mate ? `Les ${t.side === "w" ? "Blancs" : "Noirs"} jouent et font mat en ${t.mate}.` : `Trouve le meilleur coup pour les ${t.side === "w" ? "Blancs" : "Noirs"}.`;
+  const box = it && it.box != null && RS.key ? `<span class="lvl" aria-label="Étape ${it.box + 1} sur ${REV_DAYS.length}">${REV_DAYS.map((_, k) => `<i class="${k < it.box ? "on" : ""}"></i>`).join("")}</span>` : "";
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="rev-stop">${ICON.back}${RS.single ? "Retour à l'analyse" : "Arrêter"}</button><span class="pill">${RS.single ? "Rejouer" : `Révision · ${idx}/${total}`}</span></div>
+    <p class="eyebrow">${REV_KIND[it ? it.k : "moment"]}${box}</p>
+    <h2>${t.title}</h2>
+    <div class="pz-head"><span class="pz-side ${t.side}">${pieceEl(t.side === "w" ? "K" : "k")}</span><div><b>${RS.done ? "Terminé" : myTurn ? "À toi de jouer !" : "Le coup adverse..."}</b><span>${goal}</span></div></div>
+    ${RS.fb ? `<div class="fb ${RS.fb.c}">${RS.fb.t}${RS.fb.s ? `<small>${RS.fb.s}</small>` : ""}</div>` : ""}
+    <div class="row">${RS.done
+      ? (RS.single ? `<button class="btn primary big" id="rev-back">${ICON.back}Retour à l'analyse</button><button class="btn" id="rev-again">${ICON.retry}Recommencer</button>` : `<button class="btn primary big" id="rev-next">${RS.i + 1 < RS.queue.length ? "Suivant" : "Terminer"}${ICON.arrow}</button>`)
+      : `<button class="btn" id="rev-sol">${ICON.bulb}Voir la solution</button>`}</div>
+    ${RS.single ? "" : `<div class="timer rev-bar"><i style="width:${Math.round(((RS.i + (RS.done ? 1 : 0)) / Math.max(1, total)) * 100)}%"></i></div>`}`;
+  $("#rev-stop").onclick = () => (RS.single ? RS.single.back() : revEnd(true));
+  const nx = $("#rev-next"); if (nx) { nx.onclick = () => { RS.i++; revNext(); }; nx.focus({ preventScroll: true }); }
+  const bk = $("#rev-back"); if (bk) { bk.onclick = RS.single.back; bk.focus({ preventScroll: true }); }
+  const ag = $("#rev-again"); if (ag) ag.onclick = () => revRunSingle(RS.single.item, RS.single.back);
+  const so = $("#rev-sol"); if (so) so.onclick = revShow;
+}
+function revEnd(stopped) {
+  clearTimers();
+  const n = RS.single ? 0 : Math.min(RS.queue.length, RS.i + (RS.done ? 1 : 0));
+  RS.t = null;
+  resetBoard(START, { locked: true, list: true });
+  panelEnter();
+  const left = revDue().length, all = n && RS.ok === n;
+  panel.innerHTML = `
+    <p class="eyebrow">Révision</p>
+    <div class="pz-head ${all ? "win" : ""}"><span class="pz-ico">${all ? ICON.trophy : ICON.check}</span><div><b>${stopped && !n ? "Révision interrompue" : "Révision terminée"}</b><span>${n ? `${RS.ok} réussi${RS.ok > 1 ? "s" : ""} sur ${n}.` : "Reviens quand tu veux."}</span></div></div>
+    ${revCard()}
+    <p class="lead">Chaque élément réussi revient de plus en plus tard : demain, puis dans 3, 7, 14 et 30 jours. Au bout de cinq réussites, il est acquis.</p>
+    <div class="row"><button class="btn primary" id="rev-home">${ICON.arrow}Continuer</button></div>`;
+  if (all && n >= 3) celebrate();
+  revBindCard();
+  $("#rev-home").onclick = () => setMode(RS.back || "lecons");
+  if (!left && n) sound("win");
+}
+
+// ---------- Démarrage ----------
 setMode(["lecons", "exercices", "problemes", "jouer", "coord"].includes(save.mode) ? save.mode : "lecons");
 </script>
 <!--ARTIFACT-END-->

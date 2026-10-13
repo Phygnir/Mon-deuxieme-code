@@ -383,6 +383,7 @@ function pathList() {
       <div class="stat"><b>${save.record.w || 0}</b><span>Victoires</span></div>
       <div class="stat"><b>${xpTotal()}</b><span>Points</span></div>
     </div>
+    ${revCard()}
     ${next && done ? `<div class="row"><button class="btn primary big" id="resume">${ICON.arrow}Reprendre : ${next.t}</button></div>` : ""}
     <div class="paths">${PATHS.map(p => {
       const d = pathDone(p), n = p.lessons.length, lvl = LEVEL_DOTS[p.id];
@@ -394,6 +395,7 @@ function pathList() {
     }).join("")}</div>`;
   panel.querySelectorAll("[data-path]").forEach(b => b.addEventListener("click", () => lessonList(b.dataset.path)));
   const rs = $("#resume"); if (rs) rs.onclick = () => startLesson(next.id);
+  revBindCard();
 }
 function lessonList(pathId) {
   const path = PATHS.find(p => p.id === pathId);
@@ -412,6 +414,7 @@ function lessonList(pathId) {
       <div class="cover-art"><span class="pc ${PATH_EMBLEM[path.id]}"></span></div>
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
+    ${revCard(true)}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -423,6 +426,7 @@ function lessonList(pathId) {
       </button>`).join("")}</div>`;
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
+  revBindCard();
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -561,6 +565,7 @@ function nextStep() {
   if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
   const first = !save.lessons[les.id];
   save.lessons[les.id] = true; persist(); updateXp();
+  if (L_OUV.includes(les)) revAdd("ouv:" + les.id, { k: "ouv", id: les.id }, true);
   lessonRecap(first);
 }
 // Bilan de fin de leçon
@@ -805,6 +810,7 @@ function puzzleList() {
       <div class="stat"><b>${solvedCount(PUZZLES)}<small style="font-size:.55em;color:var(--muted)">/${PUZZLES.length}</small></b><span>Classiques</span></div>
       <div class="stat"><b>${save.streak || 0}</b><span>Série</span></div>
     </div>
+    ${revCard()}
     ${nextSeries ? `<div class="row"><button class="btn primary big" id="series">${ICON.puzzle}Série tactique : problème suivant</button></div>` : MINED_P.length ? `<div class="fb ok">Tous les problèmes tirés de parties sont résolus !</div>` : ""}
     <p class="group-title">Par thème</p>
     <div class="paths compact">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
@@ -823,6 +829,7 @@ function puzzleList() {
   panel.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { P.mode = "classic"; P.list = PUZZLES; startPuzzle(b.dataset.p); }));
   panel.querySelectorAll("[data-theme]").forEach(b => b.addEventListener("click", () => themeList(b.dataset.theme)));
   const s = $("#series"); if (s) s.onclick = () => { P.mode = "series"; P.list = MINED_P; startPuzzle(nextSeries.id); };
+  revBindCard();
 }
 function themeList(th) {
   const t = THEMES.find(x => x.id === th), list = MINED_P.filter(p => p.theme === th);
@@ -903,7 +910,7 @@ function puzzleHint() {
   if (!m) return;
   P.hint++;
   if (P.hint === 1) { B.marks = new Set([m.from]); P.fb = { c: "info", t: `Indice : la pièce à jouer est ${POSS[m.piece.toLowerCase()]} ${NAME[m.piece.toLowerCase()]} en ${sqName(m.from)}.${P.cur.goal === "line" ? ` Thème : ${P.cur.t.toLowerCase()}.` : ""}` }; }
-  else { B.marks = new Set(); B.arrows = [[m.from, m.to]]; P.fb = { c: "info", t: "Voici le coup. Joue-le pour continuer." }; }
+  else { if (P.cur.goal !== "convert") revAdd("ex:" + P.cur.id, { k: "ex", id: P.cur.id }); B.marks = new Set(); B.arrows = [[m.from, m.to]]; P.fb = { c: "info", t: "Voici le coup. Joue-le pour continuer." }; }
   render(); puzzlePanel();
 }
 function puzzleSolved() {
@@ -940,6 +947,7 @@ function puzzleMove(m) {
   else ok = u === p.line[P.i] || (p.line[P.i].length === 4 && u.startsWith(p.line[P.i])) || (p.goal === "line" && g.status() === "mate");
   if (!ok) {
     P.errors++; B.locked = true;
+    if (P.errors === 1 && p.goal !== "convert") revAdd("ex:" + p.id, { k: "ex", id: p.id });
     const w = whyWrong(g, m);
     P.fb = { c: "bad", t: `${w}Ce n'est pas le bon coup. Cherche d'abord les échecs, les prises et les menaces.` };
     sound("error");
@@ -1017,7 +1025,7 @@ const LEVELS = [
 ];
 const PL = Object.assign({ color: "w", level: 1, coach: true, live: true, stop: true, log: [], over: null, bal: 0 }, save.play || {});
 Object.assign(PL, { gen: 0, ana: null, anaP: null, threat: null, review: null, brief: null, paused: false, thinking: false, hint: null });
-function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal }; persist(); }
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid }; persist(); }
 const ucis = () => PL.log.map(e => e.u);
 
 // --- Outils d'analyse pour le coach ---
@@ -1215,6 +1223,7 @@ function makeBrief(oppSan, oppFacts) {
   return { items, book: bookInfo(PL.log) };
 }
 function playView() {
+  if (AN.g) { AN.run++; AN.g = null; }
   resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
   PL.gen++;
   rebuildGame();
@@ -1226,7 +1235,7 @@ function playView() {
 }
 function newGame(color) {
   PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
-  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null;
+  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
   savePlay();
   playView();
 }
@@ -1283,6 +1292,7 @@ function playPanel() {
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><p class="eyebrow">Partie avec coach</p>${book && book.name && PL.log.length ? `<span class="pill">${book.name}</span>` : ""}</div>
     <div class="fb ${status.c}">${status.t}</div>
+    ${PL.over && save.games[0] && save.games[0].id === PL.gid ? `<div class="row"><button class="btn primary big" id="analyse">${ICON.chart}Analyser la partie</button></div>` : ""}
     ${coachHTML()}
     <div class="row">
       <button class="btn" id="hint" ${PL.over || PL.thinking || PL.paused || g.turn !== PL.color ? "disabled" : ""}>${ICON.bulb}Indice</button>
@@ -1303,12 +1313,14 @@ function playPanel() {
       </div></div>
     </div>
     <div class="moves" id="moves">${rows.join("")}</div>
-    <div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>`;
+    <div class="row" style="justify-content:space-between;align-items:center"><div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>${save.games.length ? `<button class="btn" id="games">${ICON.chart}Mes parties</button>` : ""}</div>`;
   const mv = $("#moves"); mv.scrollTop = mv.scrollHeight;
   panel.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { PL.level = +b.dataset.lvl; savePlay(); playPanel(); });
   panel.querySelectorAll("[data-new]").forEach(b => b.onclick = () => newGame(b.dataset.new));
   $("#hint").onclick = playHint;
   $("#undo").onclick = playUndo;
+  const an = $("#analyse"); if (an) { an.onclick = () => analysisView(PL.gid); an.focus({ preventScroll: true }); }
+  const gl = $("#games"); if (gl) gl.onclick = gamesList;
   $("#flip").onclick = () => { B.flip = !B.flip; render(); };
   const rs = $("#resign"); if (rs) rs.onclick = () => endGame("l", "Tu as abandonné. La prochaine sera la bonne !");
   $("#coach").onchange = e => { PL.coach = e.target.checked; savePlay(); playPanel(); if (!PL.anaP && !PL.over && B.game.turn === PL.color) startTurn(); };
@@ -1359,6 +1371,7 @@ function endGame(res, text) {
   PL.gen++;
   PL.over = { r: res, c: res === "w" ? "ok" : res === "d" ? "warn" : "bad", t: text };
   save.record[res]++; updateXp();
+  archiveGame(res);
   B.locked = true; PL.thinking = false;
   savePlay(); playPanel();
   if (res === "w") celebrate();
@@ -1593,6 +1606,7 @@ function pzUpdate(p, win) {
   const d = PS.r - before;
   PS.n++; if (win) PS.ok++;
   PS.seen[p.id] = win ? 1 : 0;
+  if (!win) revAdd("pz:" + p.id, { k: "pz", id: p.id });
   for (const t of new Set(p.tags)) { if (PZ_MINOR.has(t)) continue; const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
   PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
   PS.rs.push(PS.r); PS.rs = PS.rs.slice(-80);
@@ -1962,4 +1976,3 @@ function coordClick(sq) {
   const misses = panel.querySelectorAll(".scorebox b")[1]; if (misses) misses.textContent = C.miss;
 }
 
-setMode(["lecons", "exercices", "problemes", "jouer", "coord"].includes(save.mode) ? save.mode : "lecons");

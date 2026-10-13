@@ -202,6 +202,8 @@ const ICON = {
   mute: svgI('<path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/>'),
   clock: svgI('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
   retry: svgI('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>'),
+  sun: svgI('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  moon: svgI('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
   bolt: svgI('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
   trophy: svgI('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>')
 };
@@ -234,6 +236,17 @@ function sound(kind) {
     else if (kind === "end") [392, 330, 262].forEach((f, i) => tone(f, 0.3, i * 0.12, "triangle", 0.08));
   } catch (e) {}
 }
+// Thème : clair par défaut, sombre seulement sur demande
+function applyTheme() {
+  const dark = save.theme === "dark";
+  document.documentElement.classList.toggle("theme-dark", dark);
+  const b = $("#theme-btn");
+  b.innerHTML = dark ? ICON.sun : ICON.moon;
+  b.setAttribute("aria-pressed", dark ? "true" : "false");
+  b.title = dark ? "Passer en mode clair" : "Passer en mode sombre";
+}
+$("#theme-btn").onclick = () => { save.theme = save.theme === "dark" ? "light" : "dark"; persist(); applyTheme(); };
+applyTheme();
 function updateSoundBtn() { const b = $("#sound-btn"); b.innerHTML = save.sound === false ? ICON.mute : ICON.sound; b.setAttribute("aria-pressed", save.sound === false ? "false" : "true"); }
 $("#sound-btn").onclick = () => { save.sound = save.sound === false; persist(); updateSoundBtn(); sound("move"); };
 // Confettis pour les réussites

@@ -334,6 +334,9 @@ button { font: inherit; color: inherit; }
 .pz-ico .ico { width: 26px; height: 26px; }
 .pz-info { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.9rem; color: var(--muted); }
 .pz-info b { color: var(--ink); }
+.pz-info a, .credit a { color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.pz-info a:hover, .credit a:hover { text-decoration-color: currentColor; }
+.credit { font-size: 0.82rem; margin: 0; }
 .pz-rating { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
 .pz-rating > div { display: flex; flex-direction: column; }
 .pz-rating > div span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--muted); }
@@ -4620,41 +4623,134 @@ function aiMove() {
 }
 
 // ---------- Problèmes : entraînement classé, série et tempête, comme sur Lichess ----------
-const PZ_THEMES = { capture: "Pièce en prise", fork: "Fourchette", pin: "Clouage", skewer: "Enfilade", discovered: "Découverte", sacrifice: "Sacrifice", mate: "Mat", promotion: "Promotion", check: "Échec" };
+// Source : la base de Lichess (LICHESS, classements réels issus de millions de parties) si elle est présente,
+// sinon les problèmes tirés de parties du moteur (MINED, classements estimés).
+const PZ_THEMES = {
+  capture: "Pièce en prise", discovered: "Découverte", check: "Échec",
+  fork: "Fourchette", pin: "Clouage", skewer: "Enfilade", discoveredAttack: "Attaque à la découverte", doubleCheck: "Échec double",
+  deflection: "Déviation", attraction: "Attraction", clearance: "Dégagement", interference: "Interférence", intermezzo: "Coup intermédiaire",
+  xRayAttack: "Attaque en rayons X", sacrifice: "Sacrifice", trappedPiece: "Pièce piégée", capturingDefender: "Capture du défenseur",
+  hangingPiece: "Pièce en prise", quietMove: "Coup calme", defensiveMove: "Coup défensif", zugzwang: "Zugzwang",
+  advancedPawn: "Pion avancé", promotion: "Promotion", underPromotion: "Sous-promotion", enPassant: "Prise en passant", castling: "Roque",
+  exposedKing: "Roi exposé", kingsideAttack: "Attaque à l'aile roi", queensideAttack: "Attaque à l'aile dame", attackingF2F7: "Attaque sur f2 ou f7",
+  mate: "Mat", mateIn1: "Mat en 1", mateIn2: "Mat en 2", mateIn3: "Mat en 3", mateIn4: "Mat en 4", mateIn5: "Mat en 5 ou plus",
+  backRankMate: "Mat du couloir", smotheredMate: "Mat étouffé", anastasiaMate: "Mat d'Anastasie", arabianMate: "Mat arabe",
+  bodenMate: "Mat de Boden", doubleBishopMate: "Mat des deux fous", dovetailMate: "Mat en queue d'aronde", hookMate: "Mat de l'hameçon",
+  killBoxMate: "Mat de la boîte", vukovicMate: "Mat de Vukovic", cornerMate: "Mat du coin", operaMate: "Mat de l'Opéra",
+  morphysMate: "Mat de Morphy", pillsburysMate: "Mat de Pillsbury", balestraMate: "Mat de la baliste", blindSwineMate: "Mat des cochons aveugles",
+  triangleMate: "Mat du triangle", epauletteMate: "Mat des épaulettes", swallowstailMate: "Mat en queue d'hirondelle",
+  opening: "Ouverture", middlegame: "Milieu de partie", endgame: "Finale", pawnEndgame: "Finale de pions", rookEndgame: "Finale de tours",
+  bishopEndgame: "Finale de fous", knightEndgame: "Finale de cavaliers", queenEndgame: "Finale de dames", queenRookEndgame: "Finale dame et tour",
+  oneMove: "En un coup", short: "Court (2 coups)", long: "Long (3 coups)", veryLong: "Très long (4 coups ou plus)",
+  advantage: "Avantage", crushing: "Écrasant", equality: "Égalité", master: "Parties de maîtres", masterVsMaster: "Maître contre maître", superGM: "Parties de super GM"
+};
+// Thèmes proposés dans le filtre, par famille (seuls ceux qui ont assez de problèmes s'affichent)
+const PZ_GROUPS = [
+  ["Motifs", ["fork", "pin", "skewer", "discoveredAttack", "doubleCheck", "deflection", "attraction", "clearance", "interference", "intermezzo", "xRayAttack", "sacrifice", "trappedPiece", "capturingDefender", "hangingPiece", "quietMove", "defensiveMove", "zugzwang", "exposedKing", "kingsideAttack", "queensideAttack", "attackingF2F7", "advancedPawn", "promotion", "underPromotion", "enPassant", "capture", "discovered"]],
+  ["Mats", ["mate", "mateIn1", "mateIn2", "mateIn3", "mateIn4", "mateIn5", "backRankMate", "smotheredMate", "anastasiaMate", "arabianMate", "bodenMate", "doubleBishopMate", "dovetailMate", "hookMate", "killBoxMate", "vukovicMate", "cornerMate", "operaMate", "morphysMate", "pillsburysMate", "balestraMate", "blindSwineMate", "triangleMate", "epauletteMate", "swallowstailMate"]],
+  ["Phase de jeu", ["opening", "middlegame", "endgame", "pawnEndgame", "rookEndgame", "bishopEndgame", "knightEndgame", "queenEndgame", "queenRookEndgame"]],
+  ["Longueur", ["oneMove", "short", "long", "veryLong"]],
+  ["Origine", ["master", "masterVsMaster", "superGM"]]
+];
+// Thèmes trop généraux pour le bilan par thème du tableau de bord
+const PZ_MINOR = new Set(["check", "oneMove", "short", "long", "veryLong", "advantage", "crushing", "equality", "master", "masterVsMaster", "superGM", "mateIn1", "mateIn2", "mateIn3", "mateIn4", "mateIn5"]);
 function pzHash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return (h >>> 0).toString(36); }
-const PZ = (typeof MINED !== "undefined" ? MINED : []).filter(m => m.r).map(m => ({
-  id: pzHash(m.fen), fen: m.fen, before: m.before, last: m.last, line: m.line, r: m.r, tags: m.tags,
-  theme: themeOf(m.tags), side: m.fen.split(" ")[1], n: Math.ceil(m.line.length / 2)
-})).sort((a, b) => a.r - b.r);
+const PZ_LICHESS = typeof LICHESS !== "undefined" && LICHESS.length > 0;
+const PZ = (PZ_LICHESS
+  ? LICHESS.map(s => {
+    const [id, before, mv, r, rd, th] = s.split(","), moves = mv.split(" ");
+    return { id, before, last: moves[0], line: moves.slice(1), r: +r, rd: +rd, tags: th.split(".").map(i => LICHESS_THEMES[parseInt(i, 36)]), side: before.split(" ")[1] === "w" ? "b" : "w", n: moves.length >> 1, lichess: true };
+  })
+  : (typeof MINED !== "undefined" ? MINED : []).filter(m => m.r).map(m => ({
+    id: pzHash(m.fen), fen: m.fen, before: m.before, last: m.last, line: m.line, r: m.r, rd: 150, tags: m.tags,
+    side: m.fen.split(" ")[1], n: Math.ceil(m.line.length / 2)
+  }))).sort((a, b) => a.r - b.r);
 const PZ_BY_ID = new Map(PZ.map(p => [p.id, p]));
+const PZ_COUNT = {};
+for (const p of PZ) for (const t of p.tags) PZ_COUNT[t] = (PZ_COUNT[t] || 0) + 1;
+// Position où le joueur doit trouver le coup (après le coup adverse)
+function pzFen(p) {
+  if (!p.fen) { const g = new Chess(p.before), m = g.find(p.last); if (m) g.make(m); p.fen = g.fen(); }
+  return p.fen;
+}
 if (!save.pz) save.pz = {};
-const PS = Object.assign({ r: 800, n: 0, ok: 0, hist: [], seen: {}, th: {}, streakBest: 0, stormBest: 0, diff: 0, theme: "all", auto: false, rs: [] }, save.pz);
+const PS = Object.assign({ r: 1500, n: 0, ok: 0, hist: [], seen: {}, th: {}, streakBest: 0, stormBest: 0, diff: 0, theme: "all", auto: false, rs: [] }, save.pz);
 save.pz = PS;
+// Passage au classement Glicko-2 : on garde l'ancien classement comme point de départ, avec une forte incertitude
+if (PS.rd == null) {
+  if (PS.n >= 10) { PS.rf = PS.r; PS.rd = 250; } else { PS.rf = PS.r = 1500; PS.rd = 500; PS.rs = []; }
+  PS.vol = 0.09;
+  PS.diff = PS.diff < 0 ? -300 : PS.diff > 0 ? 300 : 0;
+  if (PS.theme !== "all" && !PZ_COUNT[PS.theme]) PS.theme = "all";
+}
+PS.hist = PS.hist.filter(h => PZ_BY_ID.has(h.id));
 if (!PS.rs.length) PS.rs = [PS.r];
 const Q = { mode: "train", cur: null, i: 0, failed: false, done: false, rated: true, delta: null, solution: false, streak: 0, storm: null, review: false };
 const pzSide = p => (p.side === "w" ? "Blancs" : "Noirs");
-// Classement façon Elo : le facteur K diminue avec l'expérience
+// Classement Glicko-2, comme sur Lichess : chaque problème est un adversaire dont on connaît le classement
+// et l'incertitude. Un joueur nouveau (grande incertitude) bouge vite, puis se stabilise.
+const G2 = { scale: 173.7178, tau: 0.75, minRd: 45, maxRd: 500, maxVol: 0.1 };
+function glicko2(r, rd, vol, or, ord, score) {
+  const S = G2.scale, mu = (r - 1500) / S, phi = rd / S, muj = (or - 1500) / S, phij = ord / S;
+  const g = 1 / Math.sqrt(1 + (3 * phij * phij) / (Math.PI * Math.PI));
+  const E = 1 / (1 + Math.exp(-g * (mu - muj)));
+  const v = 1 / (g * g * E * (1 - E));
+  const delta = v * g * (score - E);
+  // Nouvelle volatilité (algorithme d'Illinois, étape 5 de Glickman)
+  const a = Math.log(vol * vol), t2 = G2.tau * G2.tau;
+  const f = x => { const ex = Math.exp(x), d = phi * phi + v + ex; return (ex * (delta * delta - phi * phi - v - ex)) / (2 * d * d) - (x - a) / t2; };
+  let A = a, Bv;
+  if (delta * delta > phi * phi + v) Bv = Math.log(delta * delta - phi * phi - v);
+  else { let k = 1; while (f(a - k * G2.tau) < 0 && k < 50) k++; Bv = a - k * G2.tau; }
+  let fA = f(A), fB = f(Bv);
+  for (let i = 0; i < 60 && Math.abs(Bv - A) > 1e-6; i++) {
+    const C = A + ((A - Bv) * fA) / (fB - fA), fC = f(C);
+    if (fC * fB <= 0) { A = Bv; fA = fB; } else fA /= 2;
+    Bv = C; fB = fC;
+  }
+  const vol2 = Math.min(G2.maxVol, Math.exp(A / 2));
+  const phiStar = Math.sqrt(phi * phi + vol2 * vol2);
+  const phi2 = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / v);
+  return { r: 1500 + S * (mu + phi2 * phi2 * g * (score - E)), rd: Math.max(G2.minRd, Math.min(G2.maxRd, S * phi2)), vol: vol2 };
+}
+// L'incertitude remonte un peu pendant les jours sans jouer
+function pzDecay() {
+  const today = Math.floor(Date.now() / 864e5), days = PS.day ? today - PS.day : 0;
+  if (days > 0) { const phi = PS.rd / G2.scale; PS.rd = Math.min(G2.maxRd, G2.scale * Math.sqrt(phi * phi + days * PS.vol * PS.vol)); }
+  PS.day = today;
+}
+const pzProvisional = () => PS.rd > 110;
+const pzRatingText = () => PS.r + (pzProvisional() ? "?" : "");
 function pzUpdate(p, win) {
-  const K = PS.n < 15 ? 60 : PS.n < 60 ? 32 : 20;
-  const E = 1 / (1 + Math.pow(10, (p.r - PS.r) / 400));
-  const d = Math.round(K * ((win ? 1 : 0) - E));
-  PS.r = Math.max(400, PS.r + d);
+  pzDecay();
+  const n = glicko2(PS.rf, PS.rd, PS.vol, p.r, p.rd || 80, win ? 1 : 0);
+  const before = PS.r;
+  PS.rf = Math.max(400, n.r); PS.rd = n.rd; PS.vol = n.vol;
+  PS.r = Math.round(PS.rf);
+  const d = PS.r - before;
   PS.n++; if (win) PS.ok++;
   PS.seen[p.id] = win ? 1 : 0;
-  for (const t of new Set(p.tags.filter(t => t !== "check"))) { const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
+  for (const t of new Set(p.tags)) { if (PZ_MINOR.has(t)) continue; const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
   PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
-  PS.rs.push(PS.r); PS.rs = PS.rs.slice(-60);
+  PS.rs.push(PS.r); PS.rs = PS.rs.slice(-80);
   persist(); updateXp();
   return d;
 }
+// Comme Lichess : un problème jamais vu, le plus proche possible du niveau visé
 function pzPick(target, pool, avoid) {
   const fresh = pool.filter(p => PS.seen[p.id] === undefined && p !== avoid);
   const list = fresh.length ? fresh : pool.filter(p => p !== avoid);
   if (!list.length) return null;
-  const near = list.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 8);
+  const near = list.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 6);
   return near[(Math.random() * near.length) | 0];
 }
-const pzPool = () => (PS.theme === "all" ? PZ : PZ.filter(p => p.tags.includes(PS.theme) || p.theme === PS.theme));
+const PZ_DIFF = [[-600, "Le plus facile"], [-300, "Plus facile"], [0, "Normal"], [300, "Plus difficile"], [600, "Le plus difficile"]];
+const pzPool = () => (PS.theme === "all" ? PZ : PZ.filter(p => p.tags.includes(PS.theme)));
+function pzThemeOptions() {
+  const opt = t => `<option value="${t}" ${PS.theme === t ? "selected" : ""}>${PZ_THEMES[t]} (${PZ_COUNT[t]})</option>`;
+  return `<option value="all">Tous les thèmes (${PZ.length})</option>` +
+    PZ_GROUPS.map(([g, ts]) => { const ok = ts.filter(t => PZ_COUNT[t] >= 8 && PZ_THEMES[t]); return ok.length ? `<optgroup label="${g}">${ok.map(opt).join("")}</optgroup>` : ""; }).join("");
+}
 function problemsView() {
   if (Q.mode === "storm" && Q.storm && Q.storm.running) return;
   if (Q.mode === "streak") return streakStart();
@@ -4746,8 +4842,8 @@ function pzPanel() {
     ? `<div class="pz-head ${Q.failed ? "fail" : "win"}"><span class="pz-ico">${Q.failed ? ICON.flag : ICON.check}</span><div><b>${Q.solution ? "Solution" : Q.failed ? "Problème raté" : "Problème réussi"}</b><span>${Q.failed ? "Tu feras mieux au prochain !" : "Bravo, tu as trouvé toute la combinaison."}</span></div></div>`
     : `<div class="pz-head"><span class="pz-side ${p.side}">${pieceEl(p.side === "w" ? "K" : "k")}</span><div><b>${myTurn ? "À toi de jouer !" : "Le coup adverse..."}</b><span>Trouve le meilleur coup pour les ${pzSide(p)}.</span></div></div>`;
   const delta = Q.delta != null ? `<span class="delta ${Q.delta >= 0 ? "up" : "down"}">${Q.delta >= 0 ? "+" : "−"}${Math.abs(Q.delta)}</span>` : "";
-  const themes = [...new Set(p.tags.filter(t => t !== "check"))].map(t => PZ_THEMES[t]).filter(Boolean);
-  const info = Q.done ? `<div class="pz-info"><span>Problème <b>#${p.id}</b></span><span>Classement <b>${p.r}</b></span>${themes.length ? `<span>Thèmes : <b>${themes.join(", ")}</b></span>` : ""}</div>` : "";
+  const themes = [...new Set(p.tags.filter(t => t !== "check" && PZ_THEMES[t]).map(t => PZ_THEMES[t]))];
+  const info = Q.done ? `<div class="pz-info"><span>Problème ${p.lichess ? `<a href="https://lichess.org/training/${p.id}" target="_blank" rel="noopener">#${p.id}</a>` : `<b>#${p.id}</b>`}</span><span>Classement <b>${p.r}</b></span>${themes.length ? `<span>Thèmes : <b>${themes.join(", ")}</b></span>` : ""}</div>` : "";
   const modeBar = `<div class="seg pz-modes" role="group" aria-label="Mode">${[["train", "Entraînement"], ["streak", "Série"], ["storm", "Tempête"]].map(([k, t]) => `<button data-mode-pz="${k}" aria-pressed="${Q.mode === k}">${t}</button>`).join("")}</div>`;
   if (Q.mode === "streak") {
     panel.innerHTML = `${modeBar}
@@ -4766,21 +4862,22 @@ function pzPanel() {
         : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}
     </div>
     <div class="pz-rating">
-      <div><span>Ton classement</span><b>${PS.r}</b>${delta}</div>
+      <div><span>Ton classement</span><b title="${pzProvisional() ? "Classement provisoire : il se stabilise après quelques problèmes" : `Incertitude : ± ${Math.round(PS.rd * 2)}`}">${pzRatingText()}</b>${delta}</div>
       ${sparkline(PS.rs)}
     </div>
     <div class="settings">
-      <div class="field"><span>Difficulté</span><div class="seg" role="group">${[[-250, "Plus facile"], [0, "Normal"], [250, "Plus difficile"]].map(([v, t]) => `<button data-diff="${v}" aria-pressed="${PS.diff === v}">${t}</button>`).join("")}</div></div>
-      <div class="field"><span>Thème</span><select id="pz-theme" class="select">${[["all", "Tous les thèmes"], ...THEMES.map(t => [t.id, t.t])].map(([v, t]) => `<option value="${v}" ${PS.theme === v ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+      <div class="field"><span>Difficulté</span><select id="pz-diff" class="select">${PZ_DIFF.map(([v, t]) => `<option value="${v}" ${PS.diff === v ? "selected" : ""}>${t}${v ? ` (${v > 0 ? "+" : "−"}${Math.abs(v)})` : ""}</option>`).join("")}</select></div>
+      <div class="field"><span>Thème</span><select id="pz-theme" class="select">${pzThemeOptions()}</select></div>
     </div>
     <label class="switch"><input type="checkbox" id="pz-auto" ${PS.auto ? "checked" : ""}> Passer au suivant automatiquement après une réussite</label>
     ${PS.hist.length ? `<p class="group-title">Derniers problèmes</p><div class="pz-hist">${PS.hist.slice(0, 20).map(h => `<button class="${h.ok ? "ok" : "ko"}" data-replay="${h.id}" title="${h.ok ? "Réussi" : "Raté"} · ${h.d >= 0 ? "+" : ""}${h.d}">${h.ok ? ICON.check : "✕"}<i>${h.d >= 0 ? "+" : "−"}${Math.abs(h.d)}</i></button>`).join("")}</div>` : ""}
-    <div class="row"><button class="btn" id="pz-dash">${ICON.trophy}Tableau de bord</button></div>`;
+    <div class="row"><button class="btn" id="pz-dash">${ICON.trophy}Tableau de bord</button></div>
+    ${PZ_LICHESS ? `<p class="calm credit">Problèmes issus de la base de <a href="https://database.lichess.org/#puzzles" target="_blank" rel="noopener">Lichess</a> (domaine public).</p>` : ""}`;
   pzBindModes();
   const nx = $("#pz-next"); if (nx) { nx.onclick = pzNext; nx.focus({ preventScroll: true }); }
   const rt = $("#pz-retry"); if (rt) rt.onclick = () => pzLoad(p, false);
   const so = $("#pz-sol"); if (so) so.onclick = pzSolution;
-  panel.querySelectorAll("[data-diff]").forEach(b => b.onclick = () => { PS.diff = +b.dataset.diff; persist(); pzPanel(); });
+  $("#pz-diff").onchange = e => { PS.diff = +e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
   $("#pz-theme").onchange = e => { PS.theme = e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
   $("#pz-auto").onchange = e => { PS.auto = e.target.checked; persist(); };
   $("#pz-dash").onclick = pzDashboard;
@@ -4813,31 +4910,32 @@ function pzDashboard() {
   resetBoard(START, { locked: true, list: true });
   panelEnter();
   const pct = PS.n ? Math.round((PS.ok / PS.n) * 100) : 0;
-  const rows = Object.entries(PS.th).filter(([t]) => PZ_THEMES[t]).sort((a, b) => b[1][1] - a[1][1]);
+  const rows = Object.entries(PS.th).filter(([t]) => PZ_THEMES[t] && !PZ_MINOR.has(t)).sort((a, b) => b[1][1] - a[1][1]).slice(0, 14);
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Problèmes</button><span class="pill">${PZ.length} problèmes</span></div>
     <p class="eyebrow">Tableau de bord</p><h2>Ta progression</h2>
     <div class="stats-strip">
-      <div class="stat"><b>${PS.r}</b><span>Classement</span></div>
+      <div class="stat"><b>${pzRatingText()}</b><span>Classement</span></div>
       <div class="stat"><b>${PS.n}</b><span>Joués</span></div>
       <div class="stat"><b>${pct}%</b><span>Réussite</span></div>
       <div class="stat"><b>${PS.streakBest}</b><span>Record série</span></div>
     </div>
-    <div class="pz-rating"><div><span>Évolution du classement</span><b>${PS.r}</b></div>${sparkline(PS.rs)}</div>
+    <div class="pz-rating"><div><span>Évolution du classement</span><b>${pzRatingText()}</b></div>${sparkline(PS.rs)}</div>
+    <p class="calm">Ton classement suit la méthode Glicko-2, comme sur Lichess : chaque problème a son propre classement, calculé à partir des joueurs qui l'ont tenté. ${pzProvisional() ? "Le « ? » indique un classement encore provisoire, qui bouge vite au début." : `Incertitude actuelle : ± ${Math.round(PS.rd * 2)} points.`}</p>
     <div class="pz-rating"><div><span>Record tempête</span><b>${PS.stormBest}</b></div><p class="calm" style="margin:0">Problèmes résolus en 3 minutes.</p></div>
     <p class="group-title">Réussite par thème</p>
     ${rows.length ? `<div class="bars">${rows.map(([t, [ok, n]]) => { const v = Math.round((ok / n) * 100); return `<div class="bar-row" title="${PZ_THEMES[t]} : ${ok} réussis sur ${n}"><span>${PZ_THEMES[t]}</span><div class="bar"><i style="width:${Math.max(2, v)}%"></i></div><b>${v}%</b><small>${ok}/${n}</small></div>`; }).join("")}</div>
-      <p class="calm">Ton thème le plus faible est un bon point de départ : choisis-le dans le filtre « Thème ».</p>` : `<p class="calm">Joue quelques problèmes pour voir tes points forts et tes points faibles.</p>`}`;
+      <p class="calm">Ton thème le plus faible${(() => { const w = rows.filter(([, [, n]]) => n >= 5).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1])[0]; return w ? ` (${PZ_THEMES[w[0]].toLowerCase()})` : ""; })()} est un bon point de départ : choisis-le dans le filtre « Thème ».</p>` : `<p class="calm">Joue quelques problèmes pour voir tes points forts et tes points faibles.</p>`}`;
   $("#back").onclick = pzNext;
 }
 // --- Série : de plus en plus difficile, jusqu'à la première erreur ---
 function streakStart() {
-  Q.mode = "streak"; Q.streak = 0; Q.streakLevel = 500; Q.used = new Set();
+  Q.mode = "streak"; Q.streak = 0; Q.streakLevel = PZ_LICHESS ? 700 : 500; Q.used = new Set();
   streakNext();
 }
 function streakNext() {
   const pool = PZ.filter(p => !Q.used.has(p.id));
-  const target = Q.streakLevel + Q.streak * 45;
+  const target = Q.streakLevel + Q.streak * (PZ_LICHESS ? 60 : 45);
   const p = pool.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 4)[(Math.random() * 4) | 0] || pool[0];
   if (!p) return streakEnd(true);
   Q.used.add(p.id);
@@ -4856,7 +4954,7 @@ function streakEnd(all) {
     <div class="seg pz-modes" role="group">${[["train", "Entraînement"], ["streak", "Série"], ["storm", "Tempête"]].map(([k, t]) => `<button data-mode-pz="${k}" aria-pressed="${k === "streak"}">${t}</button>`).join("")}</div>
     <div class="pz-head ${Q.streak ? "win" : "fail"}"><span class="pz-ico">${ICON.trophy}</span><div><b>${all ? "Tous les problèmes résolus !" : "Série terminée"}</b><span>${Q.streak} problème${Q.streak > 1 ? "s" : ""} d'affilée${best ? " : nouveau record !" : ""}</span></div></div>
     <div class="pz-rating"><div><span>Score</span><b>${Q.streak}</b></div><div><span>Record</span><b>${PS.streakBest}</b></div></div>
-    ${Q.cur ? `<p class="lead">La solution du dernier problème commençait par <b>${sanFor(Q.cur.fen, Q.cur.line[0]).replace("...", "")}</b>.</p>` : ""}
+    ${Q.cur ? `<p class="lead">La solution du dernier problème commençait par <b>${sanFor(pzFen(Q.cur), Q.cur.line[0]).replace("...", "")}</b>.</p>` : ""}
     <div class="row"><button class="btn primary big" id="again">${ICON.retry}Nouvelle série</button></div>`;
   if (best && Q.streak > 2) celebrate();
   pzBindModes();
@@ -4886,9 +4984,9 @@ function stormStart() {
   stormNext();
 }
 function stormNext() {
-  const S = Q.storm, target = 550 + S.idx * 30;
+  const S = Q.storm, target = PZ_LICHESS ? 800 + S.idx * 40 : 550 + S.idx * 30;
   S.idx++;
-  const pool = PZ.filter(p => !S.used.has(p.id) && p.line.length <= 3);
+  const pool = PZ.filter(p => !S.used.has(p.id) && p.line.length <= 5);
   const p = pool.slice().sort((a, b) => Math.abs(a.r - target) - Math.abs(b.r - target)).slice(0, 5)[(Math.random() * 5) | 0] || pool[0];
   if (!p) return stormEnd();
   S.used.add(p.id);

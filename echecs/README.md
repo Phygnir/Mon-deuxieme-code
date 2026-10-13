@@ -12,7 +12,7 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - **Ouvertures** (18) : italienne, espagnole, écossaise, gambit Dame, Londres, gambit du roi, anglaise, sicilienne, française, Caro-Kann, scandinave, est-indienne, slave, nimzo-indienne, Pirc, Petrov, mat de Légal, défense contre le coup du berger. Pour chacune, on trouve la ligne jouée guidée puis de mémoire, une fiche (plans, coups typiques, pièges) et des exercices.
 - **Exercices** : 120 problèmes tirés de parties, classés par thème (pièces en prise, fourchettes, clouages, découvertes, sacrifices, mats, promotion), avec un mode « série tactique ». S'y ajoutent les 14 problèmes classiques. Sur une mauvaise réponse, le coach explique pourquoi le coup échoue.
 - **Problèmes** : un entraînement inspiré des puzzles de Lichess.
-  - **Entraînement** classé : ton classement évolue après chaque problème (formule Elo), et on te propose des problèmes de ton niveau, réglables (plus facile, normal, plus difficile) et filtrables par thème.
+  - **Entraînement** classé : ton classement évolue après chaque problème selon la méthode Glicko-2, comme sur Lichess. Un « ? » signale un classement encore provisoire. On te propose des problèmes jamais vus, proches de ton niveau. Cinq niveaux de difficulté sont possibles, du plus facile (−600) au plus difficile (+600), et un filtre par thème (motifs, mats, phases de jeu, longueur).
   - **Série** : des problèmes de plus en plus difficiles, jusqu'à la première erreur.
   - **Tempête** : 3 minutes pour en résoudre un maximum, avec un combo qui rapporte du temps et des erreurs qui en coûtent.
   - Un tableau de bord montre ta courbe de classement, ta réussite par thème et tes records.
@@ -35,6 +35,7 @@ Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
 | `src/search.js` | Moteur de recherche : représentation 0x88, tables de transposition, PVS, coup nul, réductions des coups tardifs, quiescence avec parades aux échecs. Il tourne dans un Web Worker |
 | `src/content.js`, `src/lessons-extra.js` | Leçons, fiches d'ouverture, problèmes classiques |
 | `src/puzzles-data.js` | Problèmes tirés de parties (fichier généré) |
+| `src/puzzles-lichess.js` | Problèmes de la base Lichess (fichier généré, facultatif) |
 | `src/app.js` | Interface : échiquier, leçons, exercices, coach, coordonnées |
 | `src/styles.css`, `src/pieces.css`, `src/body.html` | Présentation |
 
@@ -44,7 +45,21 @@ Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
 node tests/engine.test.js        # perft de référence, vitesse, tactiques (fourchettes, mats)
 node tests/coach.test.js         # le coach repère un coup qui permet une fourchette
 node tools/check-content.js      # légalité de chaque position et de chaque coup des leçons, mats, pats, finales
+node tests/glicko.test.js        # classement Glicko-2 des problèmes
 ```
+
+### Problèmes de Lichess
+
+L'onglet Problèmes utilise la base de puzzles de Lichess (domaine public, CC0) quand `src/puzzles-lichess.js` existe. Ces problèmes ont de vrais classements, calculés à partir de millions de tentatives. Sinon, il utilise les problèmes tirés de parties.
+
+```sh
+curl -O https://database.lichess.org/lichess_db_puzzle.csv.zst
+python3 -I tools/import-lichess.py lichess_db_puzzle.csv.zst selection.csv   # tranches de 100 points, motifs variés
+node tools/build-lichess.js selection.csv                                    # vérifie chaque coup, écrit src/puzzles-lichess.js
+python3 build.py
+```
+
+`import-lichess.py` ne garde que des problèmes populaires, souvent joués et au classement fiable. Il retient environ 170 problèmes par tranche de 100 points, de 400 à 3 100, en prenant les motifs à tour de rôle.
 
 Les problèmes « tirés de parties » sont produits en trois étapes :
 
@@ -53,8 +68,8 @@ Les problèmes « tirés de parties » sont produits en trois étapes :
 3. `tools/rate-puzzles.js` estime la difficulté de chaque problème. Il mesure la profondeur à laquelle le moteur trouve la solution, puis ajoute des points pour les leurres (autres prises ou échecs), les coups calmes, la longueur et le motif.
 4. `tools/build-puzzles.js` génère `src/puzzles-data.js` : il répartit les classements par rang entre 600 et 2 100.
 
-Ces classements sont des estimations : contrairement à Lichess, ils ne viennent pas des résultats de vrais joueurs.
+Ces classements sont des estimations : contrairement à ceux de Lichess, ils ne viennent pas des résultats de vrais joueurs.
 
 ## Crédits
 
-Les pièces viennent du jeu « cburnett » de Colin M. L. Burnett (licence GPLv2+), celui qu'utilisent Lichess et Wikipédia.
+Une fois importés, les problèmes de l'onglet Problèmes viennent de la [base de puzzles de Lichess](https://database.lichess.org/#puzzles) (CC0). Les pièces viennent du jeu « cburnett » de Colin M. L. Burnett (licence GPLv2+), celui qu'utilisent Lichess et Wikipédia.

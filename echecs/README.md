@@ -29,7 +29,9 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - **Import par pseudo** : tape ton pseudo Lichess ou Chess.com et choisis une de tes 20 dernières parties, via les API publiques des deux sites. On peut aussi coller un PGN ou choisir un fichier .pgn (notation anglaise ou française). Si la page ne peut pas joindre le site, elle le dit et propose le copier-coller.
   - **Analyse de partie** : le moteur revoit chaque position. On obtient une courbe d'évaluation, la précision de chaque camp et le décompte des imprécisions, erreurs et gaffes, classées selon la perte de chances de gain, comme sur Lichess. On a aussi un commentaire sur chaque coup (la réfutation, ce qu'il fallait jouer) et tes moments clés, que tu peux rejouer.
   - **Bilan** : ta précision moyenne, son évolution et la part de tes erreurs par phase de jeu (ouverture, milieu, finale). Les 20 dernières parties sont gardées.
-- **Coordonnées** : un entraînement chronométré de 30 secondes.
+- **Vision** : trois entraînements chronométrés. **Coordonnées** : cliquer la case affichée. **Couleur des cases** : dire si une case est claire ou foncée, l'échiquier voilé. **Cases attaquées** : cliquer toutes les cases qu'attaque une pièce.
+- **Mon répertoire d'ouvertures** (dans Exercices) : tu choisis tes ouvertures avec les Blancs et avec les Noirs, puis tu les rejoues de mémoire face à l'entraîneur. Parfois, l'adversaire sort de la théorie avec un coup plausible choisi par le moteur, et il faut trouver soi-même un coup sain. Trois lignes sans faute d'affilée, et l'ouverture est maîtrisée. Une erreur renvoie la ligne en révision.
+- **Jouer une position** : depuis un problème ou une analyse, un bouton lance une partie contre l'ordinateur, avec le coach, à partir de la position affichée. On peut aussi continuer une ligne du répertoire.
 
 Il y a aussi des sons, l'animation des pièces, une barre d'évaluation et des points gagnés. La progression est enregistrée dans le navigateur (`localStorage`).
 
@@ -48,6 +50,8 @@ Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
 | `src/pgn.js` | Lecture des parties PGN |
 | `src/analysis.js` | Analyse de partie : évaluations, précision, moments clés |
 | `src/review.js` | Révision espacée |
+| `src/repertoire.js` | Répertoire d'ouvertures |
+| `src/vision.js` | Entraînements de vision |
 | `src/daily.js` | Plan du jour, série de jours, sauvegarde de la progression |
 | `src/styles.css`, `src/pieces.css`, `src/body.html` | Présentation |
 

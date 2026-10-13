@@ -19,7 +19,7 @@ const gameSub = g => (g.src === "pgn" ? `contre ${gameOpp(g)}` : LEVELS[g.level]
 const AN_Q = [[30, "q-bad", "gaffe"], [20, "q-err", "erreur"], [10, "q-dub", "imprécision"]];
 function archiveGame(res) {
   if (PL.log.length < 6) return;
-  const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
+  const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, fen: PL.fen || null, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
   save.games = [g].concat(save.games.filter(x => x.id !== g.id)).slice(0, 20);
   persist();
 }
@@ -85,7 +85,7 @@ async function analyseGame(game) {
 }
 function anMomentItem(game, m) {
   const g = gameAt(game, m.k);
-  return { k: "moment", fen: g.fen(), best: game.an.best[m.k], played: game.log[m.k].u, ev: game.an.ev[m.k], side: m.side, date: game.date, move: Math.floor(m.k / 2) + 1 };
+  return { k: "moment", fen: g.fen(), best: game.an.best[m.k], played: game.log[m.k].u, ev: game.an.ev[m.k], side: m.side, date: game.date, move: plyNum(game.fen, m.k).replace(/\.+$/, "") };
 }
 function analysisView(id) {
   const game = save.games.find(x => x.id === id);
@@ -122,7 +122,7 @@ function anGraph(game, moves) {
   const line = known.map((k, j) => `${j ? "L" : "M"}${x(k).toFixed(1)} ${y(k).toFixed(1)}`).join(" ");
   const area = known.length > 1 ? `${line} L${x(known[known.length - 1]).toFixed(1)} ${H} L0 ${H} Z` : "";
   const dots = moves.filter(m => m.q && m.q !== "q-best").map(m => `<circle cx="${x(m.k + 1).toFixed(1)}" cy="${y(m.k + 1).toFixed(1)}" r="3.2" class="an-dot ${m.q}"></circle>`).join("");
-  const hits = Array.from({ length: N + 1 }, (_, k) => `<rect x="${(x(k) - W / N / 2).toFixed(1)}" y="0" width="${(W / Math.max(1, N)).toFixed(1)}" height="${H}" data-go="${k}"><title>${k ? `${Math.ceil(k / 2)}${k % 2 ? "." : "..."} ${frSan(game.log[k - 1].san)}` : "Position de départ"}</title></rect>`).join("");
+  const hits = Array.from({ length: N + 1 }, (_, k) => `<rect x="${(x(k) - W / N / 2).toFixed(1)}" y="0" width="${(W / Math.max(1, N)).toFixed(1)}" height="${H}" data-go="${k}"><title>${k ? `${plyNum(game.fen, k - 1)} ${frSan(game.log[k - 1].san)}` : "Position de départ"}</title></rect>`).join("");
   return `<svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Courbe d'évaluation de la partie">
     <rect width="${W}" height="${H}" class="an-bg"></rect>
     ${area ? `<path d="${area}" class="an-area"></path>` : ""}
@@ -134,7 +134,7 @@ function anGraph(game, moves) {
 function anComment(game, m) {
   const an = game.an, g = gameAt(game, m.k), played = g.find(game.log[m.k].u);
   const me = m.side === game.color, who = me ? "me" : "opp";
-  const san = frSan(game.log[m.k].san), num = `${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."}`;
+  const san = frSan(game.log[m.k].san), num = plyNum(game.fen, m.k);
   const out = { title: `${num} ${san}`, word: m.word, c: !m.q || m.q === "q-best" ? "ok" : m.q === "q-dub" ? "warn" : "bad", lines: [] };
   if (m.book) { out.lines.push("Coup de théorie : il fait partie d'une ouverture étudiée dans les leçons."); return out; }
   if (!m.q || m.q === "q-best") {
@@ -179,11 +179,7 @@ function anPanel(progressOnly) {
   }
   const me = game.color, opp = me === "w" ? "b" : "w", resTxt = gameRes(game);
   const cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
-  const rows = [];
-  for (let i = 0; i < N; i += 2) {
-    const cell = j => { if (!game.log[j]) return "<span></span>"; const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}"${j === AN.i - 1 ? ' class="cur"' : ""}${m && m.q && m.q !== "q-best" ? ` data-q="${m.q}"` : ""}>${frSan(game.log[j].san)}</span>`; };
-    rows.push(`<span class="n">${i / 2 + 1}.</span>${cell(i)}${cell(i + 1)}`);
-  }
+  const rows = moveRows(game.fen, N, j => { const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}"${j === AN.i - 1 ? ' class="cur"' : ""}${m && m.q && m.q !== "q-best" ? ` data-q="${m.q}"` : ""}>${frSan(game.log[j].san)}</span>`; });
   const col = (c, name) => `<div class="an-side"><span class="an-who">${pieceEl(c === "w" ? "K" : "k")}${name}</span><b>${sum[c].acc != null && done ? sum[c].acc + " %" : "…"}</b><span>précision</span>
     <ul><li><i class="q-dub"></i>${sum[c].dub} imprécision${sum[c].dub > 1 ? "s" : ""}</li><li><i class="q-err"></i>${sum[c].err} erreur${sum[c].err > 1 ? "s" : ""}</li><li><i class="q-bad"></i>${sum[c].bad} gaffe${sum[c].bad > 1 ? "s" : ""}</li></ul></div>`;
   panel.innerHTML = `
@@ -194,16 +190,17 @@ function anPanel(progressOnly) {
     <div id="an-graph">${anGraph(game, moves)}</div>
     <div class="an-nav" role="group" aria-label="Navigation dans la partie">
       <button class="btn" data-nav="first" aria-label="Début">${ICON.first}</button><button class="btn" data-nav="prev" aria-label="Coup précédent">${ICON.prev}</button>
-      <span class="an-ply">${AN.i ? `${Math.ceil(AN.i / 2)}${AN.i % 2 ? "." : "..."} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
+      <span class="an-ply">${AN.i ? `${plyNum(game.fen, AN.i - 1)} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
       <button class="btn" data-nav="next" aria-label="Coup suivant">${ICON.next}</button><button class="btn" data-nav="last" aria-label="Fin">${ICON.last}</button>
     </div>
+    ${B.game.status() ? "" : `<div class="row"><button class="btn" id="an-play">${ICON.board}Jouer cette position contre l'ordinateur</button></div>`}
     ${com ? `<div class="coach-card ${com.c}"><div class="coach-title"><span class="verdict ${com.c}">${com.word}</span><b>${com.title}</b>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
       ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>` : ""}
     ${done ? `<div class="an-sum">${col(me, "Toi")}${col(opp, gameOpp(game))}</div>` : ""}
     ${moments.length ? `<p class="group-title">Tes moments clés</p><div class="list">${moments.map(m => `
       <div class="item an-moment${AN.i === m.k + 1 ? " next" : ""}">
-        <span class="num" data-q-dot="${m.q}">${Math.floor(m.k / 2) + 1}</span>
-        <span><span class="ti">${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
+        <span class="num" data-q-dot="${m.q}">${plyNum(game.fen, m.k).replace(/\.+$/, "")}</span>
+        <span><span class="ti">${plyNum(game.fen, m.k)} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
         <span class="an-acts"><button class="btn" data-go="${m.k + 1}">Voir</button><button class="btn primary" data-retry="${m.k}">${ICON.retry}Rejouer</button></span>
       </div>`).join("")}</div><p class="calm">Ces positions reviendront dans ta révision : demain, puis à intervalles de plus en plus longs.</p>` : done ? `<div class="fb ok">${ICON.check} Aucune erreur sérieuse de ta part dans cette partie. Bravo !</div>` : ""}
     <div class="moves" id="an-moves">${rows.join("")}</div>`;
@@ -212,6 +209,7 @@ function anPanel(progressOnly) {
   panel.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => anNav(b.dataset.nav));
   panel.querySelectorAll("[data-retry]").forEach(b => b.onclick = () => { const m = moves.find(x => x.k === +b.dataset.retry); if (m) revRunSingle(anMomentItem(game, m), () => analysisView(game.id)); });
   $("#an-back").onclick = analyseHome;
+  const ap = $("#an-play"); if (ap) ap.onclick = () => playFrom(B.game.fen(), game.color);
   const c = $("#an-moves .cur"); if (c) c.scrollIntoView({ block: "nearest" });
   updateEvalBar();
 }

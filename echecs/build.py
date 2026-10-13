@@ -3,7 +3,7 @@
 import pathlib
 S = pathlib.Path(__file__).parent / "src"
 r = lambda n: (S / n).read_text()
-JS = ["rules.js", "search.js", "content.js", "puzzles-data.js", "puzzles-lichess.js", "lessons-extra.js", "app.js", "pgn.js", "analysis.js", "review.js", "daily.js", "start.js"]
+JS = ["rules.js", "search.js", "content.js", "puzzles-data.js", "puzzles-lichess.js", "lessons-extra.js", "app.js", "pgn.js", "analysis.js", "review.js", "daily.js", "repertoire.js", "vision.js", "start.js"]
 js = "\n".join(r(n) for n in JS if (S / n).exists())
 page = (
     '<!DOCTYPE html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n'

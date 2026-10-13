@@ -540,6 +540,38 @@ input.select { font-weight: 400; }
 .backup b { display: block; }
 .backup span { color: var(--muted); font-size: 0.88rem; }
 .pz-why summary.coach-title b { font-family: var(--font-body); font-size: 1rem; }
+
+/* ---------- Répertoire ---------- */
+.rep-card { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; font: inherit; transition: border-color .15s, background .15s; }
+.rep-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+.rep-card b { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+.rep-card small { color: var(--muted); font-size: 0.86rem; }
+.rep-ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.rep-ico .pc { width: 34px; height: 34px; }
+.rep-list { display: flex; flex-direction: column; gap: 4px; }
+.rep-item { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 11px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; }
+.rep-item:hover { background: var(--surface-2); }
+.rep-item.on { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.rep-item input { width: 18px; height: 18px; accent-color: var(--accent); }
+.rep-item b { display: block; font-size: 0.95rem; }
+.rep-item small { color: var(--muted); font-size: 0.82rem; font-family: var(--font-mono); }
+.rep-m { display: inline-flex; gap: 3px; }
+.rep-m i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.rep-m i.on { background: var(--gold); }
+.btn .pc { width: 1.3em; height: 1.3em; }
+
+/* ---------- Vision ---------- */
+.vis-modes { align-self: flex-start; flex-wrap: wrap; }
+.vis-modes button { padding: 8px 12px; font-size: 0.88rem; }
+.board-wrap.veil .board { filter: blur(14px) saturate(.6); opacity: .55; transition: filter .3s, opacity .3s; }
+.board-wrap.veil::after { content: "Vois-le de tête"; position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--ink); pointer-events: none; }
+.vis-answer { gap: 10px; }
+.vis-answer .btn { flex: 1; justify-content: center; min-height: 64px; font-size: 1.15rem; }
+.vis-light { background: #f3efe0; color: #1d2a22; border-color: #d9d2b8; }
+.vis-dark { background: #6f915e; color: #fff; border-color: #5d7d4e; }
+.target.ok { animation: vis-ok .35s; } .target.bad { animation: vis-bad .35s; }
+@keyframes vis-ok { 40% { color: var(--good); transform: scale(1.08); } }
+@keyframes vis-bad { 20%, 60% { transform: translateX(-6px); color: var(--bad); } 40%, 80% { transform: translateX(6px); } }
 .pc.wP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
 .pc.wB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==")}
 .pc.wN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==")}
@@ -8049,7 +8081,7 @@ function celebrate() {
 const xpTotal = () => Object.keys(save.lessons).length * 10 + Object.keys(save.puzzles).length * 5 + (save.record.w || 0) * 15 + ((save.pz && save.pz.ok) || 0) * 2;
 function updateXp() { $("#xp").innerHTML = `${ICON.star}${xpTotal()} pts`; }
 // Étiquettes des onglets
-[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["analyse", "chart", "Analyse"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
+[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["analyse", "chart", "Analyse"], ["coord", "target", "Vision"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
 updateSoundBtn(); updateXp();
 
 // ---------- Navigation ----------
@@ -8062,6 +8094,7 @@ function setMode(mode) {
   if (typeof PL !== "undefined") PL.gen++;
   if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
   if (mode !== "analyse") { AN.run++; AN.g = null; }
+  visStop();
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
@@ -8196,6 +8229,7 @@ function lessonList(pathId) {
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
     ${planCard()}
+    ${path.id === "ouvertures" ? `<button class="rep-card" id="rep-open"><span class="rep-ico">${pieceEl("N")}</span><span><b>Mon répertoire d'ouvertures</b><small>Rejoue tes ouvertures de mémoire, contre un adversaire qui sort parfois de la théorie</small></span>${ICON.arrow}</button>` : ""}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -8208,6 +8242,7 @@ function lessonList(pathId) {
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
   bindPlan();
+  const ro = $("#rep-open"); if (ro) ro.onclick = () => { setMode("exercices"); repHome(); };
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -8593,6 +8628,7 @@ function puzzleList() {
       <div class="stat"><b>${save.streak || 0}</b><span>Série</span></div>
     </div>
     ${revCard()}
+    <button class="rep-card" id="rep-open"><span class="rep-ico">${pieceEl("N")}</span><span><b>Mon répertoire d'ouvertures</b><small>${save.rep.w.length + save.rep.b.length ? `${save.rep.w.length + save.rep.b.length} ouverture(s) choisie(s) · entraîne-toi à les jouer de mémoire` : "Choisis tes ouvertures et entraîne-toi à les jouer de mémoire"}</small></span>${ICON.arrow}</button>
     ${nextSeries ? `<div class="row"><button class="btn primary big" id="series">${ICON.puzzle}Série tactique : problème suivant</button></div>` : MINED_P.length ? `<div class="fb ok">Tous les problèmes tirés de parties sont résolus !</div>` : ""}
     <p class="group-title">Par thème</p>
     <div class="paths compact">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
@@ -8612,6 +8648,7 @@ function puzzleList() {
   panel.querySelectorAll("[data-theme]").forEach(b => b.addEventListener("click", () => themeList(b.dataset.theme)));
   const s = $("#series"); if (s) s.onclick = () => { P.mode = "series"; P.list = MINED_P; startPuzzle(nextSeries.id); };
   revBindCard();
+  $("#rep-open").onclick = repHome;
 }
 function themeList(th) {
   const t = THEMES.find(x => x.id === th), list = MINED_P.filter(p => p.theme === th);
@@ -8807,8 +8844,28 @@ const LEVELS = [
 ];
 const PL = Object.assign({ color: "w", level: 1, coach: true, live: true, stop: true, log: [], over: null, bal: 0 }, save.play || {});
 Object.assign(PL, { gen: 0, ana: null, anaP: null, threat: null, review: null, brief: null, paused: false, thinking: false, hint: null });
-function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid }; persist(); }
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid, fen: PL.fen }; persist(); }
 const ucis = () => PL.log.map(e => e.u);
+// Partie depuis une position quelconque (problème, analyse, répertoire) : PL.fen
+const plFen = () => PL.fen || START;
+// Numéro du coup k (0 = premier coup joué) quand la partie part de fen : « 12. » ou « 12... »
+function plyNum(fen, k) {
+  const f = (fen || START).split(" "), idx = k + (f[1] === "b" ? 1 : 0);
+  return `${(+f[5] || 1) + Math.floor(idx / 2)}${idx % 2 ? "..." : "."}`;
+}
+// Liste des coups en lignes de deux, en tenant compte d'un départ avec les Noirs
+function moveRows(fen, n, cell) {
+  const f = (fen || START).split(" "), off = f[1] === "b" ? 1 : 0, first = +f[5] || 1, rows = [];
+  for (let i = -off; i < n; i += 2) rows.push(`<span class="n">${first + (i + off) / 2}.</span>${i < 0 ? "<span>…</span>" : cell(i)}${i + 1 < n ? cell(i + 1) : "<span></span>"}`);
+  return rows;
+}
+const plTurnAt = n => ((plFen().split(" ")[1] === "w") === (n % 2 === 0) ? "w" : "b");
+function playFrom(fen, color, log) {
+  PL.fen = fen && fen !== START ? fen : null; PL.color = color;
+  PL.log = log || []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
+  savePlay();
+  setMode("jouer");
+}
 
 // --- Outils d'analyse pour le coach ---
 const FEM = { q: true, r: true };
@@ -8929,6 +8986,7 @@ function lossWords(loss) {
 }
 // Lignes d'ouverture compatibles avec la partie. Le nom n'est donné que s'il n'y a pas d'ambiguïté.
 function bookInfo(log) {
+  if (PL.fen) return null;
   const us = log.map(e => e.u);
   const lines = L_OUV.filter(l => { const line = l.steps[1].moves; return us.length <= line.length && us.every((u, i) => line[i] === u); });
   if (!lines.length) return null;
@@ -8950,7 +9008,7 @@ B.quality = m => {
   return quality(x.bound < 0 ? 999 : PL.ana.bestScore - x.score, u === PL.ana.best).cls;
 };
 function rebuildGame() {
-  const g = new Chess(START);
+  const g = new Chess(plFen());
   for (const e of PL.log) { const m = g.find(e.u); if (!m) break; g.make(m); }
   B.game = g;
   const lm = g.hist[g.hist.length - 1];
@@ -8962,13 +9020,13 @@ function startTurn() {
   const gen = PL.gen, moves = ucis();
   PL.ana = null; PL.threat = null; PL.anaP = null;
   if (PL.over || B.game.turn !== PL.color || (!PL.coach && !PL.live)) return;
-  Engine.run({ type: "threat", moves, time: 600 }).then(r => {
+  Engine.run({ type: "threat", fen: plFen(), moves, time: 600 }).then(r => {
     if (gen !== PL.gen || PL.log.length !== moves.length) return;
     PL.threat = explainThreat(r);
     if (PL.live && PL.threat && PL.threat.arrow && !B.arrows.length) B.arrows = [PL.threat.arrow];
     render(); if (modeNow === "jouer") playPanel();
   });
-  PL.anaP = Engine.run({ type: "analyse", moves, time: 1500 }).then(r => {
+  PL.anaP = Engine.run({ type: "analyse", fen: plFen(), moves, time: 1500 }).then(r => {
     if (!r) return null;
     const ana = { best: r.best, bestScore: r.bestScore, depth: r.depth, pv: r.pv, map: new Map(r.moves.map(x => [x.u, x])) };
     if (gen === PL.gen && PL.log.length === moves.length) {
@@ -9006,7 +9064,7 @@ function makeBrief(oppSan, oppFacts) {
 }
 function playView() {
   if (AN.g) { AN.run++; AN.g = null; }
-  resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
+  resetBoard(plFen(), { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
   PL.gen++;
   rebuildGame();
   B.locked = !!PL.over;
@@ -9017,7 +9075,7 @@ function playView() {
 }
 function newGame(color) {
   PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
-  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
+  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36); PL.fen = null;
   savePlay();
   playView();
 }
@@ -9064,12 +9122,9 @@ function playPanel() {
   else if (PL.paused) status = { c: "warn", t: "Le coach a mis la partie en pause : regarde les flèches. Rouge = sa réponse, vert = le bon coup." };
   else if (PL.thinking) status = { c: "info", t: `<i class="spin"></i> L'ordinateur (${lvl.name}) réfléchit...` };
   else status = { c: "info", t: g.turn === PL.color ? (g.inCheck() ? "<b>Échec !</b> Protège ton roi." : "À toi de jouer.") : "Au tour de l'ordinateur." };
-  const rows = [];
-  for (let i = 0; i < PL.log.length; i += 2) {
-    const cur = j => (j === PL.log.length - 1 ? ' class="cur"' : "");
-    const q = j => PL.log[j] && PL.log[j].q ? ` data-q="${PL.log[j].q}"` : "";
-    rows.push(`<span class="n">${i / 2 + 1}.</span><span${cur(i)}${q(i)}>${frSan(PL.log[i].san)}</span><span${cur(i + 1)}${q(i + 1)}>${PL.log[i + 1] ? frSan(PL.log[i + 1].san) : ""}</span>`);
-  }
+  const cur = j => (j === PL.log.length - 1 ? ' class="cur"' : "");
+  const q = j => PL.log[j] && PL.log[j].q ? ` data-q="${PL.log[j].q}"` : "";
+  const rows = moveRows(PL.fen, PL.log.length, j => `<span${cur(j)}${q(j)}>${frSan(PL.log[j].san)}</span>`);
   const rec = save.record, book = bookInfo(PL.log);
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><p class="eyebrow">Partie avec coach</p>${book && book.name && PL.log.length ? `<span class="pill">${book.name}</span>` : ""}</div>
@@ -9127,7 +9182,7 @@ function playHint() {
   if (PL.thinking || PL.over || PL.paused) return;
   const gen = PL.gen, n = PL.log.length;
   PL.hint = `<i class="spin"></i> Le coach cherche le meilleur coup...`; playPanel();
-  Engine.run({ type: "search", moves: ucis(), time: 1200 }).then(r => {
+  Engine.run({ type: "search", fen: plFen(), moves: ucis(), time: 1200 }).then(r => {
     if (gen !== PL.gen || n !== PL.log.length || !r || !r.move) return;
     const g = B.game, m = g.find(r.move);
     if (!m) return;
@@ -9142,7 +9197,7 @@ function playUndo() {
   if (!PL.log.length) return;
   PL.gen++;
   PL.log.pop();
-  while (PL.log.length && (PL.log.length % 2 === 0 ? "w" : "b") !== PL.color) PL.log.pop();
+  while (PL.log.length && plTurnAt(PL.log.length) !== PL.color) PL.log.pop();
   Object.assign(PL, { over: null, review: null, paused: false, thinking: false, hint: null, brief: makeBrief(null, []) });
   savePlay();
   rebuildGame(); B.locked = false; B.sel = null; B.arrows = [];
@@ -9238,7 +9293,7 @@ function playMove(m, san) {
   B.locked = true;
   playPanel();
   const gen = PL.gen, anaP = PL.anaP || Promise.resolve(null);
-  Promise.all([anaP, Engine.run({ type: "search", moves: ucis(), time: 1100 })]).then(([ana, s]) => {
+  Promise.all([anaP, Engine.run({ type: "search", fen: plFen(), moves: ucis(), time: 1100 })]).then(([ana, s]) => {
     if (gen !== PL.gen) return;
     try { PL.review = buildReview(m, san, ana, s); } catch (e) { PL.review = null; }
     savePlay();
@@ -9258,10 +9313,10 @@ function aiMove() {
   PL.thinking = true; B.locked = true; render(); playPanel();
   const g = B.game, n = PL.log.length;
   // L'ordinateur suit souvent la théorie des ouvertures étudiées
-  const book = n < 16 ? L_OUV.map(l => l.steps[1].moves).filter(line => n < line.length && PL.log.every((e, i) => line[i] === e.u)) : [];
+  const book = n < 16 && !PL.fen ? L_OUV.map(l => l.steps[1].moves).filter(line => n < line.length && PL.log.every((e, i) => line[i] === e.u)) : [];
   const fromBook = book.length && Math.random() < 0.85 ? book[(Math.random() * book.length) | 0][n] : null;
   const t0 = Date.now();
-  const p = fromBook ? Promise.resolve({ move: fromBook }) : Engine.run(Object.assign({ type: "play", moves: ucis() }, (LEVELS[PL.level] || LEVELS[1]).job));
+  const p = fromBook ? Promise.resolve({ move: fromBook }) : Engine.run(Object.assign({ type: "play", fen: plFen(), moves: ucis() }, (LEVELS[PL.level] || LEVELS[1]).job));
   p.then(r => {
     later(() => {
       if (gen !== PL.gen) return;
@@ -9574,7 +9629,7 @@ function pzPanel() {
     ${info}
     ${Q.done ? pzWhyHTML(p) : ""}
     <div class="row">
-      ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button>`
+      ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button><button class="btn" id="pz-play" title="Continuer la partie contre l'ordinateur depuis la position du problème">${ICON.board}Jouer la position</button>`
         : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}
     </div>
     <div class="pz-rating">
@@ -9592,6 +9647,7 @@ function pzPanel() {
   pzBindModes();
   const nx = $("#pz-next"); if (nx) { nx.onclick = pzNext; nx.focus({ preventScroll: true }); }
   const rt = $("#pz-retry"); if (rt) rt.onclick = () => pzLoad(p, false);
+  const pp = $("#pz-play"); if (pp) pp.onclick = () => playFrom(pzFen(p), p.side);
   const so = $("#pz-sol"); if (so) so.onclick = pzSolution;
   $("#pz-diff").onchange = e => { PS.diff = +e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
   $("#pz-theme").onchange = e => { PS.theme = e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
@@ -9762,9 +9818,11 @@ function stormEnd() {
 }
 
 // ---------- Coordonnées ----------
-const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false };
+const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false, vm: "coord" };
 const DURATION = 30000;
 function coordView() {
+  visStop();
+  if (C.vm !== "coord") return visionView();
   C.running = false;
   resetBoard(EMPTY, { flip: C.side === "b", coords: C.coords, onSquare: coordClick });
   panelEnter();
@@ -9774,7 +9832,8 @@ function newTarget() { let t; do { t = (Math.random() * 64) | 0; } while (sqName
 function coordPanel(done) {
   $("#under-top").innerHTML = C.running ? `<span>Clique sur</span><span class="target-mini" id="ctarget-mini">${C.target}</span>` : "";
   panel.innerHTML = `
-    <p class="eyebrow">Entraînement · 30 secondes</p>
+    ${C.running ? "" : visSeg()}
+    <p class="eyebrow">Vision · 30 secondes</p>
     <h2>Lis l'échiquier sans réfléchir</h2>
     <p class="lead">Une case s'affiche, clique-la le plus vite possible. Connaître les coordonnées par cœur aide à lire les livres, les vidéos et à noter tes parties.</p>
     ${C.running ? `<div class="target" id="ctarget">${C.target}</div><div class="timer"><i id="ctimer" style="width:100%"></i></div>` : ""}
@@ -9786,6 +9845,7 @@ function coordPanel(done) {
         <div class="field"><span>Aide</span><label class="switch"><input type="checkbox" id="ccoords" ${C.coords ? "checked" : ""}> Afficher les coordonnées</label></div>
       </div>
       <div class="row"><button class="btn primary" id="cstart">${done ? "Rejouer" : "Démarrer"}</button></div>`}`;
+  visBindSeg();
   panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { C.side = b.dataset.side; B.flip = C.side === "b"; render(); coordPanel(); });
   const cc = $("#ccoords"); if (cc) cc.onchange = e => { C.coords = e.target.checked; B.coords = C.coords; render(); };
   const cs = $("#cstart"); if (cs) cs.onclick = coordStart;
@@ -9894,7 +9954,7 @@ const gameSub = g => (g.src === "pgn" ? `contre ${gameOpp(g)}` : LEVELS[g.level]
 const AN_Q = [[30, "q-bad", "gaffe"], [20, "q-err", "erreur"], [10, "q-dub", "imprécision"]];
 function archiveGame(res) {
   if (PL.log.length < 6) return;
-  const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
+  const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, fen: PL.fen || null, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
   save.games = [g].concat(save.games.filter(x => x.id !== g.id)).slice(0, 20);
   persist();
 }
@@ -9960,7 +10020,7 @@ async function analyseGame(game) {
 }
 function anMomentItem(game, m) {
   const g = gameAt(game, m.k);
-  return { k: "moment", fen: g.fen(), best: game.an.best[m.k], played: game.log[m.k].u, ev: game.an.ev[m.k], side: m.side, date: game.date, move: Math.floor(m.k / 2) + 1 };
+  return { k: "moment", fen: g.fen(), best: game.an.best[m.k], played: game.log[m.k].u, ev: game.an.ev[m.k], side: m.side, date: game.date, move: plyNum(game.fen, m.k).replace(/\.+$/, "") };
 }
 function analysisView(id) {
   const game = save.games.find(x => x.id === id);
@@ -9997,7 +10057,7 @@ function anGraph(game, moves) {
   const line = known.map((k, j) => `${j ? "L" : "M"}${x(k).toFixed(1)} ${y(k).toFixed(1)}`).join(" ");
   const area = known.length > 1 ? `${line} L${x(known[known.length - 1]).toFixed(1)} ${H} L0 ${H} Z` : "";
   const dots = moves.filter(m => m.q && m.q !== "q-best").map(m => `<circle cx="${x(m.k + 1).toFixed(1)}" cy="${y(m.k + 1).toFixed(1)}" r="3.2" class="an-dot ${m.q}"></circle>`).join("");
-  const hits = Array.from({ length: N + 1 }, (_, k) => `<rect x="${(x(k) - W / N / 2).toFixed(1)}" y="0" width="${(W / Math.max(1, N)).toFixed(1)}" height="${H}" data-go="${k}"><title>${k ? `${Math.ceil(k / 2)}${k % 2 ? "." : "..."} ${frSan(game.log[k - 1].san)}` : "Position de départ"}</title></rect>`).join("");
+  const hits = Array.from({ length: N + 1 }, (_, k) => `<rect x="${(x(k) - W / N / 2).toFixed(1)}" y="0" width="${(W / Math.max(1, N)).toFixed(1)}" height="${H}" data-go="${k}"><title>${k ? `${plyNum(game.fen, k - 1)} ${frSan(game.log[k - 1].san)}` : "Position de départ"}</title></rect>`).join("");
   return `<svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Courbe d'évaluation de la partie">
     <rect width="${W}" height="${H}" class="an-bg"></rect>
     ${area ? `<path d="${area}" class="an-area"></path>` : ""}
@@ -10009,7 +10069,7 @@ function anGraph(game, moves) {
 function anComment(game, m) {
   const an = game.an, g = gameAt(game, m.k), played = g.find(game.log[m.k].u);
   const me = m.side === game.color, who = me ? "me" : "opp";
-  const san = frSan(game.log[m.k].san), num = `${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."}`;
+  const san = frSan(game.log[m.k].san), num = plyNum(game.fen, m.k);
   const out = { title: `${num} ${san}`, word: m.word, c: !m.q || m.q === "q-best" ? "ok" : m.q === "q-dub" ? "warn" : "bad", lines: [] };
   if (m.book) { out.lines.push("Coup de théorie : il fait partie d'une ouverture étudiée dans les leçons."); return out; }
   if (!m.q || m.q === "q-best") {
@@ -10054,11 +10114,7 @@ function anPanel(progressOnly) {
   }
   const me = game.color, opp = me === "w" ? "b" : "w", resTxt = gameRes(game);
   const cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
-  const rows = [];
-  for (let i = 0; i < N; i += 2) {
-    const cell = j => { if (!game.log[j]) return "<span></span>"; const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}"${j === AN.i - 1 ? ' class="cur"' : ""}${m && m.q && m.q !== "q-best" ? ` data-q="${m.q}"` : ""}>${frSan(game.log[j].san)}</span>`; };
-    rows.push(`<span class="n">${i / 2 + 1}.</span>${cell(i)}${cell(i + 1)}`);
-  }
+  const rows = moveRows(game.fen, N, j => { const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}"${j === AN.i - 1 ? ' class="cur"' : ""}${m && m.q && m.q !== "q-best" ? ` data-q="${m.q}"` : ""}>${frSan(game.log[j].san)}</span>`; });
   const col = (c, name) => `<div class="an-side"><span class="an-who">${pieceEl(c === "w" ? "K" : "k")}${name}</span><b>${sum[c].acc != null && done ? sum[c].acc + " %" : "…"}</b><span>précision</span>
     <ul><li><i class="q-dub"></i>${sum[c].dub} imprécision${sum[c].dub > 1 ? "s" : ""}</li><li><i class="q-err"></i>${sum[c].err} erreur${sum[c].err > 1 ? "s" : ""}</li><li><i class="q-bad"></i>${sum[c].bad} gaffe${sum[c].bad > 1 ? "s" : ""}</li></ul></div>`;
   panel.innerHTML = `
@@ -10069,16 +10125,17 @@ function anPanel(progressOnly) {
     <div id="an-graph">${anGraph(game, moves)}</div>
     <div class="an-nav" role="group" aria-label="Navigation dans la partie">
       <button class="btn" data-nav="first" aria-label="Début">${ICON.first}</button><button class="btn" data-nav="prev" aria-label="Coup précédent">${ICON.prev}</button>
-      <span class="an-ply">${AN.i ? `${Math.ceil(AN.i / 2)}${AN.i % 2 ? "." : "..."} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
+      <span class="an-ply">${AN.i ? `${plyNum(game.fen, AN.i - 1)} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
       <button class="btn" data-nav="next" aria-label="Coup suivant">${ICON.next}</button><button class="btn" data-nav="last" aria-label="Fin">${ICON.last}</button>
     </div>
+    ${B.game.status() ? "" : `<div class="row"><button class="btn" id="an-play">${ICON.board}Jouer cette position contre l'ordinateur</button></div>`}
     ${com ? `<div class="coach-card ${com.c}"><div class="coach-title"><span class="verdict ${com.c}">${com.word}</span><b>${com.title}</b>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
       ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>` : ""}
     ${done ? `<div class="an-sum">${col(me, "Toi")}${col(opp, gameOpp(game))}</div>` : ""}
     ${moments.length ? `<p class="group-title">Tes moments clés</p><div class="list">${moments.map(m => `
       <div class="item an-moment${AN.i === m.k + 1 ? " next" : ""}">
-        <span class="num" data-q-dot="${m.q}">${Math.floor(m.k / 2) + 1}</span>
-        <span><span class="ti">${Math.floor(m.k / 2) + 1}${m.side === "w" ? "." : "..."} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
+        <span class="num" data-q-dot="${m.q}">${plyNum(game.fen, m.k).replace(/\.+$/, "")}</span>
+        <span><span class="ti">${plyNum(game.fen, m.k)} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
         <span class="an-acts"><button class="btn" data-go="${m.k + 1}">Voir</button><button class="btn primary" data-retry="${m.k}">${ICON.retry}Rejouer</button></span>
       </div>`).join("")}</div><p class="calm">Ces positions reviendront dans ta révision : demain, puis à intervalles de plus en plus longs.</p>` : done ? `<div class="fb ok">${ICON.check} Aucune erreur sérieuse de ta part dans cette partie. Bravo !</div>` : ""}
     <div class="moves" id="an-moves">${rows.join("")}</div>`;
@@ -10087,6 +10144,7 @@ function anPanel(progressOnly) {
   panel.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => anNav(b.dataset.nav));
   panel.querySelectorAll("[data-retry]").forEach(b => b.onclick = () => { const m = moves.find(x => x.k === +b.dataset.retry); if (m) revRunSingle(anMomentItem(game, m), () => analysisView(game.id)); });
   $("#an-back").onclick = analyseHome;
+  const ap = $("#an-play"); if (ap) ap.onclick = () => playFrom(B.game.fen(), game.color);
   const c = $("#an-moves .cur"); if (c) c.scrollIntoView({ block: "nearest" });
   updateEvalBar();
 }
@@ -10684,6 +10742,313 @@ function backupLoad(text) {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign({}, s, { lastBackup: o.date }))); } catch (e) { return bkMsg("bad", "Impossible d'écrire dans ce navigateur."); }
     location.reload();
   };
+}
+
+// ---------- Mon répertoire d'ouvertures ----------
+// Tu choisis tes ouvertures avec les Blancs et avec les Noirs. L'entraîneur joue l'autre camp et tu dois
+// répondre de mémoire. Parfois, l'adversaire sort de la théorie (un coup plausible choisi par le moteur) :
+// il faut alors trouver soi-même un coup sain.
+if (!save.rep) save.rep = { w: [], b: [], st: {}, dev: true };
+const RP = { cur: null };
+const repLine = l => l.steps[1].moves;
+const repStat = id => save.rep.st[id] || (save.rep.st[id] = { runs: 0, streak: 0, last: 0 });
+// Maîtrise : 3 lignes sans faute d'affilée
+const repMastery = id => Math.min(3, repStat(id).streak);
+function repHome() {
+  clearTimers(); PL.gen++;
+  RP.cur = null;
+  resetBoard(START, { locked: true, list: true });
+  panelEnter();
+  const R = save.rep, sideList = c => L_OUV.filter(l => l.side === c);
+  const item = l => {
+    const on = R[l.side].includes(l.id), m = repMastery(l.id), st = repStat(l.id);
+    return `<label class="rep-item${on ? " on" : ""}"><input type="checkbox" data-rep="${l.id}" ${on ? "checked" : ""}>
+      <span><b>${l.t}</b><small>${l.d}${st.runs ? ` · ${st.runs} entraînement${st.runs > 1 ? "s" : ""}` : ""}</small></span>
+      <span class="rep-m" title="${m === 3 ? "Maîtrisée" : `${m}/3 lignes sans faute d'affilée`}">${[0, 1, 2].map(k => `<i class="${k < m ? "on" : ""}"></i>`).join("")}</span></label>`;
+  };
+  const n = R.w.length + R.b.length;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Exercices</button><span class="pill">${n} ouverture${n > 1 ? "s" : ""} choisie${n > 1 ? "s" : ""}</span></div>
+    <p class="eyebrow">Ouvertures</p><h2>Mon répertoire</h2>
+    <p class="lead">Coche les ouvertures que tu veux jouer. L'entraîneur joue l'autre camp, et tu réponds de mémoire. Trois lignes sans faute d'affilée, et l'ouverture est maîtrisée.</p>
+    <div class="row">
+      <button class="btn primary" data-go="w" ${R.w.length ? "" : "disabled"}>${pieceEl("K")}Avec les Blancs</button>
+      <button class="btn primary" data-go="b" ${R.b.length ? "" : "disabled"}>${pieceEl("k")}Avec les Noirs</button>
+      <button class="btn" data-go="all" ${n ? "" : "disabled"}>Tout mélanger</button>
+    </div>
+    <label class="switch"><input type="checkbox" id="rep-dev" ${R.dev ? "checked" : ""}> L'adversaire sort parfois de la théorie</label>
+    <p class="group-title">Avec les Blancs</p><div class="rep-list">${sideList("w").map(item).join("")}</div>
+    <p class="group-title">Avec les Noirs</p><div class="rep-list">${sideList("b").map(item).join("")}</div>`;
+  $("#back").onclick = puzzleList;
+  panel.querySelectorAll("[data-rep]").forEach(c => c.onchange = () => {
+    const l = L_OUV.find(x => x.id === c.dataset.rep), arr = R[l.side];
+    if (c.checked && !arr.includes(l.id)) arr.push(l.id);
+    if (!c.checked) R[l.side] = arr.filter(x => x !== l.id);
+    persist(); repHome();
+  });
+  $("#rep-dev").onchange = e => { R.dev = e.target.checked; persist(); };
+  panel.querySelectorAll("[data-go]").forEach(b => b.onclick = () => repNext(b.dataset.go));
+}
+// Choix de la ligne : d'abord les moins maîtrisées, puis les moins récemment travaillées
+function repPick(which) {
+  const R = save.rep, ids = which === "all" ? R.w.concat(R.b) : R[which];
+  if (!ids.length) return null;
+  const scored = ids.map(id => ({ id, k: repMastery(id) * 10 + Math.random() * 6 - (Date.now() - repStat(id).last) / 864e5 })).sort((a, b) => a.k - b.k);
+  const pick = RP.lastId && scored.length > 1 && scored[0].id === RP.lastId ? scored[1] : scored[0];
+  return L_OUV.find(l => l.id === pick.id);
+}
+function repNext(which) {
+  const l = repPick(which);
+  if (!l) return repHome();
+  RP.which = which; RP.lastId = l.id;
+  clearTimers(); PL.gen++;
+  const line = repLine(l);
+  // Sortie de théorie : une fois par ligne, à un coup adverse tiré au hasard (pas le premier)
+  const oppPlies = line.map((_, i) => i).filter(i => (i % 2 === 0 ? "w" : "b") !== l.side && i >= 1);
+  const devAt = save.rep.dev && Math.random() < 0.4 && oppPlies.length > 1 ? oppPlies[1 + ((Math.random() * (oppPlies.length - 1)) | 0)] : -1;
+  RP.cur = { l, line, ply: 0, errors: 0, log: [], devAt, dev: null, ana: null, done: false, fb: null, gen: 0 };
+  panelEnter();
+  resetBoard(START, { flip: l.side === "b", locked: true, canMove: sq => colorOf(B.game.b[sq]) === l.side, onMove: repMove, captured: true });
+  repPanel();
+  if (l.side === "b") later(repAuto, 500); else B.locked = false;
+}
+function repPush(m) { RP.cur.log.push({ u: uci(m), san: B.game.san(m) }); }
+// Coup de l'entraîneur : la théorie, ou un écart plausible
+function repAuto() {
+  const r = RP.cur, g = B.game;
+  if (!r || r.done) return;
+  if (r.ply === r.devAt) {
+    B.locked = true; r.fb = { c: "info", t: `<i class="spin"></i> L'adversaire réfléchit...` }; repPanel();
+    const gen = ++r.gen;
+    Engine.run({ type: "analyse", moves: r.log.map(e => e.u), time: 700 }).then(a => {
+      if (RP.cur !== r || gen !== r.gen) return;
+      const book = r.line[r.ply];
+      const alts = a ? a.moves.filter(x => x.u !== book && x.bound >= 0 && x.score >= a.bestScore - 60).sort((x, y) => y.score - x.score).slice(0, 3) : [];
+      if (!alts.length) { r.devAt = -1; return repAuto(); }
+      const u = alts[(Math.random() * alts.length) | 0].u, m = g.find(u);
+      const bm = g.find(book);
+      r.dev = { u, book: bm ? frSan(g.san(bm)) : book };
+      repPush(m); commit(m, true); r.ply++;
+      r.fb = { c: "warn", t: `Hors théorie ! Il joue <b>${frSan(r.log[r.log.length - 1].san)}</b> au lieu de ${r.dev.book}.`, s: "Pas de ligne à réciter ici : trouve un coup sain, en appliquant les idées de l'ouverture." };
+      repAnalyseMine();
+    });
+    return;
+  }
+  const m = g.find(r.line[r.ply]);
+  if (!m) return repFinish();
+  repPush(m); commit(m, true); r.ply++;
+  if (r.ply >= r.line.length) return repFinish();
+  B.locked = false; repPanel();
+}
+// Après un écart : on analyse la position pour juger le coup du joueur
+function repAnalyseMine() {
+  const r = RP.cur, gen = ++r.gen;
+  B.locked = true; repPanel();
+  Engine.run({ type: "analyse", moves: r.log.map(e => e.u), time: 1200 }).then(a => {
+    if (RP.cur !== r || gen !== r.gen) return;
+    r.ana = a; B.locked = false; repPanel();
+  });
+}
+function repMove(m) {
+  const r = RP.cur, g = B.game, u = uci(m);
+  g.undo();
+  const raw = g.san(m), san = frSan(raw);
+  g.make(m);
+  const bad = (fb, arrowU, wait) => {
+    flashSq(m.to, "flash-bad"); sound("error");
+    r.errors++; B.locked = true; r.fb = fb; repPanel();
+    later(() => { g.undo(); B.last = null; const x = arrowU && g.find(arrowU); if (x) B.arrows = [[x.from, x.to]]; B.locked = false; render(); }, wait || 900);
+  };
+  if (r.dev) {
+    // Après une erreur hors théorie : il faut jouer le coup montré
+    if (r.dev.forced) {
+      if (u !== r.dev.forced) return bad({ c: "bad", t: `${ICON.flag} Joue le coup de la flèche pour terminer.` }, r.dev.forced, 600);
+      r.log.push({ u, san: raw }); flashSq(m.to, "flash-ok");
+      r.fb = { c: "warn", t: `C'est ça : <b>${san}</b>.`, s: "Retiens l'idée pour la prochaine fois." };
+      return repFinish();
+    }
+    const a = r.ana, x = a && a.moves.find(y => y.u === u), loss = !x || x.bound < 0 ? 999 : a.bestScore - x.score;
+    g.undo();
+    const best = a && g.find(a.best), bestSan = best ? frSan(g.san(best)) : "";
+    g.make(m);
+    if (loss <= 70) {
+      r.log.push({ u, san: raw }); flashSq(m.to, "flash-ok");
+      r.fb = { c: "ok", t: `${ICON.check} Bien réagi : <b>${san}</b> est un coup sain.`, s: u === a.best ? "C'est aussi le choix du moteur." : `Le moteur préférait ${bestSan}, mais ton coup tient la route.` };
+      return repFinish();
+    }
+    r.dev.forced = a.best;
+    return bad({ c: "bad", t: `${ICON.flag} ${san} n'est pas bon ici.`, s: `${whyWrong(g, m) || ""}Mieux : <b>${bestSan}</b>. Joue-le pour terminer.` }, a.best);
+  }
+  const exp = r.line[r.ply];
+  if (u !== exp && !(exp.length === 4 && u.startsWith(exp))) {
+    g.undo(); const x = g.find(exp), em = x ? frSan(g.san(x)) : exp; g.make(m);
+    return bad({ c: "bad", t: `${ICON.flag} Ce n'est pas la ligne.`, s: `Dans ton répertoire, on joue ici <b>${em}</b>. La flèche le montre : joue-le pour continuer.` }, exp);
+  }
+  flashSq(m.to, "flash-ok"); B.arrows = [];
+  r.log.push({ u, san: raw });
+  r.ply++;
+  const note = r.l.steps[1].notes && r.l.steps[1].notes[r.ply - 1];
+  r.fb = { c: "ok", t: `${ICON.check} ${san}`, s: note || "" };
+  if (r.ply >= r.line.length) return repFinish();
+  B.locked = true; repPanel();
+  later(repAuto, 450);
+}
+function repFinish() {
+  const r = RP.cur, st = repStat(r.l.id);
+  r.done = true; B.locked = true;
+  st.runs++; st.last = Date.now(); st.streak = r.errors ? 0 : st.streak + 1;
+  if (r.errors) revAdd("ouv:" + r.l.id, { k: "ouv", id: r.l.id });
+  dayInc("les");
+  persist(); updateXp();
+  sound(r.errors ? "ok" : "win");
+  if (!r.errors && st.streak === 3) celebrate();
+  repPanel();
+}
+function repPanel() {
+  const r = RP.cur;
+  if (!r) return;
+  const l = r.l, st = repStat(l.id), myTurn = !r.done && B.game.turn === l.side;
+  const head = r.done
+    ? `<div class="pz-head ${r.errors ? "fail" : "win"}"><span class="pz-ico">${r.errors ? ICON.retry : ICON.check}</span><div><b>${r.errors ? `Ligne terminée, ${r.errors} erreur${r.errors > 1 ? "s" : ""}` : st.streak >= 3 ? "Ouverture maîtrisée !" : "Ligne sans faute !"}</b><span>${r.errors ? "Elle reviendra dans ta révision. Recommence pour la fixer." : `${Math.min(3, st.streak)}/3 lignes sans faute d'affilée.`}</span></div></div>`
+    : `<div class="pz-head"><span class="pz-side ${l.side}">${pieceEl(l.side === "w" ? "K" : "k")}</span><div><b>${myTurn ? "À toi de jouer" : "L'adversaire joue..."}</b><span>${r.dev ? "Hors théorie : trouve un coup sain." : `Joue ta ligne de mémoire, avec les ${l.side === "w" ? "Blancs" : "Noirs"}.`}</span></div></div>`;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="rep-back">${ICON.back}Mon répertoire</button><span class="pill">${RP.which === "all" ? "Mélange" : RP.which === "w" ? "Avec les Blancs" : "Avec les Noirs"}</span></div>
+    <p class="eyebrow">Répertoire</p><h2>${l.t}</h2>
+    ${head}
+    ${r.fb ? `<div class="fb ${r.fb.c}"><span>${r.fb.t}${r.fb.s ? `<small>${r.fb.s}</small>` : ""}</span></div>` : ""}
+    ${r.done ? `<div class="row"><button class="btn primary big" id="rep-next">Ligne suivante${ICON.arrow}</button><button class="btn" id="rep-play">${ICON.board}Continuer la partie</button></div>
+      <p class="calm">« Continuer la partie » te laisse jouer la suite contre l'ordinateur, avec le coach.</p>`
+      : `<div class="row"><button class="btn" id="rep-hint" ${myTurn ? "" : "disabled"}>${ICON.bulb}Montrer le coup</button></div>`}
+    <div class="moves">${moveRows(null, r.log.length, j => `<span${j === r.log.length - 1 ? ' class="cur"' : ""}>${frSan(r.log[j].san)}</span>`).join("")}</div>`;
+  $("#rep-back").onclick = repHome;
+  const nx = $("#rep-next"); if (nx) { nx.onclick = () => repNext(RP.which); nx.focus({ preventScroll: true }); }
+  const pl = $("#rep-play"); if (pl) pl.onclick = () => playFrom(START, l.side, r.log.map(e => ({ u: e.u, san: e.san })));
+  const h = $("#rep-hint"); if (h) h.onclick = () => {
+    const u = r.dev ? (r.dev.forced || (r.ana && r.ana.best)) : r.line[r.ply], m = u && B.game.find(u);
+    if (!m) return;
+    r.errors++; B.arrows = [[m.from, m.to]]; render();
+    r.fb = { c: "info", t: `${ICON.bulb} La flèche montre le coup.`, s: "Compté comme une erreur : la ligne reviendra en révision." }; repPanel();
+  };
+}
+
+// ---------- Vision : voir l'échiquier sans le regarder ----------
+// Trois entraînements chronométrés : coordonnées (dans app.js), couleur des cases, cases attaquées.
+if (!save.visBest) save.visBest = { color: 0, attack: 0 };
+const VIS_MODES = [["coord", "Coordonnées"], ["color", "Couleur des cases"], ["attack", "Cases attaquées"]];
+const VS = { running: false, score: 0, miss: 0, end: 0, iv: null, target: null, piece: null, sq: -1, sel: new Set(), dur: 30000, lock: false };
+const visSeg = () => `<div class="seg vis-modes" role="group" aria-label="Entraînement">${VIS_MODES.map(([k, t]) => `<button data-vm="${k}" aria-pressed="${(C.vm || "coord") === k}">${t}</button>`).join("")}</div>`;
+function visBindSeg() {
+  panel.querySelectorAll("[data-vm]").forEach(b => b.onclick = () => { visStop(); C.vm = b.dataset.vm; coordView(); });
+}
+function visStop() { VS.running = false; if (VS.iv) { clearInterval(VS.iv); VS.iv = null; } $("#board-wrap").classList.remove("veil"); }
+function visionView() {
+  visStop();
+  const m = C.vm;
+  resetBoard(EMPTY, { flip: C.side === "b", coords: m === "attack", onSquare: m === "attack" ? visAttackClick : null, locked: m !== "attack" });
+  // Couleur des cases : l'échiquier est voilé, il faut le voir de tête
+  if (m === "color") $("#board-wrap").classList.add("veil");
+  panelEnter();
+  visPanel();
+}
+const sqColor = s => ((s >> 3) + (s & 7)) % 2 === 0 ? "light" : "dark";
+function visPanel(done) {
+  const m = C.vm, best = save.visBest[m];
+  const intro = m === "color"
+    ? `<h2>Claire ou foncée ?</h2><p class="lead">Une case s'affiche : dis de quelle couleur elle est, sans regarder l'échiquier. Repère utile : a1 est foncée, et les cases d'une même diagonale ont toutes la même couleur.</p>`
+    : `<h2>Quelles cases attaque-t-elle ?</h2><p class="lead">Une pièce apparaît : clique toutes les cases qu'elle attaque, puis valide. C'est la base du calcul : voir d'un coup d'œil la portée de chaque pièce.</p>`;
+  panel.innerHTML = `
+    ${visSeg()}
+    <p class="eyebrow">Vision · ${m === "color" ? "30" : "60"} secondes</p>
+    ${intro}
+    ${VS.running && m === "color" ? `<div class="target" id="vtarget">${VS.target}</div><div class="timer"><i id="vtimer" style="width:100%"></i></div>
+      <div class="row vis-answer"><button class="btn big vis-light" data-ans="light">Claire</button><button class="btn big vis-dark" data-ans="dark">Foncée</button></div><p class="calm">Raccourcis : flèche gauche pour claire, flèche droite pour foncée.</p>` : ""}
+    ${VS.running && m === "attack" ? `<div class="timer"><i id="vtimer" style="width:100%"></i></div>
+      <p class="lead">${Ton(VS.piece.toLowerCase())} en <b>${sqName(VS.sq)}</b> : <span id="vcount">${VS.sel.size}</span> case${VS.sel.size > 1 ? "s" : ""} choisie${VS.sel.size > 1 ? "s" : ""}.</p>
+      <div class="row"><button class="btn primary" id="vcheck">${ICON.check}Valider</button><button class="btn" id="vclear">Effacer</button></div>` : ""}
+    <div class="scorebox"><div><b id="vscore">${VS.score}</b><span>Score</span></div><div><b id="vmiss">${VS.miss}</b><span>Erreurs</span></div><div><b>${best}</b><span>Record</span></div></div>
+    ${done ? `<div class="fb ${done.c}"><span>${done.t}</span></div>` : ""}
+    ${VS.running ? "" : `<div class="settings"><div class="field"><span>Vu depuis</span><div class="seg" role="group"><button aria-pressed="${C.side === "w"}" data-side="w">Les Blancs</button><button aria-pressed="${C.side === "b"}" data-side="b">Les Noirs</button></div></div></div>
+      <div class="row"><button class="btn primary" id="vstart">${done ? "Rejouer" : "Démarrer"}</button></div>`}`;
+  visBindSeg();
+  panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { C.side = b.dataset.side; B.flip = C.side === "b"; render(); visPanel(); });
+  panel.querySelectorAll("[data-ans]").forEach(b => b.onclick = () => visAnswer(b.dataset.ans));
+  const st = $("#vstart"); if (st) st.onclick = visStart;
+  const ck = $("#vcheck"); if (ck) ck.onclick = visAttackCheck;
+  const cl = $("#vclear"); if (cl) cl.onclick = () => { VS.sel.clear(); B.marks = new Set(); render(); visPanel(); };
+}
+function visStart() {
+  const m = C.vm;
+  Object.assign(VS, { running: true, score: 0, miss: 0, dur: m === "color" ? 30000 : 60000, lock: false });
+  VS.end = Date.now() + VS.dur;
+  if (m === "color") visNewColor(); else visNewAttack();
+  visPanel();
+  VS.iv = setInterval(() => {
+    const left = VS.end - Date.now(), bar = $("#vtimer");
+    if (bar) bar.style.width = Math.max(0, (left / VS.dur) * 100) + "%";
+    if (left <= 0) visEnd();
+  }, 100);
+}
+function visEnd() {
+  const m = C.vm;
+  visStop();
+  if (m === "color") $("#board-wrap").classList.add("veil");
+  B.marks = new Set(); B.game = new Chess(EMPTY); render();
+  const rec = VS.score > save.visBest[m];
+  if (rec) { save.visBest[m] = VS.score; persist(); if (VS.score > 2) celebrate(); }
+  visPanel({ c: rec ? "ok" : "info", t: rec ? `Nouveau record : ${VS.score} !` : `Score : ${VS.score}. Ton record : ${save.visBest[m]}.` });
+}
+// --- Couleur des cases ---
+function visNewColor() { let t; do { t = sqName((Math.random() * 64) | 0); } while (t === VS.target); VS.target = t; }
+function visAnswer(a) {
+  if (!VS.running || C.vm !== "color") return;
+  const ok = sqColor(sqIdx(VS.target)) === a;
+  if (ok) { VS.score++; sound("move"); } else { VS.miss++; VS.end -= 3000; sound("error"); }
+  const t = $("#vtarget");
+  if (t) { t.classList.remove("ok", "bad"); void t.offsetWidth; t.classList.add(ok ? "ok" : "bad"); }
+  visNewColor();
+  if (t) setTimeout(() => { if ($("#vtarget")) $("#vtarget").textContent = VS.target; }, 120);
+  $("#vscore").textContent = VS.score; $("#vmiss").textContent = VS.miss;
+}
+document.addEventListener("keydown", e => {
+  if (modeNow !== "coord" || C.vm !== "color" || !VS.running) return;
+  if (e.key === "ArrowLeft") { e.preventDefault(); visAnswer("light"); }
+  if (e.key === "ArrowRight") { e.preventDefault(); visAnswer("dark"); }
+});
+// --- Cases attaquées (échiquier vide : la portée pure de la pièce) ---
+function visAttacks(p, sq) {
+  const r = sq >> 3, c = sq & 7, out = [], t = p.toLowerCase();
+  const add = (rr, cc) => { if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) out.push(rr * 8 + cc); };
+  if (t === "n") for (const [a, b] of [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]]) add(r + a, c + b);
+  if (t === "k") for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) if (a || b) add(r + a, c + b);
+  const dirs = t === "b" ? [[1, 1], [1, -1], [-1, 1], [-1, -1]] : t === "r" ? [[1, 0], [-1, 0], [0, 1], [0, -1]] : t === "q" ? [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]] : [];
+  for (const [a, b] of dirs) for (let k = 1; k < 8; k++) { const rr = r + a * k, cc = c + b * k; if (rr < 0 || rr > 7 || cc < 0 || cc > 7) break; out.push(rr * 8 + cc); }
+  return new Set(out);
+}
+function visNewAttack() {
+  // Plus le score monte, plus les pièces sont à longue portée
+  const pool = VS.score < 3 ? ["N", "K", "R"] : VS.score < 7 ? ["N", "B", "R", "K"] : ["N", "B", "R", "Q"];
+  VS.piece = pool[(Math.random() * pool.length) | 0];
+  let s; do { s = (Math.random() * 64) | 0; } while (s === VS.sq);
+  VS.sq = s; VS.sel = new Set();
+  B.game = new Chess(EMPTY); B.game.b[s] = VS.piece; B.marks = new Set(); B.last = null; render();
+}
+function visAttackClick(sq) {
+  if (!VS.running || VS.lock || sq === VS.sq) return;
+  if (VS.sel.has(sq)) VS.sel.delete(sq); else VS.sel.add(sq);
+  B.marks = new Set(VS.sel); render();
+  const c = $("#vcount"); if (c) c.textContent = VS.sel.size;
+}
+function visAttackCheck() {
+  if (!VS.running || VS.lock) return;
+  const want = visAttacks(VS.piece, VS.sq), ok = want.size === VS.sel.size && [...want].every(s => VS.sel.has(s));
+  if (ok) { VS.score++; sound("ok"); flashSq(VS.sq, "flash-ok"); visNewAttack(); visPanel(); return; }
+  VS.miss++; sound("error");
+  const vm = $("#vmiss"); if (vm) vm.textContent = VS.miss;
+  const missing = [...want].filter(s => !VS.sel.has(s)).length, extra = [...VS.sel].filter(s => !want.has(s)).length;
+  VS.lock = true; B.marks = want; render();
+  const fbx = panel.querySelector(".scorebox");
+  fbx.insertAdjacentHTML("afterend", `<div class="fb bad" id="vfb"><span>${missing ? `${missing} case${missing > 1 ? "s" : ""} oubliée${missing > 1 ? "s" : ""}` : ""}${missing && extra ? ", " : ""}${extra ? `${extra} case${extra > 1 ? "s" : ""} en trop` : ""}. Les bonnes cases sont en bleu.</span></div>`);
+  setTimeout(() => { VS.lock = false; if (VS.running && C.vm === "attack") { visNewAttack(); visPanel(); } }, 1400);
 }
 
 // ---------- Démarrage ----------

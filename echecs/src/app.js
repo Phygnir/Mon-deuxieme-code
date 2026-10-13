@@ -272,7 +272,7 @@ function celebrate() {
 const xpTotal = () => Object.keys(save.lessons).length * 10 + Object.keys(save.puzzles).length * 5 + (save.record.w || 0) * 15 + ((save.pz && save.pz.ok) || 0) * 2;
 function updateXp() { $("#xp").innerHTML = `${ICON.star}${xpTotal()} pts`; }
 // Étiquettes des onglets
-[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["analyse", "chart", "Analyse"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
+[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["analyse", "chart", "Analyse"], ["coord", "target", "Vision"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
 updateSoundBtn(); updateXp();
 
 // ---------- Navigation ----------
@@ -285,6 +285,7 @@ function setMode(mode) {
   if (typeof PL !== "undefined") PL.gen++;
   if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
   if (mode !== "analyse") { AN.run++; AN.g = null; }
+  visStop();
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
@@ -419,6 +420,7 @@ function lessonList(pathId) {
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
     ${planCard()}
+    ${path.id === "ouvertures" ? `<button class="rep-card" id="rep-open"><span class="rep-ico">${pieceEl("N")}</span><span><b>Mon répertoire d'ouvertures</b><small>Rejoue tes ouvertures de mémoire, contre un adversaire qui sort parfois de la théorie</small></span>${ICON.arrow}</button>` : ""}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -431,6 +433,7 @@ function lessonList(pathId) {
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
   bindPlan();
+  const ro = $("#rep-open"); if (ro) ro.onclick = () => { setMode("exercices"); repHome(); };
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -816,6 +819,7 @@ function puzzleList() {
       <div class="stat"><b>${save.streak || 0}</b><span>Série</span></div>
     </div>
     ${revCard()}
+    <button class="rep-card" id="rep-open"><span class="rep-ico">${pieceEl("N")}</span><span><b>Mon répertoire d'ouvertures</b><small>${save.rep.w.length + save.rep.b.length ? `${save.rep.w.length + save.rep.b.length} ouverture(s) choisie(s) · entraîne-toi à les jouer de mémoire` : "Choisis tes ouvertures et entraîne-toi à les jouer de mémoire"}</small></span>${ICON.arrow}</button>
     ${nextSeries ? `<div class="row"><button class="btn primary big" id="series">${ICON.puzzle}Série tactique : problème suivant</button></div>` : MINED_P.length ? `<div class="fb ok">Tous les problèmes tirés de parties sont résolus !</div>` : ""}
     <p class="group-title">Par thème</p>
     <div class="paths compact">${THEMES.map(t => { const l = MINED_P.filter(p => p.theme === t.id); if (!l.length) return ""; const d = solvedCount(l); return `
@@ -835,6 +839,7 @@ function puzzleList() {
   panel.querySelectorAll("[data-theme]").forEach(b => b.addEventListener("click", () => themeList(b.dataset.theme)));
   const s = $("#series"); if (s) s.onclick = () => { P.mode = "series"; P.list = MINED_P; startPuzzle(nextSeries.id); };
   revBindCard();
+  $("#rep-open").onclick = repHome;
 }
 function themeList(th) {
   const t = THEMES.find(x => x.id === th), list = MINED_P.filter(p => p.theme === th);
@@ -1030,8 +1035,28 @@ const LEVELS = [
 ];
 const PL = Object.assign({ color: "w", level: 1, coach: true, live: true, stop: true, log: [], over: null, bal: 0 }, save.play || {});
 Object.assign(PL, { gen: 0, ana: null, anaP: null, threat: null, review: null, brief: null, paused: false, thinking: false, hint: null });
-function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid }; persist(); }
+function savePlay() { save.play = { color: PL.color, level: PL.level, coach: PL.coach, live: PL.live, stop: PL.stop, log: PL.log, over: PL.over, bal: PL.bal, gid: PL.gid, fen: PL.fen }; persist(); }
 const ucis = () => PL.log.map(e => e.u);
+// Partie depuis une position quelconque (problème, analyse, répertoire) : PL.fen
+const plFen = () => PL.fen || START;
+// Numéro du coup k (0 = premier coup joué) quand la partie part de fen : « 12. » ou « 12... »
+function plyNum(fen, k) {
+  const f = (fen || START).split(" "), idx = k + (f[1] === "b" ? 1 : 0);
+  return `${(+f[5] || 1) + Math.floor(idx / 2)}${idx % 2 ? "..." : "."}`;
+}
+// Liste des coups en lignes de deux, en tenant compte d'un départ avec les Noirs
+function moveRows(fen, n, cell) {
+  const f = (fen || START).split(" "), off = f[1] === "b" ? 1 : 0, first = +f[5] || 1, rows = [];
+  for (let i = -off; i < n; i += 2) rows.push(`<span class="n">${first + (i + off) / 2}.</span>${i < 0 ? "<span>…</span>" : cell(i)}${i + 1 < n ? cell(i + 1) : "<span></span>"}`);
+  return rows;
+}
+const plTurnAt = n => ((plFen().split(" ")[1] === "w") === (n % 2 === 0) ? "w" : "b");
+function playFrom(fen, color, log) {
+  PL.fen = fen && fen !== START ? fen : null; PL.color = color;
+  PL.log = log || []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
+  savePlay();
+  setMode("jouer");
+}
 
 // --- Outils d'analyse pour le coach ---
 const FEM = { q: true, r: true };
@@ -1152,6 +1177,7 @@ function lossWords(loss) {
 }
 // Lignes d'ouverture compatibles avec la partie. Le nom n'est donné que s'il n'y a pas d'ambiguïté.
 function bookInfo(log) {
+  if (PL.fen) return null;
   const us = log.map(e => e.u);
   const lines = L_OUV.filter(l => { const line = l.steps[1].moves; return us.length <= line.length && us.every((u, i) => line[i] === u); });
   if (!lines.length) return null;
@@ -1173,7 +1199,7 @@ B.quality = m => {
   return quality(x.bound < 0 ? 999 : PL.ana.bestScore - x.score, u === PL.ana.best).cls;
 };
 function rebuildGame() {
-  const g = new Chess(START);
+  const g = new Chess(plFen());
   for (const e of PL.log) { const m = g.find(e.u); if (!m) break; g.make(m); }
   B.game = g;
   const lm = g.hist[g.hist.length - 1];
@@ -1185,13 +1211,13 @@ function startTurn() {
   const gen = PL.gen, moves = ucis();
   PL.ana = null; PL.threat = null; PL.anaP = null;
   if (PL.over || B.game.turn !== PL.color || (!PL.coach && !PL.live)) return;
-  Engine.run({ type: "threat", moves, time: 600 }).then(r => {
+  Engine.run({ type: "threat", fen: plFen(), moves, time: 600 }).then(r => {
     if (gen !== PL.gen || PL.log.length !== moves.length) return;
     PL.threat = explainThreat(r);
     if (PL.live && PL.threat && PL.threat.arrow && !B.arrows.length) B.arrows = [PL.threat.arrow];
     render(); if (modeNow === "jouer") playPanel();
   });
-  PL.anaP = Engine.run({ type: "analyse", moves, time: 1500 }).then(r => {
+  PL.anaP = Engine.run({ type: "analyse", fen: plFen(), moves, time: 1500 }).then(r => {
     if (!r) return null;
     const ana = { best: r.best, bestScore: r.bestScore, depth: r.depth, pv: r.pv, map: new Map(r.moves.map(x => [x.u, x])) };
     if (gen === PL.gen && PL.log.length === moves.length) {
@@ -1229,7 +1255,7 @@ function makeBrief(oppSan, oppFacts) {
 }
 function playView() {
   if (AN.g) { AN.run++; AN.g = null; }
-  resetBoard(START, { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
+  resetBoard(plFen(), { flip: PL.color === "b", canMove: sq => colorOf(B.game.b[sq]) === PL.color, onMove: playMove, captured: true, names: PL.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
   PL.gen++;
   rebuildGame();
   B.locked = !!PL.over;
@@ -1240,7 +1266,7 @@ function playView() {
 }
 function newGame(color) {
   PL.color = color === "r" ? (Math.random() < 0.5 ? "w" : "b") : color;
-  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36);
+  PL.log = []; PL.over = null; PL.bal = 0; PL.brief = null; PL.gid = Date.now().toString(36); PL.fen = null;
   savePlay();
   playView();
 }
@@ -1287,12 +1313,9 @@ function playPanel() {
   else if (PL.paused) status = { c: "warn", t: "Le coach a mis la partie en pause : regarde les flèches. Rouge = sa réponse, vert = le bon coup." };
   else if (PL.thinking) status = { c: "info", t: `<i class="spin"></i> L'ordinateur (${lvl.name}) réfléchit...` };
   else status = { c: "info", t: g.turn === PL.color ? (g.inCheck() ? "<b>Échec !</b> Protège ton roi." : "À toi de jouer.") : "Au tour de l'ordinateur." };
-  const rows = [];
-  for (let i = 0; i < PL.log.length; i += 2) {
-    const cur = j => (j === PL.log.length - 1 ? ' class="cur"' : "");
-    const q = j => PL.log[j] && PL.log[j].q ? ` data-q="${PL.log[j].q}"` : "";
-    rows.push(`<span class="n">${i / 2 + 1}.</span><span${cur(i)}${q(i)}>${frSan(PL.log[i].san)}</span><span${cur(i + 1)}${q(i + 1)}>${PL.log[i + 1] ? frSan(PL.log[i + 1].san) : ""}</span>`);
-  }
+  const cur = j => (j === PL.log.length - 1 ? ' class="cur"' : "");
+  const q = j => PL.log[j] && PL.log[j].q ? ` data-q="${PL.log[j].q}"` : "";
+  const rows = moveRows(PL.fen, PL.log.length, j => `<span${cur(j)}${q(j)}>${frSan(PL.log[j].san)}</span>`);
   const rec = save.record, book = bookInfo(PL.log);
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><p class="eyebrow">Partie avec coach</p>${book && book.name && PL.log.length ? `<span class="pill">${book.name}</span>` : ""}</div>
@@ -1350,7 +1373,7 @@ function playHint() {
   if (PL.thinking || PL.over || PL.paused) return;
   const gen = PL.gen, n = PL.log.length;
   PL.hint = `<i class="spin"></i> Le coach cherche le meilleur coup...`; playPanel();
-  Engine.run({ type: "search", moves: ucis(), time: 1200 }).then(r => {
+  Engine.run({ type: "search", fen: plFen(), moves: ucis(), time: 1200 }).then(r => {
     if (gen !== PL.gen || n !== PL.log.length || !r || !r.move) return;
     const g = B.game, m = g.find(r.move);
     if (!m) return;
@@ -1365,7 +1388,7 @@ function playUndo() {
   if (!PL.log.length) return;
   PL.gen++;
   PL.log.pop();
-  while (PL.log.length && (PL.log.length % 2 === 0 ? "w" : "b") !== PL.color) PL.log.pop();
+  while (PL.log.length && plTurnAt(PL.log.length) !== PL.color) PL.log.pop();
   Object.assign(PL, { over: null, review: null, paused: false, thinking: false, hint: null, brief: makeBrief(null, []) });
   savePlay();
   rebuildGame(); B.locked = false; B.sel = null; B.arrows = [];
@@ -1461,7 +1484,7 @@ function playMove(m, san) {
   B.locked = true;
   playPanel();
   const gen = PL.gen, anaP = PL.anaP || Promise.resolve(null);
-  Promise.all([anaP, Engine.run({ type: "search", moves: ucis(), time: 1100 })]).then(([ana, s]) => {
+  Promise.all([anaP, Engine.run({ type: "search", fen: plFen(), moves: ucis(), time: 1100 })]).then(([ana, s]) => {
     if (gen !== PL.gen) return;
     try { PL.review = buildReview(m, san, ana, s); } catch (e) { PL.review = null; }
     savePlay();
@@ -1481,10 +1504,10 @@ function aiMove() {
   PL.thinking = true; B.locked = true; render(); playPanel();
   const g = B.game, n = PL.log.length;
   // L'ordinateur suit souvent la théorie des ouvertures étudiées
-  const book = n < 16 ? L_OUV.map(l => l.steps[1].moves).filter(line => n < line.length && PL.log.every((e, i) => line[i] === e.u)) : [];
+  const book = n < 16 && !PL.fen ? L_OUV.map(l => l.steps[1].moves).filter(line => n < line.length && PL.log.every((e, i) => line[i] === e.u)) : [];
   const fromBook = book.length && Math.random() < 0.85 ? book[(Math.random() * book.length) | 0][n] : null;
   const t0 = Date.now();
-  const p = fromBook ? Promise.resolve({ move: fromBook }) : Engine.run(Object.assign({ type: "play", moves: ucis() }, (LEVELS[PL.level] || LEVELS[1]).job));
+  const p = fromBook ? Promise.resolve({ move: fromBook }) : Engine.run(Object.assign({ type: "play", fen: plFen(), moves: ucis() }, (LEVELS[PL.level] || LEVELS[1]).job));
   p.then(r => {
     later(() => {
       if (gen !== PL.gen) return;
@@ -1797,7 +1820,7 @@ function pzPanel() {
     ${info}
     ${Q.done ? pzWhyHTML(p) : ""}
     <div class="row">
-      ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button>`
+      ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button><button class="btn" id="pz-play" title="Continuer la partie contre l'ordinateur depuis la position du problème">${ICON.board}Jouer la position</button>`
         : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}
     </div>
     <div class="pz-rating">
@@ -1815,6 +1838,7 @@ function pzPanel() {
   pzBindModes();
   const nx = $("#pz-next"); if (nx) { nx.onclick = pzNext; nx.focus({ preventScroll: true }); }
   const rt = $("#pz-retry"); if (rt) rt.onclick = () => pzLoad(p, false);
+  const pp = $("#pz-play"); if (pp) pp.onclick = () => playFrom(pzFen(p), p.side);
   const so = $("#pz-sol"); if (so) so.onclick = pzSolution;
   $("#pz-diff").onchange = e => { PS.diff = +e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
   $("#pz-theme").onchange = e => { PS.theme = e.target.value; persist(); if (!Q.done && !Q.failed && Q.i === 0) pzNext(); else pzPanel(); };
@@ -1985,9 +2009,11 @@ function stormEnd() {
 }
 
 // ---------- Coordonnées ----------
-const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false };
+const C = { running: false, score: 0, miss: 0, target: null, end: 0, iv: null, side: "w", coords: false, vm: "coord" };
 const DURATION = 30000;
 function coordView() {
+  visStop();
+  if (C.vm !== "coord") return visionView();
   C.running = false;
   resetBoard(EMPTY, { flip: C.side === "b", coords: C.coords, onSquare: coordClick });
   panelEnter();
@@ -1997,7 +2023,8 @@ function newTarget() { let t; do { t = (Math.random() * 64) | 0; } while (sqName
 function coordPanel(done) {
   $("#under-top").innerHTML = C.running ? `<span>Clique sur</span><span class="target-mini" id="ctarget-mini">${C.target}</span>` : "";
   panel.innerHTML = `
-    <p class="eyebrow">Entraînement · 30 secondes</p>
+    ${C.running ? "" : visSeg()}
+    <p class="eyebrow">Vision · 30 secondes</p>
     <h2>Lis l'échiquier sans réfléchir</h2>
     <p class="lead">Une case s'affiche, clique-la le plus vite possible. Connaître les coordonnées par cœur aide à lire les livres, les vidéos et à noter tes parties.</p>
     ${C.running ? `<div class="target" id="ctarget">${C.target}</div><div class="timer"><i id="ctimer" style="width:100%"></i></div>` : ""}
@@ -2009,6 +2036,7 @@ function coordPanel(done) {
         <div class="field"><span>Aide</span><label class="switch"><input type="checkbox" id="ccoords" ${C.coords ? "checked" : ""}> Afficher les coordonnées</label></div>
       </div>
       <div class="row"><button class="btn primary" id="cstart">${done ? "Rejouer" : "Démarrer"}</button></div>`}`;
+  visBindSeg();
   panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { C.side = b.dataset.side; B.flip = C.side === "b"; render(); coordPanel(); });
   const cc = $("#ccoords"); if (cc) cc.onchange = e => { C.coords = e.target.checked; B.coords = C.coords; render(); };
   const cs = $("#cstart"); if (cs) cs.onclick = coordStart;

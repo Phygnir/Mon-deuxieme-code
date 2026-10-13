@@ -529,3 +529,35 @@ input.select { font-weight: 400; }
 .backup b { display: block; }
 .backup span { color: var(--muted); font-size: 0.88rem; }
 .pz-why summary.coach-title b { font-family: var(--font-body); font-size: 1rem; }
+
+/* ---------- Répertoire ---------- */
+.rep-card { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; font: inherit; transition: border-color .15s, background .15s; }
+.rep-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+.rep-card b { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+.rep-card small { color: var(--muted); font-size: 0.86rem; }
+.rep-ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.rep-ico .pc { width: 34px; height: 34px; }
+.rep-list { display: flex; flex-direction: column; gap: 4px; }
+.rep-item { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 11px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; }
+.rep-item:hover { background: var(--surface-2); }
+.rep-item.on { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.rep-item input { width: 18px; height: 18px; accent-color: var(--accent); }
+.rep-item b { display: block; font-size: 0.95rem; }
+.rep-item small { color: var(--muted); font-size: 0.82rem; font-family: var(--font-mono); }
+.rep-m { display: inline-flex; gap: 3px; }
+.rep-m i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.rep-m i.on { background: var(--gold); }
+.btn .pc { width: 1.3em; height: 1.3em; }
+
+/* ---------- Vision ---------- */
+.vis-modes { align-self: flex-start; flex-wrap: wrap; }
+.vis-modes button { padding: 8px 12px; font-size: 0.88rem; }
+.board-wrap.veil .board { filter: blur(14px) saturate(.6); opacity: .55; transition: filter .3s, opacity .3s; }
+.board-wrap.veil::after { content: "Vois-le de tête"; position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--ink); pointer-events: none; }
+.vis-answer { gap: 10px; }
+.vis-answer .btn { flex: 1; justify-content: center; min-height: 64px; font-size: 1.15rem; }
+.vis-light { background: #f3efe0; color: #1d2a22; border-color: #d9d2b8; }
+.vis-dark { background: #6f915e; color: #fff; border-color: #5d7d4e; }
+.target.ok { animation: vis-ok .35s; } .target.bad { animation: vis-bad .35s; }
+@keyframes vis-ok { 40% { color: var(--good); transform: scale(1.08); } }
+@keyframes vis-bad { 20%, 60% { transform: translateX(-6px); color: var(--bad); } 40%, 80% { transform: translateX(6px); } }

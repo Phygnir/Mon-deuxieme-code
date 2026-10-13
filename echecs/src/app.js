@@ -275,6 +275,8 @@ function setMode(mode) {
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
   save.mode = mode; persist();
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.mode === mode ? "true" : "false"));
+  const at = $("#tab-" + mode), bar = $(".tabs");
+  if (at && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = at.offsetLeft - (bar.clientWidth - at.offsetWidth) / 2;
   if (mode === "lecons") { if (save.path) lessonList(save.path); else pathList(); }
   else if (mode === "exercices") puzzleList();
   else if (mode === "jouer") playView();

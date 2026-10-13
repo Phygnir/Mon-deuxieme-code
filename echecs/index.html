@@ -152,6 +152,7 @@ button { font: inherit; color: inherit; }
 /* ---------- Sous l'échiquier ---------- */
 .under { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 30px; font-size: 0.9rem; color: var(--muted); padding-inline: 2px; }
 .board-col.with-eval .under { padding-left: 28px; }
+.under:empty { display: none; }
 .under .who { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); }
 .under .who i { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); }
 .captured { display: inline-flex; align-items: center; font-size: 1.05rem; }
@@ -403,7 +404,11 @@ button { font: inherit; color: inherit; }
 @media (max-width: 520px) {
   .panel { padding: 17px; border-radius: 16px; }
   .panel h2 { font-size: 1.5rem; }
-  .tab { padding: 7px 10px; font-size: 0.85rem; }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 7px 10px; font-size: 0.85rem; flex: none; }
+  .top-right { width: 100%; flex-wrap: nowrap; }
+  .top-right .tabs { flex: 1; min-width: 0; }
   .tab .ico { display: none; }
   .board-wrap { border-radius: 9px; }
   .evalbar { width: 10px; }
@@ -2908,6 +2913,8 @@ function setMode(mode) {
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
   save.mode = mode; persist();
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.mode === mode ? "true" : "false"));
+  const at = $("#tab-" + mode), bar = $(".tabs");
+  if (at && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = at.offsetLeft - (bar.clientWidth - at.offsetWidth) / 2;
   if (mode === "lecons") { if (save.path) lessonList(save.path); else pathList(); }
   else if (mode === "exercices") puzzleList();
   else if (mode === "jouer") playView();

@@ -1413,7 +1413,7 @@ function buildReview(m, san, ana, s) {
   else res.reasons.push(`Bilan : tu perds ${lossWords(loss)}.`);
   if (bestSan) {
     const bw = pickFacts(bestFacts, GOOD, "me", 2);
-    res.better = `Mieux : <b>${bestSan}</b>${bw.length ? " — " + bw.map(lc).join(" ") : "."}`;
+    res.better = `Mieux : <b>${bestSan}</b>${bw.length ? " — " + lc(bw.join(" ")) : "."}`;
     res.arrows.push([bestM.from, bestM.to]);
   }
   return res;

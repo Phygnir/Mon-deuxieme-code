@@ -89,4 +89,4 @@ Ces classements sont des estimations : contrairement à ceux de Lichess, ils ne 
 
 ## Crédits
 
-Les problèmes de l'onglet Problèmes (4 511, classés de 400 à 3 100) viennent de la [base de puzzles de Lichess](https://database.lichess.org/#puzzles) (CC0). Les pièces viennent du jeu « cburnett » de Colin M. L. Burnett (licence GPLv2+), celui qu'utilisent Lichess et Wikipédia.
+Les problèmes de l'onglet Problèmes (4 511, classés de 400 à 3 100) viennent de la [base de puzzles de Lichess](https://database.lichess.org/#puzzles) (CC0). Les polices (Bricolage Grotesque, Atkinson Hyperlegible, JetBrains Mono) sont sous licence SIL Open Font License et intégrées au fichier par `tools/fetch-fonts.py`. Les pièces viennent du jeu « cburnett » de Colin M. L. Burnett (licence GPLv2+), celui qu'utilisent Lichess et Wikipédia.

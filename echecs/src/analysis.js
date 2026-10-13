@@ -7,8 +7,7 @@ Object.assign(ICON, {
   first: svgI('<path d="M18 6 12 12l6 6M7 6v12"/>'),
   prev: svgI('<path d="M15 6l-6 6 6 6"/>'),
   next: svgI('<path d="M9 6l6 6-6 6"/>'),
-  last: svgI('<path d="M6 6l6 6-6 6M17 6v12"/>'),
-  chart: svgI('<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>')
+  last: svgI('<path d="M6 6l6 6-6 6M17 6v12"/>')
 });
 // Probabilité de gain (0-100) d'après l'évaluation en centipions, formule de Lichess
 const winPct = cp => (Math.abs(cp) > Engine_MATE - 200 ? (cp > 0 ? 100 : 0) : 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * Math.max(-1000, Math.min(1000, cp)))) - 1));
@@ -75,14 +74,14 @@ async function analyseGame(game) {
     }
     if (run !== AN.run) return;
     if (k % 8 === 0) persist();
-    if (AN.g === game && modeNow === "jouer") anPanel(true);
+    if (AN.g === game && modeNow === "analyse") anPanel(true);
   }
   AN.busy = false;
   an.done = true;
   persist();
   // Les erreurs de la partie partent en révision
   if (typeof revAdd === "function") for (const m of anMoments(game, anMoves(game)).filter(m => m.drop >= 15).slice(0, 3)) revAdd(`mo:${game.id}:${m.k}`, anMomentItem(game, m));
-  if (AN.g === game && modeNow === "jouer") anPanel(true);
+  if (AN.g === game && modeNow === "analyse") anPanel(true);
 }
 function anMomentItem(game, m) {
   const g = gameAt(game, m.k);
@@ -90,7 +89,7 @@ function anMomentItem(game, m) {
 }
 function analysisView(id) {
   const game = save.games.find(x => x.id === id);
-  if (!game) return playView();
+  if (!game) return analyseHome();
   clearTimers(); PL.gen++;
   AN.g = game; AN.i = game.log.length; AN.sel = null;
   resetBoard(game.fen || START, { flip: game.color === "b", locked: true, captured: true, names: game.color === "w" ? { w: "Toi", b: gameOpp(game) } : { w: gameOpp(game), b: "Toi" } });
@@ -167,7 +166,7 @@ function anComment(game, m) {
 }
 function anPanel(progressOnly) {
   const game = AN.g;
-  if (!game || modeNow !== "jouer") return;
+  if (!game || modeNow !== "analyse") return;
   const an = game.an, N = game.log.length, done = an && an.done;
   const moves = anMoves(game), sum = anSummary(game, moves), moments = done ? anMoments(game, moves) : [];
   if (progressOnly && $("#an-progress")) {
@@ -188,8 +187,8 @@ function anPanel(progressOnly) {
   const col = (c, name) => `<div class="an-side"><span class="an-who">${pieceEl(c === "w" ? "K" : "k")}${name}</span><b>${sum[c].acc != null && done ? sum[c].acc + " %" : "…"}</b><span>précision</span>
     <ul><li><i class="q-dub"></i>${sum[c].dub} imprécision${sum[c].dub > 1 ? "s" : ""}</li><li><i class="q-err"></i>${sum[c].err} erreur${sum[c].err > 1 ? "s" : ""}</li><li><i class="q-bad"></i>${sum[c].bad} gaffe${sum[c].bad > 1 ? "s" : ""}</li></ul></div>`;
   panel.innerHTML = `
-    <div class="row" style="justify-content:space-between"><button class="btn" id="an-back">${ICON.back}Retour</button><span class="pill">${resTxt} · ${gameSub(game)} · ${Math.ceil(N / 2)} coups</span></div>
-    <p class="eyebrow">Analyse de la partie</p>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="an-back">${ICON.back}Mes parties</button><span class="pill">${resTxt} · ${gameSub(game)} · ${Math.ceil(N / 2)} coups</span></div>
+    <p class="eyebrow">Analyse de la partie${game.url ? ` · <a href="${game.url}" target="_blank" rel="noopener">voir sur ${SITES[game.site] ? SITES[game.site].name : "le site"}</a>` : ""}</p>
     <h2>${done ? (moments.length ? "Les moments qui ont compté" : "Une partie bien tenue") : "Le moteur revoit ta partie"}</h2>
     ${done ? "" : `<div class="an-load"><div class="timer"><i id="an-progress" style="width:${Math.round(((an ? an.ev.filter(v => v != null).length : 0) / (N + 1)) * 100)}%"></i></div><span class="calm"><i class="spin"></i> Positions analysées : <b id="an-count">0/${N + 1}</b></span></div>`}
     <div id="an-graph">${anGraph(game, moves)}</div>
@@ -212,7 +211,7 @@ function anPanel(progressOnly) {
   panel.querySelectorAll("#an-moves [data-go], .an-moment [data-go]").forEach(b => b.onclick = () => anGo(+b.dataset.go));
   panel.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => anNav(b.dataset.nav));
   panel.querySelectorAll("[data-retry]").forEach(b => b.onclick = () => { const m = moves.find(x => x.k === +b.dataset.retry); if (m) revRunSingle(anMomentItem(game, m), () => analysisView(game.id)); });
-  $("#an-back").onclick = () => { AN.run++; AN.g = null; playView(); };
+  $("#an-back").onclick = analyseHome;
   const c = $("#an-moves .cur"); if (c) c.scrollIntoView({ block: "nearest" });
   updateEvalBar();
 }
@@ -223,41 +222,171 @@ function anNav(d) {
 }
 const anScore = v => (Math.abs(v) >= Engine_MATE ? "#" : Math.abs(v) > Engine_MATE - 200 ? (v > 0 ? "+" : "−") + "M" + Math.ceil((Engine_MATE - Math.abs(v)) / 2) : (v >= 0 ? "+" : "−") + (Math.abs(v) / 100).toFixed(1).replace(".", ","));
 document.addEventListener("keydown", e => {
-  if (!AN.g || modeNow !== "jouer" || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+  if (!AN.g || modeNow !== "analyse" || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
   const k = { ArrowLeft: "prev", ArrowRight: "next", Home: "first", End: "last" }[e.key];
   if (k) { e.preventDefault(); anNav(k); }
 });
-// Liste des parties récentes
-function gamesList() {
+// ---------- Onglet Analyse : tes parties, import par pseudo, bilan ----------
+Object.assign(ICON, { upload: svgI('<path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>'), search: svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'), link: svgI('<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>') });
+const fmtDay = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+const SITES = { lichess: { name: "Lichess", home: n => `https://lichess.org/@/${encodeURIComponent(n)}/all` }, chesscom: { name: "Chess.com", home: n => `https://www.chess.com/games/archive/${encodeURIComponent(n)}` } };
+if (!save.acct) save.acct = { site: "lichess", name: "" };
+const FETCH = { list: null, err: null, busy: false, key: "" };
+const gamesList = () => setMode("analyse");
+function openAnalysis(id) { if (modeNow !== "analyse") setMode("analyse"); analysisView(id); }
+// Bilan sur les parties analysées : précision moyenne et erreurs par phase de jeu
+function anStats() {
+  const gs = save.games.filter(g => g.an && g.an.done).slice().reverse();
+  if (!gs.length) return null;
+  const ph = { o: [0, 0], m: [0, 0], f: [0, 0] }, accs = [];
+  for (const g of gs) {
+    const ms = anMoves(g).filter(m => m.side === g.color);
+    if (ms.length) accs.push(Math.round(ms.reduce((a, m) => a + m.acc, 0) / ms.length));
+    for (const m of ms) {
+      const pos = gameAt(g, m.k); let mat = 0;
+      for (const p of pos.b) if (p) mat += { n: 3, b: 3, r: 5, q: 9 }[p.toLowerCase()] || 0;
+      const k = m.k < 24 && mat > 40 ? "o" : mat <= 26 ? "f" : "m";
+      ph[k][0]++; if (m.q === "q-err" || m.q === "q-bad") ph[k][1]++;
+    }
+  }
+  return { n: gs.length, acc: Math.round(accs.reduce((a, b) => a + b, 0) / Math.max(1, accs.length)), accs, ph };
+}
+function analyseHome() {
   clearTimers(); PL.gen++; AN.run++; AN.g = null;
   resetBoard(START, { locked: true, list: true });
+  $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   panelEnter();
-  const fmt = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  const st = anStats(), a = save.acct;
+  const phase = st && [["o", "Ouverture"], ["m", "Milieu de partie"], ["f", "Finale"]].map(([k, t]) => { const [n, e] = st.ph[k]; return n ? { t, v: Math.round((e / n) * 100), e, n } : null; }).filter(Boolean);
+  const worst = phase && phase.filter(x => x.v > 0).sort((x, y) => y.v - x.v)[0];
   panel.innerHTML = `
-    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Jouer</button><span class="pill">${save.games.length} partie${save.games.length > 1 ? "s" : ""}</span></div>
-    <p class="eyebrow">Tes parties</p><h2>Revois tes dernières parties</h2>
-    <p class="lead">Le moteur repère tes erreurs, montre ce qu'il fallait jouer et calcule ta précision. Tes erreurs partent ensuite en révision. Les 20 dernières parties sont gardées.</p>
-    <div class="row"><button class="btn primary" id="import">${ICON.upload}Importer une partie (Lichess, Chess.com…)</button></div>
+    <p class="eyebrow">Analyse</p><h2>Revois tes parties</h2>
+    <p class="lead">Le moteur repère tes erreurs, montre ce qu'il fallait jouer et calcule ta précision. Tes erreurs reviennent ensuite dans ta révision.</p>
+    <div class="imp-card">
+      <div class="seg" role="group" aria-label="Site">${Object.entries(SITES).map(([k, x]) => `<button data-site="${k}" aria-pressed="${a.site === k}">${x.name}</button>`).join("")}</div>
+      <form class="imp-row" id="acct-form"><input type="text" id="acct-name" class="select" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ton pseudo ${SITES[a.site].name}" value="${a.name.replace(/"/g, "&quot;")}" aria-label="Pseudo"><button class="btn primary" type="submit" id="acct-go">${ICON.search}Mes parties</button></form>
+      <div id="acct-res">${fetchHTML()}</div>
+      <button class="btn ghost-link" id="paste">${ICON.upload}Ou colle un PGN, ou choisis un fichier</button>
+    </div>
+    ${st ? `<p class="group-title">Ton bilan</p>
+    <div class="stats-strip">
+      <div class="stat"><b>${st.acc} %</b><span>Précision moyenne</span></div>
+      <div class="stat"><b>${st.n}</b><span>Partie${st.n > 1 ? "s" : ""} analysée${st.n > 1 ? "s" : ""}</span></div>
+      ${worst ? `<div class="stat"><b class="word">${worst.t}</b><span>Phase à travailler</span></div>` : ""}
+    </div>
+    ${st.accs.length > 1 ? `<div class="pz-rating"><div><span>Précision, partie après partie</span><b>${st.accs[st.accs.length - 1]} %</b></div>${sparkline(st.accs)}</div>` : ""}
+    ${phase.length ? `<div class="bars">${phase.map(x => `<div class="bar-row" title="${x.e} erreurs ou gaffes sur ${x.n} coups"><span>${x.t}</span><div class="bar bad"><i style="width:${Math.max(2, Math.min(100, x.v * 4))}%"></i></div><b>${x.v} %</b><small>${x.e}/${x.n}</small></div>`).join("")}</div>
+    <p class="calm">Part de tes coups qui sont des erreurs ou des gaffes, selon la phase de jeu.${worst && worst.v ? ` C'est en ${worst.t.toLowerCase()} que tu en fais le plus.` : ""}</p>` : ""}` : ""}
+    <p class="group-title">Mes parties</p>
     ${save.games.length ? `<div class="list">${save.games.map(g => {
       const s = g.an && g.an.done ? anSummary(g, anMoves(g))[g.color] : null;
       return `<button class="item" data-game="${g.id}">
         <span class="num">${g.res === "w" ? ICON.trophy : g.res === "d" ? "½" : g.res === "l" ? ICON.flag : "?"}</span>
-        <span><span class="ti">${gameRes(g)} avec les ${g.color === "w" ? "Blancs" : "Noirs"}</span><span class="de">${fmt(g.date)} · ${gameSub(g)} · ${Math.ceil(g.log.length / 2)} coups</span></span>
+        <span><span class="ti">${gameRes(g)} avec les ${g.color === "w" ? "Blancs" : "Noirs"}</span><span class="de">${fmtDay(g.date)} · ${gameSub(g)}${g.site ? ` · ${SITES[g.site].name}` : ""} · ${Math.ceil(g.log.length / 2)} coups</span></span>
         <span class="pill${s ? " done" : ""}">${s ? `Précision ${s.acc} %` : "À analyser"}</span>
-      </button>`; }).join("")}</div>` : `<p class="calm">Termine une partie pour la retrouver ici.</p>`}`;
-  $("#back").onclick = playView;
-  $("#import").onclick = () => importView();
+      </button>`; }).join("")}</div>` : `<p class="calm">Joue une partie dans l'onglet Jouer, ou importe une partie ci-dessus.</p>`}`;
+  panel.querySelectorAll("[data-site]").forEach(b => b.onclick = () => { a.site = b.dataset.site; FETCH.list = null; FETCH.err = null; persist(); analyseHome(); });
+  $("#acct-form").onsubmit = e => { e.preventDefault(); fetchGames(); };
+  $("#paste").onclick = () => importView();
+  bindFetch();
   panel.querySelectorAll("[data-game]").forEach(b => b.onclick = () => analysisView(b.dataset.game));
 }
-// --- Import d'une partie jouée ailleurs (PGN) ---
-Object.assign(ICON, { upload: svgI('<path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>') });
+// --- Dernières parties d'un joueur, via les API publiques de Lichess et Chess.com ---
+function fetchHTML() {
+  if (FETCH.busy) return `<p class="calm"><i class="spin"></i> Recherche de tes parties...</p>`;
+  if (FETCH.err) return `<div class="fb ${FETCH.err.c || "bad"}"><span>${FETCH.err.t}${FETCH.err.s ? `<small>${FETCH.err.s}</small>` : ""}</span></div>`;
+  if (!FETCH.list) return "";
+  if (!FETCH.list.length) return `<p class="calm">Aucune partie classique trouvée récemment pour ce pseudo.</p>`;
+  return `<div class="list imp-list">${FETCH.list.map((x, i) => `
+    <button class="item" data-fetch="${i}">
+      <span class="num">${x.res === "w" ? ICON.trophy : x.res === "d" ? "½" : ICON.flag}</span>
+      <span><span class="ti">${gameRes(x)} contre ${x.opp}${x.oppElo ? ` (${x.oppElo})` : ""}</span><span class="de">${fmtDay(x.date)} · ${x.speed} · avec les ${x.color === "w" ? "Blancs" : "Noirs"}${x.opening ? ` · ${x.opening}` : ""}</span></span>
+      <span class="pill${save.games.some(g => g.id === x.id) ? " done" : ""}">${save.games.some(g => g.id === x.id) ? "Importée" : "Analyser"}</span>
+    </button>`).join("")}</div>`;
+}
+function bindFetch() {
+  panel.querySelectorAll("[data-fetch]").forEach(b => b.onclick = () => { const x = FETCH.list[+b.dataset.fetch]; if (x) importFetched(x); });
+  const pl = $("#acct-paste"); if (pl) pl.onclick = () => importView();
+}
+const SPEED = { ultraBullet: "Ultrabullet", bullet: "Bullet", blitz: "Blitz", rapid: "Rapide", classical: "Classique", correspondence: "Par correspondance", daily: "Par correspondance" };
+async function fetchGames() {
+  const a = save.acct, name = $("#acct-name").value.trim();
+  if (!name) { $("#acct-name").focus(); return; }
+  a.name = name; persist();
+  FETCH.busy = true; FETCH.err = null; FETCH.list = null;
+  const res = $("#acct-res"); res.innerHTML = fetchHTML();
+  const run = FETCH.key = a.site + ":" + name + ":" + Date.now();
+  let list = null, err = null;
+  try { list = a.site === "lichess" ? await fetchLichess(name) : await fetchChesscom(name); }
+  catch (e) {
+    const site = SITES[a.site].name;
+    err = e && e.code === 404 ? { t: `${ICON.flag} Aucun joueur « ${name} » sur ${site}.`, s: "Vérifie l'orthographe du pseudo." }
+      : e && e.code === 429 ? { c: "warn", t: `${site} demande de patienter un peu.`, s: "Réessaie dans une minute." }
+      : { t: `${ICON.flag} Impossible de joindre ${site} depuis cette page.`, s: `Ta connexion, ou la page elle-même, bloque l'accès au site. Ouvre tes parties sur <a href="${SITES[a.site].home(name)}" target="_blank" rel="noopener">${site}</a>, copie le PGN de la partie et <button class="linkish" id="acct-paste">colle-le ici</button>.` };
+  }
+  if (FETCH.key !== run) return;
+  FETCH.busy = false; FETCH.list = list; FETCH.err = err;
+  const r2 = $("#acct-res"); if (r2 && modeNow === "analyse") { r2.innerHTML = fetchHTML(); bindFetch(); }
+}
+async function getJSON(url, accept) {
+  const r = await fetch(url, { headers: { Accept: accept || "application/json" } });
+  if (!r.ok) { const e = new Error("http " + r.status); e.code = r.status; throw e; }
+  return accept === "application/x-ndjson" ? (await r.text()).split("\n").filter(l => l.trim()).map(l => JSON.parse(l)) : r.json();
+}
+async function fetchLichess(name) {
+  const rows = await getJSON(`https://lichess.org/api/games/user/${encodeURIComponent(name)}?max=30&pgnInJson=true&opening=true&clocks=false&evals=false&literate=false`, "application/x-ndjson");
+  const ln = name.toLowerCase();
+  return rows.filter(g => g.variant === "standard" && g.pgn && g.moves).slice(0, 20).map(g => {
+    const w = g.players.white, b = g.players.black, color = ((b.user && b.user.name) || "").toLowerCase() === ln ? "b" : "w";
+    const opp = color === "w" ? b : w;
+    return { site: "lichess", pgn: g.pgn, color, date: g.createdAt, speed: SPEED[g.speed] || g.speed, opening: g.opening && g.opening.name ? g.opening.name.split(":")[0] : "",
+      opp: opp.user ? opp.user.name : opp.aiLevel ? `Stockfish niveau ${opp.aiLevel}` : "Anonyme", oppElo: opp.rating || null,
+      res: !g.winner ? "d" : g.winner === (color === "w" ? "white" : "black") ? "w" : "l", url: `https://lichess.org/${g.id}`, id: null };
+  }).map(withId);
+}
+async function fetchChesscom(name) {
+  const ln = name.toLowerCase();
+  const arch = await getJSON(`https://api.chess.com/pub/player/${encodeURIComponent(ln)}/games/archives`);
+  const urls = (arch.archives || []).slice(-3).reverse(), games = [];
+  for (const u of urls) {
+    const m = await getJSON(u);
+    games.push(...(m.games || []));
+    if (games.length >= 20) break;
+  }
+  const DRAW = ["agreed", "repetition", "stalemate", "insufficient", "50move", "timevsinsufficient"];
+  return games.filter(g => g.rules === "chess" && g.pgn).sort((x, y) => y.end_time - x.end_time).slice(0, 20).map(g => {
+    const color = (g.black.username || "").toLowerCase() === ln ? "b" : "w", me = color === "w" ? g.white : g.black, opp = color === "w" ? g.black : g.white;
+    const op = (g.pgn.match(/\[ECOUrl "[^"]*\/openings\/([^"]+)"\]/) || [])[1];
+    return { site: "chesscom", pgn: g.pgn, color, date: g.end_time * 1000, speed: SPEED[g.time_class] || g.time_class, opening: op ? decodeURIComponent(op).split("-").slice(0, 3).join(" ") : "",
+      opp: opp.username, oppElo: opp.rating || null, res: me.result === "win" ? "w" : DRAW.includes(me.result) ? "d" : "l", url: g.url, id: null };
+  }).map(withId);
+}
+// L'identifiant dépend des coups : une partie importée deux fois n'est gardée qu'une fois
+function withId(x) {
+  try { const pg = parsePgn(x.pgn)[0]; x.parsed = pg; x.id = "p" + pzHash((pg.fen || "") + pg.moves.map(m => m.u).join("")); } catch (e) { x.parsed = null; }
+  return x;
+}
+function storeGames(added) {
+  const keep = new Map(save.games.map(g => [g.id, g]));
+  for (const g of added) if (keep.has(g.id)) g.an = keep.get(g.id).an;
+  save.games = added.concat(save.games.filter(g => !added.some(a => a.id === g.id))).slice(0, 20);
+  persist();
+}
+function importFetched(x) {
+  if (!x.parsed) { FETCH.err = { t: `${ICON.flag} Cette partie n'a pas pu être lue.` }; $("#acct-res").innerHTML = fetchHTML(); return; }
+  const t = x.parsed.tags;
+  storeGames([{ id: x.id, date: x.date, color: x.color, level: null, res: x.res, src: "pgn", site: x.site, url: x.url, white: t.White || null, black: t.Black || null, fen: x.parsed.fen, log: x.parsed.moves, an: null }]);
+  analysisView(x.id);
+}
+// --- Import par copier-coller (PGN) ---
 const IMP = { text: "", side: "auto" };
 function importView(err) {
   clearTimers(); PL.gen++; AN.run++; AN.g = null;
   resetBoard(START, { locked: true, list: true });
+  $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   panelEnter();
   panel.innerHTML = `
-    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Mes parties</button><span class="pill">Format PGN</span></div>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Analyse</button><span class="pill">Format PGN</span></div>
     <p class="eyebrow">Tes parties</p><h2>Importe une partie</h2>
     <p class="lead">Analyse une partie jouée en ligne ou sur un vrai échiquier. Tes erreurs deviendront des exercices dans ta révision.</p>
     <ul class="goals">
@@ -269,7 +398,7 @@ function importView(err) {
     <label class="field"><span>Texte PGN</span><textarea id="pgn-text" class="textarea" rows="8" spellcheck="false" placeholder='[White "toi"]&#10;[Black "adversaire"]&#10;&#10;1. e4 e5 2. Nf3 Nc6 3. Bc4 ...'></textarea></label>
     <div class="settings">
       <div class="field"><span>Ou un fichier</span><input type="file" id="pgn-file" accept=".pgn,.txt,application/x-chess-pgn" class="file"></div>
-      <div class="field"><span>Ton pseudo (facultatif)</span><input type="text" id="pgn-name" class="select" autocomplete="username" value="${(save.pgnName || "").replace(/"/g, "&quot;")}" placeholder="Pour savoir quel camp tu jouais"></div>
+      <div class="field"><span>Ton pseudo (facultatif)</span><input type="text" id="pgn-name" class="select" autocomplete="username" value="${(save.pgnName || save.acct.name || "").replace(/"/g, "&quot;")}" placeholder="Pour savoir quel camp tu jouais"></div>
     </div>
     <div class="field"><span>Tu jouais</span><div class="seg" role="group">${[["auto", "Selon le pseudo"], ["w", "Les Blancs"], ["b", "Les Noirs"]].map(([v, t]) => `<button data-side="${v}" aria-pressed="${IMP.side === v}">${t}</button>`).join("")}</div></div>
     <div class="row"><button class="btn primary big" id="pgn-go">${ICON.chart}Analyser</button></div>`;
@@ -278,7 +407,7 @@ function importView(err) {
   ta.oninput = () => { IMP.text = ta.value; };
   $("#pgn-file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { IMP.text = ta.value = t; }); };
   panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { IMP.side = b.dataset.side; panel.querySelectorAll("[data-side]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
-  $("#back").onclick = gamesList;
+  $("#back").onclick = analyseHome;
   $("#pgn-go").onclick = importGo;
 }
 function importGo() {
@@ -289,18 +418,15 @@ function importGo() {
   const lname = name.toLowerCase(), added = [];
   for (const pg of games.slice(0, 5)) {
     const t = pg.tags;
-    let color = IMP.side === "auto" ? (lname && (t.Black || "").toLowerCase() === lname ? "b" : "w") : IMP.side;
+    const color = IMP.side === "auto" ? (lname && (t.Black || "").toLowerCase() === lname ? "b" : "w") : IMP.side;
     const r = pg.result, res = r === "1/2-1/2" ? "d" : r === "1-0" ? (color === "w" ? "w" : "l") : r === "0-1" ? (color === "b" ? "w" : "l") : "?";
     const d = (t.UTCDate || t.Date || "").match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
     const date = d ? Date.UTC(+d[1], +d[2] - 1, +d[3], 12) : Date.now();
     const id = "p" + pzHash((pg.fen || "") + pg.moves.map(m => m.u).join(""));
     added.push({ id, date, color, level: null, res, src: "pgn", white: t.White && t.White !== "?" ? t.White : null, black: t.Black && t.Black !== "?" ? t.Black : null, fen: pg.fen, log: pg.moves, an: null });
   }
-  const keep = new Map(save.games.map(g => [g.id, g]));
-  for (const g of added) if (keep.has(g.id)) g.an = keep.get(g.id).an;
-  save.games = added.concat(save.games.filter(g => !added.some(a => a.id === g.id))).slice(0, 20);
-  persist();
+  storeGames(added);
   IMP.text = "";
   analysisView(added[0].id);
-  if (games.length > 1) panel.insertAdjacentHTML("afterbegin", `<div class="fb info">${Math.min(5, games.length)} parties importées${games.length > 5 ? ` (les 5 premières sur ${games.length})` : ""}. Retrouve les autres dans « Mes parties ».</div>`);
+  if (games.length > 1) panel.insertAdjacentHTML("afterbegin", `<div class="fb info">${Math.min(5, games.length)} parties importées${games.length > 5 ? ` (les 5 premières sur ${games.length})` : ""}. Retrouve les autres dans l'onglet Analyse.</div>`);
 }

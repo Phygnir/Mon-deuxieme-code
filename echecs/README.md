@@ -21,9 +21,11 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.
   - Après ton coup, il donne un verdict justifié : la réponse adverse, la suite probable, le bilan matériel et le meilleur coup.
   - Sur une erreur, la partie se met en pause et tu peux reprendre ton coup.
-  - **Analyse de partie** : à la fin, le moteur revoit chaque position. On obtient une courbe d'évaluation, la précision de chaque camp et le décompte des imprécisions, erreurs et gaffes, classées selon la perte de chances de gain, comme sur Lichess. On a aussi un commentaire sur chaque coup (la réfutation, ce qu'il fallait jouer) et tes moments clés, que tu peux rejouer. Les 20 dernières parties sont gardées dans « Mes parties ».
-  - **Import de tes parties** : colle le PGN d'une partie jouée sur Lichess, Chess.com ou sur un vrai échiquier, ou choisis un fichier .pgn. Les notations anglaise et française sont acceptées. Ton pseudo permet de savoir quel camp tu jouais, puis la partie est analysée et ses erreurs partent en révision.
 - **Révision espacée** : ce que tu rates revient le lendemain, puis après 3, 7, 14 et 30 jours si tu le réussis. Une erreur le renvoie au début, et après cinq réussites il est acquis. On y retrouve les problèmes et exercices ratés, les moments clés de tes parties et les ouvertures apprises. Une carte « À réviser aujourd'hui » apparaît en tête des leçons et des exercices.
+- **Analyse** : un onglet pour revoir tes parties.
+  - **Import par pseudo** : tape ton pseudo Lichess ou Chess.com et choisis une de tes 20 dernières parties, via les API publiques des deux sites. On peut aussi coller un PGN ou choisir un fichier .pgn (notation anglaise ou française). Si la page ne peut pas joindre le site, elle le dit et propose le copier-coller.
+  - **Analyse de partie** : le moteur revoit chaque position. On obtient une courbe d'évaluation, la précision de chaque camp et le décompte des imprécisions, erreurs et gaffes, classées selon la perte de chances de gain, comme sur Lichess. On a aussi un commentaire sur chaque coup (la réfutation, ce qu'il fallait jouer) et tes moments clés, que tu peux rejouer.
+  - **Bilan** : ta précision moyenne, son évolution et la part de tes erreurs par phase de jeu (ouverture, milieu, finale). Les 20 dernières parties sont gardées.
 - **Coordonnées** : un entraînement chronométré de 30 secondes.
 
 Il y a aussi des sons, l'animation des pièces, une barre d'évaluation et des points gagnés. La progression est enregistrée dans le navigateur (`localStorage`).

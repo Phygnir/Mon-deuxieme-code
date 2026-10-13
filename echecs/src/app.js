@@ -205,6 +205,7 @@ const ICON = {
   sun: svgI('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
   moon: svgI('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
   bolt: svgI('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
+  chart: svgI('<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>'),
   trophy: svgI('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>')
 };
 // Sons synthétisés (aucun fichier) : bois pour un coup, plus sec pour une prise
@@ -271,7 +272,7 @@ function celebrate() {
 const xpTotal = () => Object.keys(save.lessons).length * 10 + Object.keys(save.puzzles).length * 5 + (save.record.w || 0) * 15 + ((save.pz && save.pz.ok) || 0) * 2;
 function updateXp() { $("#xp").innerHTML = `${ICON.star}${xpTotal()} pts`; }
 // Étiquettes des onglets
-[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
+[["lecons", "book", "Leçons"], ["exercices", "puzzle", "Exercices"], ["problemes", "bolt", "Problèmes"], ["jouer", "board", "Jouer"], ["analyse", "chart", "Analyse"], ["coord", "target", "Coordonnées"]].forEach(([id, ic, t]) => { $("#tab-" + id).innerHTML = ICON[ic] + `<span>${t}</span>`; });
 updateSoundBtn(); updateXp();
 
 // ---------- Navigation ----------
@@ -283,6 +284,7 @@ function setMode(mode) {
   clearTimers();
   if (typeof PL !== "undefined") PL.gen++;
   if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
+  if (mode !== "analyse") { AN.run++; AN.g = null; }
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";
   $("#board-col").classList.toggle("with-eval", mode === "jouer");
@@ -294,6 +296,7 @@ function setMode(mode) {
   else if (mode === "exercices") puzzleList();
   else if (mode === "jouer") playView();
   else if (mode === "problemes") problemsView();
+  else if (mode === "analyse") analyseHome();
   else coordView();
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
@@ -1319,8 +1322,8 @@ function playPanel() {
   panel.querySelectorAll("[data-new]").forEach(b => b.onclick = () => newGame(b.dataset.new));
   $("#hint").onclick = playHint;
   $("#undo").onclick = playUndo;
-  const an = $("#analyse"); if (an) { an.onclick = () => analysisView(PL.gid); an.focus({ preventScroll: true }); }
-  const gl = $("#games"); if (gl) gl.onclick = gamesList;
+  const an = $("#analyse"); if (an) { an.onclick = () => openAnalysis(PL.gid); an.focus({ preventScroll: true }); }
+  const gl = $("#games"); if (gl) gl.onclick = () => setMode("analyse");
   $("#flip").onclick = () => { B.flip = !B.flip; render(); };
   const rs = $("#resign"); if (rs) rs.onclick = () => endGame("l", "Tu as abandonné. La prochaine sera la bonne !");
   $("#coach").onchange = e => { PL.coach = e.target.checked; savePlay(); playPanel(); if (!PL.anaP && !PL.over && B.game.turn === PL.color) startTurn(); };
@@ -1333,7 +1336,7 @@ function playPanel() {
 function updateEvalBar() {
   const bar = $("#evalbar");
   if (!bar) return;
-  bar.hidden = modeNow !== "jouer";
+  bar.hidden = !(modeNow === "jouer" || (modeNow === "analyse" && AN.g));
   $("#board-col").classList.toggle("with-eval", !bar.hidden);
   const v = PL.bal, pct = Math.abs(v) > Engine_MATE - 200 ? (v > 0 ? 100 : 0) : Math.max(3, Math.min(97, 50 + 50 * Math.tanh(v / 500)));
   bar.style.setProperty("--w", pct + "%");

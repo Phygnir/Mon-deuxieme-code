@@ -66,7 +66,7 @@ button { font: inherit; color: inherit; }
 .brand p { margin: 2px 0 0; font-size: 0.82rem; color: var(--muted); }
 .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .tabs { display: flex; flex-wrap: wrap; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px; box-shadow: var(--shadow); }
-.tab { display: inline-flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.92rem; color: var(--muted); transition: background .15s, color .15s; }
+.tab { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 8px 11px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.92rem; color: var(--muted); transition: background .15s, color .15s; }
 .tab:hover { color: var(--ink); background: var(--surface-2); }
 .tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); box-shadow: 0 2px 8px -2px rgba(29, 107, 69, .5); }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-size: 0.86rem; box-shadow: var(--shadow); font-variant-numeric: tabular-nums; }
@@ -464,3 +464,19 @@ button { font: inherit; color: inherit; }
 input.select { font-weight: 400; }
 .file { font: inherit; font-size: 0.86rem; color: var(--muted); max-width: 100%; }
 .file::file-selector-button { font: inherit; font-weight: 700; margin-right: 10px; padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+
+/* ---------- Onglet Analyse ---------- */
+.imp-card { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.imp-card .seg { align-self: flex-start; }
+.imp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin: 0; }
+.imp-row .select { font-size: 1rem; padding: 10px 12px; background: var(--surface); }
+.imp-list { max-height: 360px; overflow-y: auto; margin: 0 -6px; }
+.ghost-link { align-self: flex-start; background: transparent; border-color: transparent; box-shadow: none; color: var(--muted); padding-left: 4px; }
+.ghost-link:hover { color: var(--ink); background: var(--surface); }
+.linkish { font: inherit; color: inherit; font-weight: 700; text-decoration: underline; background: none; border: 0; padding: 0; cursor: pointer; }
+.fb small a { color: inherit; font-weight: 700; }
+.eyebrow a { color: inherit; }
+.bar.bad i { background: var(--bad); }
+
+.stat b.word { font-size: 1.05rem; line-height: 1.4; }
+@media (min-width: 1240px) { #xp { display: none; } }

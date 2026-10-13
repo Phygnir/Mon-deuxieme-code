@@ -495,3 +495,37 @@ input.select { font-weight: 400; }
 .dl-steps a.btn:not(.primary) { color: var(--ink); }
 .dl-steps a.btn.primary { color: var(--accent-ink); }
 .ghost-link { text-align: left; }
+.pz-why summary { cursor: pointer; list-style: none; }
+.pz-why summary::-webkit-details-marker { display: none; }
+.why-line { margin: 4px 0 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.93rem; }
+.why-line li { padding-left: 12px; border-left: 3px solid var(--line); }
+.why-line li.mine { border-left-color: var(--good); }
+.why-line li.opp { color: var(--muted); }
+.why-line li.opp b { color: var(--ink); }
+
+/* ---------- Plan du jour et sauvegarde ---------- */
+.plan { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.plan.done { background: var(--good-bg); border-color: transparent; }
+.plan-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.plan-head .eyebrow { margin: 0 0 2px; }
+.plan-head b { font-family: var(--font-display); font-size: 1.15rem; }
+.streak { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.streak b { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); }
+.streak small { font-size: 0.78rem; }
+.streak.on { background: #fff1dc; border-color: #f2c48a; color: #b85c00; }
+.streak.on .ico { fill: #f59e0b; stroke: #c2410c; }
+:root.theme-dark .streak.on { background: #3a2a14; border-color: #7a4f1d; color: #f5b35c; }
+.plan-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.plan-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 36px; }
+.plan-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; background: var(--surface); }
+.plan-list li.ok .plan-dot { background: var(--good); border-color: var(--good); color: #fff; }
+.plan-dot .ico { width: 14px; height: 14px; stroke-width: 3; }
+.plan-t { font-weight: 700; font-size: 0.95rem; }
+.plan-t small { margin-left: 8px; font-family: var(--font-mono); font-weight: 700; color: var(--muted); font-size: 0.8rem; }
+.plan-list li.ok .plan-t { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+.plan-list .btn { padding: 6px 12px; font-size: 0.86rem; }
+.plan .calm { margin: 0; font-size: 0.86rem; }
+.backup { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; border: 1px dashed var(--line); }
+.backup b { display: block; }
+.backup span { color: var(--muted); font-size: 0.88rem; }
+.pz-why summary.coach-title b { font-family: var(--font-body); font-size: 1rem; }

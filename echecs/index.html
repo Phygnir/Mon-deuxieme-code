@@ -506,6 +506,40 @@ input.select { font-weight: 400; }
 .dl-steps a.btn:not(.primary) { color: var(--ink); }
 .dl-steps a.btn.primary { color: var(--accent-ink); }
 .ghost-link { text-align: left; }
+.pz-why summary { cursor: pointer; list-style: none; }
+.pz-why summary::-webkit-details-marker { display: none; }
+.why-line { margin: 4px 0 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.93rem; }
+.why-line li { padding-left: 12px; border-left: 3px solid var(--line); }
+.why-line li.mine { border-left-color: var(--good); }
+.why-line li.opp { color: var(--muted); }
+.why-line li.opp b { color: var(--ink); }
+
+/* ---------- Plan du jour et sauvegarde ---------- */
+.plan { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.plan.done { background: var(--good-bg); border-color: transparent; }
+.plan-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.plan-head .eyebrow { margin: 0 0 2px; }
+.plan-head b { font-family: var(--font-display); font-size: 1.15rem; }
+.streak { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.streak b { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); }
+.streak small { font-size: 0.78rem; }
+.streak.on { background: #fff1dc; border-color: #f2c48a; color: #b85c00; }
+.streak.on .ico { fill: #f59e0b; stroke: #c2410c; }
+:root.theme-dark .streak.on { background: #3a2a14; border-color: #7a4f1d; color: #f5b35c; }
+.plan-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.plan-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 36px; }
+.plan-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; background: var(--surface); }
+.plan-list li.ok .plan-dot { background: var(--good); border-color: var(--good); color: #fff; }
+.plan-dot .ico { width: 14px; height: 14px; stroke-width: 3; }
+.plan-t { font-weight: 700; font-size: 0.95rem; }
+.plan-t small { margin-left: 8px; font-family: var(--font-mono); font-weight: 700; color: var(--muted); font-size: 0.8rem; }
+.plan-list li.ok .plan-t { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+.plan-list .btn { padding: 6px 12px; font-size: 0.86rem; }
+.plan .calm { margin: 0; font-size: 0.86rem; }
+.backup { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; border: 1px dashed var(--line); }
+.backup b { display: block; }
+.backup span { color: var(--muted); font-size: 0.88rem; }
+.pz-why summary.coach-title b { font-family: var(--font-body); font-size: 1rem; }
 .pc.wP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
 .pc.wB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==")}
 .pc.wN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==")}
@@ -8129,7 +8163,7 @@ function pathList() {
       <div class="stat"><b>${save.record.w || 0}</b><span>Victoires</span></div>
       <div class="stat"><b>${xpTotal()}</b><span>Points</span></div>
     </div>
-    ${revCard()}
+    ${planCard()}
     ${next && done ? `<div class="row"><button class="btn primary big" id="resume">${ICON.arrow}Reprendre : ${next.t}</button></div>` : ""}
     <div class="paths">${PATHS.map(p => {
       const d = pathDone(p), n = p.lessons.length, lvl = LEVEL_DOTS[p.id];
@@ -8138,10 +8172,11 @@ function pathList() {
         <span class="path-desc">${p.d}</span>
         <span class="path-foot"><span class="meter"><i style="width:${Math.round(d / n * 100)}%"></i></span><span class="path-count">${d}/${n}</span></span>
       </button>`;
-    }).join("")}</div>`;
+    }).join("")}</div>
+    ${backupCard()}`;
   panel.querySelectorAll("[data-path]").forEach(b => b.addEventListener("click", () => lessonList(b.dataset.path)));
   const rs = $("#resume"); if (rs) rs.onclick = () => startLesson(next.id);
-  revBindCard();
+  bindPlan(); bindBackup();
 }
 function lessonList(pathId) {
   const path = PATHS.find(p => p.id === pathId);
@@ -8160,7 +8195,7 @@ function lessonList(pathId) {
       <div class="cover-art"><span class="pc ${PATH_EMBLEM[path.id]}"></span></div>
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
-    ${revCard(true)}
+    ${planCard()}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -8172,7 +8207,7 @@ function lessonList(pathId) {
       </button>`).join("")}</div>`;
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
-  revBindCard();
+  bindPlan();
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -8311,6 +8346,7 @@ function nextStep() {
   if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
   const first = !save.lessons[les.id];
   save.lessons[les.id] = true; persist(); updateXp();
+  dayInc("les");
   if (L_OUV.includes(les)) revAdd("ouv:" + les.id, { k: "ouv", id: les.id }, true);
   lessonRecap(first);
 }
@@ -9118,6 +9154,7 @@ function endGame(res, text) {
   PL.over = { r: res, c: res === "w" ? "ok" : res === "d" ? "warn" : "bad", t: text };
   save.record[res]++; updateXp();
   archiveGame(res);
+  dayInc("les");
   B.locked = true; PL.thinking = false;
   savePlay(); playPanel();
   if (res === "w") celebrate();
@@ -9352,6 +9389,7 @@ function pzUpdate(p, win) {
   const d = PS.r - before;
   PS.n++; if (win) PS.ok++;
   PS.seen[p.id] = win ? 1 : 0;
+  dayInc("pz");
   if (!win) revAdd("pz:" + p.id, { k: "pz", id: p.id });
   for (const t of new Set(p.tags)) { if (PZ_MINOR.has(t)) continue; const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
   PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
@@ -9408,6 +9446,7 @@ function pzMove(m) {
       if (Q.rated && Q.mode === "train") Q.delta = pzUpdate(p, false);
     }
     Q.fb = { c: "bad", t: `${ICON.flag} Ce n'est pas le bon coup.`, s: w || "Essaie autre chose, ou regarde la solution." };
+    pzRefute(g.fen(), Q.fb);
     sound("error");
     B.locked = true;
     if (Q.mode === "streak") { pzPanel(); later(() => { g.undo(); B.last = null; render(); streakEnd(); }, 900); return; }
@@ -9428,6 +9467,20 @@ function pzMove(m) {
     pzPanel();
   }, 500);
 }
+// La réfutation d'un mauvais coup : la meilleure réponse adverse, trouvée par le moteur
+function pzRefute(fen, fb) {
+  if (g0Status(fen)) return;
+  Engine.run({ type: "search", fen, time: 500 }).then(r => {
+    if (!r || !r.move || Q.fb !== fb) return;
+    const g = new Chess(fen), m = g.find(r.move);
+    if (!m) return;
+    const san = frSan(g.san(m)), why = pickFacts(moveFacts(g, m), ["mate", "fork", "capFree", "capWin", "check", "threat", "capEven"], "opp", 1)[0];
+    const mate = r.score >= Engine_MATE - 200 ? ` Il a même un mat en ${Math.ceil((Engine_MATE - r.score) / 2)}.` : "";
+    fb.s = `${fb.s && !/^Essaie/.test(fb.s) ? fb.s + " " : ""}Sa réponse : <b>${san}</b>${why ? " — " + lc(why) : "."}${mate}`;
+    if (modeNow === "problemes" && Q.mode !== "storm") pzPanel();
+  });
+}
+const g0Status = fen => new Chess(fen).status();
 function pzSolved() {
   const p = Q.cur;
   Q.done = true; B.locked = true;
@@ -9456,6 +9509,45 @@ function pzSolution() {
   };
   step();
 }
+// Pourquoi la solution marche : chaque coup de la ligne, avec ce qu'il fait, puis le bilan matériel
+const pzMat = (g, c) => g.b.reduce((a, x) => a + (x && colorOf(x) === c ? VAL[x.toLowerCase()] : 0), 0);
+function pzExplain(p) {
+  const g = new Chess(pzFen(p)), me = p.side, opp = me === "w" ? "b" : "w", out = [];
+  const bal0 = pzMat(g, me) - pzMat(g, opp);
+  let quiet = 0;
+  for (let i = 0; i < p.line.length; i++) {
+    const m = g.find(p.line[i]);
+    if (!m) break;
+    const mine = i % 2 === 0, num = `${g.full}${g.turn === "w" ? "." : "..."}`, san = frSan(g.san(m));
+    const F = moveFacts(g, m), has = k => F.find(f => f.k === k), t = m.piece.toLowerCase();
+    let why;
+    if (mine) {
+      const sac = F.some(f => (f.k === "hang" && f.sq === m.to) || f.k === "capBad");
+      if (has("mate")) why = "Échec et mat !";
+      else if (sac) why = `Sacrifice${has("check") ? " avec échec" : ""} : ${ton(t)} est offert${FEM[t] ? "e" : ""}, la suite montre pourquoi.`;
+      else if (has("fork") || has("capFree") || has("capWin")) why = factText(has("fork") || has("capFree") || has("capWin"), "me");
+      else if (has("check")) why = "Échec : le roi adverse n'a pas le choix.";
+      else if (m.promo) why = "Promotion !";
+      else if (has("threat")) why = factText(has("threat"), "me");
+      else if (m.captured) why = "Tu reprends.";
+      else if (t === "p") why = "Le pion avance vers la promotion.";
+      else why = (quiet++ ? "Encore un coup calme." : "Un coup calme, le plus dur à voir : il prépare la suite.");
+    } else {
+      const prevCheck = g.inCheck();
+      why = has("mate") ? "Échec et mat." : m.captured ? `Il prend ${ton(m.captured.toLowerCase())}${has("check") ? " avec échec" : ""}.` : has("check") ? "Il te donne échec." : prevCheck ? "Il pare l'échec." : "Sa meilleure défense.";
+    }
+    out.push({ mine, txt: `<b>${num} ${san}</b> ${why}` });
+    g.make(m);
+  }
+  const st = g.status(), d = pzMat(g, me) - pzMat(g, opp) - bal0;
+  const end = st === "mate" ? "Bilan : échec et mat." : d >= 750 ? "Bilan : tu gagnes l'équivalent d'une dame." : d >= 420 ? "Bilan : tu gagnes l'équivalent d'une tour." : d >= 250 ? "Bilan : tu gagnes une pièce." : d >= 90 ? "Bilan : tu gagnes du matériel." : "Bilan : une position nettement meilleure.";
+  return { lines: out, end };
+}
+function pzWhyHTML(p) {
+  const x = pzExplain(p);
+  return `<details class="coach-card info pz-why" open><summary class="coach-title"><span class="verdict info">coach</span><b>Pourquoi ça marche</b></summary>
+    <ol class="why-line">${x.lines.map(l => `<li class="${l.mine ? "mine" : "opp"}">${l.txt}</li>`).join("")}</ol><p class="coach-better">${x.end}</p></details>`;
+}
 function pzPanel() {
   const p = Q.cur;
   if (!p) return;
@@ -9480,6 +9572,7 @@ function pzPanel() {
     ${head}
     ${Q.fb ? `<div class="fb ${Q.fb.c}">${Q.fb.t}${Q.fb.s ? `<small>${Q.fb.s}</small>` : ""}</div>` : ""}
     ${info}
+    ${Q.done ? pzWhyHTML(p) : ""}
     <div class="row">
       ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button>`
         : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}
@@ -10291,6 +10384,7 @@ function revResult(key, ok) {
     if (it.box >= REV_DAYS.length) it.done = revToday();
     else it.due = revToday() + REV_DAYS[it.box];
   } else { it.box = 0; it.due = revToday() + 1; }
+  dayInc("rev");
   persist(); updateXp();
 }
 const revActive = () => Object.entries(save.rev).filter(([, it]) => !it.done);
@@ -10473,6 +10567,123 @@ function revEnd(stopped) {
   revBindCard();
   $("#rev-home").onclick = () => setMode(RS.back || "lecons");
   if (!left && n) sound("win");
+}
+
+// ---------- Plan du jour et série de jours ----------
+// Trois objectifs par jour : la révision du jour, 5 problèmes classés, une leçon ou une partie.
+// Tous remplis : la série de jours continue (comme Duolingo).
+const DAY_PZ = 5;
+Object.assign(ICON, {
+  flame: svgI('<path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-10-1 2-2 3-4 3 0-2-1-4-3-6-1 4-5 7-5 12 0 5 4 8 9 8z"/>'),
+  save: svgI('<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>')
+});
+if (!save.streakDays) save.streakDays = { n: 0, best: 0, last: null };
+function dayNow() {
+  const d = revToday();
+  if (!save.day || save.day.d !== d) save.day = { d, rev: 0, revGoal: Math.min(5, revDue().length), pz: 0, les: 0, done: false };
+  return save.day;
+}
+// Série affichée : elle tient si le dernier jour complet est aujourd'hui ou hier
+const streakNow = () => { const s = save.streakDays; return s.last != null && s.last >= revToday() - 1 ? s.n : 0; };
+const dayGoals = D => [
+  { k: "rev", ok: D.revGoal === 0 || D.rev >= D.revGoal },
+  { k: "pz", ok: D.pz >= DAY_PZ },
+  { k: "les", ok: D.les >= 1 }
+];
+function dayInc(k) {
+  const D = dayNow();
+  D[k] = (D[k] || 0) + 1;
+  if (!D.done && dayGoals(D).every(g => g.ok)) {
+    D.done = true;
+    const s = save.streakDays, today = D.d;
+    s.n = s.last === today - 1 ? s.n + 1 : s.last === today ? s.n : 1;
+    s.last = today; s.best = Math.max(s.best, s.n);
+    D.justDone = true;
+  }
+  persist();
+}
+function planCard() {
+  const D = dayNow(), goals = dayGoals(D), n = streakNow();
+  const next = PATHS.flatMap(p => p.lessons).find(l => !save.lessons[l.id]);
+  const row = (ok, title, prog, btn) => `<li class="${ok ? "ok" : ""}"><span class="plan-dot">${ok ? ICON.check : ""}</span><span class="plan-t">${title}${prog ? `<small>${prog}</small>` : ""}</span>${ok ? "" : btn}</li>`;
+  const rows = [
+    D.revGoal ? row(goals[0].ok, `Réviser ${D.revGoal} élément${D.revGoal > 1 ? "s" : ""}`, `${Math.min(D.rev, D.revGoal)}/${D.revGoal}`, `<button class="btn" data-plan="rev">Réviser</button>`)
+      : row(true, "Rien à réviser aujourd'hui", "", ""),
+    row(goals[1].ok, `Faire ${DAY_PZ} problèmes classés`, `${Math.min(D.pz, DAY_PZ)}/${DAY_PZ}`, `<button class="btn" data-plan="pz">Problèmes</button>`),
+    row(goals[2].ok, "Faire une leçon ou une partie", "", `<button class="btn" data-plan="les">${next ? "Leçon" : "Jouer"}</button>`)
+  ];
+  const done = goals.every(g => g.ok);
+  return `<div class="plan${done ? " done" : ""}">
+    <div class="plan-head"><div><p class="eyebrow">Plan du jour</p><b>${done ? "Bravo, ta journée est faite !" : `${goals.filter(g => g.ok).length}/3 objectifs`}</b></div>
+      <span class="streak${n ? " on" : ""}" title="Jours d'affilée avec le plan terminé. Record : ${save.streakDays.best}">${ICON.flame}<b>${n}</b><small>jour${n > 1 ? "s" : ""}</small></span></div>
+    <ul class="plan-list">${rows.join("")}</ul>
+    ${done ? `<p class="calm">Reviens demain pour prolonger ta série${n > 1 ? ` de ${n} jours` : ""}.</p>` : n ? `<p class="calm">Termine les trois objectifs pour passer à ${n + 1} jours d'affilée.</p>` : ""}
+  </div>`;
+}
+function bindPlan() {
+  const D = dayNow();
+  if (D.justDone) { D.justDone = false; persist(); celebrate(); sound("win"); }
+  panel.querySelectorAll("[data-plan]").forEach(b => b.onclick = () => {
+    const k = b.dataset.plan;
+    if (k === "rev") revStart();
+    else if (k === "pz") { Q.mode = "train"; setMode("problemes"); }
+    else { const next = PATHS.flatMap(p => p.lessons).find(l => !save.lessons[l.id]); if (next) startLesson(next.id); else setMode("jouer"); }
+  });
+}
+
+// ---------- Sauvegarde de la progression dans un fichier ----------
+// Tout vit dans le navigateur (localStorage) : un fichier .json permet de le garder à l'abri
+// ou de le reprendre sur un autre appareil.
+function backupCard() {
+  const last = save.lastBackup ? new Date(save.lastBackup).toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : null;
+  const old = !save.lastBackup || Date.now() - save.lastBackup > 14 * 864e5;
+  return `<div class="backup">
+    <div><b>Ta progression</b><span>${last ? `Dernière sauvegarde le ${last}.` : "Elle est gardée dans ce navigateur seulement."}${old && (save.pz && save.pz.n > 5 || Object.keys(save.lessons).length > 3) ? " Pense à la sauvegarder." : ""}</span></div>
+    <div class="row"><button class="btn" id="bk-save">${ICON.save}Sauvegarder</button><label class="btn file-btn">${ICON.upload}Restaurer<input type="file" id="bk-load" accept=".json,application/json"></label></div>
+    <div id="bk-msg"></div>
+  </div>`;
+}
+function bindBackup() {
+  const sv = $("#bk-save"); if (sv) sv.onclick = backupSave;
+  const ld = $("#bk-load"); if (ld) ld.onchange = e => { const f = e.target.files[0]; if (f) f.text().then(backupLoad); };
+}
+const bkMsg = (c, t) => { const m = $("#bk-msg"); if (m) m.innerHTML = `<div class="fb ${c}"><span>${t}</span></div>`; };
+async function backupSave() {
+  const d = new Date(), stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const data = JSON.stringify({ app: "ecole-echecs", version: 1, date: Date.now(), save });
+  const filename = `ecole-echecs-${stamp}.json`;
+  let ok = false;
+  // Dans claude.ai, le téléchargement passe par la plateforme ; ailleurs, par un lien classique
+  const dl = window.claude && window.claude.use ? await window.claude.use("downloads").catch(() => null) : null;
+  if (dl) {
+    try { await dl.save({ filename, data }); ok = true; }
+    catch (e) { if (e && e.code === "declined") return bkMsg("warn", "Sauvegarde annulée."); if (e && e.code === "rate_limited") return bkMsg("warn", "Une fenêtre de téléchargement est déjà ouverte."); }
+  }
+  if (!ok) {
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([data], { type: "application/json" })); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      ok = true;
+    } catch (e) { return bkMsg("bad", "Le téléchargement n'est pas possible ici."); }
+  }
+  save.lastBackup = Date.now(); persist();
+  bkMsg("ok", `${ICON.check} Fichier « ${filename} » enregistré. Garde-le précieusement : il contient toute ta progression.`);
+}
+function backupLoad(text) {
+  let o;
+  try { o = JSON.parse(text); } catch (e) { return bkMsg("bad", "Ce fichier n'est pas une sauvegarde de l'École des Échecs."); }
+  if (!o || o.app !== "ecole-echecs" || !o.save || typeof o.save !== "object") return bkMsg("bad", "Ce fichier n'est pas une sauvegarde de l'École des Échecs.");
+  const s = o.save, when = new Date(o.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  const m = $("#bk-msg");
+  m.innerHTML = `<div class="fb warn"><span>Restaurer la sauvegarde du ${when} ? Ta progression actuelle sera remplacée.<small>${Object.keys(s.lessons || {}).length} leçons, ${s.pz ? s.pz.n : 0} problèmes classés (classement ${s.pz ? s.pz.r : "—"}), ${(s.games || []).length} parties.</small></span></div>
+    <div class="row"><button class="btn primary" id="bk-yes">Restaurer</button><button class="btn" id="bk-no">Annuler</button></div>`;
+  $("#bk-no").onclick = () => { m.innerHTML = ""; };
+  $("#bk-yes").onclick = () => {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign({}, s, { lastBackup: o.date }))); } catch (e) { return bkMsg("bad", "Impossible d'écrire dans ce navigateur."); }
+    location.reload();
+  };
 }
 
 // ---------- Démarrage ----------

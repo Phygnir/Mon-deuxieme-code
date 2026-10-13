@@ -24,6 +24,7 @@ function revResult(key, ok) {
     if (it.box >= REV_DAYS.length) it.done = revToday();
     else it.due = revToday() + REV_DAYS[it.box];
   } else { it.box = 0; it.due = revToday() + 1; }
+  dayInc("rev");
   persist(); updateXp();
 }
 const revActive = () => Object.entries(save.rev).filter(([, it]) => !it.done);

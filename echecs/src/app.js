@@ -386,7 +386,7 @@ function pathList() {
       <div class="stat"><b>${save.record.w || 0}</b><span>Victoires</span></div>
       <div class="stat"><b>${xpTotal()}</b><span>Points</span></div>
     </div>
-    ${revCard()}
+    ${planCard()}
     ${next && done ? `<div class="row"><button class="btn primary big" id="resume">${ICON.arrow}Reprendre : ${next.t}</button></div>` : ""}
     <div class="paths">${PATHS.map(p => {
       const d = pathDone(p), n = p.lessons.length, lvl = LEVEL_DOTS[p.id];
@@ -395,10 +395,11 @@ function pathList() {
         <span class="path-desc">${p.d}</span>
         <span class="path-foot"><span class="meter"><i style="width:${Math.round(d / n * 100)}%"></i></span><span class="path-count">${d}/${n}</span></span>
       </button>`;
-    }).join("")}</div>`;
+    }).join("")}</div>
+    ${backupCard()}`;
   panel.querySelectorAll("[data-path]").forEach(b => b.addEventListener("click", () => lessonList(b.dataset.path)));
   const rs = $("#resume"); if (rs) rs.onclick = () => startLesson(next.id);
-  revBindCard();
+  bindPlan(); bindBackup();
 }
 function lessonList(pathId) {
   const path = PATHS.find(p => p.id === pathId);
@@ -417,7 +418,7 @@ function lessonList(pathId) {
       <div class="cover-art"><span class="pc ${PATH_EMBLEM[path.id]}"></span></div>
       <div><p class="eyebrow">Parcours ${path.t}</p><h2>${path.d}</h2></div>
     </div>
-    ${revCard(true)}
+    ${planCard()}
     ${path.intro ? `<p class="lead">${path.intro}</p>` : ""}
     <div class="progress">${path.lessons.map(l => `<span class="${save.lessons[l.id] ? "on" : ""}"></span>`).join("")}</div>
     ${next ? `<div class="row"><button class="btn primary big" data-start="${next.id}">${ICON.arrow}${d ? "Continuer" : "Commencer"} : ${next.t}</button></div>` : `<div class="fb ok">${ICON.trophy} Parcours terminé, bravo ! Tu peux refaire n'importe quelle leçon ou choisir un autre parcours.</div>`}
@@ -429,7 +430,7 @@ function lessonList(pathId) {
       </button>`).join("")}</div>`;
   $("#back").onclick = () => { save.path = null; persist(); pathList(); };
   panel.querySelectorAll("[data-start]").forEach(b => b.addEventListener("click", () => startLesson(b.dataset.start)));
-  revBindCard();
+  bindPlan();
 }
 function startLesson(id, i) {
   L.lesson = LESSONS.find(l => l.id === id); L.path = pathOf(L.lesson);
@@ -568,6 +569,7 @@ function nextStep() {
   if (L.i < les.steps.length - 1) { L.i++; loadStep(); return; }
   const first = !save.lessons[les.id];
   save.lessons[les.id] = true; persist(); updateXp();
+  dayInc("les");
   if (L_OUV.includes(les)) revAdd("ouv:" + les.id, { k: "ouv", id: les.id }, true);
   lessonRecap(first);
 }
@@ -1375,6 +1377,7 @@ function endGame(res, text) {
   PL.over = { r: res, c: res === "w" ? "ok" : res === "d" ? "warn" : "bad", t: text };
   save.record[res]++; updateXp();
   archiveGame(res);
+  dayInc("les");
   B.locked = true; PL.thinking = false;
   savePlay(); playPanel();
   if (res === "w") celebrate();
@@ -1609,6 +1612,7 @@ function pzUpdate(p, win) {
   const d = PS.r - before;
   PS.n++; if (win) PS.ok++;
   PS.seen[p.id] = win ? 1 : 0;
+  dayInc("pz");
   if (!win) revAdd("pz:" + p.id, { k: "pz", id: p.id });
   for (const t of new Set(p.tags)) { if (PZ_MINOR.has(t)) continue; const x = PS.th[t] || [0, 0]; x[1]++; if (win) x[0]++; PS.th[t] = x; }
   PS.hist.unshift({ id: p.id, ok: win, d }); PS.hist = PS.hist.slice(0, 40);
@@ -1665,6 +1669,7 @@ function pzMove(m) {
       if (Q.rated && Q.mode === "train") Q.delta = pzUpdate(p, false);
     }
     Q.fb = { c: "bad", t: `${ICON.flag} Ce n'est pas le bon coup.`, s: w || "Essaie autre chose, ou regarde la solution." };
+    pzRefute(g.fen(), Q.fb);
     sound("error");
     B.locked = true;
     if (Q.mode === "streak") { pzPanel(); later(() => { g.undo(); B.last = null; render(); streakEnd(); }, 900); return; }
@@ -1685,6 +1690,20 @@ function pzMove(m) {
     pzPanel();
   }, 500);
 }
+// La réfutation d'un mauvais coup : la meilleure réponse adverse, trouvée par le moteur
+function pzRefute(fen, fb) {
+  if (g0Status(fen)) return;
+  Engine.run({ type: "search", fen, time: 500 }).then(r => {
+    if (!r || !r.move || Q.fb !== fb) return;
+    const g = new Chess(fen), m = g.find(r.move);
+    if (!m) return;
+    const san = frSan(g.san(m)), why = pickFacts(moveFacts(g, m), ["mate", "fork", "capFree", "capWin", "check", "threat", "capEven"], "opp", 1)[0];
+    const mate = r.score >= Engine_MATE - 200 ? ` Il a même un mat en ${Math.ceil((Engine_MATE - r.score) / 2)}.` : "";
+    fb.s = `${fb.s && !/^Essaie/.test(fb.s) ? fb.s + " " : ""}Sa réponse : <b>${san}</b>${why ? " — " + lc(why) : "."}${mate}`;
+    if (modeNow === "problemes" && Q.mode !== "storm") pzPanel();
+  });
+}
+const g0Status = fen => new Chess(fen).status();
 function pzSolved() {
   const p = Q.cur;
   Q.done = true; B.locked = true;
@@ -1713,6 +1732,45 @@ function pzSolution() {
   };
   step();
 }
+// Pourquoi la solution marche : chaque coup de la ligne, avec ce qu'il fait, puis le bilan matériel
+const pzMat = (g, c) => g.b.reduce((a, x) => a + (x && colorOf(x) === c ? VAL[x.toLowerCase()] : 0), 0);
+function pzExplain(p) {
+  const g = new Chess(pzFen(p)), me = p.side, opp = me === "w" ? "b" : "w", out = [];
+  const bal0 = pzMat(g, me) - pzMat(g, opp);
+  let quiet = 0;
+  for (let i = 0; i < p.line.length; i++) {
+    const m = g.find(p.line[i]);
+    if (!m) break;
+    const mine = i % 2 === 0, num = `${g.full}${g.turn === "w" ? "." : "..."}`, san = frSan(g.san(m));
+    const F = moveFacts(g, m), has = k => F.find(f => f.k === k), t = m.piece.toLowerCase();
+    let why;
+    if (mine) {
+      const sac = F.some(f => (f.k === "hang" && f.sq === m.to) || f.k === "capBad");
+      if (has("mate")) why = "Échec et mat !";
+      else if (sac) why = `Sacrifice${has("check") ? " avec échec" : ""} : ${ton(t)} est offert${FEM[t] ? "e" : ""}, la suite montre pourquoi.`;
+      else if (has("fork") || has("capFree") || has("capWin")) why = factText(has("fork") || has("capFree") || has("capWin"), "me");
+      else if (has("check")) why = "Échec : le roi adverse n'a pas le choix.";
+      else if (m.promo) why = "Promotion !";
+      else if (has("threat")) why = factText(has("threat"), "me");
+      else if (m.captured) why = "Tu reprends.";
+      else if (t === "p") why = "Le pion avance vers la promotion.";
+      else why = (quiet++ ? "Encore un coup calme." : "Un coup calme, le plus dur à voir : il prépare la suite.");
+    } else {
+      const prevCheck = g.inCheck();
+      why = has("mate") ? "Échec et mat." : m.captured ? `Il prend ${ton(m.captured.toLowerCase())}${has("check") ? " avec échec" : ""}.` : has("check") ? "Il te donne échec." : prevCheck ? "Il pare l'échec." : "Sa meilleure défense.";
+    }
+    out.push({ mine, txt: `<b>${num} ${san}</b> ${why}` });
+    g.make(m);
+  }
+  const st = g.status(), d = pzMat(g, me) - pzMat(g, opp) - bal0;
+  const end = st === "mate" ? "Bilan : échec et mat." : d >= 750 ? "Bilan : tu gagnes l'équivalent d'une dame." : d >= 420 ? "Bilan : tu gagnes l'équivalent d'une tour." : d >= 250 ? "Bilan : tu gagnes une pièce." : d >= 90 ? "Bilan : tu gagnes du matériel." : "Bilan : une position nettement meilleure.";
+  return { lines: out, end };
+}
+function pzWhyHTML(p) {
+  const x = pzExplain(p);
+  return `<details class="coach-card info pz-why" open><summary class="coach-title"><span class="verdict info">coach</span><b>Pourquoi ça marche</b></summary>
+    <ol class="why-line">${x.lines.map(l => `<li class="${l.mine ? "mine" : "opp"}">${l.txt}</li>`).join("")}</ol><p class="coach-better">${x.end}</p></details>`;
+}
 function pzPanel() {
   const p = Q.cur;
   if (!p) return;
@@ -1737,6 +1795,7 @@ function pzPanel() {
     ${head}
     ${Q.fb ? `<div class="fb ${Q.fb.c}">${Q.fb.t}${Q.fb.s ? `<small>${Q.fb.s}</small>` : ""}</div>` : ""}
     ${info}
+    ${Q.done ? pzWhyHTML(p) : ""}
     <div class="row">
       ${Q.done ? `<button class="btn primary big" id="pz-next">${Q.review ? "Retour à l'entraînement" : "Continuer l'entraînement"}${ICON.arrow}</button><button class="btn" id="pz-retry">${ICON.retry}Rejouer</button>`
         : `<button class="btn" id="pz-sol">${ICON.bulb}Voir la solution</button>`}

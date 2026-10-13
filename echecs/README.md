@@ -15,12 +15,15 @@ Une application pour apprendre les échecs, en français. Tout tient dans un seu
   - **Entraînement** classé : ton classement évolue après chaque problème selon la méthode Glicko-2, comme sur Lichess. Un « ? » signale un classement encore provisoire. On te propose des problèmes jamais vus, proches de ton niveau. Cinq niveaux de difficulté sont possibles, du plus facile (−600) au plus difficile (+600), et un filtre par thème (motifs, mats, phases de jeu, longueur).
   - **Série** : des problèmes de plus en plus difficiles, jusqu'à la première erreur.
   - **Tempête** : 3 minutes pour en résoudre un maximum, avec un combo qui rapporte du temps et des erreurs qui en coûtent.
+  - Après chaque problème, le coach explique la solution coup par coup (sacrifice, fourchette, coup calme, bilan matériel). Sur une erreur, le moteur montre la réponse adverse qui la réfute.
   - Un tableau de bord montre ta courbe de classement, ta réussite par thème et tes records.
 - **Jouer** : une partie contre l'ordinateur sur 5 niveaux (de Débutant à Maître), avec un coach en temps réel.
   - Avant ton coup, il explique le coup adverse, montre en rouge la menace adverse (fourchette, mat…) et chiffre ce que tu perdrais si tu l'ignorais.
   - Quand tu prends une pièce, ses cases d'arrivée sont colorées selon la qualité du coup.
   - Après ton coup, il donne un verdict justifié : la réponse adverse, la suite probable, le bilan matériel et le meilleur coup.
   - Sur une erreur, la partie se met en pause et tu peux reprendre ton coup.
+- **Plan du jour** : trois objectifs par jour, en tête des leçons : la révision du jour, 5 problèmes classés, une leçon ou une partie. Une série de jours d'affilée récompense la régularité.
+- **Sauvegarde** : un fichier .json garde toute la progression, pour la mettre à l'abri ou la reprendre sur un autre appareil (boutons « Sauvegarder » et « Restaurer » dans l'onglet Leçons).
 - **Révision espacée** : ce que tu rates revient le lendemain, puis après 3, 7, 14 et 30 jours si tu le réussis. Une erreur le renvoie au début, et après cinq réussites il est acquis. On y retrouve les problèmes et exercices ratés, les moments clés de tes parties et les ouvertures apprises. Une carte « À réviser aujourd'hui » apparaît en tête des leçons et des exercices.
 - **Analyse** : un onglet pour revoir tes parties.
   - **Import par pseudo** : tape ton pseudo Lichess ou Chess.com et choisis une de tes 20 dernières parties, via les API publiques des deux sites. On peut aussi coller un PGN ou choisir un fichier .pgn (notation anglaise ou française). Si la page ne peut pas joindre le site, elle le dit et propose le copier-coller.
@@ -45,6 +48,7 @@ Les sources sont dans `src/`. `python3 build.py` les assemble en `index.html`.
 | `src/pgn.js` | Lecture des parties PGN |
 | `src/analysis.js` | Analyse de partie : évaluations, précision, moments clés |
 | `src/review.js` | Révision espacée |
+| `src/daily.js` | Plan du jour, série de jours, sauvegarde de la progression |
 | `src/styles.css`, `src/pieces.css`, `src/body.html` | Présentation |
 
 ## Vérifications

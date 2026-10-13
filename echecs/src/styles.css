@@ -459,3 +459,8 @@ button { font: inherit; color: inherit; }
   .rev-card { grid-template-columns: 46px minmax(0, 1fr); }
   .rev-card .btn { grid-column: 1 / -1; justify-content: center; }
 }
+.textarea { font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.5; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); resize: vertical; width: 100%; min-height: 150px; }
+.textarea:focus, .select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+input.select { font-weight: 400; }
+.file { font: inherit; font-size: 0.86rem; color: var(--muted); max-width: 100%; }
+.file::file-selector-button { font: inherit; font-weight: 700; margin-right: 10px; padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }

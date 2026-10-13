@@ -1313,7 +1313,7 @@ function playPanel() {
       </div></div>
     </div>
     <div class="moves" id="moves">${rows.join("")}</div>
-    <div class="row" style="justify-content:space-between;align-items:center"><div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div>${save.games.length ? `<button class="btn" id="games">${ICON.chart}Mes parties</button>` : ""}</div>`;
+    <div class="row" style="justify-content:space-between;align-items:center"><div class="stats"><span>Victoires <b>${rec.w}</b></span><span>Nulles <b>${rec.d}</b></span><span>Défaites <b>${rec.l}</b></span></div><button class="btn" id="games">${ICON.chart}Mes parties</button></div>`;
   const mv = $("#moves"); mv.scrollTop = mv.scrollHeight;
   panel.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { PL.level = +b.dataset.lvl; savePlay(); playPanel(); });
   panel.querySelectorAll("[data-new]").forEach(b => b.onclick = () => newGame(b.dataset.new));

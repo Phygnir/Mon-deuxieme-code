@@ -14,11 +14,14 @@ Object.assign(ICON, {
 const winPct = cp => (Math.abs(cp) > Engine_MATE - 200 ? (cp > 0 ? 100 : 0) : 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * Math.max(-1000, Math.min(1000, cp)))) - 1));
 const anWp = (game, k, side) => Math.round(winPct((side === "w" ? 1 : -1) * game.an.ev[k]));
 const moveAcc = drop => Math.max(0, Math.min(100, 103.1668 * Math.exp(-0.04354 * drop) - 3.1669));
+const gameRes = g => ({ w: "Victoire", d: "Nulle", l: "Défaite" }[g.res] || "Partie");
+const gameOpp = g => (g.src === "pgn" ? (g.color === "w" ? g.black : g.white) || "Adversaire" : "Ordinateur");
+const gameSub = g => (g.src === "pgn" ? `contre ${gameOpp(g)}` : LEVELS[g.level] ? LEVELS[g.level].name : "");
 const AN_Q = [[30, "q-bad", "gaffe"], [20, "q-err", "erreur"], [10, "q-dub", "imprécision"]];
 function archiveGame(res) {
   if (PL.log.length < 6) return;
   const g = { id: PL.gid || Date.now().toString(36), date: Date.now(), color: PL.color, level: PL.level, res, log: PL.log.map(e => ({ u: e.u, san: e.san })), an: null };
-  save.games = [g].concat(save.games.filter(x => x.id !== g.id)).slice(0, 12);
+  save.games = [g].concat(save.games.filter(x => x.id !== g.id)).slice(0, 20);
   persist();
 }
 // Ligne d'ouverture connue jusqu'au coup k inclus ?
@@ -29,10 +32,10 @@ function anMoves(game) {
   if (!an) return out;
   for (let k = 0; k < game.log.length; k++) {
     if (an.ev[k] == null || an.ev[k + 1] == null) break;
-    const side = k % 2 ? "b" : "w", s = side === "w" ? 1 : -1;
+    const side = (k % 2 === 1) === (!game.fen || game.fen.split(" ")[1] === "w") ? "b" : "w", s = side === "w" ? 1 : -1;
     const before = winPct(s * an.ev[k]), after = winPct(s * an.ev[k + 1]);
     // Un coup de théorie qui perd beaucoup (piège d'ouverture) reste une erreur
-    const drop = Math.max(0, before - after), book = drop < 10 && anBook(game.log, k);
+    const drop = Math.max(0, before - after), book = drop < 10 && !game.fen && anBook(game.log, k);
     const best = an.best[k] === game.log[k].u;
     const q = book || best ? null : AN_Q.find(([d]) => drop >= d);
     out.push({ k, side, drop: book ? 0 : drop, acc: book || best ? 100 : moveAcc(drop), q: q ? q[1] : best ? "q-best" : null, word: q ? q[2] : book ? "théorie" : best ? "meilleur coup" : "bon coup", book, best });
@@ -50,7 +53,7 @@ function anSummary(game, moves) {
 // Les moments clés : tes coups qui ont le plus coûté
 const anMoments = (game, moves) => moves.filter(m => m.side === game.color && m.drop >= 10).sort((a, b) => b.drop - a.drop).slice(0, 4).sort((a, b) => a.k - b.k);
 function gameAt(game, n) {
-  const g = new Chess(START);
+  const g = new Chess(game.fen || START);
   for (const e of game.log.slice(0, n)) { const m = g.find(e.u); if (!m) break; g.make(m); }
   return g;
 }
@@ -65,7 +68,7 @@ async function analyseGame(game) {
     const g = gameAt(game, k), st = g.status();
     if (st) { an.ev[k] = st === "mate" ? (g.turn === "w" ? -Engine_MATE : Engine_MATE) : 0; an.best[k] = null; an.pv[k] = []; }
     else {
-      const r = await Engine.run({ type: "search", moves: game.log.slice(0, k).map(e => e.u), time: 450 });
+      const r = await Engine.run({ type: "search", fen: game.fen || START, moves: game.log.slice(0, k).map(e => e.u), time: 450 });
       if (run !== AN.run) return;
       const sc = r && r.move ? r.score : 0;
       an.ev[k] = g.turn === "w" ? sc : -sc; an.best[k] = r && r.move; an.pv[k] = (r && r.pv || []).slice(0, 6);
@@ -90,7 +93,7 @@ function analysisView(id) {
   if (!game) return playView();
   clearTimers(); PL.gen++;
   AN.g = game; AN.i = game.log.length; AN.sel = null;
-  resetBoard(START, { flip: game.color === "b", locked: true, captured: true, names: game.color === "w" ? { w: "Toi", b: "Ordinateur" } : { w: "Ordinateur", b: "Toi" } });
+  resetBoard(game.fen || START, { flip: game.color === "b", locked: true, captured: true, names: game.color === "w" ? { w: "Toi", b: gameOpp(game) } : { w: gameOpp(game), b: "Toi" } });
   $("#evalbar").hidden = false; $("#board-col").classList.add("with-eval");
   panelEnter();
   anGo(AN.i);
@@ -159,7 +162,7 @@ function anComment(game, m) {
   }
   // L'adversaire venait de se tromper ?
   const prev = anMoves(game).find(x => x.k === m.k - 1);
-  if (me && prev && (prev.q === "q-err" || prev.q === "q-bad")) out.lines.unshift("L'ordinateur venait de faire une erreur : il y avait une occasion à saisir.");
+  if (me && prev && (prev.q === "q-err" || prev.q === "q-bad")) out.lines.unshift(`${game.src === "pgn" ? "Ton adversaire" : "L'ordinateur"} venait de faire une erreur : il y avait une occasion à saisir.`);
   return out;
 }
 function anPanel(progressOnly) {
@@ -175,7 +178,7 @@ function anPanel(progressOnly) {
     $("#an-graph").innerHTML = anGraph(game, moves); anBindGraph();
     if (!done) return;
   }
-  const me = game.color, opp = me === "w" ? "b" : "w", resTxt = { w: "Victoire", d: "Nulle", l: "Défaite" }[game.res] || "Partie";
+  const me = game.color, opp = me === "w" ? "b" : "w", resTxt = gameRes(game);
   const cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
   const rows = [];
   for (let i = 0; i < N; i += 2) {
@@ -185,7 +188,7 @@ function anPanel(progressOnly) {
   const col = (c, name) => `<div class="an-side"><span class="an-who">${pieceEl(c === "w" ? "K" : "k")}${name}</span><b>${sum[c].acc != null && done ? sum[c].acc + " %" : "…"}</b><span>précision</span>
     <ul><li><i class="q-dub"></i>${sum[c].dub} imprécision${sum[c].dub > 1 ? "s" : ""}</li><li><i class="q-err"></i>${sum[c].err} erreur${sum[c].err > 1 ? "s" : ""}</li><li><i class="q-bad"></i>${sum[c].bad} gaffe${sum[c].bad > 1 ? "s" : ""}</li></ul></div>`;
   panel.innerHTML = `
-    <div class="row" style="justify-content:space-between"><button class="btn" id="an-back">${ICON.back}Retour</button><span class="pill">${resTxt} · ${LEVELS[game.level] ? LEVELS[game.level].name : ""} · ${Math.ceil(N / 2)} coups</span></div>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="an-back">${ICON.back}Retour</button><span class="pill">${resTxt} · ${gameSub(game)} · ${Math.ceil(N / 2)} coups</span></div>
     <p class="eyebrow">Analyse de la partie</p>
     <h2>${done ? (moments.length ? "Les moments qui ont compté" : "Une partie bien tenue") : "Le moteur revoit ta partie"}</h2>
     ${done ? "" : `<div class="an-load"><div class="timer"><i id="an-progress" style="width:${Math.round(((an ? an.ev.filter(v => v != null).length : 0) / (N + 1)) * 100)}%"></i></div><span class="calm"><i class="spin"></i> Positions analysées : <b id="an-count">0/${N + 1}</b></span></div>`}
@@ -197,7 +200,7 @@ function anPanel(progressOnly) {
     </div>
     ${com ? `<div class="coach-card ${com.c}"><div class="coach-title"><span class="verdict ${com.c}">${com.word}</span><b>${com.title}</b>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
       ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>` : ""}
-    ${done ? `<div class="an-sum">${col(me, "Toi")}${col(opp, "Ordinateur")}</div>` : ""}
+    ${done ? `<div class="an-sum">${col(me, "Toi")}${col(opp, gameOpp(game))}</div>` : ""}
     ${moments.length ? `<p class="group-title">Tes moments clés</p><div class="list">${moments.map(m => `
       <div class="item an-moment${AN.i === m.k + 1 ? " next" : ""}">
         <span class="num" data-q-dot="${m.q}">${Math.floor(m.k / 2) + 1}</span>
@@ -233,14 +236,71 @@ function gamesList() {
   panel.innerHTML = `
     <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Jouer</button><span class="pill">${save.games.length} partie${save.games.length > 1 ? "s" : ""}</span></div>
     <p class="eyebrow">Tes parties</p><h2>Revois tes dernières parties</h2>
-    <p class="lead">Le moteur repère tes erreurs, montre ce qu'il fallait jouer et calcule ta précision. Les 12 dernières parties sont gardées.</p>
+    <p class="lead">Le moteur repère tes erreurs, montre ce qu'il fallait jouer et calcule ta précision. Tes erreurs partent ensuite en révision. Les 20 dernières parties sont gardées.</p>
+    <div class="row"><button class="btn primary" id="import">${ICON.upload}Importer une partie (Lichess, Chess.com…)</button></div>
     ${save.games.length ? `<div class="list">${save.games.map(g => {
       const s = g.an && g.an.done ? anSummary(g, anMoves(g))[g.color] : null;
       return `<button class="item" data-game="${g.id}">
-        <span class="num">${g.res === "w" ? ICON.trophy : g.res === "d" ? "½" : ICON.flag}</span>
-        <span><span class="ti">${{ w: "Victoire", d: "Nulle", l: "Défaite" }[g.res]} avec les ${g.color === "w" ? "Blancs" : "Noirs"}</span><span class="de">${fmt(g.date)} · ${LEVELS[g.level] ? LEVELS[g.level].name : ""} · ${Math.ceil(g.log.length / 2)} coups</span></span>
+        <span class="num">${g.res === "w" ? ICON.trophy : g.res === "d" ? "½" : g.res === "l" ? ICON.flag : "?"}</span>
+        <span><span class="ti">${gameRes(g)} avec les ${g.color === "w" ? "Blancs" : "Noirs"}</span><span class="de">${fmt(g.date)} · ${gameSub(g)} · ${Math.ceil(g.log.length / 2)} coups</span></span>
         <span class="pill${s ? " done" : ""}">${s ? `Précision ${s.acc} %` : "À analyser"}</span>
       </button>`; }).join("")}</div>` : `<p class="calm">Termine une partie pour la retrouver ici.</p>`}`;
   $("#back").onclick = playView;
+  $("#import").onclick = () => importView();
   panel.querySelectorAll("[data-game]").forEach(b => b.onclick = () => analysisView(b.dataset.game));
+}
+// --- Import d'une partie jouée ailleurs (PGN) ---
+Object.assign(ICON, { upload: svgI('<path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>') });
+const IMP = { text: "", side: "auto" };
+function importView(err) {
+  clearTimers(); PL.gen++; AN.run++; AN.g = null;
+  resetBoard(START, { locked: true, list: true });
+  panelEnter();
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn" id="back">${ICON.back}Mes parties</button><span class="pill">Format PGN</span></div>
+    <p class="eyebrow">Tes parties</p><h2>Importe une partie</h2>
+    <p class="lead">Analyse une partie jouée en ligne ou sur un vrai échiquier. Tes erreurs deviendront des exercices dans ta révision.</p>
+    <ul class="goals">
+      <li><b>Lichess</b> : sur la page de la partie, onglet «&nbsp;Partager et exporter&nbsp;», puis copie le PGN.</li>
+      <li><b>Chess.com</b> : bouton «&nbsp;Partager&nbsp;», onglet «&nbsp;PGN&nbsp;», puis «&nbsp;Copier le PGN&nbsp;».</li>
+      <li>Un fichier .pgn marche aussi, et la notation française (C, F, T, D, R) est acceptée.</li>
+    </ul>
+    ${err ? `<div class="fb bad">${ICON.flag} ${err}</div>` : ""}
+    <label class="field"><span>Texte PGN</span><textarea id="pgn-text" class="textarea" rows="8" spellcheck="false" placeholder='[White "toi"]&#10;[Black "adversaire"]&#10;&#10;1. e4 e5 2. Nf3 Nc6 3. Bc4 ...'></textarea></label>
+    <div class="settings">
+      <div class="field"><span>Ou un fichier</span><input type="file" id="pgn-file" accept=".pgn,.txt,application/x-chess-pgn" class="file"></div>
+      <div class="field"><span>Ton pseudo (facultatif)</span><input type="text" id="pgn-name" class="select" autocomplete="username" value="${(save.pgnName || "").replace(/"/g, "&quot;")}" placeholder="Pour savoir quel camp tu jouais"></div>
+    </div>
+    <div class="field"><span>Tu jouais</span><div class="seg" role="group">${[["auto", "Selon le pseudo"], ["w", "Les Blancs"], ["b", "Les Noirs"]].map(([v, t]) => `<button data-side="${v}" aria-pressed="${IMP.side === v}">${t}</button>`).join("")}</div></div>
+    <div class="row"><button class="btn primary big" id="pgn-go">${ICON.chart}Analyser</button></div>`;
+  const ta = $("#pgn-text");
+  ta.value = IMP.text;
+  ta.oninput = () => { IMP.text = ta.value; };
+  $("#pgn-file").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { IMP.text = ta.value = t; }); };
+  panel.querySelectorAll("[data-side]").forEach(b => b.onclick = () => { IMP.side = b.dataset.side; panel.querySelectorAll("[data-side]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+  $("#back").onclick = gamesList;
+  $("#pgn-go").onclick = importGo;
+}
+function importGo() {
+  const name = $("#pgn-name").value.trim();
+  save.pgnName = name;
+  let games;
+  try { games = parsePgn(IMP.text); } catch (e) { persist(); return importView(e.message); }
+  const lname = name.toLowerCase(), added = [];
+  for (const pg of games.slice(0, 5)) {
+    const t = pg.tags;
+    let color = IMP.side === "auto" ? (lname && (t.Black || "").toLowerCase() === lname ? "b" : "w") : IMP.side;
+    const r = pg.result, res = r === "1/2-1/2" ? "d" : r === "1-0" ? (color === "w" ? "w" : "l") : r === "0-1" ? (color === "b" ? "w" : "l") : "?";
+    const d = (t.UTCDate || t.Date || "").match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
+    const date = d ? Date.UTC(+d[1], +d[2] - 1, +d[3], 12) : Date.now();
+    const id = "p" + pzHash((pg.fen || "") + pg.moves.map(m => m.u).join(""));
+    added.push({ id, date, color, level: null, res, src: "pgn", white: t.White && t.White !== "?" ? t.White : null, black: t.Black && t.Black !== "?" ? t.Black : null, fen: pg.fen, log: pg.moves, an: null });
+  }
+  const keep = new Map(save.games.map(g => [g.id, g]));
+  for (const g of added) if (keep.has(g.id)) g.an = keep.get(g.id).an;
+  save.games = added.concat(save.games.filter(g => !added.some(a => a.id === g.id))).slice(0, 20);
+  persist();
+  IMP.text = "";
+  analysisView(added[0].id);
+  if (games.length > 1) panel.insertAdjacentHTML("afterbegin", `<div class="fb info">${Math.min(5, games.length)} parties importées${games.length > 5 ? ` (les 5 premières sur ${games.length})` : ""}. Retrouve les autres dans « Mes parties ».</div>`);
 }

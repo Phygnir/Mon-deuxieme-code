@@ -647,7 +647,7 @@ input.select { font-weight: 400; }
 .bar.bad i { background: var(--bad); }
 
 .stat b.word { font-size: 1.05rem; line-height: 1.4; }
-@media (min-width: 1240px) { #xp { display: none; } }
+@media (min-width: 521px) and (max-width: 1100px), (min-width: 1240px) { #xp { display: none; } }
 .dl-steps { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .dl-lead { margin: 0; font-weight: 700; }
 .dl-steps ol { margin: 0; padding: 0; list-style: none; counter-reset: dl; display: flex; flex-direction: column; gap: 12px; }
@@ -770,6 +770,24 @@ input.select { font-weight: 400; }
 .rv-row.zero { opacity: .45; }
 .rv-row.zero b { color: var(--muted); }
 .rv-num { background: transparent !important; border: 0 !important; }
+/* Revue : pas de saut de mise en page d'un coup à l'autre */
+.an-card { min-height: 128px; }
+.an-card:empty { min-height: 0; }
+.rv-p em { grid-column: 2; font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--accent); white-space: nowrap; }
+.rv-elo { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--gold-soft); font-size: 0.92rem; }
+.rv-elo .ico { color: var(--gold); width: 22px; height: 22px; }
+.rv-elo b { font-family: var(--font-display); font-size: 1.05rem; }
+.rv-elo small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.stat-elo b { color: var(--accent); }
+#an-moves { scroll-behavior: smooth; overscroll-behavior: contain; }
+.board-nav { display: none; }
+@media (max-width: 900px) {
+  .board-nav:not([hidden]) { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; gap: 6px; align-items: center; margin-top: 10px; padding: 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .board-nav .btn { padding: 10px 14px; justify-content: center; }
+  .bn-ply { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .bn-ply small { font-family: var(--font-body); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 420px) { .bn-ply small { display: none; } }
 .pc.wP{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==")}
 .pc.wB{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==")}
 .pc.wN{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==")}
@@ -8293,6 +8311,7 @@ function setMode(mode) {
   if (typeof PL !== "undefined") PL.gen++;
   if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
   if (mode !== "analyse") { AN.run++; AN.g = null; }
+  anBoardNav(false);
   visStop();
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";
@@ -10303,7 +10322,9 @@ function anGo(i) {
   }
   const ev = an && an.ev[AN.i];
   if (ev != null) PL.bal = ev;
-  render(); anPanel();
+  render();
+  // Même partie, même état : mise à jour légère au lieu de tout reconstruire
+  if (AN.built && AN.built.game === game && AN.built.done === !!(an && an.done) && $("#an-card")) anRefresh(); else anPanel();
 }
 function anGraph(game, moves) {
   const an = game.an, N = game.log.length, W = 300, H = 84;
@@ -10359,6 +10380,29 @@ function anComment(game, m) {
   if (prev && prev.drop >= 15) out.lines.unshift(m.cls === "miss" ? (me ? "L'adversaire venait de se tromper, mais tu n'en as pas profité." : "Tu venais de te tromper, mais il n'en a pas profité.") : me ? `${game.src === "pgn" ? "Ton adversaire" : "L'ordinateur"} venait de faire une erreur : il y avait une occasion à saisir.` : "Tu venais de faire une erreur, et il pouvait en profiter.");
   return out;
 }
+// Niveau estimé sur une partie, d'après la précision des coups hors théorie (barème proche de celui de chess.com).
+// Ce n'est qu'une indication : une seule partie, analysée par un petit moteur.
+const ELO_TABLE = [[30, 250], [40, 400], [50, 600], [60, 850], [70, 1100], [75, 1250], [80, 1450], [85, 1700], [90, 2000], [94, 2300], [97, 2600], [100, 2850]];
+function anElo(moves, side) {
+  const ms = moves.filter(m => m.side === side && !m.book);
+  if (ms.length < 8) return null;
+  const acc = ms.reduce((a, m) => a + m.acc, 0) / ms.length;
+  let elo = ELO_TABLE[0][1];
+  for (let i = 1; i < ELO_TABLE.length; i++) {
+    const [a0, e0] = ELO_TABLE[i - 1], [a1, e1] = ELO_TABLE[i];
+    if (acc <= a1) { elo = acc <= a0 ? e0 : e0 + ((acc - a0) / (a1 - a0)) * (e1 - e0); break; }
+  }
+  return Math.max(100, Math.round(elo / 50) * 50);
+}
+function anCardHTML(game, moves, moments) {
+  const an = game.an, done = an && an.done, cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
+  if (com) return `<div class="rv-card" style="--c:${CLS[com.cls].c}">
+      <div class="rv-head">${clsIcon(com.cls, true)}<div><b>${com.head}</b><span>${com.num} · ${com.who}</span></div>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
+      ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>`;
+  if (!done) return "";
+  return `<div class="rv-card rv-intro"><div class="rv-head">${clsIcon("best", true)}<div><b>Revue de la partie</b><span>Avance coup par coup : chaque coup reçoit sa note et son explication.</span></div></div>
+      <div class="row"><button class="btn primary" id="rv-start">${ICON.arrow}Commencer la revue</button>${moments.length ? `<button class="btn" id="rv-first">Aller à ma première erreur</button>` : ""}</div></div>`;
+}
 function anPanel(progressOnly) {
   const game = AN.g;
   if (!game || modeNow !== "analyse") return;
@@ -10372,13 +10416,17 @@ function anPanel(progressOnly) {
     $("#an-graph").innerHTML = anGraph(game, moves); anBindGraph();
     if (!done) return;
   }
+  // Le panneau complet n'est construit qu'une fois ; ensuite anRefresh ne met à jour que ce qui change
+  const keepY = window.scrollY, keepP = panel.scrollTop;
+  AN.built = { game, done: !!done };
   const me = game.color, opp = me === "w" ? "b" : "w", resTxt = gameRes(game);
-  const cur = moves.find(m => m.k === AN.i - 1), com = cur ? anComment(game, cur) : null;
   const rows = moveRows(game.fen, N, j => { const m = moves.find(x => x.k === j); return `<span data-go="${j + 1}" class="rv-mv${j === AN.i - 1 ? " cur" : ""}">${m ? clsIcon(m.cls) : ""}${frSan(game.log[j].san)}</span>`; });
-  // Bilan façon chess.com : précision, puis le nombre de coups de chaque catégorie pour les deux camps
+  const eloMe = done ? anElo(moves, me) : null, eloOpp = done ? anElo(moves, opp) : null;
+  const player = (c, name, elo) => `<div class="rv-p">${pieceEl(c === "w" ? "K" : "k")}<span>${name}</span><b>${sum[c].acc ?? "—"}</b>${elo ? `<em title="Niveau estimé sur cette partie">≈ ${elo} Elo</em>` : ""}</div>`;
+  // Bilan façon chess.com : précision, niveau estimé, puis le nombre de coups de chaque catégorie
   const summary = () => `<div class="rv-sum">
-      <div class="rv-players"><div class="rv-p">${pieceEl(me === "w" ? "K" : "k")}<span>Toi</span><b>${sum[me].acc ?? "—"}</b><small>précision</small></div>
-        <div class="rv-p">${pieceEl(opp === "w" ? "K" : "k")}<span>${gameOpp(game)}</span><b>${sum[opp].acc ?? "—"}</b><small>précision</small></div></div>
+      <div class="rv-players">${player(me, "Toi", eloMe)}${player(opp, gameOpp(game), eloOpp)}</div>
+      ${eloMe ? `<p class="rv-elo">${ICON.trophy}<span>Sur cette partie, tu as joué au niveau d'un joueur classé <b>environ ${eloMe}</b>.<small>Estimation d'après la précision de tes coups hors théorie. Elle varie d'une partie à l'autre : c'est la moyenne qui compte.</small></span></p>` : ""}
       <div class="rv-rows">${CLS_ORDER.map(k => { const a = sum[me].n[k] || 0, b = sum[opp].n[k] || 0; return `<div class="rv-row${a + b ? "" : " zero"}" style="--c:${CLS[k].c}"><b>${a}</b><span>${clsIcon(k)}${CLS[k].t}</span><b>${b}</b></div>`; }).join("")}</div>
     </div>`;
   panel.innerHTML = `
@@ -10389,32 +10437,65 @@ function anPanel(progressOnly) {
     <div id="an-graph">${anGraph(game, moves)}</div>
     <div class="an-nav" role="group" aria-label="Navigation dans la partie">
       <button class="btn" data-nav="first" aria-label="Début">${ICON.first}</button><button class="btn" data-nav="prev" aria-label="Coup précédent">${ICON.prev}</button>
-      <span class="an-ply">${AN.i ? `${plyNum(game.fen, AN.i - 1)} ${frSan(game.log[AN.i - 1].san)}` : "Départ"}</span>
+      <span class="an-ply" id="an-ply"></span>
       <button class="btn" data-nav="next" aria-label="Coup suivant">${ICON.next}</button><button class="btn" data-nav="last" aria-label="Fin">${ICON.last}</button>
     </div>
-    ${B.game.status() ? "" : `<div class="row"><button class="btn" id="an-play">${ICON.board}Jouer cette position contre l'ordinateur</button></div>`}
-    ${com ? `<div class="rv-card" style="--c:${CLS[com.cls].c}">
-        <div class="rv-head">${clsIcon(com.cls, true)}<div><b>${com.head}</b><span>${com.num} · ${com.who}</span></div>${an.ev[AN.i] != null ? `<span class="coach-score">${anScore(an.ev[AN.i])}</span>` : ""}</div>
-        ${com.lines.length ? `<ul>${com.lines.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}${com.better ? `<p class="coach-better">${com.better}</p>` : ""}</div>`
-      : done ? `<div class="rv-card rv-intro"><div class="rv-head">${clsIcon("best", true)}<div><b>Revue de la partie</b><span>Avance coup par coup : chaque coup reçoit sa note et son explication.</span></div></div>
-        <div class="row"><button class="btn primary" id="rv-start">${ICON.arrow}Commencer la revue</button>${moments.length ? `<button class="btn" id="rv-first">Aller à ma première erreur</button>` : ""}</div></div>` : ""}
+    <div id="an-card" class="an-card"></div>
+    <div id="an-playrow" class="row"><button class="btn" id="an-play">${ICON.board}Jouer cette position contre l'ordinateur</button></div>
     ${done ? summary() : ""}
     ${moments.length ? `<p class="group-title">Tes moments clés</p><div class="list">${moments.map(m => `
-      <div class="item an-moment${AN.i === m.k + 1 ? " next" : ""}">
+      <div class="item an-moment" data-mk="${m.k + 1}">
         <span class="num rv-num">${clsIcon(m.cls, true)}</span>
         <span><span class="ti">${plyNum(game.fen, m.k)} ${frSan(game.log[m.k].san)} · ${m.word}</span><span class="de">Tes chances de gain passent de ${anWp(game, m.k, m.side)} % à ${anWp(game, m.k + 1, m.side)} %.</span></span>
         <span class="an-acts"><button class="btn" data-go="${m.k + 1}">Voir</button><button class="btn primary" data-retry="${m.k}">${ICON.retry}Rejouer</button></span>
       </div>`).join("")}</div><p class="calm">Ces positions reviendront dans ta révision : demain, puis à intervalles de plus en plus longs.</p>` : done ? `<div class="fb ok">${ICON.check} Aucune erreur sérieuse de ta part dans cette partie. Bravo !</div>` : ""}
     <div class="moves" id="an-moves">${rows.join("")}</div>`;
-  anBindGraph();
   panel.querySelectorAll("#an-moves [data-go], .an-moment [data-go]").forEach(b => b.onclick = () => anGo(+b.dataset.go));
   panel.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => anNav(b.dataset.nav));
   panel.querySelectorAll("[data-retry]").forEach(b => b.onclick = () => { const m = moves.find(x => x.k === +b.dataset.retry); if (m) revRunSingle(anMomentItem(game, m), () => analysisView(game.id)); });
   $("#an-back").onclick = analyseHome;
+  $("#an-play").onclick = () => playFrom(B.game.fen(), game.color);
+  anRefresh();
+  // La page ne saute pas quand le panneau est reconstruit (fin de l'analyse, par exemple)
+  window.scrollTo(0, keepY); panel.scrollTop = keepP;
+}
+// Barre de navigation sous l'échiquier (écrans d'une colonne : iPad en portrait, téléphone)
+function anBoardNav(show) {
+  let el = $("#board-nav");
+  if (!el && !show) return;
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "board-nav"; el.className = "board-nav"; el.setAttribute("role", "group"); el.setAttribute("aria-label", "Navigation dans la partie");
+    el.innerHTML = `<button class="btn" data-bnav="first" aria-label="Début">${ICON.first}</button><button class="btn" data-bnav="prev" aria-label="Coup précédent">${ICON.prev}</button>
+      <span class="bn-ply" id="bn-ply"></span><button class="btn" data-bnav="next" aria-label="Coup suivant">${ICON.next}</button><button class="btn" data-bnav="last" aria-label="Fin">${ICON.last}</button>`;
+    $("#board-col").appendChild(el);
+    el.querySelectorAll("[data-bnav]").forEach(b => b.onclick = () => anNav(b.dataset.bnav));
+  }
+  el.hidden = !show;
+}
+// Mise à jour légère à chaque coup : rien d'autre ne bouge, la page garde sa position
+function anRefresh() {
+  const game = AN.g;
+  if (!game || !$("#an-card")) return;
+  const moves = anMoves(game), done = game.an && game.an.done, moments = done ? anMoments(game, moves) : [];
+  $("#an-graph").innerHTML = anGraph(game, moves); anBindGraph();
+  $("#an-ply").textContent = AN.i ? `${plyNum(game.fen, AN.i - 1)} ${frSan(game.log[AN.i - 1].san)}` : "Départ";
+  anBoardNav(true);
+  const cm = moves.find(m => m.k === AN.i - 1);
+  $("#bn-ply").innerHTML = AN.i ? `${cm ? clsIcon(cm.cls) : ""}<span>${plyNum(game.fen, AN.i - 1)} ${frSan(game.log[AN.i - 1].san)}</span>${cm ? `<small style="color:${CLS[cm.cls].c}">${CLS[cm.cls].t}</small>` : ""}` : "<span>Départ</span>";
+  $("#an-card").innerHTML = anCardHTML(game, moves, moments);
   const rs = $("#rv-start"); if (rs) rs.onclick = () => anGo(1);
   const rf = $("#rv-first"); if (rf) rf.onclick = () => anGo(moments[0].k + 1);
-  const ap = $("#an-play"); if (ap) ap.onclick = () => playFrom(B.game.fen(), game.color);
-  const c = $("#an-moves .cur"); if (c) c.scrollIntoView({ block: "nearest" });
+  $("#an-playrow").hidden = !!B.game.status();
+  panel.querySelectorAll("#an-moves [data-go]").forEach(el => el.classList.toggle("cur", +el.dataset.go === AN.i));
+  panel.querySelectorAll(".an-moment").forEach(el => el.classList.toggle("next", +el.dataset.mk === AN.i));
+  // On fait défiler la liste des coups elle-même, jamais la page
+  const box = $("#an-moves"), c = box && box.querySelector(".cur");
+  if (c) {
+    const top = c.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop, h = c.offsetHeight;
+    if (top < box.scrollTop) box.scrollTop = top - 4;
+    else if (top + h > box.scrollTop + box.clientHeight) box.scrollTop = top + h - box.clientHeight + 4;
+  }
   updateEvalBar();
 }
 function anBindGraph() { panel.querySelectorAll(".an-hits [data-go]").forEach(r => r.onclick = () => anGo(+r.dataset.go)); }
@@ -10440,10 +10521,11 @@ function openAnalysis(id) { if (modeNow !== "analyse") setMode("analyse"); analy
 function anStats() {
   const gs = save.games.filter(g => g.an && g.an.done).slice().reverse();
   if (!gs.length) return null;
-  const ph = { o: [0, 0], m: [0, 0], f: [0, 0] }, accs = [];
+  const ph = { o: [0, 0], m: [0, 0], f: [0, 0] }, accs = [], elos = [];
   for (const g of gs) {
     const ms = anMoves(g).filter(m => m.side === g.color);
     if (ms.length) accs.push(Math.round(ms.reduce((a, m) => a + m.acc, 0) / ms.length));
+    const e = anElo(anMoves(g), g.color); if (e) elos.push(e);
     for (const m of ms) {
       const pos = gameAt(g, m.k); let mat = 0;
       for (const p of pos.b) if (p) mat += { n: 3, b: 3, r: 5, q: 9 }[p.toLowerCase()] || 0;
@@ -10451,10 +10533,12 @@ function anStats() {
       ph[k][0]++; if (m.q === "q-err" || m.q === "q-bad") ph[k][1]++;
     }
   }
-  return { n: gs.length, acc: Math.round(accs.reduce((a, b) => a + b, 0) / Math.max(1, accs.length)), accs, ph };
+  // Niveau estimé : moyenne des 10 dernières parties, plus parlante qu'une seule
+  const last = elos.slice(-10), elo = last.length ? Math.round(last.reduce((a, b) => a + b, 0) / last.length / 50) * 50 : null;
+  return { n: gs.length, acc: Math.round(accs.reduce((a, b) => a + b, 0) / Math.max(1, accs.length)), accs, ph, elo, eloN: last.length };
 }
 function analyseHome() {
-  clearTimers(); PL.gen++; AN.run++; AN.g = null;
+  clearTimers(); PL.gen++; AN.run++; AN.g = null; anBoardNav(false);
   resetBoard(START, { locked: true, list: true });
   $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   panelEnter();
@@ -10472,6 +10556,7 @@ function analyseHome() {
     </div>
     ${st ? `<p class="group-title">Ton bilan</p>
     <div class="stats-strip">
+      ${st.elo ? `<div class="stat stat-elo" title="Moyenne de tes ${st.eloN} dernière(s) partie(s) analysée(s)"><b>≈ ${st.elo}</b><span>Niveau estimé</span></div>` : ""}
       <div class="stat"><b>${st.acc} %</b><span>Précision moyenne</span></div>
       <div class="stat"><b>${st.n}</b><span>Partie${st.n > 1 ? "s" : ""} analysée${st.n > 1 ? "s" : ""}</span></div>
       ${worst ? `<div class="stat"><b class="word">${worst.t}</b><span>Phase à travailler</span></div>` : ""}
@@ -10640,7 +10725,7 @@ function importFetched(x) {
 // --- Import par copier-coller (PGN) ---
 const IMP = { text: "", side: "auto" };
 function importView(err) {
-  clearTimers(); PL.gen++; AN.run++; AN.g = null;
+  clearTimers(); PL.gen++; AN.run++; AN.g = null; anBoardNav(false);
   resetBoard(START, { locked: true, list: true });
   $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   panelEnter();
@@ -10761,7 +10846,7 @@ function revTask(it) {
 }
 function revLoad(key, it, task) {
   task = task || revTask(it);
-  clearTimers(); PL.gen++; AN.g = null;
+  clearTimers(); PL.gen++; AN.g = null; anBoardNav(false);
   $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   task.ply = 0;
   Object.assign(RS, { key, it, t: task, failed: false, done: false, fb: null });

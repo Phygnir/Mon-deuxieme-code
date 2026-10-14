@@ -479,7 +479,7 @@ input.select { font-weight: 400; }
 .bar.bad i { background: var(--bad); }
 
 .stat b.word { font-size: 1.05rem; line-height: 1.4; }
-@media (min-width: 1240px) { #xp { display: none; } }
+@media (min-width: 521px) and (max-width: 1100px), (min-width: 1240px) { #xp { display: none; } }
 .dl-steps { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .dl-lead { margin: 0; font-weight: 700; }
 .dl-steps ol { margin: 0; padding: 0; list-style: none; counter-reset: dl; display: flex; flex-direction: column; gap: 12px; }
@@ -602,3 +602,21 @@ input.select { font-weight: 400; }
 .rv-row.zero { opacity: .45; }
 .rv-row.zero b { color: var(--muted); }
 .rv-num { background: transparent !important; border: 0 !important; }
+/* Revue : pas de saut de mise en page d'un coup à l'autre */
+.an-card { min-height: 128px; }
+.an-card:empty { min-height: 0; }
+.rv-p em { grid-column: 2; font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--accent); white-space: nowrap; }
+.rv-elo { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--gold-soft); font-size: 0.92rem; }
+.rv-elo .ico { color: var(--gold); width: 22px; height: 22px; }
+.rv-elo b { font-family: var(--font-display); font-size: 1.05rem; }
+.rv-elo small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.stat-elo b { color: var(--accent); }
+#an-moves { scroll-behavior: smooth; overscroll-behavior: contain; }
+.board-nav { display: none; }
+@media (max-width: 900px) {
+  .board-nav:not([hidden]) { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; gap: 6px; align-items: center; margin-top: 10px; padding: 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .board-nav .btn { padding: 10px 14px; justify-content: center; }
+  .bn-ply { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .bn-ply small { font-family: var(--font-body); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 420px) { .bn-ply small { display: none; } }

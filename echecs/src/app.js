@@ -286,6 +286,7 @@ function setMode(mode) {
   if (typeof PL !== "undefined") PL.gen++;
   if (typeof Q !== "undefined" && Q.storm && Q.storm.iv) { clearInterval(Q.storm.iv); Q.storm.running = false; }
   if (mode !== "analyse") { AN.run++; AN.g = null; }
+  anBoardNav(false);
   visStop();
   modeNow = mode;
   $("#evalbar").hidden = mode !== "jouer";

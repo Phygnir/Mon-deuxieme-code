@@ -74,7 +74,7 @@ function revTask(it) {
 }
 function revLoad(key, it, task) {
   task = task || revTask(it);
-  clearTimers(); PL.gen++; AN.g = null;
+  clearTimers(); PL.gen++; AN.g = null; anBoardNav(false);
   $("#evalbar").hidden = true; $("#board-col").classList.remove("with-eval");
   task.ply = 0;
   Object.assign(RS, { key, it, t: task, failed: false, done: false, fb: null });

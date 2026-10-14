@@ -561,3 +561,44 @@ input.select { font-weight: 400; }
 .target.ok { animation: vis-ok .35s; } .target.bad { animation: vis-bad .35s; }
 @keyframes vis-ok { 40% { color: var(--good); transform: scale(1.08); } }
 @keyframes vis-bad { 20%, 60% { transform: translateX(-6px); color: var(--bad); } 40%, 80% { transform: translateX(6px); } }
+
+/* ---------- Revue de partie façon chess.com : badges de classement ---------- */
+.cls { --c: #81b64c; display: inline-grid; place-items: center; flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--c); color: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25), inset 0 -2px 0 rgba(0, 0, 0, .12); vertical-align: -4px; }
+.cls i { font-style: normal; font-family: var(--font-body); font-weight: 800; font-size: 10px; letter-spacing: -0.06em; line-height: 1; color: #fff; }
+.cls svg { width: 13px; height: 13px; }
+.cls.big { width: 34px; height: 34px; }
+.cls.big i { font-size: 17px; }
+.cls.big svg { width: 23px; height: 23px; }
+.sq-badge { position: absolute; top: 3%; right: 3%; width: 38%; height: 38%; z-index: 4; pointer-events: none; animation: badge-pop .3s cubic-bezier(.3, 1.6, .5, 1); }
+.sq-badge .cls { width: 100%; height: 100%; vertical-align: top; box-shadow: 0 2px 6px rgba(0, 0, 0, .35); border: 2px solid #fff; }
+.sq-badge .cls i { font-size: clamp(9px, 2.6cqi, 18px); }
+.sq-badge .cls svg { width: 70%; height: 70%; }
+@keyframes badge-pop { from { transform: scale(.2); opacity: 0; } }
+.rv-mv { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.rv-mv .cls { width: 15px; height: 15px; }
+.rv-mv .cls i { font-size: 8.5px; }
+.rv-mv .cls svg { width: 11px; height: 11px; }
+#an-moves { grid-template-columns: 2.6em minmax(0, 1fr) minmax(0, 1fr); }
+.rv-card { --c: #81b64c; border-radius: 16px; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--line); border-left: 5px solid var(--c); display: flex; flex-direction: column; gap: 9px; }
+.rv-card.rv-intro { border-left-color: var(--accent); }
+.rv-head { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.rv-head b { display: block; font-family: var(--font-display); font-size: 1.12rem; line-height: 1.2; color: var(--c); }
+.rv-intro .rv-head b { color: var(--ink); }
+.rv-head span:not(.cls):not(.coach-score) { color: var(--muted); font-size: 0.85rem; }
+.rv-card ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.94rem; }
+.rv-card .coach-better { margin: 0; }
+.rv-sum { border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.rv-players { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rv-p { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.rv-p .pc { grid-row: span 2; width: 30px; height: 30px; }
+.rv-p span { font-weight: 700; font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rv-p b { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.05; }
+.rv-p b::after { content: " %"; font-size: 0.9rem; color: var(--muted); }
+.rv-p small { display: none; }
+.rv-rows { display: flex; flex-direction: column; gap: 2px; }
+.rv-row { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) 2.4em; align-items: center; padding: 4px 6px; border-radius: 8px; font-size: 0.92rem; }
+.rv-row b { font-family: var(--font-mono); text-align: center; color: var(--c); font-size: 1rem; }
+.rv-row span { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; }
+.rv-row.zero { opacity: .45; }
+.rv-row.zero b { color: var(--muted); }
+.rv-num { background: transparent !important; border: 0 !important; }

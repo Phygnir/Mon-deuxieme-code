@@ -28,6 +28,7 @@ function render() {
     const p = g.b[sq];
     if (p) inner += pieceEl(p, B.dragFrom === sq ? "ghosted" : "");
     if (B.stars.has(sq)) inner += `<span class="star">★</span>`;
+    if (B.badge && B.badge.sq === sq) inner += `<span class="sq-badge">${B.badge.html}</span>`;
     if (targets.has(sq)) { const q = B.quality ? B.quality(targets.get(sq)) : ""; inner += p || targets.get(sq).flags === "e" ? `<span class="ring ${q}"></span>` : `<span class="dot ${q}"></span>`; }
     if (B.coords) {
       if (vi >= 56) inner += `<span class="co f">${FILES[f]}</span>`;
@@ -174,7 +175,7 @@ wrapEl.addEventListener("pointercancel", endDrag);
 
 function resetBoard(fen, opts = {}) {
   B.game = new Chess(fen || START);
-  B.flip = !!opts.flip; B.sel = null; B.last = null; B.stars = new Set(); B.arrows = []; B.marks = new Set();
+  B.flip = !!opts.flip; B.sel = null; B.last = null; B.stars = new Set(); B.arrows = []; B.marks = new Set(); B.badge = null;
   B.coords = opts.coords !== false; B.dots = true; B.locked = !!opts.locked; B.canMove = opts.canMove || (() => true);
   document.body.classList.toggle("lists", !!opts.list);
   B.onMove = opts.onMove || null; B.onSquare = opts.onSquare || null; B.showCaptured = !!opts.captured; B.flash = null; B.names = opts.names || null;

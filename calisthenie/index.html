@@ -400,6 +400,18 @@ button:disabled { opacity: .4; cursor: default; }
 .switch:checked::after { transform: translateX(20px); }
 .restore { width: 100%; font: 13px/1.4 ui-monospace, Menlo, monospace; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
 
+/* Lieux */
+.place-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.place-note { display: grid; gap: 6px; }
+.place-note .swap { display: grid; gap: 8px; border-top: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); padding-top: 8px; }
+.place-note .btn { justify-self: start; }
+.tag.home { background: var(--warn-soft); color: var(--warn); }
+.eq-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px 18px; align-items: center; }
+.eq-head { font-size: 13px; text-align: center; }
+.eq-grid .switch { justify-self: center; }
+.eq-days { display: grid; gap: 8px; }
+.eq-day { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+
 /* Sources */
 .why { list-style: none; padding: 0; display: grid; gap: 12px; }
 .why li { display: grid; gap: 2px; font-size: 15px; padding-left: 12px; border-left: 3px solid var(--accent-soft); }
@@ -2682,6 +2694,168 @@ renderProfile = function () {
   return scr;
 };
 render();
+
+
+/* =====================================================================
+   V4 : lieux d'entraînement (Maison / Salle) avec leur propre matériel
+   ===================================================================== */
+const PLACES = [["home", "Maison"], ["gym", "Salle"]];
+if (!settings.places) {
+  settings.places = { home: { bar: false, para: settings.eq.para, weights: false }, gym: Object.assign({}, settings.eq) };
+  settings.placeByDay = {};
+  saveAll();
+}
+settings.placeOv = settings.placeOv || {};
+settings.swaps = settings.swaps || {};
+const placeName = p => PLACES.find(x => x[0] === p)[1];
+
+/* ---------- Tirage sans barre ---------- */
+Object.assign(EX, {
+  doorRow: {
+    name: "Tirage à la porte", short: "Serviette sur une poignée",
+    desc: "Passe une serviette solide autour des deux poignées d'une porte fermée (ou d'une poignée bien fixée), pieds près de la porte, corps penché en arrière bras tendus. Tire la poitrine vers la porte en serrant les omoplates. Le tirage de base quand il n'y a pas de barre.",
+    cues: ["Porte fermée, du côté où elle ne peut pas s'ouvrir vers toi", "Corps gainé et droit, talons au sol", "Plus tes pieds avancent vers la porte, plus c'est dur"],
+    props: [{ wall: 40 }, { box: [40, 96, 10, 8] }],
+    poses: [
+      { h:[48,100], e:[75,92], s:[101,83], p:[85,124], k:[74,156], f:[62,190], hd:[108,71] },
+      { h:[48,100], e:[66,106], s:[80,80], p:[73,124], k:[67,156], f:[62,190], hd:[87,68] }
+    ],
+    seq: [[0,.3,1.1],[1,.4,1.1]]
+  }
+});
+EX_INFO.doorRow = ["door frame towel row"];
+EX_CAT.doorRow = "pull";
+
+/* ---------- Lieu de chaque séance ---------- */
+function placeOf(abs, d) { return settings.placeOv[abs + "-" + d] || settings.placeByDay[d] || "gym"; }
+function swappedDay(abs, d) { const sw = settings.swaps[abs]; if (!sw) return d; return d === sw[0] ? sw[1] : d === sw[1] ? sw[0] : d; }
+const _session4 = session;
+session = function (abs, d) {
+  const dd = swappedDay(abs, d), place = placeOf(abs, d), keep = settings.eq;
+  settings.eq = Object.assign({ bar: true, para: true, weights: true }, settings.places[place]);
+  try {
+    const s = _session4(abs, dd);
+    if (!s) return s;
+    return Object.assign(s, { d, key: abs + "-" + d, place, eqUsed: settings.eq, swappedFrom: dd !== d ? dd : null });
+  } finally { settings.eq = keep; }
+};
+const _extraItems4 = extraItems;
+extraItems = function (main, s) {
+  const out = _extraItems4(main, s);
+  if (!settings.eq.bar && (s.type === "pull" || s.type === "full")) {
+    const i = out.findIndex(x => x.ex === "row");
+    out.splice(i >= 0 ? i + 1 : out.length, 0, Object.assign(item("doorRow", "3 × 10", "repos 90 s", "Sans barre : serviette autour d'une poignée de porte solide"), { eyebrow: "Tirage à la maison", keep: true }));
+  }
+  return out;
+};
+
+/* Rowing de remplacement : volume de rowing, pas celui des tractions lestées */
+const _equip4 = equip;
+equip = function (it) {
+  const x = _equip4(it);
+  if (x && x.ex === "row" && it.ex !== "row") {
+    const m = (x.dose || "").match(/^(\d+) × (\d+)$/);
+    if (m) x.dose = Math.min(4, Math.max(3, +m[1])) + " × " + Math.min(15, Math.max(8, +m[2] * 3));
+    x.unit = (x.unit || "").replace(/\s*\+\d+ kg/, "").replace("lestés", "").trim() || "repos 90 s";
+    x.auto = 0; x.lk = "row";
+  }
+  return x;
+};
+
+/* ---------- Ce qui change sans le matériel ---------- */
+function missingNote(s) {
+  const E = s.eqUsed || {}, out = [];
+  if (!E.bar) out.push("Pas de barre : front lever, back lever et muscle-up attendent ta prochaine séance à la salle. Les tractions deviennent du rowing sous une table et du tirage à la porte.");
+  if (!E.weights) out.push("Pas de lest : dips et tractions au poids du corps, avec 4 s de descente.");
+  if (!E.para) out.push("Pas de parallettes : planche et L-sit au sol, sur les poings ou mains à plat.");
+  return out;
+}
+function swapCandidate(s) {
+  if (s.eqUsed.bar || !(s.type === "pull") || s.swappedFrom != null) return null;
+  const slots = cuSlots();
+  for (let k = 1; k < 7; k++) {
+    const d2 = (s.d + k) % 7;
+    if (d2 <= s.d) continue;
+    if ((slots[d2] === "push" || slots[d2] === "full") && !done[s.abs + "-" + d2]) return d2;
+  }
+  return null;
+}
+function placeSwitch(s) {
+  return h("div", { class: "place-row" },
+    h("span", { class: "label" }, "Où t'entraînes-tu ?"),
+    h("div", { class: "seg" }, PLACES.map(([id, l]) => h("button", { class: s.place === id ? "on" : "", "aria-pressed": s.place === id, onclick: e => {
+      e.stopPropagation(); settings.placeOv[s.key] = id; saveAll(); toast("Séance recalculée pour : " + l); render();
+    } }, l))));
+}
+function placeBanner(s) {
+  const notes = missingNote(s), d2 = swapCandidate(s);
+  if (!notes.length && s.swappedFrom == null) return null;
+  return h("div", { class: "note-box place-note" },
+    s.swappedFrom != null ? h("p", null, h("b", null, "Séance échangée. "), "Tu fais aujourd'hui la séance prévue " + DAYS[s.swappedFrom].toLowerCase() + ". ",
+      h("button", { class: "link", onclick: () => { delete settings.swaps[s.abs]; saveAll(); render(); } }, "Annuler l'échange")) : null,
+    notes.map(n => h("p", null, n)),
+    d2 != null ? h("div", { class: "swap" },
+      h("p", null, h("b", null, "Conseil : "), "fais aujourd'hui la séance de poussée de " + DAYS[d2].toLowerCase() + ", et garde le tirage pour " + DAYS[d2].toLowerCase() + " à la salle."),
+      h("button", { class: "btn small", onclick: () => { settings.swaps[s.abs] = [s.d, d2]; settings.placeOv[s.abs + "-" + d2] = "gym"; saveAll(); toast("Séances échangées"); render(); } }, "Échanger les deux séances")) : null);
+}
+
+/* ---------- Affichage : carte du jour, détail, plan ---------- */
+const _sessionCard4 = sessionCard;
+sessionCard = function (s, label) {
+  const c = _sessionCard4(s, label);
+  c.querySelector("h2").after(placeSwitch(s));
+  const b = placeBanner(s); if (b) c.querySelector("ol.mini").before(b);
+  return c;
+};
+const _renderSessionDetail4 = renderSessionDetail;
+renderSessionDetail = function (abs, d) {
+  const scr = _renderSessionDetail4(abs, d), s = session(abs, d);
+  if (!s) return scr;
+  const top = scr.querySelector(".top");
+  top.after(placeSwitch(s));
+  const b = placeBanner(s); if (b) scr.querySelector(".place-row").after(b);
+  return scr;
+};
+const _renderPlan4 = renderPlan;
+renderPlan = function () {
+  const scr = _renderPlan4(), abs = S.weekAbs;
+  scr.querySelectorAll("button.dayrow").forEach((b, i) => {
+    const d = DAYS.findIndex(n => b.querySelector(".dr-date b").textContent === n.slice(0, 3));
+    if (d < 0) return;
+    const end = b.querySelector(".dr-end"), sw = swappedDay(abs, d);
+    end.prepend(h("span", { class: "tag" + (placeOf(abs, d) === "home" ? " home" : "") }, placeName(placeOf(abs, d))));
+    if (sw !== d) end.prepend(h("span", { class: "tag accent" }, "Échangée"));
+  });
+  return scr;
+};
+
+/* ---------- Profil : matériel par lieu et lieu par défaut ---------- */
+const _renderProfile4 = renderProfile;
+renderProfile = function () {
+  const scr = _renderProfile4();
+  const old = [...scr.querySelectorAll(".card")].find(c => c.querySelector("h3") && c.querySelector("h3").textContent === "Ton matériel");
+  const timeField = old ? old.querySelector(".field") : null;
+  const ITEMS = [["bar", "Barre de traction"], ["para", "Parallettes"], ["weights", "Lest"]];
+  const grid = h("div", { class: "eq-grid" },
+    h("span", null), PLACES.map(([, l]) => h("b", { class: "eq-head" }, l)),
+    ITEMS.map(([k, l]) => [h("span", { class: "eq-l" }, l), PLACES.map(([p, pl]) => h("input", { type: "checkbox", class: "switch", id: "eq-" + p + "-" + k, "aria-label": l + " · " + pl, checked: settings.places[p][k] || null,
+      onchange: e => { settings.places[p][k] = e.target.checked; saveAll(); toast(pl + " : " + l.toLowerCase() + (e.target.checked ? " ajouté" : " retiré")); } }))]));
+  const slots = cuSlots();
+  const days = h("div", { class: "eq-days" }, Object.keys(slots).map(Number).map(d => h("div", { class: "eq-day" },
+    h("span", null, h("b", null, DAYS[d]), h("span", { class: "muted small" }, " · " + CU_META[slots[d]].title)),
+    h("div", { class: "seg" }, PLACES.map(([p, l]) => h("button", { class: (settings.placeByDay[d] || "gym") === p ? "on" : "", "aria-pressed": (settings.placeByDay[d] || "gym") === p,
+      onclick: () => { settings.placeByDay[d] = p; saveAll(); render(); } }, l))))));
+  const card = h("section", { class: "card stack" }, h("h3", null, "Ton matériel"),
+    h("p", { class: "muted small" }, "Coche ce que tu as dans chaque lieu. Chaque séance s'adapte au matériel du lieu où tu t'entraînes, et tu peux changer de lieu d'un tap sur la séance du jour."),
+    grid,
+    h("span", { class: "label" }, "Lieu habituel de chaque séance"),
+    days,
+    timeField);
+  if (old) old.replaceWith(card); else scr.querySelector(".card").after(card);
+  return scr;
+};
+render();
+
 
 </script>
 

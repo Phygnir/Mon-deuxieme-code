@@ -2706,6 +2706,8 @@ if (!settings.places) {
   saveAll();
 }
 settings.placeOv = settings.placeOv || {};
+if (settings.places.home.table == null) { settings.places.home.table = false; settings.places.home.door = true; }
+if (settings.places.gym.table == null) { settings.places.gym.table = true; settings.places.gym.door = true; }
 settings.swaps = settings.swaps || {};
 const placeName = p => PLACES.find(x => x[0] === p)[1];
 
@@ -2723,6 +2725,30 @@ Object.assign(EX, {
     seq: [[0,.3,1.1],[1,.4,1.1]]
   }
 });
+Object.assign(EX, {
+  doorRow1: Object.assign({}, EX.doorRow, {
+    name: "Tirage à la porte, un bras", short: "Version difficile",
+    desc: "Même installation que le tirage à la porte, mais tu tires avec un seul bras, l'autre le long du corps. Le corps ne doit pas tourner : c'est un vrai travail de force pour le dos et les biceps sans barre.",
+    cues: ["Hanches et épaules face à la porte", "Tire le coude vers la hanche", "Pieds plus loin de la porte pour simplifier"],
+    poses: [
+      { h:[48,100], e:[75,92], s:[101,83], p:[85,124], k:[74,156], f:[62,190], hd:[108,71], e2:[104,104], h2:[100,124] },
+      { h:[48,100], e:[66,106], s:[80,80], p:[73,124], k:[67,156], f:[62,190], hd:[87,68], e2:[84,102], h2:[80,122] }
+    ]
+  }),
+  floorPull: {
+    name: "Tirage glissé au sol", short: "Sans barre, sans table, sans porte",
+    desc: "Allongé sur le ventre sur un sol lisse, mains posées sur une serviette (ou des chaussettes sous les mains) bras tendus devant toi. Appuie fort dans le sol et tire ton corps vers l'avant jusqu'à ce que les mains arrivent sous les épaules, puis repousse lentement. Travaille les dorsaux comme une traction.",
+    cues: ["Appuie les mains dans le sol pendant tout le tirage", "Corps gainé, pieds en chaussettes pour glisser", "Retour lent, 2 à 3 s"],
+    props: [],
+    poses: [
+      { h:[40,186], e:[64,184], s:[90,182], p:[134,184], k:[170,186], f:[206,186], hd:[78,176] },
+      { h:[40,186], e:[54,174], s:[70,180], p:[114,184], k:[150,186], f:[186,186], hd:[58,174] }
+    ],
+    seq: [[0,.3,1.2],[1,.3,1.6]]
+  }
+});
+EX_INFO.doorRow1 = ["single arm door frame row"]; EX_INFO.floorPull = ["floor sliding lat pull bodyweight"];
+EX_CAT.doorRow1 = "pull"; EX_CAT.floorPull = "pull";
 EX_INFO.doorRow = ["door frame towel row"];
 EX_CAT.doorRow = "pull";
 
@@ -2743,8 +2769,11 @@ const _extraItems4 = extraItems;
 extraItems = function (main, s) {
   const out = _extraItems4(main, s);
   if (!settings.eq.bar && (s.type === "pull" || s.type === "full")) {
-    const i = out.findIndex(x => x.ex === "row");
-    out.splice(i >= 0 ? i + 1 : out.length, 0, Object.assign(item("doorRow", "3 × 10", "repos 90 s", "Sans barre : serviette autour d'une poignée de porte solide"), { eyebrow: "Tirage à la maison", keep: true }));
+    const E = settings.eq, main2 = E.table ? (E.door ? "doorRow" : "floorPull") : E.door ? "doorRow1" : "ytw";
+    const note = { doorRow: "Sans barre : serviette autour d'une poignée de porte solide", floorPull: "Sans barre ni porte : tirage glissé au sol", doorRow1: "Version un bras : plus dur, pour compenser l'absence de barre", ytw: "Haut du dos et omoplates, en complément du tirage au sol" }[main2];
+    const dose = main2 === "doorRow1" ? "3 × 6" : main2 === "ytw" ? "3 × 10" : "3 × 10";
+    const i = out.findIndex(x => ["row", "doorRow", "floorPull"].includes(x.ex));
+    if (!out.some(x => x.ex === main2)) out.splice(i >= 0 ? i + 1 : out.length, 0, Object.assign(item(main2, dose, main2 === "doorRow1" ? "repos 90 s par côté" : "repos 90 s", note), { eyebrow: "Tirage à la maison", keep: true }));
   }
   return out;
 };
@@ -2759,13 +2788,17 @@ equip = function (it) {
     x.unit = (x.unit || "").replace(/\s*\+\d+ kg/, "").replace("lestés", "").trim() || "repos 90 s";
     x.auto = 0; x.lk = "row";
   }
+  if (x && x.ex === "row" && !settings.eq.bar && !settings.eq.table) {
+    const alt = settings.eq.door ? "doorRow" : "floorPull";
+    Object.assign(x, { ex: alt, name: EX[alt].name, lk: alt, note: settings.eq.door ? "Sans barre ni table : serviette autour d'une poignée de porte solide, porte fermée" : "Sans barre, table ni porte : tirage glissé au sol" });
+  }
   return x;
 };
 
 /* ---------- Ce qui change sans le matériel ---------- */
 function missingNote(s) {
   const E = s.eqUsed || {}, out = [];
-  if (!E.bar) out.push("Pas de barre : front lever, back lever et muscle-up attendent ta prochaine séance à la salle. Les tractions deviennent du rowing sous une table et du tirage à la porte.");
+  if (!E.bar) out.push("Pas de barre : front lever, back lever et muscle-up attendent ta prochaine séance à la salle. Les tractions deviennent " + (E.table ? "du rowing sous une table" : E.door ? "du tirage à la serviette sur une porte, à deux bras puis à un bras" : "du tirage glissé au sol") + ".");
   if (!E.weights) out.push("Pas de lest : dips et tractions au poids du corps, avec 4 s de descente.");
   if (!E.para) out.push("Pas de parallettes : planche et L-sit au sol, sur les poings ou mains à plat.");
   return out;
@@ -2835,7 +2868,7 @@ renderProfile = function () {
   const scr = _renderProfile4();
   const old = [...scr.querySelectorAll(".card")].find(c => c.querySelector("h3") && c.querySelector("h3").textContent === "Ton matériel");
   const timeField = old ? old.querySelector(".field") : null;
-  const ITEMS = [["bar", "Barre de traction"], ["para", "Parallettes"], ["weights", "Lest"]];
+  const ITEMS = [["bar", "Barre de traction"], ["para", "Parallettes"], ["weights", "Lest"], ["table", "Table solide (rowing)"], ["door", "Porte avec poignée"]];
   const grid = h("div", { class: "eq-grid" },
     h("span", null), PLACES.map(([, l]) => h("b", { class: "eq-head" }, l)),
     ITEMS.map(([k, l]) => [h("span", { class: "eq-l" }, l), PLACES.map(([p, pl]) => h("input", { type: "checkbox", class: "switch", id: "eq-" + p + "-" + k, "aria-label": l + " · " + pl, checked: settings.places[p][k] || null,

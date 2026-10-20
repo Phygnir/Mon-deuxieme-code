@@ -356,6 +356,113 @@ button:disabled { opacity: .4; cursor: default; }
 .xp-gain { font-size: 22px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 4px 14px; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .ring-fg { transition: none; } }
 
+/* Compagnons */
+.pet { position: relative; width: 96px; height: 96px; display: grid; place-items: center; flex: none; }
+.pet.sm { width: 64px; height: 64px; } .pet.md { width: 88px; height: 88px; } .pet.xl { width: 180px; height: 180px; }
+.pet-art { position: relative; z-index: 2; width: 100%; height: 100%; }
+.pet-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pet-body, .pet-eyes, .pet-wing, .pet-flame, .pet-halo, .pet-orbit, .pet-tail, .pet-tent, .pet-dust, .pet-rune, .pet-zzz, .pet-cape { transform-box: fill-box; transform-origin: center; }
+.pet-body { transform-origin: 50% 100%; }
+.a-bob { animation: p-bob 2.4s ease-in-out infinite; }
+.a-hop { animation: p-hop 1.6s ease-in-out infinite; }
+.a-float { animation: p-float 3s ease-in-out infinite; }
+.a-spin { animation: p-spin 4s ease-in-out infinite; transform-origin: 50% 60%; }
+.a-pushup { animation: p-push 1.8s ease-in-out infinite; }
+.a-flip { animation: p-flip 4.5s ease-in-out infinite; transform-origin: 50% 60%; }
+.a-handstand { animation: p-hand 3s ease-in-out infinite; transform-origin: 50% 60%; }
+.a-sleep { animation: p-breath 3.6s ease-in-out infinite; }
+@keyframes p-bob { 0%,100% { transform: translateY(0) scale(1,1); } 50% { transform: translateY(-3px) scale(1.02,.98); } }
+@keyframes p-hop { 0%,60%,100% { transform: translateY(0) scale(1,1); } 70% { transform: translateY(0) scale(1.08,.9); } 82% { transform: translateY(-14px) scale(.95,1.06); } 92% { transform: translateY(0) scale(1.05,.95); } }
+@keyframes p-float { 0%,100% { transform: translateY(-4px); } 50% { transform: translateY(-12px); } }
+@keyframes p-spin { 0%,70% { transform: rotate(0) translateY(-4px); } 85% { transform: rotate(200deg) translateY(-10px); } 100% { transform: rotate(360deg) translateY(-4px); } }
+@keyframes p-push { 0%,100% { transform: scale(1,1); } 50% { transform: scale(1.08,.86); } }
+@keyframes p-flip { 0%,65% { transform: translateY(0) rotate(0); } 75% { transform: translateY(-26px) rotate(-180deg); } 85% { transform: translateY(-10px) rotate(-320deg); } 100% { transform: translateY(0) rotate(-360deg); } }
+@keyframes p-hand { 0%,100% { transform: rotate(180deg) translateY(2px); } 50% { transform: rotate(176deg) translateY(-4px); } }
+@keyframes p-breath { 0%,100% { transform: scale(1,1); } 50% { transform: scale(1.03,.97); } }
+.pet-eyes { animation: p-blink 4.2s infinite; }
+@keyframes p-blink { 0%,94%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+.r-common .pet-eyes { animation: none; }
+.pet-wing-l { animation: p-flapL .5s ease-in-out infinite; transform-origin: 100% 60%; } .pet-wing-r { animation: p-flapR .5s ease-in-out infinite; transform-origin: 0% 60%; }
+@keyframes p-flapL { 50% { transform: rotate(16deg); } } @keyframes p-flapR { 50% { transform: rotate(-16deg); } }
+.pet-flame { animation: p-flick .35s ease-in-out infinite alternate; transform-origin: 50% 100%; }
+@keyframes p-flick { to { transform: scale(.9, 1.12) skewX(4deg); } }
+.pet-tail { animation: p-tail 1.4s ease-in-out infinite; transform-origin: 0% 100%; } @keyframes p-tail { 50% { transform: rotate(-12deg); } }
+.pet-tent { animation: p-tent 1.6s ease-in-out infinite; } @keyframes p-tent { 50% { transform: scaleX(1.06) translateY(1px); } }
+.pet-halo { animation: p-halo 2s ease-in-out infinite; } @keyframes p-halo { 50% { transform: translateY(-3px); opacity: .7; } }
+.pet-orbit { animation: p-orbit 6s linear infinite; transform-origin: 50% 61%; transform-box: view-box; } @keyframes p-orbit { to { transform: rotate(360deg); } }
+.pet-dust { animation: p-dust 2.4s ease-in-out infinite; } @keyframes p-dust { 50% { opacity: .2; transform: translateY(-4px); } }
+.pet-rune { animation: p-rune 1.6s ease-in-out infinite; } @keyframes p-rune { 50% { opacity: .3; } }
+.pet-zzz { animation: p-zzz 2.4s ease-in-out infinite; } @keyframes p-zzz { 0% { opacity: 0; transform: translate(0, 4px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translate(6px, -8px); } }
+/* Raretés : plus c'est rare, plus c'est stylé */
+.r-rare .pet-art { filter: drop-shadow(0 0 6px color-mix(in srgb, #2f7fd8 45%, transparent)); }
+.r-epic .pet-art { filter: drop-shadow(0 0 10px color-mix(in srgb, #8a4fd8 60%, transparent)); }
+.r-legendary .pet-art { filter: drop-shadow(0 0 12px rgba(255, 196, 60, .8)); }
+.r-mythic .pet-art { filter: drop-shadow(0 0 14px rgba(255, 80, 60, .85)); }
+.r-ultimate .pet-art { animation: p-holo 4s linear infinite; }
+@keyframes p-holo { 0% { filter: drop-shadow(0 0 14px #ff4fd8) hue-rotate(0deg); } 100% { filter: drop-shadow(0 0 14px #ff4fd8) hue-rotate(360deg); } }
+.pet-aura { position: absolute; inset: 6%; border-radius: 50%; z-index: 1; opacity: .55; filter: blur(6px); animation: p-aura 5s linear infinite; }
+.r-legendary .pet-aura { background: conic-gradient(from 0deg, #ffd34d, transparent 30%, #ff9f1c, transparent 70%, #ffd34d); }
+.r-mythic .pet-aura { background: conic-gradient(from 0deg, #ff4b3a, transparent 25%, #ffb02e, transparent 55%, #ff4b3a 80%, transparent); opacity: .7; }
+.r-ultimate .pet-aura { background: conic-gradient(#ff4fd8, #5cc8ff, #7dff9a, #ffe75c, #ff4fd8); opacity: .65; animation-duration: 3s; }
+@keyframes p-aura { to { transform: rotate(360deg); } }
+.spark { position: absolute; z-index: 3; width: 5px; height: 5px; border-radius: 50%; left: calc(14% + var(--i) * 8%); bottom: 18%; opacity: 0; animation: p-spark 2.4s ease-in infinite; animation-delay: calc(var(--i) * .27s); pointer-events: none; }
+.r-epic .spark { background: #c9a6ff; } .r-legendary .spark { background: #ffd34d; } .r-mythic .spark { background: #ff8a3d; width: 6px; height: 6px; }
+.r-ultimate .spark { background: #fff; box-shadow: 0 0 6px #ff4fd8, 0 0 10px #5cc8ff; }
+@keyframes p-spark { 0% { opacity: 0; transform: translateY(0) scale(.6); } 25% { opacity: 1; } 100% { opacity: 0; transform: translateY(-70px) scale(1.2); } }
+.shiny .pet-art::after { content: "✦"; position: absolute; top: 4%; right: 8%; color: #ffd34d; font-size: 18px; animation: p-halo 1.6s ease-in-out infinite; }
+.silhouette .pet-svg { filter: brightness(0) opacity(.18); }
+.silhouette .pet-body { animation: none; }
+/* Carte joueur, album, éclosion */
+.pc-pet { position: relative; display: flex; align-items: center; gap: 10px; border: 0; background: var(--bg); border-radius: 16px; padding: 4px 12px 4px 4px; width: 100%; text-align: left; color: var(--ink); }
+.pc-pet .bubble { font-size: 14px; line-height: 1.3; }
+.pc-pet .pc-egg { width: 64px; height: 64px; }
+.egg-badge { position: absolute; top: 4px; left: 58px; background: var(--warn); color: #fff; border-radius: 99px; min-width: 22px; height: 22px; padding: 0 6px; display: grid; place-items: center; font-size: 13px; font-weight: 700; box-shadow: 0 0 0 2px var(--surface); }
+.profile-pet { width: auto; background: none; padding: 0; }
+.pets-hero { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; text-align: left; background: radial-gradient(circle at 30% 40%, var(--accent-soft), var(--surface) 70%); }
+.pets-hero .stack { flex: 1; min-width: 200px; }
+.egg-count { display: inline-flex; align-items: center; gap: 6px; }
+.egg-count b { font-family: var(--font-display); font-size: 24px; }
+.egg-ic svg { width: 20px; height: 20px; display: block; fill: #fff8ec; stroke: var(--warn); stroke-width: 1.6; }
+.rar-tag { display: inline-block; font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--rc); padding: 2px 10px; border-radius: 6px; }
+.rar-tag.small { font-size: 12px; padding: 1px 7px; }
+.album { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.album-item { display: grid; gap: 2px; justify-items: center; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 6px 10px; }
+.album-item.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.album-item b { font-size: 14px; line-height: 1.15; }
+.album-item.unknown { opacity: .75; }
+.stars { color: #e0a21a; font-size: 13px; letter-spacing: 1px; }
+.big-egg { width: 120px; }
+.egg { width: 140px; }
+.egg-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.p-pet { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 52; pointer-events: none; }
+.p-pet.cheer .pet { animation: p-cheer .6s ease-out; }
+@keyframes p-cheer { 30% { transform: translateY(-22px) rotate(-8deg); } 60% { transform: translateY(0) rotate(6deg); } }
+.hatch { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px 16px; overflow-y: auto; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rc, #fff) 30%, #1b1f2b), #10131c 70%); color: #fff; }
+.hatch.r-common { --rc: #8a9590; } .hatch.r-rare { --rc: #2f7fd8; } .hatch.r-epic { --rc: #8a4fd8; } .hatch.r-legendary { --rc: #e0a21a; } .hatch.r-mythic { --rc: #e2483a; } .hatch.r-ultimate { --rc: #ff4fd8; }
+.hatch-stage { position: relative; z-index: 2; display: grid; justify-items: center; width: 100%; }
+.hatch .egg { cursor: pointer; animation: egg-wobble 1.9s ease-in-out forwards; }
+.hatch.r-legendary .egg, .hatch.r-mythic .egg, .hatch.r-ultimate .egg { animation-duration: 2.6s; filter: drop-shadow(0 0 18px var(--rc)); }
+.egg-crack { opacity: 0; animation: egg-crack 1.9s forwards; }
+@keyframes egg-wobble { 0% { transform: rotate(0) scale(.8); } 15% { transform: rotate(-8deg) scale(1); } 30% { transform: rotate(8deg); } 45% { transform: rotate(-12deg); } 60% { transform: rotate(12deg); } 75% { transform: rotate(-16deg) scale(1.05); } 90% { transform: rotate(16deg) scale(1.1); } 100% { transform: rotate(0) scale(1.2); } }
+@keyframes egg-crack { 0%,55% { opacity: 0; } 70%,100% { opacity: 1; } }
+.hatch-flash { position: absolute; inset: 0; background: var(--rc); opacity: 0; pointer-events: none; z-index: 1; }
+.hatch.revealed .hatch-flash { animation: flash .7s ease-out; }
+@keyframes flash { 0% { opacity: .9; } 100% { opacity: 0; } }
+.hatch-skip { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px; z-index: 3; color: #fff; border-color: rgba(255,255,255,.4); }
+.hatch-card { display: grid; gap: 10px; justify-items: center; text-align: center; max-width: 420px; animation: pop .4s cubic-bezier(.2, 1.4, .4, 1); }
+.hatch-card h2 { font-size: 34px; color: #fff; }
+.hatch-card .muted { color: rgba(255,255,255,.75); }
+.hatch-card .btn.ghost { color: #fff; border-color: rgba(255,255,255,.4); }
+.hatch-card.multi { max-width: 640px; width: 100%; }
+.multi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; width: 100%; }
+.multi-item { display: grid; gap: 3px; justify-items: center; background: rgba(255,255,255,.08); border-radius: 12px; padding: 8px 4px; }
+.multi-item b { font-size: 13px; }
+.multi-item.new { box-shadow: inset 0 0 0 2px var(--rc, #fff); }
+@media (prefers-reduced-motion: reduce) {
+  .pet *, .pet, .spark, .pet-aura, .hatch .egg, .egg-crack, .hatch-card, .p-pet.cheer .pet { animation: none !important; }
+  .egg-crack { opacity: 1; }
+}
+
 /* Craie, avatar, boutique */
 .chalk { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
 .chalk-ic svg { width: 16px; height: 16px; display: block; fill: color-mix(in srgb, var(--surface) 70%, var(--accent)); stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
@@ -3170,6 +3277,296 @@ render = function () {
     $("#nav").hidden = false; renderNav(); $("#view").replaceChildren(renderShop()); return;
   }
   _render6();
+};
+render();
+
+
+/* =====================================================================
+   V7 : œufs et compagnons animés (gacha), sans argent réel
+   ===================================================================== */
+settings.pets = Object.assign({ owned: {}, equip: null, opened: 0, bought: 0, pity: { e: 0, l: 0 }, log: [] }, settings.pets || {});
+
+/* ---------- Raretés : taux affichés, garanties, style ---------- */
+const RARITIES = [
+  { id: "common", name: "Commun", rate: 50, color: "#8a9590" },
+  { id: "rare", name: "Rare", rate: 28, color: "#2f7fd8" },
+  { id: "epic", name: "Épique", rate: 13.5, color: "#8a4fd8" },
+  { id: "legendary", name: "Légendaire", rate: 6, color: "#e0a21a" },
+  { id: "mythic", name: "Mythique", rate: 2, color: "#e2483a" },
+  { id: "ultimate", name: "Ultime", rate: .5, color: "#ff4fd8" }
+];
+const RIDX = Object.fromEntries(RARITIES.map((r, i) => [r.id, i]));
+
+/* ---------- Les compagnons ---------- */
+// shape : forme du corps · ears : oreilles/cornes · x : accessoires · anim : animation propre
+const PETS = [
+  { id: "bloubi", name: "Bloubi", r: "common", shape: "blob", c: "#7fcf8a", b: "#c9efce", anim: "bob", d: "Un slime qui fait des pompes. En gélatine, mais avec conviction." },
+  { id: "craiou", name: "Craiou", r: "common", shape: "cube", c: "#f1f1ec", b: "#ffffff", x: ["chalk"], anim: "bob", d: "Un cube de magnésie. Laisse des traces blanches partout où il passe." },
+  { id: "pompon", name: "Pompon", r: "common", shape: "round", c: "#f2b8c6", b: "#fbe2e8", anim: "hop", d: "Une boule de poils qui saute à la corde sans corde." },
+  { id: "gainou", name: "Gainou", r: "common", shape: "round", c: "#9ea7ad", b: "#cdd3d6", x: ["band"], anim: "bob", d: "Un caillou. Il tient la planche depuis 3 000 ans." },
+  { id: "plumo", name: "Plumo", r: "common", shape: "round", ears: "chick", c: "#f5d34a", b: "#fbe9a1", anim: "hop", d: "Un poussin qui rêve de muscle-up. Pour l'instant, il saute." },
+  { id: "mochi", name: "Mochi", r: "common", shape: "blob", c: "#f6c7d9", b: "#ffffff", anim: "bob", d: "Moelleux, souple, et étonnamment bon en pont." },
+  { id: "goutto", name: "Goutto", r: "common", shape: "drop", c: "#6cc1ef", b: "#c4e7fa", anim: "bob", d: "La goutte de sueur de ta dernière série. Elle est restée." },
+  { id: "barrou", name: "Barrou", r: "rare", shape: "round", ears: "cat", c: "#f0a35e", b: "#fbe0c6", x: ["band"], anim: "hop", d: "Un chat qui dort accroché à la barre. Grip infini." },
+  { id: "lapinche", name: "Lapinche", r: "rare", shape: "round", ears: "bunny", c: "#e8e2da", b: "#ffffff", anim: "hop", d: "Un lapin qui tient l'advanced tuck mieux que toi. Désolé." },
+  { id: "ficelle", name: "Ficelle", r: "rare", shape: "blob", ears: "frog", c: "#5fbf6e", b: "#c8edc9", anim: "hop", d: "Une grenouille experte en squats sautés." },
+  { id: "kettle", name: "Kettle", r: "rare", shape: "round", c: "#3e4a4f", b: "#6b7a80", x: ["handle"], anim: "bob", d: "Un kettlebell qui a décidé de devenir vivant. Lourd de sens." },
+  { id: "nuagou", name: "Nuagou", r: "rare", shape: "cloud", c: "#eef4fb", b: "#ffffff", anim: "float", d: "Un nuage. Il ne connaît pas la gravité, et ça l'énerve que toi si." },
+  { id: "dragonnet", name: "Dragonnet", r: "epic", shape: "round", ears: "horns", c: "#5a9e6f", b: "#cfe8c7", x: ["wings"], anim: "float", d: "Petit dragon, grande poussée. Crache de la magnésie." },
+  { id: "spectro", name: "Spectro", r: "epic", shape: "ghost", c: "#e9e6ff", b: "#ffffff", anim: "float", d: "Le fantôme de tes séances sautées. Il est gentil, mais il te regarde." },
+  { id: "renardo", name: "Renardo", r: "epic", shape: "round", ears: "fox", c: "#e8743b", b: "#fff1e6", x: ["tail"], anim: "hop", d: "Rusé. Il connaît tous les raccourcis, sauf pour la planche." },
+  { id: "astro", name: "Astro", r: "epic", shape: "star", c: "#ffd34d", b: "#fff2b8", anim: "spin", d: "Une étoile filante tombée pendant un handstand." },
+  { id: "phenix", name: "Phénix de la Barre", r: "legendary", shape: "tall", ears: "crest", c: "#ff7a3d", b: "#ffd29e", x: ["wings", "flame"], anim: "float", d: "Renaît de ses cendres à chaque séance ratée. Comme ta motivation." },
+  { id: "golem", name: "Golem Planche", r: "legendary", shape: "cube", c: "#8d8579", b: "#b8b0a3", x: ["band", "rune"], anim: "pushup", d: "Un golem de pierre qui tient la full planche. Depuis toujours." },
+  { id: "licorne", name: "Licorne Handstand", r: "legendary", shape: "round", ears: "unicorn", c: "#ffffff", b: "#ffe6f6", x: ["mane"], anim: "handstand", d: "Elle ne marche que sur les mains. Et elle a raison." },
+  { id: "titan", name: "Titan Muscle-up", r: "mythic", shape: "tall", ears: "horns", c: "#c23b3b", b: "#f2b3a8", x: ["cape", "flame"], anim: "flip", d: "Il passe la barre comme on passe une porte. Sans les mains, parfois." },
+  { id: "kraken", name: "Kraken de la Traction", r: "mythic", shape: "blob", c: "#3c3f9e", b: "#9fa3ec", x: ["tentacles", "crown"], anim: "float", d: "Huit bras, huit tractions en même temps." },
+  { id: "gravitas", name: "Gravitas", r: "ultimate", shape: "star", c: "#ffffff", b: "#ffffff", x: ["halo", "orbit"], anim: "handstand", d: "L'être qui a vaincu la gravité. Il fait le poirier sur l'univers." },
+  { id: "calistos", name: "Calistos, l'Éternel", r: "ultimate", shape: "tall", ears: "crest", c: "#1b1f3a", b: "#4c5bd4", x: ["halo", "orbit", "wings", "crown"], anim: "flip", d: "Le premier athlète. On dit qu'il a inventé la traction en regardant une branche." }
+];
+const PET = Object.fromEntries(PETS.map(p => [p.id, p]));
+
+/* ---------- Dessin d'un compagnon (SVG) ---------- */
+function petSVG(p, o) {
+  o = o || {};
+  const sleepy = o.mood === "sleepy", shiny = o.shiny, c = shiny ? shade(p.c) : p.c, b = p.b;
+  const parts = [];
+  const add = s => parts.push(s);
+  const x = p.x || [];
+  // derrière le corps
+  if (x.includes("cape")) add('<path class="pet-cape" d="M38 58 Q60 52 82 58 L92 104 Q60 96 28 104Z" fill="#7a1fa8"/>');
+  if (x.includes("wings")) add('<g class="pet-wing pet-wing-l"><path d="M34 70 Q10 52 8 72 Q16 72 14 82 Q24 76 34 82Z" fill="' + (p.r === "legendary" ? "#ffb347" : "#bfe3c8") + '" stroke="rgba(0,0,0,.15)"/></g><g class="pet-wing pet-wing-r"><path d="M86 70 Q110 52 112 72 Q104 72 106 82 Q96 76 86 82Z" fill="' + (p.r === "legendary" ? "#ffb347" : "#bfe3c8") + '" stroke="rgba(0,0,0,.15)"/></g>');
+  if (x.includes("tail")) add('<path class="pet-tail" d="M84 92 Q110 84 106 62 Q100 76 82 82Z" fill="' + c + '"/><path d="M106 62 Q104 70 99 73 L103 66Z" fill="#fff"/>');
+  if (x.includes("tentacles")) add('<g class="pet-tent">' + [30, 44, 58, 72, 86].map((tx, i) => '<path d="M' + tx + ' 96 q' + (i % 2 ? 6 : -6) + ' 10 0 14" stroke="' + c + '" stroke-width="7" stroke-linecap="round" fill="none"/>').join("") + '</g>');
+  // corps
+  const body = {
+    blob: '<path d="M60 40 C88 40 96 62 96 80 C96 98 80 104 60 104 C40 104 24 98 24 80 C24 62 32 40 60 40Z"/>',
+    round: '<circle cx="60" cy="76" r="30"/>',
+    cube: '<rect x="31" y="47" width="58" height="57" rx="12"/>',
+    drop: '<path d="M60 30 C72 52 92 66 92 82 C92 98 78 104 60 104 C42 104 28 98 28 82 C28 66 48 52 60 30Z"/>',
+    cloud: '<path d="M34 100 C18 100 18 78 34 78 C34 60 56 54 64 66 C74 54 96 62 90 80 C104 82 102 100 88 100Z"/>',
+    ghost: '<path d="M32 104 V70 C32 50 46 40 60 40 C74 40 88 50 88 70 V104 L80 96 L72 104 L64 96 L56 104 L48 96 L40 104Z"/>',
+    star: '<path d="M60 36 L69 60 L95 61 L74 77 L82 102 L60 87 L38 102 L46 77 L25 61 L51 60Z" stroke-linejoin="round"/>',
+    tall: '<ellipse cx="60" cy="74" rx="27" ry="31"/>'
+  }[p.shape];
+  // oreilles / cornes (avant le corps pour qu'elles dépassent derrière la tête)
+  const ears = {
+    cat: '<path d="M38 58 L42 36 L56 50Z M82 58 L78 36 L64 50Z"/>',
+    fox: '<path d="M36 60 L38 30 L58 50Z M84 60 L82 30 L62 50Z"/><path d="M40 36 L42 44 L46 41Z M80 36 L78 44 L74 41Z" fill="#fff"/>',
+    bunny: '<ellipse cx="48" cy="34" rx="7" ry="20" transform="rotate(-10 48 34)"/><ellipse cx="72" cy="34" rx="7" ry="20" transform="rotate(10 72 34)"/>',
+    frog: '<circle cx="44" cy="48" r="11"/><circle cx="76" cy="48" r="11"/>',
+    horns: '<path d="M44 50 Q36 34 42 26 Q46 40 52 46Z M76 50 Q84 34 78 26 Q74 40 68 46Z" fill="#f2d27a"/>',
+    crest: '<path d="M60 40 Q54 22 62 12 Q64 26 70 20 Q70 32 64 42Z" fill="#ffcf4a"/>',
+    unicorn: '<path d="M60 46 L56 22 L66 44Z" fill="#ffd34d" stroke="#e9a81a" stroke-width="1"/><path d="M40 56 L44 40 L54 50Z M80 56 L76 40 L66 50Z"/>',
+    chick: '<path d="M58 46 Q56 36 62 34 Q60 40 64 44Z" fill="' + c + '"/>'
+  }[p.ears] || "";
+  add('<g class="pet-shape" fill="' + c + '" stroke="rgba(0,0,0,.12)" stroke-width="1.5">' + ears + body + '</g>');
+  if (x.includes("mane")) add('<path d="M36 62 Q30 52 38 46 Q36 56 44 56 Q40 48 48 44 Q46 52 52 52" fill="none" stroke="#c88cff" stroke-width="5" stroke-linecap="round"/>');
+  if (!["star", "cloud", "cube"].includes(p.shape)) add('<ellipse cx="60" cy="90" rx="17" ry="11" fill="' + b + '" opacity=".9"/>');
+  // visage
+  const ey = p.shape === "tall" ? 68 : p.ears === "frog" ? 50 : 72, ex = p.ears === "frog" ? 16 : 10;
+  if (sleepy) add('<path d="M' + (60 - ex - 6) + ' ' + ey + ' q6 4 12 0 M' + (60 + ex - 6) + ' ' + ey + ' q6 4 12 0" stroke="#2a2a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>');
+  else add('<g class="pet-eyes">' + [60 - ex, 60 + ex].map(cx => '<circle cx="' + cx + '" cy="' + ey + '" r="6.5" fill="#fff"/><circle cx="' + cx + '" cy="' + (ey + 1) + '" r="4" fill="' + (p.r === "ultimate" ? "#7b3cff" : "#222") + '"/><circle cx="' + (cx + 1.6) + '" cy="' + (ey - 1) + '" r="1.5" fill="#fff"/>').join("") + '</g>');
+  add('<ellipse cx="' + (60 - ex - 9) + '" cy="' + (ey + 10) + '" rx="5" ry="3" fill="#ff8fa3" opacity=".55"/><ellipse cx="' + (60 + ex + 9) + '" cy="' + (ey + 10) + '" rx="5" ry="3" fill="#ff8fa3" opacity=".55"/>');
+  if (p.ears === "chick") add('<path d="M56 ' + (ey + 7) + ' L64 ' + (ey + 7) + ' L60 ' + (ey + 13) + 'Z" fill="#ff9f1c"/>');
+  else add('<path d="M55 ' + (ey + 9) + ' q5 ' + (sleepy ? 2 : 5) + ' 10 0" stroke="#2a2a2a" stroke-width="2" fill="none" stroke-linecap="round"/>');
+  // accessoires devant
+  if (x.includes("band")) add('<rect x="' + (p.shape === "cube" ? 31 : 33) + '" y="' + (ey - 15) + '" width="' + (p.shape === "cube" ? 58 : 54) + '" height="6" rx="3" fill="#e2483a"/><path d="M' + (p.shape === "cube" ? 88 : 86) + ' ' + (ey - 13) + ' l10 -4 l-2 8Z" fill="#e2483a"/>');
+  if (x.includes("handle")) add('<path d="M42 54 Q42 30 60 30 Q78 30 78 54" fill="none" stroke="' + c + '" stroke-width="7"/>');
+  if (x.includes("chalk")) add('<g class="pet-dust" fill="#fff">' + [[30, 44], [92, 50], [26, 92], [96, 88]].map(([cx, cy]) => '<circle cx="' + cx + '" cy="' + cy + '" r="2.4"/>').join("") + '</g>');
+  if (x.includes("rune")) add('<path class="pet-rune" d="M52 92 L60 82 L68 92 L60 100Z" fill="none" stroke="#6cf2ff" stroke-width="2"/>');
+  if (x.includes("crown")) add('<path d="M44 ' + (ey - 26) + ' L48 ' + (ey - 40) + ' L56 ' + (ey - 30) + ' L60 ' + (ey - 44) + ' L64 ' + (ey - 30) + ' L72 ' + (ey - 40) + ' L76 ' + (ey - 26) + 'Z" fill="#ffd34d" stroke="#d99a00" stroke-width="1.5"/>');
+  if (x.includes("halo")) add('<ellipse class="pet-halo" cx="60" cy="' + (ey - 38) + '" rx="18" ry="5" fill="none" stroke="#ffe680" stroke-width="3.5"/>');
+  if (x.includes("flame")) add('<g class="pet-flame"><path d="M60 ' + (ey - 26) + ' Q50 ' + (ey - 40) + ' 60 ' + (ey - 56) + ' Q70 ' + (ey - 40) + ' 60 ' + (ey - 26) + 'Z" fill="#ffb02e"/><path d="M60 ' + (ey - 28) + ' Q55 ' + (ey - 37) + ' 60 ' + (ey - 46) + ' Q65 ' + (ey - 37) + ' 60 ' + (ey - 28) + 'Z" fill="#fff1a8"/></g>');
+  if (x.includes("orbit")) add('<g class="pet-orbit"><circle cx="60" cy="18" r="4" fill="#9ff"/><circle cx="104" cy="74" r="3" fill="#f9f"/><circle cx="16" cy="74" r="3.5" fill="#ff9"/></g>');
+  if (sleepy) add('<text class="pet-zzz" x="86" y="46" font-size="14" font-weight="700" fill="#6b7a80" font-family="var(--font-display)">z<tspan dy="-6" font-size="11">z</tspan><tspan dy="-5" font-size="9">z</tspan></text>');
+  return '<svg viewBox="0 0 120 120" class="pet-svg" aria-hidden="true"><ellipse class="pet-shadow" cx="60" cy="108" rx="24" ry="4.5" fill="rgba(0,0,0,.13)"/><g class="pet-body a-' + (sleepy ? "sleep" : p.anim) + '">' + parts.join("") + '</g></svg>';
+}
+function shade(hex) { // variante « brillante » : teinte décalée
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  return "#" + [b, r, g].map(v => v.toString(16).padStart(2, "0")).join("");
+}
+function stars(copies) { return copies >= 16 ? 5 : copies >= 8 ? 4 : copies >= 4 ? 3 : copies >= 2 ? 2 : 1; }
+function petEl(id, o) {
+  o = o || {};
+  const p = PET[id], copies = settings.pets.owned[id] || 1, st = stars(copies), shiny = st >= 5;
+  const box = h("div", { class: "pet r-" + p.r + (shiny ? " shiny" : "") + (o.size ? " " + o.size : "") + (o.cls ? " " + o.cls : ""), title: p.name });
+  if (RIDX[p.r] >= 3) box.appendChild(h("span", { class: "pet-aura" }));
+  if (RIDX[p.r] >= 2) for (let i = 0; i < (RIDX[p.r] >= 4 ? 10 : 6); i++) box.appendChild(h("span", { class: "spark", style: "--i:" + i }));
+  const art = h("div", { class: "pet-art" }); art.innerHTML = petSVG(p, { mood: o.mood, shiny }); box.appendChild(art);
+  return box;
+}
+
+/* ---------- Œufs : gains, tirage, garanties ---------- */
+function fullWeeks() {
+  const slots = Object.keys(cuSlots()), weeks = new Set(Object.keys(done).map(k => +k.split("-")[0]));
+  return [...weeks].filter(a => a >= 1 && slots.every(d => done[a + "-" + d])).length;
+}
+function eggsEarned() { return 1 + journal.length + (levelOf(xpTotal().xp).L - 1) + fullWeeks(); }
+const eggs = () => eggsEarned() + settings.pets.bought - settings.pets.opened;
+const EGG_PRICE = 150, EGG10_PRICE = 1350;
+function rollRarity() {
+  const pt = settings.pets.pity;
+  let roll = Math.random() * 100, acc = 0, r = "common";
+  for (const ra of RARITIES) { acc += ra.rate; if (roll < acc) { r = ra.id; break; } }
+  if (pt.l >= 39 && RIDX[r] < 3) r = "legendary";      // garantie Légendaire au 40e œuf
+  else if (pt.e >= 9 && RIDX[r] < 2) r = "epic";       // garantie Épique au 10e œuf
+  pt.e = RIDX[r] >= 2 ? 0 : pt.e + 1;
+  pt.l = RIDX[r] >= 3 ? 0 : pt.l + 1;
+  return r;
+}
+function pull() {
+  const r = rollRarity(), pool = PETS.filter(p => p.r === r), p = pool[Math.floor(Math.random() * pool.length)];
+  const isNew = !settings.pets.owned[p.id];
+  settings.pets.owned[p.id] = (settings.pets.owned[p.id] || 0) + 1;
+  settings.pets.opened++;
+  settings.pets.log.unshift({ id: p.id, d: iso(new Date()) }); settings.pets.log = settings.pets.log.slice(0, 50);
+  if (!settings.pets.equip) settings.pets.equip = p.id;
+  return { p, isNew, copies: settings.pets.owned[p.id] };
+}
+function openEggs(n, cost) {
+  if (cost) { if (chalk() < cost) { toast("Il te manque " + (cost - chalk()) + " craies"); return; } settings.shop.spent += cost; settings.pets.bought += n; }
+  else if (eggs() < n) { toast("Pas assez d'œufs"); return; }
+  const res = Array.from({ length: n }, pull);
+  saveAll(); hatch(res);
+}
+
+/* ---------- Animation d'éclosion ---------- */
+function eggSVG(rar) {
+  const col = RARITIES[RIDX[rar]].color;
+  return '<svg viewBox="0 0 100 120" class="egg-svg"><ellipse cx="50" cy="114" rx="26" ry="4" fill="rgba(0,0,0,.15)"/><path class="egg-shell" d="M50 8 C76 8 90 52 90 76 C90 100 72 112 50 112 C28 112 10 100 10 76 C10 52 24 8 50 8Z" fill="#fff8ec" stroke="' + col + '" stroke-width="3"/><g fill="' + col + '" opacity=".55"><circle cx="34" cy="50" r="6"/><circle cx="62" cy="38" r="4"/><circle cx="66" cy="76" r="7"/><circle cx="36" cy="88" r="4"/></g><path class="egg-crack" d="M14 70 L28 62 L36 72 L48 60 L58 72 L70 62 L86 70" fill="none" stroke="#3a3a3a" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+}
+function hatch(res) {
+  const best = res.reduce((a, r) => RIDX[r.p.r] > RIDX[a.p.r] ? r : a, res[0]);
+  const ov = h("div", { class: "hatch r-" + best.p.r, role: "dialog", "aria-modal": "true", "aria-label": "Éclosion" });
+  const stage = h("div", { class: "hatch-stage" });
+  const egg = h("div", { class: "egg" }); egg.innerHTML = eggSVG(best.p.r);
+  stage.appendChild(egg);
+  const skip = h("button", { class: "btn ghost small hatch-skip" }, "Passer");
+  ov.append(h("div", { class: "hatch-flash" }), stage, skip);
+  document.body.appendChild(ov);
+  let shown = false;
+  const reveal = () => {
+    if (shown) return; shown = true;
+    ov.classList.add("revealed");
+    const R = RARITIES[RIDX[best.p.r]];
+    const content = res.length === 1 ? h("div", { class: "hatch-card" },
+      h("span", { class: "rar-tag", style: "--rc:" + R.color }, R.name),
+      petEl(best.p.id, { size: "xl" }),
+      h("h2", null, best.p.name),
+      h("p", { class: "muted" }, best.p.d),
+      h("p", { class: "small" }, best.isNew ? "✨ Nouveau compagnon !" : "Doublon : " + best.p.name + " passe à " + "★".repeat(stars(best.copies)) + (stars(best.copies) >= 5 ? " · Brillant !" : "")),
+      h("div", { class: "hero-actions" },
+        h("button", { class: "btn", onclick: () => { settings.pets.equip = best.p.id; saveAll(); close(); toast(best.p.name + " est ton compagnon"); } }, "Choisir comme compagnon"),
+        h("button", { class: "btn ghost", onclick: () => close() }, "Continuer"))) :
+      h("div", { class: "hatch-card multi" },
+        h("h2", null, "×" + res.length + " œufs"),
+        h("div", { class: "multi-grid" }, res.map(r => h("div", { class: "multi-item" + (r.isNew ? " new" : "") }, petEl(r.p.id, { size: "sm" }), h("b", null, r.p.name), h("span", { class: "rar-tag small", style: "--rc:" + RARITIES[RIDX[r.p.r]].color }, RARITIES[RIDX[r.p.r]].name), r.isNew ? h("span", { class: "tag accent" }, "Nouveau") : null))),
+        h("button", { class: "btn", onclick: () => close() }, "Super !"));
+    stage.replaceChildren(content); skip.remove();
+    if (RIDX[best.p.r] >= 3 && !reduceMotion) { const cv = h("canvas", { class: "confetti", "aria-hidden": "true" }); ov.prepend(cv); confetti(cv); }
+    beep(RIDX[best.p.r] >= 3 ? 1320 : 990, .35); buzz(RIDX[best.p.r] >= 3 ? [80, 50, 160] : 60);
+    speak(R.name + " ! " + best.p.name);
+  };
+  const close = () => { ov.remove(); render(); };
+  skip.onclick = reveal; egg.onclick = reveal;
+  if (reduceMotion) reveal(); else setTimeout(reveal, RIDX[best.p.r] >= 3 ? 2600 : 1900);
+}
+
+/* ---------- Humeur du compagnon ---------- */
+function lastTrainDays() {
+  const ds = Object.values(done).map(v => v && v.d).filter(Boolean).sort();
+  if (!ds.length) return null;
+  return Math.round((new Date(iso(new Date()) + "T12:00:00") - new Date(ds[ds.length - 1] + "T12:00:00")) / 864e5);
+}
+function petMood() {
+  const n = lastTrainDays();
+  if (n === 0) return { mood: "happy", say: "est fier de toi aujourd'hui !" };
+  if (n != null && n >= 3) return { mood: "sleepy", say: "s'ennuie… ça fait " + n + " jours. Une petite séance ?" };
+  const tp = todayPos(), nx = nextSession(Math.max(1, tp.abs), tp.d, true);
+  return { mood: "idle", say: nx ? "t'attend pour " + (nx.abs === tp.abs && nx.d === tp.d ? "la séance d'aujourd'hui" : DAYS[nx.d].toLowerCase()) + "." : "est prêt." };
+}
+
+/* ---------- Écran Compagnons ---------- */
+function renderPets() {
+  const owned = settings.pets.owned, eq = settings.pets.equip, nOwned = Object.keys(owned).length, egg = eggs(), bal = chalk(), pt = settings.pets.pity;
+  const hero = h("section", { class: "card pets-hero" },
+    eq ? petEl(eq, { size: "xl", mood: petMood().mood }) : h("div", { class: "egg big-egg" }),
+    h("div", { class: "stack" },
+      h("span", { class: "eyebrow" }, eq ? RARITIES[RIDX[PET[eq].r]].name + " · " + "★".repeat(stars(owned[eq])) : "Pas encore de compagnon"),
+      h("h2", null, eq ? PET[eq].name : "Ouvre ton premier œuf"),
+      h("p", { class: "muted small" }, eq ? PET[eq].d : "Ton œuf de bienvenue t'attend.")));
+  if (!eq) hero.querySelector(".big-egg").innerHTML = eggSVG("common");
+  const shop = h("section", { class: "card stack" },
+    h("div", { class: "row-between" }, h("h3", null, "Œufs"), h("div", { class: "egg-count" }, h("span", { class: "egg-ic" }), h("b", { class: "num" }, egg), h("span", { class: "muted small" }, egg > 1 ? "œufs" : "œuf"), chalkPill(bal))),
+    h("div", { class: "hero-actions" },
+      h("button", { class: "btn big", disabled: egg < 1, onclick: () => openEggs(1, 0) }, "Ouvrir un œuf"),
+      egg >= 10 ? h("button", { class: "btn", onclick: () => openEggs(10, 0) }, "Ouvrir ×10") : null),
+    h("div", { class: "hero-actions" },
+      h("button", { class: "btn ghost" + (bal < EGG_PRICE ? " poor" : ""), onclick: () => openEggs(1, EGG_PRICE) }, "Acheter + ouvrir ", chalkPill(EGG_PRICE)),
+      h("button", { class: "btn ghost" + (bal < EGG10_PRICE ? " poor" : ""), onclick: () => openEggs(10, EGG10_PRICE) }, "×10 ", chalkPill(EGG10_PRICE))),
+    h("p", { class: "muted small" }, "Œufs gratuits : 1 de bienvenue, 1 par palier validé, 1 par niveau, 1 par semaine où tu fais toutes tes séances."),
+    h("p", { class: "muted small" }, "Garanties : Épique ou mieux dans " + (10 - pt.e) + " œuf" + (10 - pt.e > 1 ? "s" : "") + " maximum, Légendaire ou mieux dans " + (40 - pt.l) + "."),
+    h("details", { class: "tbl" }, h("summary", null, "Taux d'apparition"), h("table", null, h("tbody", null, RARITIES.map(r => h("tr", null, h("td", null, h("span", { class: "rar-tag small", style: "--rc:" + r.color }, r.name)), h("td", { class: "num" }, String(r.rate).replace(".", ",") + " %"), h("td", { class: "muted small" }, PETS.filter(p => p.r === r.id).length + " compagnons")))))));
+  shop.querySelector(".egg-ic").innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2c4 0 7 7 7 12a7 7 0 0 1-14 0c0-5 3-12 7-12z"/></svg>';
+  const album = RARITIES.map(r => {
+    const list = PETS.filter(p => p.r === r.id), got = list.filter(p => owned[p.id]).length;
+    return h("section", { class: "stack" },
+      h("div", { class: "row-between" }, h("h3", null, h("span", { class: "rar-tag", style: "--rc:" + r.color }, r.name)), h("span", { class: "muted small num" }, got + "/" + list.length + (got === list.length ? " · titre « Collectionneur " + r.name + " » débloqué" : ""))),
+      h("div", { class: "album" }, list.map(p => owned[p.id] ?
+        h("button", { class: "album-item" + (eq === p.id ? " on" : ""), onclick: () => { settings.pets.equip = p.id; saveAll(); toast(p.name + " est ton compagnon"); render(); } },
+          petEl(p.id, { size: "md" }), h("b", null, p.name), h("span", { class: "stars" }, "★".repeat(stars(owned[p.id])) + "☆".repeat(5 - stars(owned[p.id]))), h("span", { class: "muted small" }, "×" + owned[p.id] + (eq === p.id ? " · compagnon" : ""))) :
+        h("div", { class: "album-item unknown" }, silhouette(p), h("b", null, "???"), h("span", { class: "muted small" }, "À découvrir")))));
+  });
+  return h("div", { class: "screen" },
+    h("button", { class: "back", onclick: () => { S.sub = null; S.tab = "today"; render(); } }, "‹ Aujourd'hui"),
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, nOwned + "/" + PETS.length + " compagnons découverts"), h("h1", null, "Compagnons")),
+    hero, shop, h("p", { class: "muted small" }, "Doublons : chaque copie fait monter ton compagnon en étoiles (2, 4, 8, 16 copies). À 5★, il devient Brillant."), album);
+}
+
+function silhouette(p) { const d = h("div", { class: "pet md silhouette" }); d.innerHTML = '<div class="pet-art">' + petSVG(p) + '</div>'; return d; }
+
+/* ---------- Titres de collection ---------- */
+function collectionTitles() { return RARITIES.filter(r => PETS.filter(p => p.r === r.id).every(p => settings.pets.owned[p.id])).map(r => "Collectionneur " + r.name); }
+
+/* ---------- Intégration ---------- */
+const _playerCard7 = playerCard;
+playerCard = function () {
+  const c = _playerCard7(), eq = settings.pets.equip, m = petMood();
+  const wrap = h("button", { class: "pc-pet", onclick: () => openSub({ type: "pets" }), "aria-label": "Compagnons et œufs" });
+  if (eq) wrap.append(petEl(eq, { size: "md", mood: m.mood }), h("span", { class: "bubble" }, PET[eq].name + " " + m.say));
+  else { const e = h("div", { class: "egg pc-egg" }); e.innerHTML = eggSVG("common"); wrap.append(e, h("span", { class: "bubble" }, eggs() + " œuf" + (eggs() > 1 ? "s" : "") + " à ouvrir !")); }
+  const nE = eggs(); if (eq && nE > 0) wrap.appendChild(h("span", { class: "egg-badge num" }, nE));
+  c.insertBefore(wrap, c.querySelector(".pc-stats"));
+  return c;
+};
+const _renderShop7 = renderShop;
+renderShop = function () {
+  const scr = _renderShop7(), stack = scr.querySelector(".profile-card .stack");
+  if (settings.pets.equip) scr.querySelector(".profile-card").appendChild(h("button", { class: "pc-pet profile-pet", onclick: () => openSub({ type: "pets" }) }, petEl(settings.pets.equip, { size: "md", mood: petMood().mood })));
+  stack.appendChild(h("button", { class: "btn ghost small", onclick: () => openSub({ type: "pets" }) }, "Compagnons et œufs · " + eggs() + " œuf" + (eggs() > 1 ? "s" : "")));
+  const ct = collectionTitles();
+  if (ct.length) { const sec = [...scr.querySelectorAll("section.stack")].find(s => s.querySelector("h3") && s.querySelector("h3").textContent === "Titres de profil"); if (sec) sec.querySelector(".shop-grid").append(...ct.map(t => h("div", { class: "shop-item" + (settings.shop.equip.title === t ? " on" : "") }, h("span", { class: "sw title-sw" }, "★"), h("b", null, t), settings.shop.equip.title === t ? h("span", { class: "tag ok" }, "✓ Équipé") : h("button", { class: "btn ghost small", onclick: () => { settings.shop.equip.title = t; if (!settings.shop.owned.includes("title:" + t)) settings.shop.owned.push("title:" + t); saveAll(); render(); } }, "Équiper")))); }
+  return scr;
+};
+// Le compagnon encourage pendant la séance guidée
+const _drawP7 = drawP;
+drawP = function () {
+  _drawP7();
+  const o = $("#player"); if (!o || !settings.pets.equip) return;
+  let pp = o.querySelector(".p-pet");
+  if (!pp) { pp = h("div", { class: "p-pet" }); pp.appendChild(petEl(settings.pets.equip, { size: "sm", mood: "happy" })); o.appendChild(pp); }
+  if (P.cheerAt && Date.now() - P.cheerAt < 600) pp.classList.add("cheer");
+};
+const _record7 = record;
+record = function (v) { _record7(v); P.cheerAt = Date.now(); };
+const _render7 = render;
+render = function () {
+  if (S.onb == null && S.sub && S.sub.type === "pets") {
+    applyLook(); figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
+    $("#nav").hidden = false; renderNav(); $("#view").replaceChildren(renderPets()); return;
+  }
+  _render7();
 };
 render();
 

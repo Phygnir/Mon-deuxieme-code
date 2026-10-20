@@ -333,6 +333,11 @@ button:disabled { opacity: .4; cursor: default; }
 .switch:checked::after { transform: translateX(20px); }
 .restore { width: 100%; font: 13px/1.4 ui-monospace, Menlo, monospace; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
 
+/* Sources */
+.why { list-style: none; padding: 0; display: grid; gap: 12px; }
+.why li { display: grid; gap: 2px; font-size: 15px; padding-left: 12px; border-left: 3px solid var(--accent-soft); }
+.why a { color: var(--accent); font-weight: 600; font-size: 14px; text-decoration: none; }
+
 /* Célébration */
 .celebrate { position: fixed; inset: 0; z-index: 70; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 20px 16px; overflow-y: auto; }
 .confetti { position: fixed; inset: 0; pointer-events: none; }
@@ -1145,30 +1150,32 @@ const TREES = [
     acc: [["pikeBox", "r", 3, 10], ["dipsW", "r", 3, 6]] },
   { id: "planche", name: "Planche", cat: "push", skill: true, straight: true, steps: [
     { ex: "lean", k: "h", n: 3, v: 30, t: "Planche lean 30 s" },
-    { ex: "tuckPl", k: "h", n: 3, v: 15, t: "Tuck planche" },
-    { ex: "advTuck", k: "h", n: 3, v: 12, t: "Advanced tuck" },
-    { ex: "oneLeg", k: "h", n: 3, v: 8, t: "Une jambe", side: true },
-    { ex: "straddle", k: "h", n: 3, v: 8, t: "Straddle" },
-    { ex: "halfLay", k: "h", n: 3, v: 6, t: "Half-lay" },
-    { ex: "fullPl", k: "h", n: 3, v: 5, t: "Full planche" } ],
+    { ex: "tuckPl", k: "h", n: 4, v: 15, nx: 10, t: "Tuck planche" },
+    { ex: "advTuck", k: "h", n: 4, v: 15, nx: 10, t: "Advanced tuck" },
+    { ex: "oneLeg", k: "h", n: 4, v: 15, nx: 10, t: "Une jambe", side: true },
+    { ex: "straddle", k: "h", n: 4, v: 15, nx: 10, t: "Straddle" },
+    { ex: "halfLay", k: "h", n: 4, v: 15, nx: 10, t: "Half-lay" },
+    { ex: "fullPl", k: "h", n: 3, v: 10, t: "Full planche" } ],
     acc: [["lean", "h", 3, 25], ["pppu", "r", 3, 10]] },
   { id: "fl", name: "Front lever", cat: "pull", skill: true, straight: true, steps: [
-    { ex: "flTuck", k: "h", n: 3, v: 15, t: "Tuck" },
-    { ex: "flAdv", k: "h", n: 3, v: 12, t: "Advanced tuck" },
-    { ex: "flOne", k: "h", n: 3, v: 10, t: "Une jambe", side: true },
-    { ex: "flStraddle", k: "h", n: 3, v: 8, t: "Straddle" },
-    { ex: "flHalf", k: "h", n: 3, v: 6, t: "Half-lay" },
-    { ex: "flFull", k: "h", n: 3, v: 6, t: "Front lever" } ],
+    { ex: "flTuck", k: "h", n: 4, v: 15, nx: 10, t: "Tuck" },
+    { ex: "flAdv", k: "h", n: 4, v: 15, nx: 10, t: "Advanced tuck" },
+    { ex: "flOne", k: "h", n: 4, v: 15, nx: 10, t: "Une jambe", side: true },
+    { ex: "flStraddle", k: "h", n: 4, v: 15, nx: 10, t: "Straddle" },
+    { ex: "flHalf", k: "h", n: 4, v: 15, nx: 10, t: "Half-lay" },
+    { ex: "flFull", k: "h", n: 3, v: 10, t: "Front lever" } ],
     acc: [["row", "r", 3, 12], ["legRaise", "r", 3, 10]] },
   { id: "bl", name: "Back lever", cat: "pull", skill: true, straight: true, steps: [
-    { ex: "blTuck", k: "h", n: 3, v: 15, t: "Tuck" },
-    { ex: "blAdv", k: "h", n: 3, v: 12, t: "Advanced tuck" },
-    { ex: "blStraddle", k: "h", n: 3, v: 10, t: "Straddle" },
+    { ex: "blTuck", k: "h", n: 4, v: 15, nx: 10, t: "Tuck" },
+    { ex: "blAdv", k: "h", n: 4, v: 15, nx: 10, t: "Advanced tuck" },
+    { ex: "blStraddle", k: "h", n: 4, v: 15, nx: 10, t: "Straddle" },
     { ex: "blFull", k: "h", n: 3, v: 10, t: "Back lever" } ],
     acc: [["row", "r", 3, 12], ["dips", "r", 3, 12]] },
   { id: "mu", name: "Muscle-up", cat: "pull", skill: true, steps: [
     { ex: "pullUp", k: "r", n: 3, v: 10, t: "Tractions ×10" },
     { ex: "c2b", k: "r", n: 3, v: 6, t: "Chest-to-bar ×6" },
+    { ex: "sbDip", k: "r", n: 3, v: 10, t: "Dips barre droite ×10" },
+    { ex: "t2b", k: "r", n: 3, v: 8, t: "Toes-to-bar ×8" },
     { ex: "explosive", k: "r", n: 3, v: 5, t: "Tractions explosives ×5" },
     { ex: "muNeg", k: "r", n: 3, v: 3, t: "Négatifs 5 s ×3" },
     { ex: "mu", k: "r", n: 3, v: 1, t: "Muscle-up ×1" },
@@ -1206,7 +1213,7 @@ const TREES = [
 ];
 const TREE = Object.fromEntries(TREES.map(t => [t.id, t]));
 const CAT_LABEL = { balance: "Équilibre", push: "Poussée", pull: "Tirage", core: "Core", legs: "Jambes" };
-const stdText = st => st.n + " × " + (st.k === "h" ? fmtS(st.v) : st.v) + (st.side ? " par côté" : "") + (st.wt ? " à +" + st.wt + " % du poids" : "");
+const stdText = st => st.n + " × " + (st.k === "h" ? fmtS(st.v) : st.v) + (st.side ? " par côté" : "") + (st.wt ? " à +" + st.wt + " % du poids" : "") + (st.nx ? " + " + st.nx + " s au palier suivant" : "");
 
 /* Niveaux et réglages partagés par tous les programmes */
 const gstore = {
@@ -1214,7 +1221,7 @@ const gstore = {
   set(k, v) { try { localStorage.setItem("cap:" + k, JSON.stringify(v)); } catch (e) {} }
 };
 // Point de départ estimé d'après ton profil (handstand 20 s, HSPU placés, advanced tuck, +50 kg en traction, 100 kg au développé couché)
-const LEVEL_DEFAULT = { hs: 3, hspu: 3, planche: 2, fl: 1, bl: 0, mu: 2, pull: 4, push: 4, core: 1, legs: 2 };
+const LEVEL_DEFAULT = { hs: 3, hspu: 3, planche: 2, fl: 1, bl: 0, mu: 4, pull: 4, push: 4, core: 1, legs: 2 };
 const levels = Object.assign({}, LEVEL_DEFAULT, gstore.get("levels", {}));
 const settings = Object.assign({ focus: ["hs", "planche", "fl"], days: 4, bw: 65, adj: 0, onboarded: false, start: null }, gstore.get("settings", {}));
 let journal = gstore.get("journal", []);
@@ -1230,9 +1237,8 @@ function setLevel(id, lv, why) {
 
 /* ---------- Programme sur mesure : cycle de 12 semaines ---------- */
 const CU_PHASES = [
-  { name: "Bloc 1 · Volume", from: 1, to: 4, color: "--p1", goal: "Accumuler du temps de qualité dans chaque palier.", detail: "Plus de séries, tenues et répétitions à 50–70 % du standard. Semaine 4 : décharge et test." },
-  { name: "Bloc 2 · Intensité", from: 5, to: 8, color: "--p3", goal: "Se rapprocher du standard de validation.", detail: "Moins de séries, plus proches du maximum. Tentatives dans le palier suivant. Semaine 8 : décharge et test." },
-  { name: "Bloc 3 · Validation", from: 9, to: 12, color: "--p4", goal: "Valider un palier dans chaque skill prioritaire.", detail: "Séries au niveau du standard. Semaine 12 : test final, puis on relance un cycle avec tes nouveaux niveaux." }
+  { name: "Bloc 1 · Volume", from: 1, to: 6, color: "--p1", goal: "Accumuler du temps de qualité dans chaque palier.", detail: "Tenues à 60–65 % de ta tenue max, 50 à 60 s au total par skill. Négatifs lents sur les leviers. Semaine 6 : décharge et test." },
+  { name: "Bloc 2 · Intensité", from: 7, to: 12, color: "--p4", goal: "Valider un palier dans chaque skill prioritaire.", detail: "Tenues à 65–70 % de ta tenue max, jusqu'à 65 s au total. Tentatives du palier suivant. Semaine 12 : décharge, test final, puis nouveau cycle." }
 ];
 const CU_META = {
   push: { title: "Poussée", sub: "Skills de poussée, puis force", min: 60 },
@@ -1288,7 +1294,7 @@ function accItem(treeId, w, i, used) {
 function cuBaseSession(w, type) {
   const F = settings.focus.filter(id => TREE[id]);
   const fc = c => F.filter(id => TREE[id].cat === c);
-  const wi = (w - 1) % 4, test = wi === 3;
+  const wi = (w - 1) % 6, test = wi === 5;
   const hsActive = F.includes("hs") || levels.hs < 6;
   const warm = [item("wrists", "3 min", "", "Poignets et épaules")];
   if (type === "pull" || type === "full") warm.push(item("scapPU", "2 × 10", "", "Activation des omoplates"));
@@ -1390,7 +1396,7 @@ function dateOf(abs, d) { const s = new Date(settings.start + "T12:00:00"); s.se
 const fmtLong = d => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 const fmtShort = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 const phaseOf = w => CU_PHASES.find(p => w >= p.from && w <= p.to);
-const isDeload = w => w % 4 === 0;
+const isDeload = w => w % 6 === 0;
 
 /* ---------- Séances ---------- */
 const CU_DEFIS = HS_DEFIS.concat(PL_DEFIS).filter((d, i, a) => d.min === 0 && a.findIndex(x => x.t === d.t) === i);
@@ -1717,7 +1723,7 @@ function renderExercise(id) {
 const GLOSSARY = [
   ["Palier", "Une étape d'un arbre de skill. Tu travailles toujours ton palier actuel jusqu'à réussir son standard."],
   ["Standard", "Le test qui valide un palier, par exemple 3 × 12 s : trois tenues de 12 s, propres, avec 2 à 3 min de repos."],
-  ["Décharge", "Une semaine sur quatre, le volume est divisé par deux pour laisser récupérer tendons et articulations. On en profite pour tester les standards."],
+  ["Décharge", "Une semaine sur six, le volume est divisé par deux pour laisser récupérer tendons et articulations. On en profite pour tester les standards."],
   ["Tuck", "Position groupée : genoux serrés contre la poitrine. C'est le levier le plus court, donc le plus facile."],
   ["Advanced tuck", "Comme la tuck, mais le dos est plat et les hanches s'éloignent : les cuisses font un angle droit avec le buste."],
   ["Straddle", "Jambes tendues et très écartées. Raccourcit le levier par rapport aux jambes serrées."],
@@ -1761,7 +1767,7 @@ function renderProfile() {
       h("ol", { class: "how" },
         h("li", null, h("b", null, "Tu choisis 3 priorités. "), "Ce sont les skills travaillés en premier dans chaque séance, 2 à 3 fois par semaine."),
         h("li", null, h("b", null, "Chaque arbre a un palier actuel. "), "Les séries et tenues sont calculées à partir de son standard."),
-        h("li", null, h("b", null, "Cycle de 12 semaines. "), "3 blocs : volume, intensité, validation. Chaque 4e semaine : décharge et test."),
+        h("li", null, h("b", null, "Cycle de 12 semaines. "), "2 blocs de 6 semaines : volume puis intensité. Chaque 6e semaine : décharge et test."),
         h("li", null, h("b", null, "Tu valides, ça s'adapte. "), "Un palier validé fait passer tout le programme au suivant. Ton ressenti ajuste l'intensité de ±5 %."))),
     h("section", { class: "card stack" }, h("h3", null, "Lexique"), h("dl", { class: "gloss" }, GLOSSARY.map(([k, v]) => [h("dt", null, k), h("dd", null, v)]))),
     h("section", { class: "card stack" }, h("h3", null, "Données"),
@@ -1818,7 +1824,7 @@ function renderOnboarding() {
         h("span", { class: "label" }, "Ta semaine type"),
         h("ul", { class: "week-type" }, DAYS.map((n, d) => h("li", { class: sl[d] ? "" : "muted" }, h("b", null, n), h("span", null, sl[d] ? CU_META[sl[d]].title : "Repos")))),
         h("span", { class: "label" }, "Les 12 semaines"),
-        h("p", { class: "small" }, "Semaines 1–3 volume · 4 décharge et test · 5–7 intensité · 8 test · 9–11 validation · 12 test final.")),
+        h("p", { class: "small" }, "Semaines 1–5 volume · 6 décharge et test · 7–11 intensité · 12 décharge et test final.")),
       h("div", { class: "hero-actions" }, h("button", { class: "btn ghost", onclick: () => go(3) }, "‹ Retour"),
         h("button", { class: "btn big", onclick: () => {
           settings.focus = D.focus; settings.days = D.days; settings.bw = D.bw; Object.assign(levels, D.levels);
@@ -1921,7 +1927,7 @@ function drawP() {
     btns = [h("button", { class: "btn big", onclick: () => { P.phase = "ready"; P.newEx = false; P.paused = false; drawP(); } }, "Passer le repos"),
       h("button", { class: "btn ghost", onclick: () => { P.restFor += 15; } }, "+15 s")];
   } else if (P.phase === "ready") {
-    sub = "Série " + P.set + "/" + rx.sets;
+    sub = "Série " + P.set + "/" + rx.sets + (it.last && rx.mode === "hold" && P.set === rx.sets ? " · dernière : tiens au max" : "");
     if (rx.mode === "hold") { clock = "0"; btns = [h("button", { class: "btn big", onclick: () => { P.phase = "count"; P.t0 = Date.now(); P.reached = false; P.lastBeep = null; drawP(); } }, "▶ Démarrer la tenue")]; }
     else if (rx.mode === "timer") { clock = fmtClock(rx.secs); btns = [h("button", { class: "btn big", onclick: () => { P.phase = "work"; P.t0 = Date.now(); drawP(); } }, "▶ Lancer le chrono")]; }
     else if (rx.mode === "emom") { clock = "60"; btns = [h("button", { class: "btn big", onclick: () => { P.phase = "work"; P.t0 = Date.now(); P.emomMin = 1; beep(880, .25); drawP(); } }, "▶ Lancer l'EMOM")]; }
@@ -1966,7 +1972,8 @@ function drawSummary() {
     if (prev > 0 && mx > prev) prs.push(nameOf(it) + " : " + mx + (rx.mode === "hold" ? " s" : " rép.") + " (avant " + prev + ")");
     if (it.tree && it.lk === it.tree + ":" + levels[it.tree]) {
       const st = TREE[it.tree].steps[levels[it.tree]];
-      if (st && r.filter(v => v >= st.v).length >= st.n && !vals.includes(it.tree)) vals.push(it.tree);
+      const nxOk = !st || !st.nx || bestOf(it.tree + ":" + (levels[it.tree] + 1)) >= st.nx || P.list.some((x, j) => x.lk === it.tree + ":" + (levels[it.tree] + 1) && P.rec[j].some(v => v >= st.nx));
+      if (st && nxOk && r.filter(v => v >= st.v).length >= st.n && !vals.includes(it.tree)) vals.push(it.tree);
     }
   });
   const fb = [["easy", "Trop facile", "+5 %"], ["ok", "Parfait", "on garde"], ["hard", "Trop dur", "−5 %"]];
@@ -2086,6 +2093,7 @@ function adapt(s) {
   if (["fl", "bl", "mu", "pull"].some(t => trees.has(t))) warm.push(item("scapPull", "2 × 8", "", "Active les omoplates avant de tirer"));
   warm = warm.map(equip).filter(Boolean); main = main.map(equip).filter(Boolean);
   main = main.filter((x, i) => x.tree || main.findIndex(y => y.ex === x.ex) === i);
+  main = extraItems(main, s);
   const cool = [item("pikeFold", "1 min", "", "Respire lentement, sans forcer"), item("puppy", "1 min", "", "Ouvre les épaules")];
   const full = estMin(warm, main, cool);
   let guard = 0, trimmed = false;
@@ -2094,7 +2102,7 @@ function adapt(s) {
     const hs = warm.find(i => i.dose === "8 min");
     if (cool.length > 1) { cool.pop(); continue; }
     if (hs) { hs.dose = "4 min"; continue; }
-    const acc = main.map((x, i) => [x, i]).filter(([x]) => !x.tree).map(([, i]) => i).pop();
+    const acc = main.map((x, i) => [x, i]).filter(([x]) => !x.tree && !x.keep).map(([, i]) => i).pop();
     if (acc != null && main.length > 3) { main.splice(acc, 1); continue; }
     const order = [...main.keys()].reverse();
     const j = order.find(i => !(main[i].tree && TREE[main[i].tree].skill) && lessSets(main[i])) ?? order.find(i => lessSets(main[i]));
@@ -2366,7 +2374,7 @@ function adjPlan() {
   P.list.forEach((it, i) => {
     const r = P.rec[i];
     if (!r.length || it.warm || it.cool || !it.tree || it.validate || /décharge|tentatives|pratique/.test(it.unit || "")) return;
-    const rx = parseRx(it); if (rx.mode !== "hold" && rx.mode !== "reps") return;
+    const rx = parseRx(it); if (rx.mode !== "reps") return;
     const tgt = rx.mode === "hold" ? rx.secs : rx.reps, hits = r.filter(v => v >= tgt).length, step = rx.mode === "hold" ? 2 : 1;
     if (r.length >= rx.sets && hits >= rx.sets) out.push({ lk: it.lk, d: step, label: nameOf(it) + " : +" + step + (rx.mode === "hold" ? " s" : " rép.") });
     else if (hits < Math.ceil(rx.sets / 2)) out.push({ lk: it.lk, d: -step, label: nameOf(it) + " : −" + step + (rx.mode === "hold" ? " s" : " rép.") + " pour consolider" });
@@ -2405,6 +2413,206 @@ render = function () {
   }
   _render();
   if (S.tab === "profile" && !S.sub && S.onb == null) { const top = $("#view .top"); if (top && !top.querySelector(".back")) top.prepend(h("button", { class: "back", onclick: () => { S.tab = "today"; render(); } }, "‹ Aujourd'hui")); }
+};
+
+
+/* =====================================================================
+   V3 : programmation alignée sur les sources publiques
+   Steven Low (Overcoming Gravity), r/bodyweightfitness Recommended Routine,
+   FitnessFAQs, Chris Heria, Calimove
+   ===================================================================== */
+
+/* ---------- Nouveaux exercices ---------- */
+Object.assign(EX, {
+  flNeg: {
+    name: "Négatifs de front lever", short: "Descente lente",
+    desc: "Depuis la suspension renversée (corps vertical tête en bas sous la barre), descends le plus lentement possible jusqu'à la position de front lever de ton palier, bras tendus. Méthode excentrique de Steven Low.",
+    cues: ["Bras tendus du début à la fin", "3 à 5 s de descente, régulière", "Version groupée tant que le palier est tuck ou advanced tuck"],
+    props: [{ pullbar: 50 }], vb: "0 -40 240 240", tag: "dos vers le sol",
+    poses: [
+      { h:[100,50], e:[100,73], s:[100,96], p:[100,52], k:[100,16], f:[100,-20], hd:[100,110] },
+      { h:[100,50], e:[96,73], s:[92,96], p:[136,96], k:[172,96], f:[208,96], hd:[79,98] }
+    ],
+    seq: [[0,.6,3.5],[1,.5,1.2]]
+  },
+  plNeg: {
+    name: "Négatifs de planche", short: "Du handstand à la planche",
+    desc: "Depuis un handstand sur les parallettes, descends lentement les jambes en gardant les bras verrouillés et les épaules en avant, jusqu'à la position de planche de ton palier. Méthode excentrique de Steven Low.",
+    cues: ["Bras verrouillés, épaules qui partent en avant", "3 à 5 s de descente", "Version groupée tant que le palier est tuck ou advanced tuck"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[108,146], s:[108,124], p:[108,80], k:[108,44], f:[108,8], hd:[115,136] },
+      { h:[108,168], e:[104,148], s:[100,128], p:[146,128], k:[134,160], f:[164,154], hd:[87,126] }
+    ],
+    seq: [[0,.6,3.5],[1,.5,1.2]]
+  },
+  plPU: {
+    name: "Pompes en planche", short: "Planche push-up",
+    desc: "En planche (straddle ou full), plie les bras pour descendre puis repousse, sans poser les pieds. Dernière étape de la progression de Chris Heria vers la full planche push-up.",
+    cues: ["Le corps reste à l'horizontale", "Coudes serrés vers l'arrière", "Négatifs si la poussée ne passe pas encore"],
+    props: [{ para: [108, 168] }],
+    poses: [
+      { h:[108,168], e:[102,148], s:[96,128], p:[142,128], k:[178,128], f:[214,128], hd:[83,126] },
+      { h:[108,168], e:[124,150], s:[96,156], p:[142,158], k:[178,160], f:[214,162], hd:[83,154] }
+    ],
+    seq: [[0,.4,1.4],[1,.2,1]]
+  },
+  sbDip: {
+    name: "Dips à la barre droite", short: "Straight bar dip",
+    desc: "En appui au-dessus d'une barre de traction, descends la poitrine vers la barre puis repousse jusqu'aux bras tendus. C'est la deuxième moitié du muscle-up : Chris Heria l'exige avant de travailler la transition.",
+    cues: ["Buste penché au-dessus de la barre", "Coudes vers l'arrière", "Barre au niveau des hanches en haut"],
+    props: [{ pullbar: 60 }], vb: "0 -16 240 250",
+    poses: [
+      { h:[120,60], e:[121,38], s:[122,16], p:[117,60], k:[116,96], f:[114,132], hd:[126,3] },
+      { h:[120,60], e:[104,46], s:[128,52], p:[114,90], k:[118,124], f:[110,156], hd:[138,40] }
+    ],
+    seq: [[0,.4,1.1],[1,.2,.9]]
+  },
+  t2b: {
+    name: "Toes-to-bar", short: "Pieds à la barre",
+    desc: "Suspendu, monte les pieds jusqu'à toucher la barre en contrôlant le balancement, puis redescends. Compression et contrôle du corps, prérequis du muscle-up selon Chris Heria.",
+    cues: ["Épaules actives, bras tendus", "Monte avec les abdos, pas avec l'élan", "Redescends lentement"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[120,152], f:[120,184], hd:[114,64] },
+      { h:[120,30], e:[121,52], s:[122,74], p:[126,108], k:[100,76], f:[114,36], hd:[115,64] }
+    ],
+    seq: [[0,.3,1.2],[1,.3,1.3]]
+  },
+  ytw: {
+    name: "Y-T-W au sol", short: "Coiffe des rotateurs",
+    desc: "Allongé sur le ventre, décolle les bras tendus en Y, puis en T, puis plie les coudes en W en serrant les omoplates. Renforce la coiffe des rotateurs et le bas des trapèzes, que toute la poussée de planche et de handstand sollicite.",
+    cues: ["Pouces vers le plafond", "Lent et contrôlé, sans élan", "Front posé, nuque neutre"],
+    props: [],
+    poses: [
+      { h:[48,186], e:[70,184], s:[92,182], p:[136,184], k:[172,186], f:[208,186], hd:[80,176] },
+      { h:[50,156], e:[70,166], s:[92,178], p:[136,184], k:[172,186], f:[208,186], hd:[80,170] }
+    ],
+    seq: [[0,.3,1],[1,.8,1]]
+  }
+});
+Object.assign(EX_INFO, { flNeg: ["front lever negatives"], plNeg: ["handstand to planche negative"], plPU: ["planche push up progression"], sbDip: ["straight bar dips"], t2b: ["toes to bar strict"], ytw: ["prone Y T W raises shoulder"] });
+Object.assign(EX_CAT, { flNeg: "pull", plNeg: "push", plPU: "push", sbDip: "pull", t2b: "core", ytw: "mobility" });
+TREE.planche.acc = [["lean", "h", 3, 25]];
+
+/* ---------- Migration : les prérequis du muscle-up s'insèrent dans l'arbre ---------- */
+if ((settings.schema || 0) < 3) {
+  if (gstore.get("levels", null) && levels.mu >= 2) levels.mu += 2;
+  settings.schema = 3; saveAll();
+}
+
+/* ---------- Tenue max (Steven Low : travailler à 60–70 % du max) ---------- */
+function maxHold(lk, st) {
+  let m = 0;
+  (logs[lk] || []).filter(e => e.u === "s").slice(-6).forEach(e => e.vals.forEach(v => { if (v > m) m = v; }));
+  return { v: m || Math.max(5, Math.round(st.v * .8)), est: !m };
+}
+
+/* ---------- Prescription ---------- */
+rxItem = function (treeId, w, opts) {
+  opts = opts || {};
+  const t = TREE[treeId], lv = levels[treeId], N = t.steps.length, done = lv >= N, si = Math.min(lv, N - 1), st = t.steps[si];
+  const wi = (w - 1) % 6, blk = Math.floor((w - 1) / 6) % 2;
+  const side = st.side ? " par côté" : "", kg = st.wt ? " +" + Math.round(settings.bw * st.wt / 100) + " kg" : "";
+  const it = { ex: st.ex, title: (opts.prefix || "") + t.name + " · " + st.t, tree: treeId,
+    eyebrow: (opts.prefix || "") + t.name + " · palier " + (si + 1) + "/" + N, name: EX[st.ex].name + (st.assisted ? " assisté" : ""), lk: treeId + ":" + si };
+  const rest = st.k === "h" ? (t.straight || t.cat === "balance" ? "repos 2–3 min" : "repos 90 s") : (t.skill ? "repos 2–3 min" : "repos 2 min");
+  const iso = st.k === "h" && (t.straight || t.cat === "core");
+  if (wi === 5) {
+    if (opts.test !== false && !done) return Object.assign(it, { dose: st.n + " × " + st.v + (st.k === "h" ? " s" : ""), unit: "test" + side + kg, validate: treeId,
+      note: "Tente le standard : " + stdText(st) + ". Réussi : valide le palier." });
+    const ref = iso ? maxHold(it.lk, st).v : st.v;
+    return Object.assign(it, { dose: "2 × " + Math.max(st.k === "h" ? 3 : 1, Math.round(ref * .5)) + (st.k === "h" ? " s" : ""), unit: "décharge" + side + kg, note: "Facile : on entretient le geste" });
+  }
+  if (iso) {
+    const mx = maxHold(it.lk, st), pct = .6 + .05 * blk + .05 * Math.min(1, wi / 4);
+    const total = opts.light ? 30 : Math.round(50 + 15 * (blk * 5 + Math.min(wi, 4)) / 9);
+    const v = Math.max(3, Math.round(mx.v * pct)), n = Math.max(opts.light ? 2 : 4, Math.min(6, Math.round(total / v)));
+    return Object.assign(it, { dose: n + " × " + v + " s", unit: rest + side, maxv: mx.v, last: !opts.light,
+      note: (mx.est ? "Tenue max estimée : " + mx.v + " s" : "Ta tenue max : " + mx.v + " s") + ", travail à " + Math.round(pct * 100) + " %. Dernière série : tiens au max sans casser la forme, ça met ton max à jour." });
+  }
+  if (st.k === "h") {
+    const frac = [[.5, .75], [.75, 1]][blk], tt = Math.min(1, wi / 4);
+    const v = Math.max(3, Math.round(st.v * (frac[0] + (frac[1] - frac[0]) * tt))), n = opts.light ? 2 : st.n + 1;
+    return Object.assign(it, { dose: n + " × " + v + " s", unit: rest + side, note: done ? "Arbre terminé : on entretient et on allonge" : "Standard pour valider : " + stdText(st) });
+  }
+  const base = Math.max(1, Math.round(st.v * .6));
+  const r = Math.max(1, Math.min(st.v, base + (opts.light ? 0 : (autoAdj[it.lk] || 0))));
+  const n = opts.light ? 2 : Math.max(st.n, Math.min(6, Math.ceil(15 / r)));
+  if (r !== base) it.auto = r - base;
+  return Object.assign(it, { dose: n + " × " + r, unit: rest + side + kg,
+    note: done ? "Arbre terminé : on entretient" : "Double progression : +1 répétition dès que toutes les séries passent. Standard : " + stdText(st) + (st.assisted ? ". Tiens un support d'une main" : "") });
+};
+nextAttempt = function (treeId, w) {
+  const t = TREE[treeId], lv = levels[treeId], wi = (w - 1) % 6;
+  if (lv + 1 >= t.steps.length || wi === 5 || w === 1) return null;
+  const st = t.steps[lv], nx = t.steps[lv + 1], need = st.nx || 0;
+  return { ex: nx.ex, title: t.name + " · " + nx.t, eyebrow: t.name + " · palier suivant", name: EX[nx.ex].name, lk: treeId + ":" + (lv + 1), tree: treeId,
+    dose: nx.k === "h" ? "3 × " + (need || 5) + " s" : "3 × 1", unit: "tentatives · repos 2 min",
+    note: need ? "Tiens le plus longtemps possible : " + need + " s sur ce palier font partie du standard de ton palier actuel." : "Juste toucher le palier suivant, frais." };
+};
+accItem = function (treeId, w, i, used) {
+  const a = TREE[treeId].acc; if (!a) return null;
+  const pick = [0, 1].map(j => a[(w + (i || 0) + j) % a.length]).find(x => !(used || []).includes(x[0]));
+  if (!pick) return null;
+  const [ex, k, n, v] = pick, blk = Math.floor((w - 1) / 6) % 2, dl = (w - 1) % 6 === 5;
+  return item(ex, (dl ? 2 : n) + " × " + (k === "h" ? v : Math.round(v * [1, .9][blk])) + (k === "h" ? " s" : ""), ex.endsWith("W") ? "lestés" : "repos 90 s", "Accessoire " + TREE[treeId].name);
+};
+
+/* ---------- Ajouts par séance : négatifs (Low), EMOM (Heria), coiffe (FitnessFAQs) ---------- */
+function extraItems(main, s) {
+  const w = s.w, wi = (w - 1) % 6, F = settings.focus;
+  if (wi === 5) return main;
+  const out = main.slice();
+  const after = (tree, it) => { const i = out.map(x => x.tree).lastIndexOf(tree); out.splice(i >= 0 ? i + 1 : 0, 0, it); };
+  const has = tree => out.some(x => x.tree === tree && !x.eyebrow.includes("suivant"));
+  if (w <= 5) {
+    const neg = "Méthode excentrique de Steven Low : descentes de 3 à 5 s, 3 min de repos. Version groupée si ton palier est tuck ou advanced tuck";
+    if (F.includes("fl") && has("fl") && settings.eq.bar) after("fl", Object.assign(item("flNeg", "3 × 3", "négatifs 4 s · repos 3 min", neg), { eyebrow: "Front lever · excentrique" }));
+    if (F.includes("planche") && has("planche")) after("planche", Object.assign(item("plNeg", "3 × 3", "négatifs 4 s · repos 3 min", neg), { eyebrow: "Planche · excentrique" }));
+  }
+  if (F.includes("planche") && has("planche")) {
+    const lv = levels.planche, ex = lv <= 1 ? "pppu" : lv <= 4 ? "atPU" : "plPU";
+    const ni = out.findIndex(x => x.ex === "plNeg"), emom = Object.assign(item(ex, "EMOM 8 min", "1+ rép. / min",
+      "Méthode Chris Heria : ta progression de pompe planche la plus dure, 1 répétition ou plus au début de chaque minute. Quand la forme casse, passe à la progression plus facile"), { eyebrow: "Planche · pompes (méthode Heria)" });
+    if (ni >= 0) out.splice(ni + 1, 0, emom); else after("planche", emom);
+  }
+  if (s.type === "push" || s.type === "full") out.splice(Math.max(0, out.length - 1), 0, Object.assign(item("ytw", "2 × 10", "repos 60 s", "Coiffe des rotateurs et omoplates, comme dans les programmes FitnessFAQs"), { eyebrow: "Santé des épaules", keep: true }));
+  return out;
+}
+
+/* ---------- Bilan de séance : tenue max mise à jour ---------- */
+const _drawSummary3 = drawSummary;
+drawSummary = function () {
+  const sm = _drawSummary3(), ups = [];
+  P.list.forEach((it, i) => { const r = P.rec[i]; if (it.maxv && r.length) { const b = Math.max(...r); if (b > it.maxv) ups.push(nameOf(it) + " : " + it.maxv + " → " + b + " s"); } });
+  if (ups.length) sm.querySelector(".stack").before(h("div", { class: "card stack left" }, h("span", { class: "label" }, "Nouvelle tenue max"), h("ul", { class: "journal" }, ups.map(x => h("li", null, x))), h("p", { class: "muted small" }, "Les prochaines séances sont recalculées à 60–70 % de ce nouveau max.")));
+  return sm;
+};
+
+/* ---------- Pourquoi ce programme (sources) ---------- */
+const SOURCES = [
+  ["Le skill d'abord", "Échauffement, puis skill et technique, puis force : l'ordre recommandé par Steven Low dans Overcoming Gravity.", "Overcoming Gravity, notes de lecture", "https://dpetkovski.com/overcoming-gravity-by-steven-low-book-notes/"],
+  ["Tenues à 60–70 % de ton max", "Steven Low fait travailler les tenues isométriques à 60–70 % de la tenue max, pour 50 à 65 s au total (exemple : 4–5 × 13 s pour un max de 20 s). L'appli suit ta tenue max à chaque séance.", "Steven Low, Prilepin tables pour l'isométrie", "https://stevenlow.org/prilepin-tables-for-bodyweight-strength-isometric-and-eccentric-exercises/"],
+  ["Valider un levier : 4 × 15 s", "Passer au palier suivant quand on tient 4 × 15 s et au moins 10 s sur le palier suivant : critère tiré d'Overcoming Gravity (résumé tiers).", "WorkedOut Fitness, Front Lever Progression", "https://www.workedoutfitness.com/search/article/front-lever-progression"],
+  ["Négatifs lents", "Pour les leviers, Steven Low propose 2–3 séries de 2–3 descentes de 3 à 5 s avec 3 min de repos.", "Steven Low, programmer après un plateau", "https://stevenlow.org/how-to-program-for-advanced-isometric-movements-after-a-plateau/"],
+  ["Double progression", "3 × 5 répétitions, +1 par séance jusqu'à 3 × 8, puis exercice suivant (Recommended Routine). Steven Low vise 15 à 18 répétitions au total par exercice.", "Recommended Routine (copie GitHub)", "https://github.com/NearHuscarl/recommended-routine"],
+  ["Une décharge toutes les 6 semaines", "Steven Low conseille une semaine de repos toutes les 4 à 8 semaines. L'appli utilise 5 semaines de charge et 1 de décharge avec test.", "Steven Low, Fundamentals of Bodyweight Strength Training", "https://stevenlow.org/the-fundamentals-of-bodyweight-strength-training/"],
+  ["Pompes planche en EMOM", "Chris Heria : prendre la progression la plus dure, 1 répétition ou plus chaque minute jusqu'à ce que la forme casse, puis redescendre dans la progression.", "Chris Heria (TikTok officiel)", "https://www.tiktok.com/@thechrisheria/video/7439462747135282475?lang=en"],
+  ["Prérequis du muscle-up", "Tractions strictes, dips à la barre droite, L-sit et toes-to-bar avant de travailler la transition (méthode Heria, résumé tiers).", "Coachway, Chris Heria et le muscle-up", "https://coachway.io/articles/chris-heria-muscle-up-progression-for-coaches/"],
+  ["Santé des épaules", "Les programmes planche de FitnessFAQs incluent un travail des omoplates et de la coiffe des rotateurs.", "FitnessFAQs, Planche Pro", "https://fitnessfaqs.com/product/planche-pro/"],
+  ["Tests réguliers", "Calimove découpe ses niveaux en phases de 4–5 semaines, chacune ouverte par une semaine de test.", "Calimove, Complete Calisthenics Level 3", "https://www.calimove.com/p/complete-calisthenics-level-3"]
+];
+const _renderProfile3 = renderProfile;
+renderProfile = function () {
+  const scr = _renderProfile3();
+  const how = [...scr.querySelectorAll(".card")].find(c => c.textContent.startsWith("Comment ça marche"));
+  const why = h("section", { class: "card stack", id: "why" }, h("h3", null, "Pourquoi ce programme"),
+    h("p", { class: "muted small" }, "Chaque règle de l'appli et sa source publique. Les programmes payants (Heria Pro, Planche Pro, Calimove) ne sont pas publics : seuls leurs principes publiés ont été utilisés."),
+    h("ul", { class: "why" }, SOURCES.map(([t, d, src, url]) => h("li", null, h("b", null, t), h("span", null, d), h("a", { href: url, target: "_blank", rel: "noopener" }, src + " ↗")))),
+    h("p", { class: "muted small" }, "Un choix de l'appli n'est confirmé par aucune source : placer la planche et les leviers avant les tractions, dips et HSPU. C'est une habitude de coach courante, gardée par prudence pour les tendons."));
+  how.after(why);
+  return scr;
 };
 render();
 

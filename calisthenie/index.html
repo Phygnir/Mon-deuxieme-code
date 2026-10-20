@@ -389,6 +389,32 @@ button:disabled { opacity: .4; cursor: default; }
 .switch:checked::after { transform: translateX(20px); }
 .restore { width: 100%; font: 13px/1.4 ui-monospace, Menlo, monospace; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
 
+/* Motivation */
+.player-card { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 20px; }
+.pc-lv { display: flex; gap: 12px; align-items: center; flex: 1 1 220px; min-width: 0; }
+.pc-txt { display: grid; gap: 3px; flex: 1; min-width: 0; }
+.pc-txt b { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.lv-badge { width: 48px; height: 48px; flex: none; border-radius: 14px; display: grid; place-items: center; font-size: 26px; font-weight: 700; color: var(--on-accent); background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, var(--p1))); }
+.lv-badge.big { width: 84px; height: 84px; font-size: 46px; border-radius: 22px; }
+.xpbar { height: 8px; border-radius: 99px; background: var(--sunk); overflow: hidden; }
+.xpbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--p3))); }
+.pc-stats { display: flex; gap: 18px; }
+.pc-stat { display: grid; justify-items: center; gap: 2px; }
+.streak.big { display: inline-flex; align-items: center; gap: 4px; color: var(--warn); background: none; padding: 0; font-size: 26px; }
+.streak.big .flame svg { width: 26px; height: 26px; }
+.streak.big b { font-family: var(--font-display); font-size: 30px; line-height: 1; }
+.ring-wrap { position: relative; width: 48px; height: 48px; }
+.ring { width: 48px; height: 48px; display: block; }
+.ring-bg { fill: none; stroke: var(--sunk); stroke-width: 6; }
+.ring-fg { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .4s; }
+.ring-n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; }
+.daily { display: flex; align-items: center; gap: 12px; flex-direction: row; border-color: color-mix(in srgb, var(--p3) 45%, var(--line)); }
+.daily.ok { opacity: .7; }
+.daily-txt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.daily-txt b { font-size: 17px; }
+.xp-gain { font-size: 22px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 4px 14px; border-radius: 99px; }
+@media (prefers-reduced-motion: reduce) { .ring-fg { transition: none; } }
+
 /* Lieux */
 .place-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .place-note { display: grid; gap: 6px; }
@@ -2837,6 +2863,169 @@ renderProfile = function () {
   if (card) card.querySelector("h3").after(h("label", { class: "switch-row", for: "sound" },
     h("span", null, h("b", null, "Bips sonores"), h("span", { class: "muted small" }, "Compte à rebours, fin du repos, objectif atteint. Désactive-les pour t'entraîner en silence.")),
     h("input", { id: "sound", type: "checkbox", class: "switch", checked: settings.sound || null, onchange: e => { settings.sound = e.target.checked; saveAll(); toast(e.target.checked ? "Bips activés" : "Bips désactivés"); if (e.target.checked) beep(880, .15); } })));
+  return scr;
+};
+render();
+
+
+/* =====================================================================
+   V5 : motivation (XP, niveaux, série de jours, défi du jour)
+   Principe : récompenser la régularité sans pousser au surentraînement.
+   Les jours de repos comptent dans la série, et un oubli par semaine est toléré.
+   ===================================================================== */
+settings.daily = settings.daily || {};
+const TITLES = ["Recrue", "Apprenti", "Pratiquant", "Athlète", "Athlète confirmé", "Expert", "Élite", "Maître", "Légende"];
+
+/* ---------- XP : recalculée à partir de tes données, toujours cohérente ---------- */
+const XP = { session: 100, set: 4, record: 40, step: 250, daily: 30 };
+function xpTotal() {
+  let xp = 0, pr = 0, sets = 0, sessions = 0;
+  Object.values(done).forEach(v => { if (!v) return; sessions++; if (v.items) v.items.forEach(i => { sets += i.v.length; }); });
+  Object.values(logs).forEach(L => { let best = 0; L.forEach((e, i) => { const m = Math.max(...e.vals); if (i > 0 && best > 0 && m > best) pr++; if (m > best) best = m; }); });
+  xp = sessions * XP.session + sets * XP.set + pr * XP.record + journal.length * XP.step + Object.keys(settings.daily).length * XP.daily;
+  return { xp, pr, sets, sessions };
+}
+function levelOf(xp) {
+  let L = 1, acc = 0, need = 300;
+  while (xp >= acc + need) { acc += need; L++; need = 300 + 150 * (L - 1); }
+  return { L, into: xp - acc, need, title: TITLES[Math.min(TITLES.length - 1, L - 1)] + (L > TITLES.length ? " " + (L - TITLES.length + 1) : "") };
+}
+
+/* ---------- Série de jours : on suit le plan, les repos comptent ---------- */
+function dayStreak() {
+  const tp = todayPos(); if (tp.before) return { n: 0, frozen: 0 };
+  const slots = cuSlots();
+  let n = 0, lastFreeze = null, frozen = 0;
+  for (let k = 0; k < 730; k++) {
+    const t = (tp.abs - 1) * 7 + tp.d - k; if (t < 0) break;
+    const abs = Math.floor(t / 7) + 1, d = t % 7;
+    const ok = !slots[d] || !!done[abs + "-" + d];
+    if (k === 0 && !ok) continue; // la séance du jour n'est pas encore faite : la série n'est pas cassée
+    if (ok) { n++; continue; }
+    if (lastFreeze === null || k - lastFreeze >= 7) { lastFreeze = k; frozen++; n++; continue; } // gel : 1 oubli toléré par semaine
+    break;
+  }
+  if (n > (settings.bestStreak || 0)) { settings.bestStreak = n; gstore.set("settings", settings); }
+  return { n, frozen };
+}
+
+/* ---------- Défi du jour ---------- */
+const DAILY_SKILL = [
+  ["hsFree", "Cumule 60 s de handstand", "Au mur ou en libre, en autant de tentatives que tu veux."],
+  ["lean", "3 × 20 s de planche lean", "Penche juste assez pour sentir les poignets travailler."],
+  ["lsit", "Cumule 30 s de L-sit", "Au sol ou sur parallettes, genoux pliés si besoin."],
+  ["pistol", "5 pistols par jambe", "Assistés si besoin, en contrôle jusqu'en bas."],
+  ["bearCrawl", "1 min de bear crawl", "Genoux à 3 cm du sol tout du long."],
+  ["kickup", "10 entrées en handstand", "5 de chaque jambe, en cherchant à t'arrêter en haut."],
+  ["frog", "Cumule 45 s de frog stand", "Regarde devant tes mains, pas tes pieds."]
+];
+const DAILY_MOB = [
+  ["wrists", "Routine poignets, 3 min", "Rotations puis bascules : tes poignets te remercieront à la prochaine planche."],
+  ["pikeFold", "2 min d'étirement en pike", "Respire lentement, dos long. Utile pour le L-sit et la compression."],
+  ["puppy", "2 min d'ouverture d'épaules", "Poitrine vers le sol : ça aide la ligne du handstand."],
+  ["ytw", "2 × 10 Y-T-W", "Coiffe des rotateurs : des épaules solides pour la planche."]
+];
+function dailyOf(date) {
+  const key = iso(date), seed = [...key].reduce((a, c) => a * 31 + c.charCodeAt(0) >>> 0, 7);
+  const train = !!cuSlots()[(date.getDay() + 6) % 7];
+  const pool = train ? DAILY_MOB : DAILY_SKILL;
+  const [ex, t, d] = pool[seed % pool.length];
+  return { ex, t, d, key, train, done: !!settings.daily[key] };
+}
+
+/* ---------- Bloc « joueur » sur l'écran Aujourd'hui ---------- */
+function ring(frac, label) {
+  const r = 22, c = 2 * Math.PI * r;
+  const svg = el("svg", { viewBox: "0 0 56 56", class: "ring", role: "img", "aria-label": label });
+  el("circle", { cx: 28, cy: 28, r, class: "ring-bg" }, svg);
+  el("circle", { cx: 28, cy: 28, r, class: "ring-fg", "stroke-dasharray": c, "stroke-dashoffset": c * (1 - Math.min(1, frac)), transform: "rotate(-90 28 28)" }, svg);
+  return svg;
+}
+function playerCard() {
+  const t = xpTotal(), lv = levelOf(t.xp), st = dayStreak(), tp = todayPos(), abs = Math.max(1, tp.abs), slots = cuSlots();
+  const nTot = Object.keys(slots).length, nDone = Object.keys(slots).filter(d => done[abs + "-" + d]).length;
+  const fl = h("span", { class: "flame", "aria-hidden": "true" });
+  fl.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-6 1-9.5z"/></svg>';
+  return h("section", { class: "card player-card" },
+    h("div", { class: "pc-lv" }, h("span", { class: "lv-badge num" }, lv.L),
+      h("div", { class: "pc-txt" }, h("span", { class: "eyebrow" }, "Niveau " + lv.L), h("b", null, lv.title),
+        h("div", { class: "xpbar", role: "img", "aria-label": lv.into + " XP sur " + lv.need }, h("i", { style: "width:" + Math.round(lv.into / lv.need * 100) + "%" })),
+        h("span", { class: "muted small num" }, lv.into + " / " + lv.need + " XP"))),
+    h("div", { class: "pc-stats" },
+      h("div", { class: "pc-stat" }, h("span", { class: "streak big" }, fl, h("b", { class: "num" }, st.n)), h("span", { class: "muted small" }, st.n > 1 ? "jours de suite" : "jour de suite")),
+      h("div", { class: "pc-stat" }, h("div", { class: "ring-wrap" }, ring(nTot ? nDone / nTot : 0, nDone + " séances sur " + nTot + " cette semaine"), h("b", { class: "num ring-n" }, nDone + "/" + nTot)), h("span", { class: "muted small" }, "cette semaine"))));
+}
+function dailyCard() {
+  const dc = dailyOf(new Date());
+  return h("section", { class: "card daily" + (dc.done ? " ok" : "") },
+    thumb(dc.ex, "sm"),
+    h("div", { class: "daily-txt" },
+      h("span", { class: "eyebrow" }, (dc.train ? "Récup du jour" : "Défi du jour") + " · +" + XP.daily + " XP"),
+      h("b", null, dc.t),
+      h("span", { class: "muted small" }, dc.d)),
+    dc.done ? h("span", { class: "tag ok" }, "✓ Fait") :
+      h("button", { class: "btn small", onclick: () => { settings.daily[dc.key] = true; saveAll(); toast("+" + XP.daily + " XP · défi relevé"); render(); } }, "C'est fait"));
+}
+const _renderToday5 = renderToday;
+renderToday = function () {
+  const scr = _renderToday5();
+  scr.querySelector(".streak") && scr.querySelector(".streak").remove();
+  const cyc = scr.querySelector(".card .row-between .muted.small.num"); if (cyc) cyc.remove();
+  const top = scr.querySelector(".top");
+  top.after(playerCard());
+  const hero = scr.querySelector(".card.hero");
+  if (hero) hero.after(dailyCard());
+  return scr;
+};
+
+/* ---------- Bilan de séance : XP gagnée ---------- */
+const _drawSummary5 = drawSummary;
+drawSummary = function () {
+  const sm = _drawSummary5();
+  const sets = P.rec.reduce((a, r, i) => a + (P.list[i].warm ? 0 : r.length), 0);
+  let pr = 0;
+  P.list.forEach((it, i) => { const r = P.rec[i]; if (!r.length || it.warm) return; const prev = bestOf(lkOf(it)), mx = Math.max(...r); if (prev > 0 && mx > prev) pr++; });
+  const gain = XP.session + sets * XP.set + pr * XP.record;
+  sm.querySelector("h2").after(h("p", { class: "xp-gain num" }, "+" + gain + " XP"));
+  return sm;
+};
+
+/* ---------- Passage de niveau et trophées : célébration ---------- */
+function levelUp(lv) {
+  const o = h("div", { class: "celebrate", role: "dialog", "aria-modal": "true", "aria-label": "Nouveau niveau" });
+  const cv = h("canvas", { class: "confetti", "aria-hidden": "true" });
+  o.append(cv, h("div", { class: "cel-card" },
+    h("span", { class: "eyebrow" }, "Nouveau niveau"),
+    h("span", { class: "lv-badge big num" }, lv.L),
+    h("h1", null, lv.title),
+    h("p", { class: "muted" }, "Prochain niveau dans " + (lv.need - lv.into) + " XP. Continue comme ça."),
+    h("button", { class: "btn big", onclick: () => o.remove() }, "Continuer")));
+  document.body.appendChild(o);
+  speak("Niveau " + lv.L + " : " + lv.title); buzz([60, 40, 120]);
+  if (!reduceMotion) confetti(cv);
+}
+const _render5 = render;
+render = function () {
+  _render5();
+  if (S.onb != null || P.on) return;
+  const lv = levelOf(xpTotal().xp);
+  if (settings.lastLevel == null) { settings.lastLevel = lv.L; saveAll(); }
+  else if (lv.L > settings.lastLevel) { settings.lastLevel = lv.L; saveAll(); levelUp(lv); }
+  const got = achievements().filter(a => a[2]).map(a => a[0]);
+  if (!settings.achSeen) { settings.achSeen = got; saveAll(); }
+  else { const neu = got.filter(t => !settings.achSeen.includes(t)); if (neu.length) { settings.achSeen = got; saveAll(); toast("★ Trophée débloqué : " + neu.join(", ")); } }
+};
+
+/* ---------- Progrès : niveau et record de série ---------- */
+const _renderProgress5 = renderProgress;
+renderProgress = function () {
+  const scr = _renderProgress5(), t = xpTotal(), lv = levelOf(t.xp), st = dayStreak();
+  scr.querySelector(".top").after(h("section", { class: "card stack" },
+    h("div", { class: "pc-lv" }, h("span", { class: "lv-badge num" }, lv.L),
+      h("div", { class: "pc-txt" }, h("span", { class: "eyebrow" }, "Niveau " + lv.L + " · " + t.xp + " XP au total"), h("b", null, lv.title),
+        h("div", { class: "xpbar" }, h("i", { style: "width:" + Math.round(lv.into / lv.need * 100) + "%" })))),
+    h("p", { class: "muted small" }, "Série actuelle : " + st.n + " jour" + (st.n > 1 ? "s" : "") + " · record : " + (settings.bestStreak || st.n) + " jour" + ((settings.bestStreak || st.n) > 1 ? "s" : "") + ". Les jours de repos comptent, et un oubli par semaine est toléré."),
+    h("p", { class: "muted small" }, "XP : séance +" + XP.session + ", série +" + XP.set + ", record +" + XP.record + ", palier validé +" + XP.step + ", défi du jour +" + XP.daily + ".")));
   return scr;
 };
 render();

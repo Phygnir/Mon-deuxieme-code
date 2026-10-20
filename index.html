@@ -2767,6 +2767,19 @@ renderProfile = function () {
   if (old) old.replaceWith(card); else scr.querySelector(".card").after(card);
   return scr;
 };
+/* ---------- Son : bips activables dans les réglages ---------- */
+if (settings.sound == null) settings.sound = true;
+const _beep5 = beep;
+beep = function (f, dur) { if (settings.sound) _beep5(f, dur); };
+const _renderProfile5 = renderProfile;
+renderProfile = function () {
+  const scr = _renderProfile5();
+  const card = [...scr.querySelectorAll(".card")].find(c => c.querySelector("h3") && c.querySelector("h3").textContent === "Séance guidée");
+  if (card) card.querySelector("h3").after(h("label", { class: "switch-row", for: "sound" },
+    h("span", null, h("b", null, "Bips sonores"), h("span", { class: "muted small" }, "Compte à rebours, fin du repos, objectif atteint. Désactive-les pour t'entraîner en silence.")),
+    h("input", { id: "sound", type: "checkbox", class: "switch", checked: settings.sound || null, onchange: e => { settings.sound = e.target.checked; saveAll(); toast(e.target.checked ? "Bips activés" : "Bips désactivés"); if (e.target.checked) beep(880, .15); } })));
+  return scr;
+};
 render();
 
 

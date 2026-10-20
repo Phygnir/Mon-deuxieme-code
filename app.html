@@ -529,6 +529,25 @@ button:disabled { opacity: .4; cursor: default; }
 @keyframes s-pulse { 50% { transform: scale(1.08); opacity: .35; } }
 .k-sh .s-orbit { animation: s-orbit 3s ease-in-out infinite; }
 @keyframes s-orbit { 50% { transform: translateY(-3px); } }
+.k-sh .s-strand { animation: s-strand 1.9s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes s-strand { 50% { transform: rotate(4deg) scale(1.04); } }
+.k-sh .s-ribbon { animation: s-ribbon 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0%; }
+@keyframes s-ribbon { 0%,100% { transform: skewX(0); } 50% { transform: skewX(9deg) scaleY(1.05); } }
+.k-sh .s-rise { animation: s-rise 2.6s ease-in infinite; }
+@keyframes s-rise { 0% { transform: translateY(6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-18px); opacity: 0; } }
+.k-sh .s-trail { animation: s-trail 1.6s ease-in-out infinite; }
+@keyframes s-trail { 50% { opacity: .3; } }
+.k-sh .s-puff { animation: s-puff 2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes s-puff { 0% { opacity: 0; transform: scale(.4); } 40% { opacity: .9; } 100% { opacity: 0; transform: translateY(-6px) scale(1.5); } }
+.k-sh .s-spin { animation: s-spin 20s linear infinite; transform-box: view-box; transform-origin: 60px 58px; }
+@keyframes s-spin { to { transform: rotate(360deg); } }
+.k-sh .s-mane { animation: s-mane 3s ease-in-out infinite; transform-box: view-box; transform-origin: 60px 58px; }
+@keyframes s-mane { 50% { transform: rotate(-6deg) scale(1.03); } }
+.k-sh .s-head { animation: s-head 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes s-head { 50% { transform: rotate(-7deg) translateY(-2px); } }
+.k-sh .s-tongue { animation: s-tongue 1.4s steps(1) infinite; }
+@keyframes s-tongue { 0%, 55% { opacity: 0; } 56%, 100% { opacity: 1; } }
+.k-sh .s-swing { animation: s-swish 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 0% 0%; }
 .egg-svg .s-tw { animation: c-twinkle 1.5s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .k-sh *, .k-sh { animation: none !important; } }
 
@@ -3883,7 +3902,7 @@ const dot = (x, y, r, c, cls) => '<circle' + (cls ? ' class="' + cls + '"' : '')
 function eye(u, x, y, r, iris, o) {
   o = o || {};
   if (o.sl) return ln("M" + (x - r) + " " + y + " Q" + x + " " + (y + r * .6) + " " + (x + r) + " " + y, 3);
-  const inn = x < 60 ? 1 : -1, id = u + "e" + (++CEL_N), rx = r * (o.w || .88), W = rx + 2;
+  const inn = o.inn || (x < 60 ? 1 : -1), id = u + "e" + (++CEL_N), rx = r * (o.w || .88), W = rx + 2;
   const lid = "M" + (x - inn * W) + " " + (y - r - 2) + " L" + (x + inn * W) + " " + (y - r - 2) + " L" + (x + inn * W) + " " + (y - r * (o.a1 == null ? .05 : o.a1)) + " L" + (x - inn * W) + " " + (y - r * (o.a2 == null ? .6 : o.a2)) + " Z";
   const ix = x + inn * r * .14, iy = y + r * .14, ir = r * (o.ir || .64);
   const pupil = o.slit ? '<ellipse cx="' + ix + '" cy="' + iy + '" rx="' + ir * .2 + '" ry="' + ir * .82 + '" fill="#0d0d14"/>' : dot(ix, iy, ir * .48, "#0d0d14");
@@ -4160,32 +4179,6 @@ ART.spectre = (u, sl) => {
 };
 
 /* ----- Légendaire ----- */
-ART.phenix = (u, sl) => {
-  const wing = "M48 64 C36 42 20 28 2 22 C8 30 8 36 6 42 C12 42 16 46 14 52 C20 52 24 56 22 62 C30 62 36 68 38 76 Z";
-  let s = cel2(u, wing, "#ff7a2a", "#c23a14", { cls: "s-wing", x: fill("M2 22 C8 30 8 36 6 42 C12 42 16 46 14 52 C20 52 24 56 22 62 C14 56 10 44 2 22Z", "#ffd04a") + ln("M44 64 L10 30 M40 68 L16 50 M38 72 L24 62", 1.6, "#ffb03a") });
-  s += cel2(u, "M48 100 C42 110 32 116 22 116 C30 108 36 100 40 92 Z", "#ffb03a", "#e0501a", { cls: "s-flame" });
-  s += cel(u, "M60 96 C56 106 60 114 64 118 C66 110 66 104 60 96Z", "#ffd04a", "#ff7a2a", { cls: "s-flame" });
-  s += cel(u, "M42 100 C36 84 42 60 60 58 C78 60 84 84 78 100 C72 106 48 106 42 100 Z", "#ff5a2a", "#b0220e", { x: fill("M50 66 L60 76 L70 66 L70 80 L60 92 L50 80 Z", "#ffd04a") + ln("M52 72 L60 80 L68 72 M54 82 L60 88 L66 82", 1.6, "#ff8a2a") });
-  s += cel(u, "M52 32 C44 20 48 8 54 0 C56 10 60 16 60 26 C62 14 68 6 76 4 C72 14 72 22 68 32 Z", "#ffe14d", "#ff8a1a", { cls: "s-flame", f: 1 });
-  s += cel(u, "M44 46 C44 32 52 26 60 26 C68 26 76 32 76 46 C76 56 68 62 60 62 C52 62 44 56 44 46 Z", "#ff6a2a", "#b0300e", { hl: [52, 34, 4, 2.5, -20] });
-  s += eyes(u, 60, 43, 8.4, 5.2, "#ffe14d", { sl, glow: 1 });
-  s += cel(u, "M55 49 L65 49 C65 54 62 58 60 61 C58 58 55 54 55 49 Z", "#ffe08a", "#d99a2a");
-  s += dot(18, 80, 1.8, "#ffd04a", "s-tw") + dot(102, 76, 2, "#ff8a2a", "s-tw") + dot(96, 100, 1.4, "#ffe14d", "s-tw") + dot(24, 100, 1.6, "#ffb03a", "s-tw");
-  return s;
-};
-ART.fenrir = (u, sl) => {
-  let s = cel2(u, "M26 58 L2 52 L18 68 L0 78 L22 82 L10 98 L34 92 Z", "#353a4c", "#1c1f2a");
-  s += cel2(u, "M30 42 L22 4 L54 30 Z", "#4a5064", "#2a2e3c", { x: fill("M32 36 L27 14 L46 30Z", "#8a1a24") });
-  s += cel(u, "M22 64 C20 40 38 26 60 26 C82 26 100 40 98 64 C104 72 104 82 96 86 C90 98 76 104 60 104 C44 104 30 98 24 86 C16 82 16 72 22 64 Z", "#4c5266", "#272b38", {
-    hl: [40, 38, 10, 4, -20],
-    x: fill("M40 86 C40 70 80 70 80 86 C80 100 40 100 40 86 Z", "#8a90a6") + glowLn(u, "M60 32 L60 46 M54 36 L60 40 L66 36", "#ff2a2a", 2) + ln("M26 70 L36 72 M26 78 L36 77", 2.4, "#272b38") + ln(mir("M26 70 L36 72 M26 78 L36 77"), 2.4, "#272b38")
-  });
-  s += eyes(u, 60, 58, 15, 7.6, "#ff2a2a", { sl, glow: 1, slit: 1, sc: "#ffe6c8" });
-  s += cel(u, "M52 76 C52 70 68 70 68 76 C68 80 60 84 60 84 C60 84 52 80 52 76 Z", "#141620", "#000", { hl: [56, 73, 2.5, 1.2] });
-  s += fill("M46 90 Q60 98 74 90 Q60 94 46 90 Z", "#3a0a10", ' stroke="' + OL + '" stroke-width="2.6" stroke-linejoin="round"') + fang(49, 90.5, 1) + fang(71, 90.5, 1) + fang(56, 93, .6) + fang(64, 93, .6);
-  s += [30, 42, 54, 66, 78, 90].map((x, i) => '<ellipse cx="' + x + '" cy="' + (104 - Math.abs(60 - x) * .12) + '" rx="6" ry="3.6" fill="none" stroke="' + OL + '" stroke-width="5"/><ellipse cx="' + x + '" cy="' + (104 - Math.abs(60 - x) * .12) + '" rx="6" ry="3.6" fill="none" stroke="#c4cad4" stroke-width="2.4"/>').join("");
-  return s;
-};
 ART.titanlave = (u, sl) => {
   let s = cel2(u, "M42 32 C32 26 28 16 30 4 C38 14 44 18 52 24 Z", "#ffb46b", "#c8641a", { f: 1 });
   s += cel2(u, "M18 74 C4 76 2 96 10 106 L30 106 C34 94 30 80 18 74 Z", "#4a342c", "#22140e", { cls: "s-fist", x: glowLn(u, "M10 90 L18 94 L16 100", "#ff7a1a", 2) });
@@ -4198,18 +4191,6 @@ ART.titanlave = (u, sl) => {
   s += cel(u, "M48 52 L72 52 L68 58 L52 58 Z", "#ff7a1a", "#c83a0a", { f: 1 });
   s += '<path class="s-drip" d="M48 106 C48 110 50 112 50 114" stroke="#ff7a1a" stroke-width="3" stroke-linecap="round" filter="url(#' + u + 'g)"/>';
   s += dot(30, 30, 1.8, "#ff9a3a", "s-tw") + dot(94, 34, 1.6, "#ffcc33", "s-tw") + dot(100, 52, 1.4, "#ff7a1a", "s-tw");
-  return s;
-};
-ART.griffon = (u, sl) => {
-  const wing = "M46 72 C34 52 18 42 2 40 C8 48 6 54 4 60 C12 60 14 66 12 72 C20 70 24 76 22 82 C32 80 38 84 40 90 Z";
-  let s = cel2(u, wing, "#b47c3a", "#76501e", { cls: "s-wing", x: fill("M2 40 C8 48 6 54 4 60 C12 60 14 66 12 72 C20 70 24 76 22 82 C14 76 8 62 2 40Z", "#f6f2ea") + ln("M42 74 L10 46 M40 80 L16 64 M40 86 L24 78", 1.6, "#8a5c26") });
-  s += cel(u, "M34 106 C30 88 42 74 60 74 C78 74 90 88 86 106 Z", "#d9a441", "#a4721e", { x: fill("M48 106 C48 96 54 88 60 88 C66 88 72 96 72 106Z", "#f0cc7a") });
-  s += cel2(u, "M38 96 C32 96 30 104 34 108 L46 108 C46 102 44 96 38 96 Z", "#d9a441", "#a4721e");
-  s += cel2(u, "M44 32 L36 12 L54 26 Z", "#f6f2ea", "#c4baa8");
-  s += cel(u, "M36 54 C34 36 46 24 60 24 C74 24 86 36 84 54 C82 68 72 78 60 78 C48 78 38 68 36 54 Z", "#f8f4ec", "#c4baa8", { hl: [46, 34, 7, 3, -20], x: ln("M40 62 L46 60 M38 68 L44 66", 1.6, "#c4baa8") + ln(mir("M40 62 L46 60 M38 68 L44 66"), 1.6, "#c4baa8") });
-  s += eyes(u, 60, 48, 11, 6.6, "#ffb000", { sl, glow: 1 });
-  s += cel(u, "M51 56 L69 56 C69 66 63 72 60 76 C57 72 51 66 51 56 Z", "#ffc23a", "#c8861a", { hl: [55, 59, 2, 1.5] });
-  s += ln("M56 62 L64 62", 1.6, "#8a5a12");
   return s;
 };
 
@@ -4226,19 +4207,6 @@ ART.leviathan = (u, sl) => {
   s += ln("M50 62 Q60 66 70 62", 2.6) + fang(53, 62.6, .8) + fang(67, 62.6, .8);
   s += '<path class="s-wave" d="M0 106 Q10 100 20 106 T40 106 T60 106 T80 106 T100 106 T120 106 L120 116 L0 116 Z" fill="#3aa8f0" stroke="' + OL + '" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/>';
   s += dot(14, 50, 1.6, "#bff6ff", "s-tw") + dot(104, 48, 1.8, "#7fffe0", "s-tw");
-  return s;
-};
-ART.kirin = (u, sl) => {
-  const mane = "M40 40 C24 38 16 24 20 10 C26 22 34 26 44 26 Z";
-  let s = cel2(u, mane, "#ff8a2a", "#d0401a", { cls: "s-flame", f: 1, x: fill("M24 18 C28 26 34 30 42 30 L44 26 C34 26 26 22 24 18Z", "#ffd04a") });
-  s += cel2(u, "M38 58 C22 58 14 48 12 38 C22 44 30 44 40 46 Z", "#ff8a2a", "#d0401a", { cls: "s-flame", f: 1 });
-  s += cel(u, "M38 106 C36 90 44 80 60 80 C76 80 84 90 82 106 Z", "#ffe7a8", "#cfa040", { x: [46, 56, 66, 74].map((x, i) => '<path d="M' + x + ' ' + (92 + (i % 2) * 6) + ' q4 -5 8 0" fill="none" stroke="#d9a43a" stroke-width="1.6"/>').join("") + fill("M52 106 C52 96 56 90 60 90 C64 90 68 96 68 106Z", "#fff6dc") });
-  s += cel2(u, "M42 36 C30 34 22 40 18 44 C28 48 36 46 44 42 Z", "#ffe7a8", "#cfa040", { x: fill("M40 38 C32 38 28 42 26 43 C32 44 36 43 42 40Z", "#3ff2a0") });
-  s += cel(u, "M56 28 C56 16 60 6 64 0 C64 10 66 18 66 28 Z", "#ffe24d", "#c89a1a", { f: 1, x: ln("M57 22 L65 20 M58 14 L64 12", 1.4, "#c89a1a") });
-  s += cel(u, "M40 46 C38 30 48 24 60 24 C72 24 82 30 80 46 C80 60 74 78 60 84 C46 78 40 60 40 46 Z", "#fff0c4", "#d4a840", { hl: [50, 32, 6, 3, -20], x: fill("M48 66 C48 60 72 60 72 66 C70 78 50 78 48 66Z", "#ffe7a8") + glowLn(u, "M60 30 L60 40", "#3ff2a0", 2) });
-  s += eyes(u, 60, 47, 10.5, 6.2, "#3ff2a0", { sl, glow: 1 });
-  s += dot(56, 72, 1.5, OL) + dot(64, 72, 1.5, OL) + ln("M55 78 Q60 80 65 78", 2.2);
-  s += dot(16, 70, 1.8, "#ffd04a", "s-tw") + dot(104, 66, 1.6, "#3ff2a0", "s-tw") + dot(100, 90, 1.4, "#ff8a2a", "s-tw");
   return s;
 };
 ART.angefer = (u, sl) => {
@@ -4289,6 +4257,269 @@ ART.gravitas = (u, sl) => {
   return s;
 };
 
+/* ----- Légendaires et mythiques remaniés : plus de mouvement ----- */
+// Liseré coloré sur un bord de la forme (flamme, aura)
+const rim = (d, c, base, dx, dy) => fill(d, c) + fill(d, base, ' transform="translate(' + dx + ' ' + dy + ')"');
+const rise = pts => pts.map(([x, y, c], i) => '<circle class="s-rise" style="animation-delay:' + (-i * .45) + 's" cx="' + x + '" cy="' + y + '" r="1.8" fill="' + c + '"/>').join("");
+const strand = (i, inner) => '<g class="s-strand" style="animation-delay:' + (-i * .3) + 's">' + inner + '</g>';
+
+ART.phenix = (u, sl) => {
+  let s = '<circle class="s-pulse" cx="60" cy="58" r="50" fill="url(#' + u + 'f)" opacity=".75"/>';
+  const wing = "M50 58 C40 38 24 20 4 6 C10 16 12 24 10 30 C18 30 22 34 20 40 C28 40 32 46 28 52 C36 52 40 58 36 64 C42 64 46 68 46 74 Z";
+  s += cel2(u, wing, "#e8401a", "#a01e0a", { cls: "s-wing", x: fill("M50 60 C42 44 30 32 14 20 C20 30 22 34 20 40 C26 42 30 46 28 52 C34 54 38 58 36 64 C42 64 46 68 46 72 Z", "#ff8a2a") + fill("M50 62 C44 52 38 46 30 42 C34 48 34 52 32 56 C38 58 42 62 46 68 Z", "#ffd04a") + ln("M48 60 L12 22 M46 64 L22 40 M46 68 L32 54", 1.4, "#a01e0a") });
+  const rib = ["M56 92 C46 104 30 102 18 112 C16 116 20 120 26 117 C36 108 50 110 60 98 Z", "M64 92 C76 102 92 98 104 106 C110 110 110 118 104 117 C96 108 82 112 60 98 Z", "M57 96 C61 106 54 114 58 122 C64 116 66 106 63 96 Z"];
+  s += rib.map((d, i) => '<g class="s-ribbon" style="animation-delay:' + (-i * .5) + 's">' + cel(u, d, i === 2 ? "#ffd04a" : "#ff7a2a", "#c0360e", { x: i === 2 ? "" : fill(d, "#ffd04a", ' transform="translate(' + (i ? 2 : -2) + ' 3)" opacity=".85"') }) + '</g>').join("");
+  s += cel(u, "M60 48 C70 52 74 66 70 80 C66 90 62 96 60 100 C58 96 54 90 50 80 C46 66 50 52 60 48 Z", "#ff5a2a", "#b0220e", { x: fill("M54 62 L60 70 L66 62 L66 74 L60 84 L54 74 Z", "#ffd04a") + ln("M56 68 L60 72 L64 68 M56 76 L60 80 L64 76", 1.4, "#ff8a2a") });
+  s += ["M62 34 C72 22 86 16 102 18 C92 22 84 28 76 36 Z", "M60 32 C64 18 76 8 92 2 C84 12 78 20 72 32 Z", "M58 32 C56 20 60 10 68 -2 C66 12 66 22 66 30 Z"].map((d, i) => strand(i, cel(u, d, ["#ffe14d", "#ffb03a", "#ff7a2a"][i], "#e0501a", { f: 1 }))).join("");
+  s += cel(u, "M48 40 C48 30 54 26 61 26 C68 26 74 32 72 40 C70 48 65 52 60 52 C54 52 48 48 48 40 Z", "#ff6a2a", "#b0300e", { hl: [54, 32, 3.5, 2, -20], dx: -1, dy: -3 });
+  s += eyes(u, 60, 39, 6.4, 4.4, "#ffe14d", { sl, glow: 1 });
+  s += cel(u, "M56 45 L64 45 C64 49 62 52 60 55 C58 52 56 49 56 45 Z", "#ffe08a", "#d99a2a", { dx: -1, dy: -2 });
+  s += rise([[22, 72, "#ffd04a"], [98, 66, "#ff8a2a"], [34, 98, "#ffe14d"], [86, 94, "#ffd04a"], [60, 16, "#ffb03a"], [12, 50, "#ff8a2a"]]);
+  return s;
+};
+ART.fenrir = (u, sl) => {
+  const L = ["M30 46 C18 36 6 38 -2 30 C2 44 12 52 24 58 Z", "M26 62 C14 58 2 66 -4 60 C0 74 12 78 24 72 Z", "M28 78 C18 84 10 94 0 94 C8 102 22 98 32 88 Z"];
+  const R = ["M90 46 C104 32 118 36 126 24 C124 42 112 52 96 58 Z", "M94 62 C108 56 120 64 128 56 C124 74 110 80 96 72 Z", "M92 78 C104 86 112 98 124 100 C112 106 98 100 88 88 Z"];
+  let s = L.map((d, i) => strand(i, cel(u, d, "#3a3f54", "#1c1f2c", { x: rim(d, "#ff4040", "#3a3f54", 4, 3) }))).join("") + R.map((d, i) => strand(i + 1, cel(u, d, "#3a3f54", "#1c1f2c", { x: rim(d, "#ff4040", "#3a3f54", -4, 3) }))).join("");
+  s += cel(u, "M40 92 C44 104 52 110 60 120 C68 110 76 104 80 92 C72 98 66 100 60 100 C54 100 48 98 40 92 Z", "#9aa0b4", "#5a6076");
+  s += cel2(u, "M32 42 L18 4 L54 30 Z", "#4a5064", "#2a2e3c", { x: fill("M33 36 L24 14 L46 30Z", "#8a1a24") });
+  s += cel(u, "M22 64 C20 40 38 26 60 26 C82 26 100 40 98 64 C104 72 104 82 96 86 C90 98 76 104 60 104 C44 104 30 98 24 86 C16 82 16 72 22 64 Z", "#4c5266", "#272b38", {
+    hl: [40, 38, 10, 4, -20],
+    x: fill("M40 86 C40 70 80 70 80 86 C80 100 40 100 40 86 Z", "#8a90a6") + fill("M60 26 C54 34 52 44 60 56 C68 44 66 34 60 26 Z", "#3a3f54") + glowLn(u, "M60 32 L60 46 M54 36 L60 40 L66 36", "#ff2a2a", 2) + ln("M26 70 L36 72 M26 78 L36 77", 2.4, "#272b38") + ln(mir("M26 70 L36 72 M26 78 L36 77"), 2.4, "#272b38")
+  });
+  s += sl ? "" : glowLn(u, "M38 56 C30 50 20 52 8 44", "#ff3b3b", 2, "s-trail") + glowLn(u, mir("M38 56 C30 50 20 52 8 44"), "#ff3b3b", 2, "s-trail");
+  s += eyes(u, 60, 58, 15, 7.6, "#ff2a2a", { sl, glow: 1, slit: 1, sc: "#ffe6c8" });
+  s += cel(u, "M52 76 C52 70 68 70 68 76 C68 80 60 84 60 84 C60 84 52 80 52 76 Z", "#141620", "#000", { hl: [56, 73, 2.5, 1.2] });
+  s += fill("M46 90 Q60 98 74 90 Q60 94 46 90 Z", "#3a0a10", ' stroke="' + OL + '" stroke-width="2.6" stroke-linejoin="round"') + fang(49, 90.5, 1) + fang(71, 90.5, 1) + fang(56, 93, .6) + fang(64, 93, .6);
+  const link = (x, y, r) => '<g transform="rotate(' + r + ' ' + x + ' ' + y + ')"><ellipse cx="' + x + '" cy="' + y + '" rx="6" ry="3.6" fill="none" stroke="' + OL + '" stroke-width="5"/><ellipse cx="' + x + '" cy="' + y + '" rx="6" ry="3.6" fill="none" stroke="#c4cad4" stroke-width="2.4"/></g>';
+  s += link(36, 101, 20) + link(47, 105, 8) + link(59, 106, 0) + link(71, 105, -8);
+  s += '<g class="s-swing">' + link(84, 104, -40) + link(92, 112, -70) + '</g>' + '<g class="s-rise" style="animation-duration:3s">' + link(106, 92, 30) + '</g>';
+  return s;
+};
+ART.griffon = (u, sl) => {
+  const wing = "M46 74 C34 66 18 52 10 34 C6 26 4 20 2 12 C8 16 12 18 14 20 C12 12 12 8 14 2 C18 10 22 14 24 16 C24 8 26 4 30 0 C32 10 32 18 34 24 C38 42 44 54 54 64 Z";
+  let s = cel2(u, wing, "#b47c3a", "#76501e", { cls: "s-wing", x: fill("M46 74 C38 66 30 56 24 46 C30 46 36 48 40 52 C38 44 40 40 42 36 C44 46 48 56 54 64 Z", "#f6f2ea") + fill("M2 12 C8 16 12 18 14 20 C12 12 12 8 14 2 C18 10 22 14 24 16 C24 8 26 4 30 0 C30 8 26 12 22 22 C16 20 8 18 2 12Z", "#6a4416") + ln("M44 68 L6 16 M46 64 L16 6 M48 60 L28 4", 1.4, "#76501e") });
+  let tail = "M84 102 C98 104 106 92 102 82 C98 72 104 64 112 66";
+  s += '<g class="s-tail">' + ln(tail, 8) + ln(tail, 4, "#d9a441") + cel(u, "M110 68 C110 58 120 56 124 62 C118 62 118 68 114 72 Z", "#8a5c26", "#5a3a12") + '</g>';
+  s += cel(u, "M34 106 C30 88 42 74 60 74 C78 74 90 88 86 106 Z", "#d9a441", "#a4721e", { x: fill("M48 106 C48 96 54 90 60 90 C66 90 72 96 72 106Z", "#f0cc7a") });
+  s += cel(u, "M40 74 C44 86 52 92 60 96 C68 92 76 86 80 74 C74 80 68 82 60 80 C52 82 46 80 40 74 Z", "#f8f4ec", "#c4baa8", { x: ln("M48 82 L52 86 M60 84 L60 90 M72 82 L68 86", 1.4, "#c4baa8") });
+  s += cel(u, "M36 96 C30 96 28 104 32 108 L44 108 C44 102 42 96 36 96 Z", "#d9a441", "#a4721e") + cel(u, "M78 90 C82 84 90 84 92 90 C94 96 88 98 84 96 Z", "#d9a441", "#a4721e");
+  s += ["M40 36 C30 30 22 22 20 10 C28 18 36 22 46 28 Z", "M44 30 C38 20 38 10 42 2 C44 12 48 18 54 24 Z"].map((d, i) => strand(i, cel(u, d, "#f6f2ea", "#c4baa8") + cel(u, mir(d), "#f6f2ea", "#c4baa8"))).join("");
+  s += cel(u, "M36 54 C34 36 46 24 60 24 C74 24 86 36 84 54 C82 68 72 78 60 78 C48 78 38 68 36 54 Z", "#f8f4ec", "#c4baa8", { hl: [46, 34, 7, 3, -20], x: ln("M40 62 L46 60 M38 68 L44 66", 1.6, "#c4baa8") + ln(mir("M40 62 L46 60 M38 68 L44 66"), 1.6, "#c4baa8") });
+  s += eyes(u, 60, 48, 11, 6.6, "#ffb000", { sl, glow: 1 });
+  s += cel(u, "M51 56 L69 56 C69 66 63 72 60 76 C57 72 51 66 51 56 Z", "#ffc23a", "#c8861a", { hl: [55, 59, 2, 1.5] });
+  s += ln("M56 62 L64 62", 1.6, "#8a5a12");
+  s += rise([[16, 70, "#ffd36b"], [104, 40, "#ffd36b"], [100, 96, "#fff"]]);
+  return s;
+};
+ART.kirin = (u, sl) => {
+  let s = '<g class="s-ribbon">' + cel(u, "M94 80 C104 72 104 56 112 48 C112 58 118 62 120 72 C114 76 108 82 98 88 Z", "#ff8a2a", "#d0401a", { f: 1, x: rim("M94 80 C104 72 104 56 112 48 C112 58 118 62 120 72 C114 76 108 82 98 88 Z", "#ffd04a", "#ff8a2a", -3, 2) }) + '</g>';
+  s += [[56, 108], [92, 108]].map(([x, y]) => '<g class="s-glow"><ellipse cx="' + x + '" cy="' + y + '" rx="13" ry="5" fill="#e8fff6" stroke="#3ff2a0" stroke-width="1.6"/><circle cx="' + (x - 6) + '" cy="' + (y - 2) + '" r="4" fill="#e8fff6"/><circle cx="' + (x + 5) + '" cy="' + (y - 3) + '" r="5" fill="#e8fff6"/></g>').join("");
+  s += cel(u, "M86 92 L90 106 L84 106 L80 94 Z", "#e8c878", "#b08a30") + cel(u, "M96 88 L100 106 L94 106 L90 92 Z", "#f6dc90", "#b08a30");
+  s += cel(u, "M58 92 L58 106 L51 106 L51 90 Z", "#f6dc90", "#b08a30");
+  s += cel(u, "M44 56 C50 66 58 72 66 72 C78 70 90 70 96 76 C102 84 98 94 90 96 C80 98 68 98 58 94 C50 90 42 80 40 66 Z", "#ffe7a8", "#cfa040", {
+    hl: [74, 76, 9, 2.5, -5],
+    x: fill("M48 84 C58 94 74 98 92 96 L92 104 L48 104 Z", "#fff6dc") + [64, 74, 84, 70, 80].map((x, i) => '<path d="M' + x + ' ' + (i < 3 ? 80 : 88) + ' q4 -5 8 0" fill="none" stroke="#d9a43a" stroke-width="1.6"/>').join("")
+  });
+  s += cel(u, "M64 92 C62 98 56 100 52 98 L48 102 L44 98 C48 92 56 88 62 88 Z", "#f6dc90", "#b08a30");
+  s += ["M44 34 C56 22 74 18 92 22 C82 26 76 30 70 36 Z", "M46 42 C60 34 80 34 98 42 C88 44 80 48 72 52 Z", "M48 52 C60 50 76 54 90 62 C78 62 70 64 60 66 Z"].map((d, i) => strand(i, cel(u, d, "#ff8a2a", "#d0401a", { f: 1, x: rim(d, "#ffd04a", "#ff8a2a", 0, 3) }))).join("");
+  const horn = "M38 32 C40 20 46 12 56 8 M44 20 C44 14 47 10 51 8";
+  s += ln("M44 32 C48 22 56 16 66 14", 6) + ln("M44 32 C48 22 56 16 66 14", 3.2, "#c89a1a");
+  s += cel(u, "M42 36 C48 28 56 28 60 30 C54 34 48 38 44 40 Z", "#ffe7a8", "#cfa040");
+  s += cel(u, "M10 46 C10 38 20 32 30 30 C40 28 48 32 52 40 L54 50 C48 56 40 56 34 54 C28 56 20 56 14 54 C10 52 8 48 10 46 Z", "#fff0c4", "#d4a840", { hl: [26, 35, 7, 2.5, -10], x: glowLn(u, "M40 34 L48 38", "#3ff2a0", 2) });
+  s += '<g filter="url(#' + u + 'g)">' + ln(horn, 6) + ln(horn, 3.2, "#ffe24d") + '</g>';
+  s += eye(u, 30, 41, 5.4, "#3ff2a0", { sl, glow: 1, inn: -1 });
+  s += dot(14, 44, 1.6, OL) + ln("M10 50 L22 51", 2.2);
+  s += glowLn(u, "M14 52 C6 58 4 68 12 72 C18 74 20 68 16 66", "#3ff2a0", 1.8, "s-trail") + glowLn(u, "M24 55 C20 62 24 70 30 70", "#3ff2a0", 1.6, "s-trail");
+  s += rise([[20, 84, "#ffd04a"], [108, 40, "#3ff2a0"], [74, 20, "#ff8a2a"]]);
+  return s;
+};
+
+/* ----- Nouvelles créatures ----- */
+ART.taurillon = (u, sl) => {
+  let s = cel2(u, "M32 44 C20 42 12 34 10 20 C16 28 24 30 36 34 Z", "#f2e6c8", "#c4ae80", { x: fill("M10 20 C12 26 14 28 18 30 L14 34 C12 30 10 26 10 20Z", "#5a4630") });
+  s += cel2(u, "M28 54 C18 54 10 50 6 44 C16 42 26 44 32 48 Z", "#7a3e22", "#4a2412");
+  s += cel(u, "M28 50 C28 36 44 30 60 30 C76 30 92 36 92 50 C92 62 88 70 86 78 C84 96 74 104 60 104 C46 104 36 96 34 78 C32 70 28 62 28 50 Z", "#8a4a2a", "#5a2c16", {
+    hl: [42, 40, 9, 3.5, -15],
+    x: fill("M40 86 C40 76 80 76 80 86 C80 100 40 100 40 86 Z", "#e8b89a") + fill("M50 32 C54 40 58 42 60 48 C62 42 66 40 70 32 C66 34 62 30 60 28 C56 32 54 32 50 32 Z", "#5a2c16")
+  });
+  s += eyes(u, 60, 60, 15, 7, "#ff3b2a", { sl });
+  s += dot(52, 87, 2.4, OL) + dot(68, 87, 2.4, OL);
+  s += '<circle cx="60" cy="96" r="5.5" fill="none" stroke="' + OL + '" stroke-width="4.6"/><circle cx="60" cy="96" r="5.5" fill="none" stroke="#ffc83a" stroke-width="2.2"/>';
+  s += sl ? "" : '<circle class="s-puff" cx="40" cy="90" r="4" fill="#fff" stroke="#c8d0d8" stroke-width="1.4"/><circle class="s-puff" style="animation-delay:-.9s" cx="80" cy="90" r="4" fill="#fff" stroke="#c8d0d8" stroke-width="1.4"/>';
+  return s;
+};
+ART.scorpi = (u, sl) => {
+  const tail = "M60 72 C58 44 72 24 88 24 C102 24 104 42 92 48";
+  let s = '<g class="s-sway">' + ln(tail, 13) + ln(tail, 8.6, "#e0902a") + ln(tail, 8.6, "#e0902a") + '<path d="' + tail + '" fill="none" stroke="#a85a14" stroke-width="9" stroke-dasharray="1.5 7" opacity=".7"/>' + cel(u, "M94 46 C86 50 82 56 84 64 C90 58 96 54 96 46 Z", "#3a2a20", "#1a1008") + '</g>';
+  s += ln("M36 98 L24 104 M38 92 L26 94", 3) + ln(mir("M36 98 L24 104 M38 92 L26 94"), 3);
+  s += cel2(u, "M36 84 L22 74 L26 70 L40 80 Z", "#e0902a", "#a85a14");
+  s += cel2(u, "M22 74 C10 72 6 60 12 50 C16 56 20 58 24 58 C20 52 22 46 28 44 C32 52 30 64 26 72 Z", "#f0a83a", "#a85a14", { cls: "s-blade", hl: [14, 58, 1.5, 4] });
+  s += cel(u, "M34 102 C28 84 38 66 60 66 C82 66 92 84 86 102 C78 108 42 108 34 102 Z", "#f0a03a", "#a85a14", { hl: [44, 74, 7, 3, -20], x: ln("M36 82 Q60 76 84 82 M34 92 Q60 86 86 92", 2, "#a85a14") });
+  s += eyes(u, 60, 80, 11, 6.4, "#ffe14d", { sl });
+  s += ln("M54 94 L57 97 M66 94 L63 97", 2.4);
+  return s;
+};
+ART.bastion = (u, sl) => {
+  let s = ["M40 50 L44 36 L52 46 Z", "M56 46 L60 30 L66 44 Z", "M70 46 L78 34 L80 50 Z"].map(d => cel(u, d, "#e8e0c8", "#a89a78")).join("");
+  s += cel(u, "M12 94 C12 60 32 44 60 44 C88 44 108 60 108 94 Z", "#5f8240", "#3a5222", {
+    hl: [36, 58, 9, 4, -25],
+    x: ln("M34 54 L46 64 L40 80 L22 80 M46 64 L74 64 M74 64 L86 54 M74 64 L80 80 L98 80 M40 80 L48 94 M80 80 L72 94", 2.2, "#3a5222") + fill("M12 88 C30 94 90 94 108 88 L108 100 L12 100 Z", "#c8b070")
+  });
+  s += cel2(u, "M30 92 C24 92 20 100 22 106 L36 106 C38 100 36 94 30 92 Z", "#9acb5a", "#5f9a30");
+  s += cel(u, "M40 78 C40 64 48 58 60 58 C72 58 80 64 80 78 C80 92 72 100 60 100 C48 100 40 92 40 78 Z", "#9acb5a", "#5f9a30", { hl: [50, 64, 4, 2, -20] });
+  s += eyes(u, 60, 76, 9.6, 6, "#ff8a1a", { sl });
+  s += ln("M52 90 L60 93 L68 90", 2.6);
+  return s;
+};
+ART.banquise = (u, sl) => {
+  let s = cel2(u, "M28 70 C16 76 10 88 12 98 C20 92 26 86 30 82 Z", "#262c44", "#12162a", { cls: "s-fin" });
+  s += cel(u, "M30 100 C22 80 26 50 60 44 C94 50 98 80 90 100 C80 108 40 108 30 100 Z", "#2a3048", "#161a2a", {
+    hl: [40, 56, 7, 3.5, -25],
+    x: fill("M40 106 C34 84 38 66 48 60 C54 58 58 62 60 64 C62 62 66 58 72 60 C82 66 86 84 80 106 Z", "#f4f6fa")
+  });
+  s += ["M46 60 C38 56 30 50 26 40 C34 46 40 48 50 54 Z"].map((d, i) => strand(i, cel(u, d, "#ffd23a", "#d99a10") + cel(u, mir(d), "#ffd23a", "#d99a10"))).join("");
+  s += eyes(u, 60, 66, 10.5, 6, "#e0201a", { sl });
+  s += cel(u, "M53 74 L67 74 L60 83 Z", "#ff9a2a", "#d0601a", { dx: -1, dy: -2 });
+  s += cel2(u, "M44 104 L36 108 L50 108 Z", "#ff9a2a", "#d0601a", { dx: -1, dy: -2 });
+  return s;
+};
+ART.cameleo = (u, sl) => {
+  const tail = "M84 100 C100 102 110 92 106 82 C102 74 92 76 92 84 C92 90 100 90 100 84";
+  let s = '<g class="s-tail">' + ln(tail, 10) + ln(tail, 6, "#3fbf7a") + '</g>';
+  s += cel(u, "M34 106 C30 88 40 76 60 76 C80 76 90 88 86 106 Z", "#3fbf7a", "#23864e", { x: fill("M30 90 L90 86 L90 92 L30 96 Z", "#ff8a3a") + fill("M58 106 C58 98 62 94 66 94 L66 106Z", "#c8f0a0") });
+  s += cel(u, "M32 64 C30 46 42 30 60 22 C78 30 90 46 88 64 C86 76 74 84 60 84 C46 84 34 76 32 64 Z", "#46c884", "#23864e", { hl: [46, 38, 6, 3, -35], x: fill("M60 22 C64 34 64 44 60 52 C56 44 56 34 60 22 Z", "#ff8a3a") + dot(42, 74, 3, "#ffd23a") + dot(80, 70, 2.4, "#ffd23a") });
+  s += cel2(u, "M30 58 C30 48 40 44 48 48 C54 52 54 62 48 66 C40 70 30 66 30 58 Z", "#46c884", "#23864e");
+  s += eye(u, 40, 57, 5.6, "#ff3b6b", { sl }) + eye(u, 80, 57, 5.6, "#ff3b6b", { sl, a1: .6, a2: .1 });
+  s += ln("M44 74 Q60 82 76 72", 2.8);
+  return s;
+};
+ART.kongo = (u, sl) => {
+  let s = cel2(u, "M32 54 C16 58 8 76 10 94 C12 100 20 102 26 98 C28 90 30 80 34 70 C36 64 38 60 40 58 Z", "#3a3a46", "#1e1e28", { cls: "s-flex" });
+  s += cel2(u, "M6 94 C4 104 10 110 20 110 C30 110 32 102 28 94 C22 90 12 90 6 94 Z", "#3a3a46", "#1e1e28", { x: ln("M12 98 L12 104 M18 98 L18 105 M24 98 L24 104", 1.6, "#5a5a68") });
+  s += cel(u, "M32 106 C26 82 34 58 60 54 C86 58 94 82 88 106 Z", "#3a3a46", "#1e1e28", { hl: [42, 66, 6, 3, -25], x: fill("M42 74 C48 66 58 68 60 76 C62 68 72 66 78 74 C80 86 70 90 60 88 C50 90 40 86 42 74 Z", "#6c6474") + ln("M60 78 L60 88 M48 94 L72 94", 1.6, "#4a4452") });
+  s += cel(u, "M40 46 C38 30 48 20 60 18 C72 20 82 30 80 46 C80 58 72 66 60 66 C48 66 40 58 40 46 Z", "#3a3a46", "#1e1e28", { x: fill("M50 22 C54 18 66 18 70 22 C66 24 54 24 50 22 Z", "#c8c8d4") + fill("M44 46 C44 38 76 38 76 46 C78 58 70 64 60 64 C50 64 42 58 44 46 Z", "#8a7a84") });
+  s += fill("M42 40 Q60 32 78 40 L78 45 Q60 38 42 45 Z", OL);
+  s += eyes(u, 60, 47, 8.4, 4.8, "#ffb000", { sl });
+  s += dot(56, 55, 1.6, OL) + dot(64, 55, 1.6, OL) + ln("M52 60 Q60 57 68 60", 2.4);
+  return s;
+};
+ART.octavio = (u, sl) => {
+  const T = ["M32 80 C20 86 12 96 16 104 C20 110 28 106 26 100", "M42 86 C36 96 32 106 38 112 C42 114 46 110 44 106", "M54 90 C52 100 50 110 56 114", "M66 90 C68 100 70 110 64 114", "M78 86 C84 96 88 106 82 112 C78 114 74 110 76 106", "M88 80 C100 86 108 96 104 104 C100 110 92 106 94 100"];
+  let s = T.map((d, i) => '<g class="s-tent" style="animation-delay:' + (-i * .3) + 's">' + ln(d, 10) + ln(d, 6.4, "#e24a5a") + '</g>').join("");
+  s += cel(u, "M24 70 C20 40 38 18 60 18 C82 18 100 40 96 70 C94 84 78 92 60 92 C42 92 26 84 24 70 Z", "#e8505e", "#a02436", { hl: [42, 30, 9, 4, -25], x: dot(36, 46, 3.4, "#ff9aa6") + dot(82, 40, 4, "#ff9aa6") + dot(66, 28, 2.4, "#ff9aa6") + dot(30, 62, 2, "#ff9aa6") });
+  s += eyes(u, 60, 64, 15, 8.4, "#ffd000", { sl });
+  s += ln("M54 82 Q60 79 66 82", 2.6);
+  return s;
+};
+ART.rhinoc = (u, sl) => {
+  let s = cel2(u, "M30 46 C22 38 22 28 30 22 C34 30 36 36 40 42 Z", "#8a95a6", "#5a6476");
+  s += cel(u, "M24 60 C24 42 40 32 60 32 C80 32 96 42 96 60 C96 72 90 80 86 88 C82 100 72 106 60 106 C48 106 38 100 34 88 C30 80 24 72 24 60 Z", "#8a95a6", "#5a6476", {
+    hl: [40, 40, 9, 3.5, -15],
+    x: fill("M26 50 C40 42 80 42 94 50 L94 56 C80 48 40 48 26 56 Z", "#5a6476") + [34, 48, 72, 86].map(x => dot(x, 51, 1.6, "#c8d0dc")).join("") + fill("M40 94 C40 86 80 86 80 94 C80 104 40 104 40 94 Z", "#a8b2c0")
+  });
+  s += eyes(u, 60, 66, 21, 6, "#ff6a1a", { sl });
+  s += cel(u, "M50 90 C52 76 54 62 60 46 C66 62 68 76 70 90 Z", "#f2e6c8", "#c4ae80", { hl: [57, 66, 1.5, 6] });
+  s += dot(48, 98, 2, OL) + dot(72, 98, 2, OL);
+  return s;
+};
+ART.ursa = (u, sl) => {
+  let s = cel2(u, "M32 40 C24 34 24 22 34 20 C40 22 44 28 44 34 Z", "#8a5a32", "#5a3618");
+  s += cel(u, "M30 106 C26 88 38 76 60 76 C82 76 94 88 90 106 Z", "#7a4e2a", "#4a2c12");
+  s += cel2(u, "M22 94 C14 82 18 66 32 64 C42 64 46 72 44 82 Z", "#b8c4d0", "#6a7888", { x: dot(28, 74, 1.6, "#5a6476") + dot(36, 70, 1.6, "#5a6476") + dot(34, 80, 1.6, "#5a6476") });
+  s += cel2(u, "M24 68 L14 56 L28 64 Z", "#e0e6ee", "#8a96a6");
+  s += cel(u, "M24 58 C22 38 40 26 60 26 C80 26 98 38 96 58 C96 76 80 88 60 88 C40 88 24 76 24 58 Z", "#8a5a32", "#5a3618", { x: fill("M44 72 C44 62 76 62 76 72 C76 84 44 84 44 72 Z", "#d9a878") });
+  s += cel(u, "M26 50 C26 30 42 20 60 20 C78 20 94 30 94 50 C80 44 40 44 26 50 Z", "#c0ccd8", "#6a7888", { hl: [44, 28, 9, 3, -15], x: ln("M60 20 L60 46", 2, "#8a96a6") + dot(36, 40, 1.6, "#5a6476") + dot(84, 40, 1.6, "#5a6476") });
+  s += cel(u, "M56 44 L64 44 L62 62 L58 62 Z", "#c0ccd8", "#6a7888", { dx: -1, dy: -2 });
+  s += eyes(u, 60, 56, 14, 6.4, "#ffb000", { sl });
+  s += ln("M30 46 L44 64", 2.4, "#d84a3a");
+  s += cel(u, "M54 66 C54 62 66 62 66 66 C66 69 60 72 60 72 C60 72 54 69 54 66 Z", "#141620", "#000");
+  s += ln("M52 78 Q60 82 68 78", 2.6) + fang(54, 78.6, .8) + fang(66, 78.6, .8);
+  return s;
+};
+ART.naja = (u, sl) => {
+  let s = cel(u, "M14 104 C12 94 34 90 60 90 C86 90 108 94 106 104 C104 112 16 112 14 104 Z", "#2e8a6a", "#18584a", { x: ln("M24 100 Q30 96 36 100 M44 98 Q50 94 56 98 M64 98 Q70 94 76 98 M84 100 Q90 96 96 100", 1.6, "#5ac89a") });
+  s += cel(u, "M60 26 C82 26 98 46 96 68 C94 82 78 90 60 94 C42 90 26 82 24 68 C22 46 38 26 60 26 Z", "#2e9a74", "#186048", {
+    hl: [38, 44, 6, 3, -35],
+    x: [[36, 52], [32, 68], [40, 82]].map(([x, y]) => fill("M" + x + " " + (y - 5) + " L" + (x + 4) + " " + y + " L" + x + " " + (y + 5) + " L" + (x - 4) + " " + y + " Z", "#ffd23a", ' stroke="' + OL + '" stroke-width="1.6"') + fill("M" + (120 - x) + " " + (y - 5) + " L" + (124 - x) + " " + y + " L" + (120 - x) + " " + (y + 5) + " L" + (116 - x) + " " + y + " Z", "#ffd23a", ' stroke="' + OL + '" stroke-width="1.6"')).join("") + fill("M52 56 C52 72 54 84 60 92 C66 84 68 72 68 56 Z", "#c8e8a0") + ln("M53 64 L67 64 M54 72 L66 72 M55 80 L65 80", 1.4, "#8ac070")
+  });
+  s += cel(u, "M46 42 C46 30 52 24 60 24 C68 24 74 30 74 42 C74 52 68 58 60 58 C52 58 46 52 46 42 Z", "#34a87e", "#186048", { hl: [52, 30, 3, 2, -20], dx: -1, dy: -3, x: fill("M60 26 L63 31 L60 36 L57 31 Z", "#ffd23a") });
+  s += eyes(u, 60, 41, 7.4, 4.8, "#ffd000", { sl, slit: 1, glow: 1 });
+  s += sl ? "" : '<g class="s-tongue">' + ln("M60 56 L60 64 M60 64 L56 68 M60 64 L64 68", 2, "#e2402e") + '</g>';
+  return s;
+};
+const hydHead = (u, sl, x, y, r, d) => '<g class="s-head" style="animation-delay:' + d + 's"><g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')">' +
+  cel(u, "M-9 -6 L-18 -16 L-4 -11 Z", "#7fe0b0", "#2a8a5a", { dx: -1, dy: -2 }) + cel(u, "M9 -6 L18 -16 L4 -11 Z", "#7fe0b0", "#2a8a5a", { dx: -1, dy: -2 }) +
+  cel(u, "M-11 0 C-11 -9 -6 -13 0 -13 C6 -13 11 -9 11 0 C11 8 7 13 0 13 C-7 13 -11 8 -11 0 Z", "#46a86a", "#1e5a3a", { hl: [-4, -8, 3, 1.6], dx: -1, dy: -3, x: fill("M-6 6 C-6 2 6 2 6 6 C6 11 -6 11 -6 6 Z", "#8ad8a0") }) +
+  eye(u, -4.6, -1, 3.8, "#ffd000", { sl, inn: 1, slit: 1 }) + eye(u, 4.6, -1, 3.8, "#ffd000", { sl, inn: -1, slit: 1 }) + ln("M-4 8 Q0 10 4 8", 1.8) + '</g></g>';
+ART.hydre = (u, sl) => {
+  let s = cel(u, "M30 106 C26 92 38 80 60 80 C82 80 94 92 90 106 Z", "#3a8a5a", "#1e5a3a", { x: fill("M46 106 C46 96 52 90 60 90 C68 90 74 96 74 106Z", "#bfe8a0") });
+  s += cel(u, "M84 100 C98 102 108 94 110 84 L116 86 C114 100 102 108 86 106 Z", "#3a8a5a", "#1e5a3a", { cls: "s-tail" });
+  const N = ["M46 88 C38 72 26 64 22 50", "M60 84 C60 70 58 56 60 38", "M74 88 C82 72 94 64 98 50"];
+  s += N.map(d => ln(d, 13) + ln(d, 8.4, "#46a86a")).join("");
+  s += hydHead(u, sl, 22, 48, -20, -.8) + hydHead(u, sl, 98, 48, 20, -1.6) + hydHead(u, sl, 60, 32, 0, 0);
+  return s;
+};
+ART.quetzal = (u, sl) => {
+  let s = ["M20 102 C10 96 2 98 -4 92 C0 102 8 108 18 106 Z", "M20 104 C10 106 2 112 -2 118 C8 118 16 112 22 108 Z", "M18 100 C12 90 12 82 6 76 C4 86 8 96 16 104 Z"].map((d, i) => strand(i, cel(u, d, ["#2ab0c8", "#ff4a5a", "#3fd08a"][i], "#177a6a", { x: rim(d, "#ffd23a", ["#2ab0c8", "#ff4a5a", "#3fd08a"][i], 0, -3) }))).join("");
+  s += cel(u, "M54 62 C42 48 26 44 8 48 C16 52 18 56 16 60 C24 60 28 64 26 70 C34 68 40 70 42 76 Z", "#2fbf7a", "#177a4a", { cls: "s-wing s-l", x: fill("M54 62 C46 54 38 52 30 52 C34 56 34 60 32 64 C38 64 42 68 44 72 Z", "#ffd23a") + fill("M8 48 C16 52 18 56 16 60 C12 56 10 52 8 48Z", "#ff4a5a") });
+  s += cel(u, "M62 62 C74 46 92 40 110 44 C102 48 100 54 102 58 C94 58 90 62 90 68 C82 66 74 68 72 74 Z", "#2fbf7a", "#177a4a", { cls: "s-wing s-r", x: fill("M62 62 C70 54 80 50 90 50 C86 54 86 58 88 62 C80 62 76 66 74 70 Z", "#ffd23a") + fill("M110 44 C102 48 100 54 102 58 C106 52 108 48 110 44Z", "#ff4a5a") });
+  const body = "M18 102 C40 114 72 110 78 92 C84 74 56 72 48 60 C40 48 52 36 66 38";
+  s += ln(body, 17) + ln(body, 12, "#2fbf7a") + '<path d="' + body + '" fill="none" stroke="#7fe8a8" stroke-width="3" stroke-linecap="round" transform="translate(-1.5 -2.5)" opacity=".8"/><path d="' + body + '" fill="none" stroke="#ffd23a" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round" transform="translate(1 2)"/>';
+  s += ["M64 32 C54 22 40 20 28 24 C38 26 46 30 52 38 Z", "M66 28 C60 14 48 8 36 8 C46 12 54 20 58 32 Z", "M70 26 C68 14 62 6 54 0 C60 10 62 18 62 28 Z"].map((d, i) => strand(i, cel(u, d, ["#3fd08a", "#2ab0c8", "#ff4a5a"][i], "#177a6a", { x: rim(d, "#ffd23a", ["#3fd08a", "#2ab0c8", "#ff4a5a"][i], 3, 2) }))).join("");
+  s += cel(u, "M60 40 C60 30 68 24 78 24 C88 24 96 30 100 36 L92 40 L98 46 C90 50 80 52 72 52 C64 52 60 46 60 40 Z", "#34c884", "#177a4a", { hl: [72, 29, 6, 2, -10], x: fill("M68 46 C76 48 86 48 94 44 L96 48 C88 52 76 52 68 50Z", "#ffd23a") });
+  s += eye(u, 76, 36, 5, "#ff4a5a", { sl, glow: 1, inn: 1, slit: 1 });
+  s += fang(92, 40.5, .7);
+  s += rise([[100, 80, "#3fd08a"], [30, 30, "#ffd23a"], [110, 100, "#2ab0c8"]]);
+  return s;
+};
+ART.minotaure = (u, sl) => {
+  let s = ["M38 46 C24 48 14 60 10 76 C18 70 26 68 34 70 Z", "M36 62 C24 68 18 80 18 94 C24 86 30 82 38 80 Z"].map((d, i) => strand(i, cel(u, d, "#3a2418", "#1e1008") + cel(u, mir(d), "#3a2418", "#1e1008"))).join("");
+  s += cel(u, "M12 108 C12 88 30 78 60 78 C90 78 108 88 108 108 Z", "#8a3a24", "#5a2014", { x: ln("M60 84 L60 108 M40 90 Q50 96 58 92 M80 90 Q70 96 62 92", 2, "#5a2014") });
+  s += cel(u, "M30 86 C46 94 74 94 90 86 L92 94 C74 102 46 102 28 94 Z", "#ffc83a", "#c8901a", { x: dot(60, 95, 3, "#e2402e") });
+  s += cel2(u, "M38 40 C24 40 10 34 4 18 C2 12 4 6 8 4 C10 14 16 22 26 26 C32 28 38 30 42 32 Z", "#f2e6c8", "#c4ae80", { x: fill("M4 18 C2 12 4 6 8 4 C9 10 10 14 12 18 Z", "#3a2a1a") + ln("M30 30 L28 38 M22 26 L18 34", 1.6, "#c4ae80") });
+  s += cel(u, "M34 54 C32 38 44 28 60 28 C76 28 88 38 86 54 C86 66 82 74 78 82 C74 94 68 100 60 100 C52 100 46 94 42 82 C38 74 34 66 34 54 Z", "#9a4428", "#642414", {
+    hl: [46, 36, 7, 3, -20],
+    x: fill("M44 84 C44 74 76 74 76 84 C76 96 44 96 44 84 Z", "#c8846a") + fill("M52 30 C56 36 58 40 60 44 C62 40 64 36 68 30 C64 32 62 30 60 28 C58 30 56 30 52 30 Z", "#3a2418")
+  });
+  s += eyes(u, 60, 58, 12, 6.2, "#ff2a2a", { sl, glow: 1 });
+  s += dot(53, 84, 2.2, OL) + dot(67, 84, 2.2, OL);
+  s += '<circle cx="60" cy="92" r="5" fill="none" stroke="' + OL + '" stroke-width="4.4"/><circle cx="60" cy="92" r="5" fill="none" stroke="#ffc83a" stroke-width="2"/>';
+  s += sl ? "" : '<circle class="s-puff" cx="44" cy="86" r="4" fill="#fff" stroke="#c8d0d8" stroke-width="1.4"/><circle class="s-puff" style="animation-delay:-.9s" cx="76" cy="86" r="4" fill="#fff" stroke="#c8d0d8" stroke-width="1.4"/>';
+  return s;
+};
+ART.sphinx = (u, sl) => {
+  let s = cel2(u, "M32 72 C20 58 6 56 -2 60 C4 64 4 70 2 74 C10 74 14 78 12 84 C20 82 24 86 24 92 Z", "#ffc83a", "#c8901a", { cls: "s-wing", x: fill("M32 72 C26 66 18 64 10 64 C12 68 12 72 10 76 C16 76 20 80 20 86 Z", "#2a4ab0") + ln("M30 74 L4 62 M28 80 L12 78", 1.4, "#c8901a") });
+  s += cel(u, "M20 100 C22 76 26 58 30 44 C34 26 46 18 60 18 C74 18 86 26 90 44 C94 58 98 76 100 100 L82 100 C80 86 78 74 76 66 L44 66 C42 74 40 86 38 100 Z", "#2a4ab0", "#162a70", { x: [50, 58, 66, 74, 82, 90].map(y => ln("M10 " + y + " L110 " + y, 3.4, "#ffc83a")).join("") + ln("M30 30 L90 30 M26 40 L94 40", 3.4, "#ffc83a") });
+  s += cel2(u, "M30 100 C24 100 22 108 26 112 L42 112 C42 106 38 100 30 100 Z", "#e0a860", "#b07a38");
+  s += cel(u, "M42 48 C42 36 50 30 60 30 C70 30 78 36 78 48 C78 62 72 72 60 74 C48 72 42 62 42 48 Z", "#e0a860", "#b07a38", { hl: [50, 38, 4, 2, -20] });
+  s += cel(u, "M32 40 C46 32 74 32 88 40 L86 46 C72 38 48 38 34 46 Z", "#ffc83a", "#c8901a", { dx: -1, dy: -2 });
+  s += cel(u, "M60 26 C64 28 64 34 60 38 C56 34 56 28 60 26 Z", "#ffc83a", "#c8901a", { f: 1, dx: -1, dy: -2 });
+  s += eyes(u, 60, 52, 8.4, 4.8, "#3fc8ff", { sl, glow: 1 });
+  s += sl ? "" : ln("M47 54 L42 56 L44 60", 1.8) + ln(mir("M47 54 L42 56 L44 60"), 1.8);
+  s += ln("M55 66 Q60 68 65 66", 2.2);
+  s += cel(u, "M56 72 L64 72 L62 88 L58 88 Z", "#2a4ab0", "#162a70", { dx: -1, dy: -2, x: ln("M54 77 L66 77 M54 82 L66 82", 1.6, "#ffc83a") });
+  s += '<g class="s-halo" filter="url(#' + u + 'g)">' + ln("M106 22 L106 38 M100 28 L112 28", 2.6, "#ffc83a") + '<ellipse cx="106" cy="18" rx="4" ry="5" fill="none" stroke="#ffc83a" stroke-width="2.6"/></g>';
+  s += rise([[14, 40, "#ffc83a"], [96, 70, "#3fc8ff"], [20, 90, "#ffc83a"]]);
+  return s;
+};
+ART.solaris = (u, sl) => {
+  let rays = "";
+  for (let i = 0; i < 12; i++) rays += '<path d="M60 -2 L64 16 L56 16 Z" fill="' + (i % 2 ? "#ffe680" : "#ffb03a") + '" opacity=".85" transform="rotate(' + (i * 30 + 15) + ' 60 58)"/>';
+  let s = '<circle class="s-pulse" cx="60" cy="58" r="56" fill="url(#' + u + 's)" opacity=".85"/><g class="s-spin">' + rays + '</g>';
+  let mane = "";
+  for (let i = 0; i < 10; i++) mane += '<g transform="rotate(' + i * 36 + ' 60 58)">' + cel(u, "M60 58 C48 46 46 30 54 16 C58 28 68 32 72 42 C74 52 68 56 60 58 Z", i % 2 ? "#ff7a1a" : "#ffa82a", "#d0501a", { dx: 0, dy: 0, so: 0, sw: 2.6, x: fill("M60 58 C52 48 52 36 56 26 C60 34 66 38 68 46 C68 52 64 56 60 58 Z", "#ffd04a") }) + '</g>';
+  s += '<g class="s-mane">' + mane + '</g>';
+  s += cel(u, "M38 58 C36 42 46 32 60 32 C74 32 84 42 82 58 C82 72 72 84 60 86 C48 84 38 72 38 58 Z", "#ffd86b", "#e09a20", { hl: [48, 40, 6, 2.5, -20], x: fill("M48 72 C48 64 72 64 72 72 C72 82 48 82 48 72 Z", "#fff3c8") });
+  s += cel(u, "M44 36 L46 24 L52 30 L56 20 L60 28 L64 20 L68 30 L74 24 L76 36 Z", "#ffe75c", "#d9a020", { f: 1, dx: -1, dy: -2 });
+  s += '<circle class="s-glow" cx="60" cy="43" r="3.2" fill="#fff" stroke="' + OL + '" stroke-width="1.8" filter="url(#' + u + 'g)"/>';
+  s += eyes(u, 60, 55, 10, 6, "#ff6a00", { sl, glow: 1, sc: "#fffbe0" });
+  s += cel(u, "M55 68 L65 68 L60 73 Z", "#3a2010", "#1a0a00", { dx: 0, dy: -1 });
+  s += ln("M60 73 L60 76 M53 78 Q60 82 67 78", 2.4) + fang(55, 78.8, .7) + fang(65, 78.8, .7);
+  s += rise([[10, 96, "#ffd04a"], [110, 90, "#ff8a2a"], [20, 20, "#fff3a0"], [100, 14, "#ffd04a"]]);
+  return s;
+};
+
 /* ======================== Liste et conversion ======================== */
 const V9_PETS = [
   { id: "gravillon", name: "Gravillon", r: "common", anim: "stomp", d: "Un rocher couvert de mousse. Il tient le gainage depuis la préhistoire." },
@@ -4299,6 +4530,10 @@ const V9_PETS = [
   { id: "corbin", name: "Corbin", r: "common", anim: "bob", d: "Un corbeau qui compte tes reps. Il ne rate jamais une triche." },
   { id: "crocou", name: "Crocou", r: "common", anim: "stomp", d: "Petit crocodile, grande mâchoire. Il mord dans chaque série." },
   { id: "fouisseur", name: "Fouisseur", r: "common", anim: "stomp", d: "Une taupe à lunettes. Elle creuse jusqu'à ta prochaine progression." },
+  { id: "taurillon", name: "Taurillon", r: "common", anim: "stomp", d: "Il fonce sur la barre comme sur une cape rouge." },
+  { id: "scorpi", name: "Scorpi", r: "common", anim: "bob", d: "Sa queue fait le pont mieux que toi. Et elle pique." },
+  { id: "bastion", name: "Bastion", r: "common", anim: "stomp", d: "Lent, mais il n'a jamais raté une séance. Pas une." },
+  { id: "banquise", name: "Banquise", r: "common", anim: "bob", d: "Il glisse sur la glace comme sur ses séries de pompes." },
   { id: "lynxglace", name: "Lynx des glaces", r: "rare", anim: "breath", d: "Sang-froid absolu. Son handstand ne tremble jamais." },
   { id: "cornebuff", name: "Cornebuff", r: "rare", anim: "stomp", d: "Un scarabée qui soulève cent fois son poids. Il te juge un peu." },
   { id: "meduse", name: "Méduse", r: "rare", anim: "float", d: "Elle flotte sans effort. Toi aussi, un jour, en planche." },
@@ -4306,21 +4541,32 @@ const V9_PETS = [
   { id: "squalo", name: "Squalo", r: "rare", anim: "hover", d: "Un requin qui ne s'arrête jamais de nager. Ni de pousser." },
   { id: "champi", name: "Champi", r: "rare", anim: "bob", d: "Un champignon ceinture noire. Petit, mais il frappe fort." },
   { id: "vespere", name: "Vespère", r: "rare", anim: "hover", d: "Une chauve-souris qui s'entraîne la tête en bas. Forcément." },
+  { id: "cameleo", name: "Caméléo", r: "rare", anim: "breath", d: "Il change de couleur selon l'exercice. Rouge pour les jambes." },
+  { id: "kongo", name: "Kongo", r: "rare", anim: "stomp", d: "Dos argenté, tractions en or. Le roi des barres." },
+  { id: "octavio", name: "Octavio", r: "rare", anim: "float", d: "Huit bras, huit prises. Aucune barre ne lui résiste." },
+  { id: "rhinoc", name: "Rhinoc", r: "rare", anim: "stomp", d: "Blindé de la tête aux pieds. Il encaisse tous les volumes." },
   { id: "kitsune", name: "Kitsune", r: "epic", anim: "breath", d: "Trois queues, trois paliers validés. Elle en vise neuf." },
   { id: "tigreorage", name: "Tigre d'orage", r: "epic", anim: "breath", d: "Chaque rayure est un éclair. Chaque série, un orage." },
   { id: "golemcristal", name: "Golem de cristal", r: "epic", anim: "stomp", d: "Translucide et solide. Sa planche ne tremble jamais." },
   { id: "mante", name: "Mante", r: "epic", anim: "breath", d: "Deux lames, zéro hésitation. Elle tranche dans tes excuses." },
   { id: "wyverne", name: "Wyverne", r: "epic", anim: "hover", d: "Mi-dragon, mi-tempête. Elle survole les plateaux." },
   { id: "spectre", name: "Spectre", r: "epic", anim: "flicker", d: "Le fantôme de tes séances sautées. Il ricane quand tu en rates une." },
+  { id: "ursa", name: "Ursa", r: "epic", anim: "breath", d: "Un ours en armure. Il hiberne entre deux séries, jamais pendant." },
+  { id: "naja", name: "Naja", r: "epic", anim: "breath", d: "Elle hypnotise ta fatigue. Tu ne la sens plus." },
+  { id: "hydre", name: "Hydre", r: "epic", anim: "breath", d: "Coupe une tête, il en repousse deux. Comme tes muscles après la séance." },
   { id: "phenix", name: "Phénix", r: "legendary", anim: "hover", d: "Il renaît de chaque échec. Plus fort, à chaque fois." },
   { id: "fenrir", name: "Fenrir", r: "legendary", anim: "breath", d: "Aucune chaîne ne l'arrête. Aucune barre non plus." },
   { id: "titanlave", name: "Titan de lave", r: "legendary", anim: "stomp", d: "Le sol fond sous ses appuis. Ses pompes aussi." },
   { id: "griffon", name: "Griffon", r: "legendary", anim: "breath", d: "Tête d'aigle, corps de lion. La traction et la poussée réunies." },
+  { id: "quetzal", name: "Quetzal", r: "legendary", anim: "hover", d: "Le serpent à plumes. Sa souplesse est une légende." },
+  { id: "minotaure", name: "Minotaure", r: "legendary", anim: "stomp", d: "Il garde le labyrinthe des séances de jambes." },
   { id: "leviathan", name: "Léviathan", r: "mythic", anim: "hover", d: "Des abysses jusqu'au sommet de la barre." },
   { id: "kirin", name: "Kirin", r: "mythic", anim: "breath", d: "Il marche sur le feu sans laisser de trace. Comme un handstand parfait." },
   { id: "angefer", name: "Ange de fer", r: "mythic", anim: "hover", d: "Mi-machine, mi-légende. Ses ailes sont des lames." },
+  { id: "sphinx", name: "Sphinx", r: "mythic", anim: "breath", d: "Son énigme : combien de reps reste-t-il ? Toujours une de plus." },
   { id: "dragonneant", name: "Dragon du néant", r: "ultimate", anim: "hover", d: "Il dévore la gravité. Pour lui, tout est un handstand." },
-  { id: "gravitas", name: "Gravitas", r: "ultimate", anim: "float", d: "L'être qui a vaincu la gravité. Il ne descend jamais." }
+  { id: "gravitas", name: "Gravitas", r: "ultimate", anim: "float", d: "L'être qui a vaincu la gravité. Il ne descend jamais." },
+  { id: "solaris", name: "Solaris", r: "ultimate", anim: "float", d: "Sa crinière est un soleil. Il se lève avant toi, chaque jour." }
 ];
 // Anciennes créatures (V8) → nouvelles, à rareté égale
 const V9_MAP = { loup: "etincelle", renard: "pousse", corbeau: "corbin", golempierre: "gravillon", feufollet: "flammeche", lezard: "crocou", lynx: "fouisseur", faucon: "ondin", loupneige: "lynxglace", panthere: "squalo", aigle: "hibou", golemacier: "cornebuff", espritglace: "meduse", serpent: "vespere", fennec: "champi", espritorage: "spectre", corbeauombre: "mante", dragonor: "griffon" };
@@ -4349,7 +4595,7 @@ Object.keys(PET).forEach(k => delete PET[k]); PETS.forEach(p => { PET[p.id] = p;
 petSVG = function (p, o) {
   o = o || {};
   const u = "pv" + (++ART_N) + "_", sl = o.mood === "sleepy";
-  const defs = '<defs>' + glowF(u + "g") + rad(u + "n", ["#ff4fd8", "#5b3fd1", "rgba(20,10,60,0)"]) + lin(u + "r", ["#5cc8ff", "#ff4fd8", "#ffe75c"], 1, 0) +
+  const defs = '<defs>' + glowF(u + "g") + rad(u + "n", ["#ff4fd8", "#5b3fd1", "rgba(20,10,60,0)"]) + lin(u + "r", ["#5cc8ff", "#ff4fd8", "#ffe75c"], 1, 0) + rad(u + "f", ["#fff3a0", "#ff8a2a", "rgba(255,90,20,0)"]) + rad(u + "s", ["#fff7c0", "#ffb000", "rgba(255,170,0,0)"]) +
     (o.shiny ? '<filter id="' + u + 'h"><feColorMatrix type="hueRotate" values="150"/></filter>' : '') + '</defs>';
   const z = sl ? '<text class="pet-zzz" x="86" y="28" font-size="14" font-weight="700" fill="#6b7a80" font-family="var(--font-display)">z<tspan dy="-6" font-size="11">z</tspan><tspan dy="-5" font-size="9">z</tspan></text>' : "";
   const art = (ART[p.id] || ART.gravillon)(u, sl);

@@ -2639,51 +2639,10 @@ if (!settings.places) {
   saveAll();
 }
 settings.placeOv = settings.placeOv || {};
-if (settings.places.home.table == null) { settings.places.home.table = false; settings.places.home.door = true; }
-if (settings.places.gym.table == null) { settings.places.gym.table = true; settings.places.gym.door = true; }
+if (settings.places.home.table == null) settings.places.home.table = false;
+if (settings.places.gym.table == null) settings.places.gym.table = true;
 settings.swaps = settings.swaps || {};
 const placeName = p => PLACES.find(x => x[0] === p)[1];
-
-/* ---------- Tirage sans barre ---------- */
-Object.assign(EX, {
-  doorRow: {
-    name: "Tirage à la porte", short: "Serviette sur une poignée",
-    desc: "Passe une serviette solide autour des deux poignées d'une porte fermée (ou d'une poignée bien fixée), pieds près de la porte, corps penché en arrière bras tendus. Tire la poitrine vers la porte en serrant les omoplates. Le tirage de base quand il n'y a pas de barre.",
-    cues: ["Porte fermée, du côté où elle ne peut pas s'ouvrir vers toi", "Corps gainé et droit, talons au sol", "Plus tes pieds avancent vers la porte, plus c'est dur"],
-    props: [{ wall: 40 }, { box: [40, 96, 10, 8] }],
-    poses: [
-      { h:[48,100], e:[75,92], s:[101,83], p:[85,124], k:[74,156], f:[62,190], hd:[108,71] },
-      { h:[48,100], e:[66,106], s:[80,80], p:[73,124], k:[67,156], f:[62,190], hd:[87,68] }
-    ],
-    seq: [[0,.3,1.1],[1,.4,1.1]]
-  }
-});
-Object.assign(EX, {
-  doorRow1: Object.assign({}, EX.doorRow, {
-    name: "Tirage à la porte, un bras", short: "Version difficile",
-    desc: "Même installation que le tirage à la porte, mais tu tires avec un seul bras, l'autre le long du corps. Le corps ne doit pas tourner : c'est un vrai travail de force pour le dos et les biceps sans barre.",
-    cues: ["Hanches et épaules face à la porte", "Tire le coude vers la hanche", "Pieds plus loin de la porte pour simplifier"],
-    poses: [
-      { h:[48,100], e:[75,92], s:[101,83], p:[85,124], k:[74,156], f:[62,190], hd:[108,71], e2:[104,104], h2:[100,124] },
-      { h:[48,100], e:[66,106], s:[80,80], p:[73,124], k:[67,156], f:[62,190], hd:[87,68], e2:[84,102], h2:[80,122] }
-    ]
-  }),
-  floorPull: {
-    name: "Tirage glissé au sol", short: "Sans barre, sans table, sans porte",
-    desc: "Allongé sur le ventre sur un sol lisse, mains posées sur une serviette (ou des chaussettes sous les mains) bras tendus devant toi. Appuie fort dans le sol et tire ton corps vers l'avant jusqu'à ce que les mains arrivent sous les épaules, puis repousse lentement. Travaille les dorsaux comme une traction.",
-    cues: ["Appuie les mains dans le sol pendant tout le tirage", "Corps gainé, pieds en chaussettes pour glisser", "Retour lent, 2 à 3 s"],
-    props: [],
-    poses: [
-      { h:[40,186], e:[64,184], s:[90,182], p:[134,184], k:[170,186], f:[206,186], hd:[78,176] },
-      { h:[40,186], e:[54,174], s:[70,180], p:[114,184], k:[150,186], f:[186,186], hd:[58,174] }
-    ],
-    seq: [[0,.3,1.2],[1,.3,1.6]]
-  }
-});
-EX_INFO.doorRow1 = ["single arm door frame row"]; EX_INFO.floorPull = ["floor sliding lat pull bodyweight"];
-EX_CAT.doorRow1 = "pull"; EX_CAT.floorPull = "pull";
-EX_INFO.doorRow = ["door frame towel row"];
-EX_CAT.doorRow = "pull";
 
 /* ---------- Lieu de chaque séance ---------- */
 function placeOf(abs, d) { return settings.placeOv[abs + "-" + d] || settings.placeByDay[d] || "gym"; }
@@ -2691,39 +2650,28 @@ function swappedDay(abs, d) { const sw = settings.swaps[abs]; if (!sw) return d;
 const _session4 = session;
 session = function (abs, d) {
   const dd = swappedDay(abs, d), place = placeOf(abs, d), keep = settings.eq;
-  settings.eq = Object.assign({ bar: true, para: true, weights: true }, settings.places[place]);
+  settings.eq = Object.assign({ bar: true, para: true, weights: true, table: false }, settings.places[place]);
+  const origType = cuSlots()[dd], noPull = !settings.eq.bar && !settings.eq.table && origType === "pull";
+  const origSlots = cuSlots;
   try {
+    // Sans barre ni table, pas de tirage possible : la séance de tirage devient équilibre, jambes et core
+    if (noPull) cuSlots = () => Object.assign({}, origSlots(), { [dd]: "bal" });
     const s = _session4(abs, dd);
     if (!s) return s;
-    return Object.assign(s, { d, key: abs + "-" + d, place, eqUsed: settings.eq, swappedFrom: dd !== d ? dd : null });
-  } finally { settings.eq = keep; }
-};
-const _extraItems4 = extraItems;
-extraItems = function (main, s) {
-  const out = _extraItems4(main, s);
-  if (!settings.eq.bar && (s.type === "pull" || s.type === "full")) {
-    const E = settings.eq, main2 = E.table ? (E.door ? "doorRow" : "floorPull") : E.door ? "doorRow1" : "ytw";
-    const note = { doorRow: "Sans barre : serviette autour d'une poignée de porte solide", floorPull: "Sans barre ni porte : tirage glissé au sol", doorRow1: "Version un bras : plus dur, pour compenser l'absence de barre", ytw: "Haut du dos et omoplates, en complément du tirage au sol" }[main2];
-    const dose = main2 === "doorRow1" ? "3 × 6" : main2 === "ytw" ? "3 × 10" : "3 × 10";
-    const i = out.findIndex(x => ["row", "doorRow", "floorPull"].includes(x.ex));
-    if (!out.some(x => x.ex === main2)) out.splice(i >= 0 ? i + 1 : out.length, 0, Object.assign(item(main2, dose, main2 === "doorRow1" ? "repos 90 s par côté" : "repos 90 s", note), { eyebrow: "Tirage à la maison", keep: true }));
-  }
-  return out;
+    return Object.assign(s, { d, key: abs + "-" + d, place, eqUsed: settings.eq, origType, noPull, swappedFrom: dd !== d ? dd : null });
+  } finally { settings.eq = keep; cuSlots = origSlots; }
 };
 
-/* Rowing de remplacement : volume de rowing, pas celui des tractions lestées */
+/* Sans barre : rowing sous une table s'il y en a une, sinon pas de tirage */
 const _equip4 = equip;
 equip = function (it) {
   const x = _equip4(it);
+  if (x && x.ex === "row" && !settings.eq.bar && !settings.eq.table) return null;
   if (x && x.ex === "row" && it.ex !== "row") {
     const m = (x.dose || "").match(/^(\d+) × (\d+)$/);
     if (m) x.dose = Math.min(4, Math.max(3, +m[1])) + " × " + Math.min(15, Math.max(8, +m[2] * 3));
     x.unit = (x.unit || "").replace(/\s*\+\d+ kg/, "").replace("lestés", "").trim() || "repos 90 s";
-    x.auto = 0; x.lk = "row";
-  }
-  if (x && x.ex === "row" && !settings.eq.bar && !settings.eq.table) {
-    const alt = settings.eq.door ? "doorRow" : "floorPull";
-    Object.assign(x, { ex: alt, name: EX[alt].name, lk: alt, note: settings.eq.door ? "Sans barre ni table : serviette autour d'une poignée de porte solide, porte fermée" : "Sans barre, table ni porte : tirage glissé au sol" });
+    x.auto = 0; x.lk = "row"; x.note = "Sans barre : sous une table solide";
   }
   return x;
 };
@@ -2731,13 +2679,15 @@ equip = function (it) {
 /* ---------- Ce qui change sans le matériel ---------- */
 function missingNote(s) {
   const E = s.eqUsed || {}, out = [];
-  if (!E.bar) out.push("Pas de barre : front lever, back lever et muscle-up attendent ta prochaine séance à la salle. Les tractions deviennent " + (E.table ? "du rowing sous une table" : E.door ? "du tirage à la serviette sur une porte, à deux bras puis à un bras" : "du tirage glissé au sol") + ".");
-  if (!E.weights) out.push("Pas de lest : dips et tractions au poids du corps, avec 4 s de descente.");
-  if (!E.para) out.push("Pas de parallettes : planche et L-sit au sol, sur les poings ou mains à plat.");
+  if (s.noPull) out.push("Pas de barre ni de table : pas de tirage aujourd'hui. La séance de tirage devient équilibre, jambes et core.");
+  else if (!E.bar) out.push("Pas de barre : front lever, back lever et muscle-up attendent ta prochaine séance à la salle." + (E.table ? " Les tractions deviennent du rowing sous une table." : " Pas de tirage dans cette séance."));
+  const all = (s.main || []).concat(s.warm || []);
+  if (!E.weights && all.some(i => /tempo 4-0-1/.test(i.unit || ""))) out.push("Pas de lest : dips et tractions au poids du corps, avec 4 s de descente.");
+  if (!E.para && all.some(i => /Sans parallettes/.test(i.note || ""))) out.push("Pas de parallettes : planche et L-sit au sol, sur les poings ou mains à plat.");
   return out;
 }
 function swapCandidate(s) {
-  if (s.eqUsed.bar || !(s.type === "pull") || s.swappedFrom != null) return null;
+  if (s.eqUsed.bar || s.origType !== "pull" || s.swappedFrom != null) return null;
   const slots = cuSlots();
   for (let k = 1; k < 7; k++) {
     const d2 = (s.d + k) % 7;
@@ -2761,7 +2711,7 @@ function placeBanner(s) {
       h("button", { class: "link", onclick: () => { delete settings.swaps[s.abs]; saveAll(); render(); } }, "Annuler l'échange")) : null,
     notes.map(n => h("p", null, n)),
     d2 != null ? h("div", { class: "swap" },
-      h("p", null, h("b", null, "Conseil : "), "fais aujourd'hui la séance de poussée de " + DAYS[d2].toLowerCase() + ", et garde le tirage pour " + DAYS[d2].toLowerCase() + " à la salle."),
+      h("p", null, h("b", null, "Mieux : "), "fais aujourd'hui la séance de poussée de " + DAYS[d2].toLowerCase() + ", et garde le tirage pour " + DAYS[d2].toLowerCase() + " à la salle."),
       h("button", { class: "btn small", onclick: () => { settings.swaps[s.abs] = [s.d, d2]; settings.placeOv[s.abs + "-" + d2] = "gym"; saveAll(); toast("Séances échangées"); render(); } }, "Échanger les deux séances")) : null);
 }
 
@@ -2801,7 +2751,7 @@ renderProfile = function () {
   const scr = _renderProfile4();
   const old = [...scr.querySelectorAll(".card")].find(c => c.querySelector("h3") && c.querySelector("h3").textContent === "Ton matériel");
   const timeField = old ? old.querySelector(".field") : null;
-  const ITEMS = [["bar", "Barre de traction"], ["para", "Parallettes"], ["weights", "Lest"], ["table", "Table solide (rowing)"], ["door", "Porte avec poignée"]];
+  const ITEMS = [["bar", "Barre de traction"], ["para", "Parallettes"], ["weights", "Lest"], ["table", "Table solide (rowing)"]];
   const grid = h("div", { class: "eq-grid" },
     h("span", null), PLACES.map(([, l]) => h("b", { class: "eq-head" }, l)),
     ITEMS.map(([k, l]) => [h("span", { class: "eq-l" }, l), PLACES.map(([p, pl]) => h("input", { type: "checkbox", class: "switch", id: "eq-" + p + "-" + k, "aria-label": l + " · " + pl, checked: settings.places[p][k] || null,

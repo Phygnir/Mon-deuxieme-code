@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
-<title>Cap Handstand</title>
-<meta name="description" content="Programme de 26 semaines pour tenir 2 min en handstand et enchaîner 10 handstand push-ups.">
+<title>Cap Calisthénie</title>
+<meta name="description" content="Programmes de calisthénie sur mesure : arbres de compétences, cycles de 12 semaines et séances guidées.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
@@ -72,7 +72,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 .log select { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
 
 /* Objectifs */
-.goals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; }
 .goal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .goal-big { font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -163,6 +163,71 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .rules .card p { font-size: 14px; }
 
+
+/* Skills */
+.trees { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.tree { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 10px; align-content: start; }
+.tree.focus { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.tree-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.tree .fig { width: 100%; aspect-ratio: 6 / 5; height: auto; max-width: 100%; background: var(--sunk); border-radius: 8px; }
+.tree-now { display: grid; gap: 2px; }
+.tree-now b { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.1; }
+.tree-now .muted { font-size: 14px; }
+.star { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 4px 10px; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.star.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.segs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; }
+.segs i { height: 8px; border-radius: 3px; background: var(--sunk); }
+.segs i.on { background: var(--accent); }
+.segs i.cur { background: repeating-linear-gradient(135deg, var(--accent) 0 3px, var(--accent-soft) 3px 6px); }
+.tree-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ghost { border: 1px solid var(--line); background: transparent; border-radius: 8px; padding: 8px 12px; color: var(--ink); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: 8px; }
+.steps button { width: 100%; text-align: left; display: flex; gap: 10px; align-items: center; background: none; border: 0; padding: 6px 4px; border-radius: 6px; }
+.steps button:hover { background: var(--sunk); }
+.steps .dot { width: 24px; height: 24px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--sunk); color: var(--muted); }
+.steps li.ok .dot { background: var(--accent); color: var(--on-accent); }
+.steps li.cur .dot { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.steps b { display: block; font-weight: 600; font-size: 14px; }
+.steps small { font-size: 12px; }
+.validate-btn { margin-top: 4px; justify-self: start; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
+
+/* Réglages du programme sur mesure */
+.cu-set { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: end; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; }
+.cu-col { display: grid; gap: 6px; min-width: 0; }
+.chips-sel { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: 14px; font-weight: 500; }
+.chip-btn.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--sunk); border-radius: 8px; }
+.seg button { border: 0; background: transparent; border-radius: 6px; padding: 5px 14px; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--muted); }
+.seg button.on { background: var(--surface); color: var(--ink); }
+.cu-set input { width: 90px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.lvl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px 24px; }
+.lvl { display: grid; gap: 6px; }
+.lvl-top { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; flex-wrap: wrap; }
+.journal { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.session-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.play-btn { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 8px 14px; font-weight: 600; }
+
+/* Séance guidée */
+.player { position: fixed; inset: 0; z-index: 50; background: var(--bg); color: var(--ink); overflow-y: auto; display: grid; grid-template-rows: auto 1fr;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px); }
+.pl-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 760px; width: 100%; margin: 0 auto; }
+.pl-prog { flex: 1 1 160px; height: 6px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.pl-prog i { display: block; height: 100%; background: var(--accent); }
+.pl-body { max-width: 760px; width: 100%; margin: 0 auto; display: grid; gap: 14px; align-content: start; justify-items: center; text-align: center; padding-top: 12px; }
+.pl-stage { width: min(100%, 420px); }
+.pl-fig { width: 100%; height: auto; aspect-ratio: 6 / 5; background: var(--sunk); border-radius: 12px; }
+.pl-info { display: grid; gap: 4px; justify-items: center; }
+.pl-info h2 { font-size: clamp(24px, 5vw, 34px); }
+.pl-what { font-size: 22px; font-weight: 600; }
+.pl-clock-wrap { --p: 0; width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(closest-side, var(--bg) 82%, transparent 83%), conic-gradient(var(--accent) calc(var(--p) * 360deg), var(--sunk) 0); }
+.pl-clock-wrap.resting { background: radial-gradient(closest-side, var(--bg) 82%, transparent 83%), conic-gradient(var(--p3) 360deg, var(--p3) 0); }
+.pl-clock { font-size: 52px; font-weight: 700; }
+.pl-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.pl-main { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 10px; padding: 14px 26px; font-size: 18px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .pl-clock-wrap { transition: none; } }
+
 /* Figures */
 .fig .pr { stroke: var(--muted); stroke-width: 2; fill: none; }
 .fig .prf { fill: var(--line); stroke: var(--muted); stroke-width: 1.5; }
@@ -176,7 +241,6 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
   .weeks { grid-template-columns: repeat(13, minmax(0, 1fr)); row-gap: 12px; }
 }
 @media (max-width: 560px) {
-  .goals { grid-template-columns: 1fr; }
   .days { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ex-row { grid-template-columns: 110px minmax(0, 1fr); }
   .ex-row .fig { width: 110px; height: 92px; }
@@ -189,6 +253,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
   <header>
     <div class="intro">
       <div class="prog-switch" role="tablist" aria-label="Programme">
+        <button role="tab" data-prog="cu">Sur mesure</button>
         <button role="tab" data-prog="hs">Handstand</button>
         <button role="tab" data-prog="pl">Planche</button>
       </div>
@@ -206,6 +271,7 @@ header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
 
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="week" aria-selected="true">Semaine</button>
+    <button role="tab" data-tab="skills" aria-selected="false">Skills</button>
     <button role="tab" data-tab="plan" aria-selected="false" id="plan-tab">Progression</button>
     <button role="tab" data-tab="lib" aria-selected="false">Exercices</button>
   </nav>
@@ -1148,7 +1214,7 @@ function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); f
 
 function makeFigure(id, cls) {
   const ex = EX[id];
-  const svg = el("svg", { viewBox: "0 0 240 200", class: "fig " + (cls || ""), role: "img", "aria-label": "Animation : " + ex.name });
+  const svg = el("svg", { viewBox: ex.vb || "0 0 240 200", class: "fig " + (cls || ""), role: "img", "aria-label": "Animation : " + ex.name });
   const hasBars = ex.props.some(p => p.bars || p.pullbar);
   if (!hasBars) el("line", { x1: 8, y1: 190, x2: 232, y2: 190, class: "pr" }, svg);
   else el("line", { x1: 8, y1: 194, x2: 232, y2: 194, class: "pr", "stroke-dasharray": "4 5" }, svg);
@@ -1235,18 +1301,19 @@ function renderGoals() {
 }
 
 function render() {
-  figures = [];
+  figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
   document.querySelectorAll(".prog-switch button").forEach(b => b.setAttribute("aria-selected", b.dataset.prog === PROG.id));
   $("#eyebrow").textContent = PROG.eyebrow;
   $("#prog-title").textContent = PROG.title;
   $("#prog-intro").textContent = PROG.intro;
-  $("#plan-tab").textContent = "Progression " + PROG.duration;
+  $("#plan-tab").textContent = "Progression";
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === state.tab));
   renderGoals();
   const v = $("#view");
   if (state.tab === "week") v.replaceChildren(renderWeek());
   if (state.tab === "plan") v.replaceChildren(renderPlan());
   if (state.tab === "lib") v.replaceChildren(renderLib());
+  if (state.tab === "skills") v.replaceChildren(renderSkills());
 }
 
 function renderTimeline() {
@@ -1272,7 +1339,7 @@ function renderWeek() {
   const w = state.week, pi = phaseIndex(w), P = PHASES[pi];
   const head = h("div", { class: "week-head" },
     h("div", { class: "info" },
-      h("div", null, h("span", { class: "pill", style: pc(pi) }, h("i"), "Phase " + (pi + 1) + " · " + P.name)),
+      h("div", null, h("span", { class: "pill", style: pc(pi) }, h("i"), (PROG.id === "cu" ? "" : "Phase " + (pi + 1) + " · ") + P.name)),
       h("h2", null, "Semaine " + w + " · " + fmtDate(dateOf(w, 0)) + " – " + fmtDate(dateOf(w, 6))),
       h("p", { class: "muted" }, PROG.weekText(w, P))),
     h("div", { class: "nav" },
@@ -1292,7 +1359,7 @@ function renderWeek() {
       return;
     }
     const m = SESSION_META[type], sess = buildSession(w, type);
-    const mains = sess.main.map(it => EX[it.ex].name);
+    const mains = sess.main.map(it => it.title ? it.title.split(" · ")[0] : EX[it.ex].name).filter((x, i, a) => a.indexOf(x) === i);
     days.appendChild(h("button", { class: "day" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); }, "aria-label": name + " : " + m.title },
       h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "check" + (isDone ? " on" : "") }, isDone ? "✓" : "")),
       h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
@@ -1300,7 +1367,7 @@ function renderWeek() {
       h("div", { class: "t" }, m.title),
       h("div", { class: "s" }, mains.slice(0, 3).join(" · "))));
   });
-  return h("div", { style: "display:grid;gap:22px" }, renderTimeline(), head, days, renderSession(w, state.day));
+  return h("div", { style: "display:grid;gap:22px" }, PROG.id === "cu" ? renderCuSettings() : null, renderTimeline(), head, days, renderSession(w, state.day));
 }
 
 function exRow(it) {
@@ -1310,7 +1377,8 @@ function exRow(it) {
     h("div", { class: "txt" },
       h("div", { class: "name" }, it.title || ex.name),
       it.note ? h("div", { class: "note" }, it.note) : h("div", { class: "note" }, ex.short),
-      h("ul", { class: "cues" }, ex.cues.slice(0, 2).map(c => h("li", null, c)))),
+      h("ul", { class: "cues" }, ex.cues.slice(0, 2).map(c => h("li", null, c))),
+      it.validate && levels[it.validate] < TREE[it.validate].steps.length ? h("button", { class: "validate-btn", onclick: () => { setLevel(it.validate, levels[it.validate] + 1, "valid"); render(); } }, "✓ Standard réussi : valider ce palier") : null),
     h("div", { class: "dose" }, h("b", null, it.dose), it.unit ? h("span", null, it.unit) : null));
 }
 
@@ -1331,13 +1399,15 @@ function renderSession(w, d) {
     h("div", { class: "session-head" },
       h("div", { class: "info" },
         h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
-        h("h3", null, sess.test ? (w === NW ? "Test final" : "Test de fin de phase") : m.title),
-        h("p", { class: "muted" }, sess.test ? "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas." : m.sub),
+        h("h3", null, sess.test ? (sess.cu ? m.title + " · test des paliers" : w === NW ? "Test final" : "Test de fin de phase") : m.title),
+        h("p", { class: "muted" }, sess.test ? (sess.cu ? "Bien échauffé et frais. Tente le standard de chaque palier, et valide ceux que tu réussis." : "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas.") : m.sub),
         sess.variant ? h("p", null, h("span", { class: "tag-var" }, "Version " + sess.variant.name), " ", h("span", { class: "muted", style: "font-size:14px" }, sess.variant.desc)) : null),
-      h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
-        if (state.done[key]) delete state.done[key]; else state.done[key] = true;
-        store.set("done", state.done); render();
-      } }, isDone ? "✓ Séance faite" : "Marquer comme faite")),
+      h("div", { class: "session-btns" },
+        h("button", { class: "play-btn", onclick: () => startPlayer(w, d) }, "▶ Lancer la séance guidée"),
+        h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
+          if (state.done[key]) delete state.done[key]; else state.done[key] = true;
+          store.set("done", state.done); render();
+        } }, isDone ? "✓ Séance faite" : "Marquer comme faite"))),
     h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Échauffement"), sess.warm.map(exRow)),
     h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Corps de séance"), sess.main.map(exRow)));
   if (sess.defi) {
@@ -1346,7 +1416,7 @@ function renderSession(w, d) {
       exRow({ ex: sess.defi.ex, dose: "Bonus", unit: "si tu as encore de l'énergie", note: sess.defi.d, title: sess.defi.t })));
   }
 
-  if (sess.test) {
+  if (sess.test && PROG.logFields.length) {
     const r = state.results[w] || {};
     const save = () => { const o = {}; PROG.logFields.forEach(f => { o[f.key] = $("#res-" + f.key).value; }); state.results[w] = o; store.set("results", state.results); renderGoals(); };
     box.appendChild(h("div", { class: "log" },
@@ -1390,7 +1460,7 @@ function renderPlan() {
     h("p", { style: "font-weight:600" }, p.goal),
     h("p", { class: "muted", style: "font-size:14px" }, p.detail),
     h("p", { class: "num", style: "font-size:20px;margin-top:4px" }, PROG.phaseLine(p)))));
-  const chart = h("div", { class: "chart-box" },
+  const chart = PROG.renderPlan ? null : h("div", { class: "chart-box" },
     h("div", { class: "goal-top" },
       h("h3", null, "Objectifs semaine par semaine"),
       h("div", { class: "legend" },
@@ -1403,14 +1473,16 @@ function renderPlan() {
   return h("div", { style: "display:grid;gap:22px" },
     h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, PROG.planTitle),
       h("p", { class: "muted" }, PROG.planIntro)),
-    phases, chart, rules);
+    phases, PROG.renderPlan ? PROG.renderPlan() : chart, rules);
 }
 
 function renderLib() {
   const used = {};
-  for (let w = 1; w <= NW; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => { (used[it.ex] = used[it.ex] || new Set()).add(phaseIndex(w)); }); });
+  const tag = (id, label) => (used[id] = used[id] || new Set()).add(label);
+  if (PROG.id === "cu") { TREES.forEach(t => t.steps.forEach(s => tag(s.ex, t.name))); Object.keys(EX).forEach(id => { if (!used[id]) tag(id, "Accessoire"); }); }
+  else for (let w = 1; w <= NW; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => tag(it.ex, PHASES[phaseIndex(w)].name)); });
   return h("div", { style: "display:grid;gap:18px" },
-    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, "Les " + Object.keys(used).length + " exercices du programme"),
+    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, PROG.id === "cu" ? "Les " + Object.keys(used).length + " exercices" : "Les " + Object.keys(used).length + " exercices du programme"),
       h("p", { class: "muted" }, "Chaque animation montre le mouvement de profil. Le trait clair, c'est le bras ou la jambe du côté opposé.")),
     h("div", { class: "lib" }, Object.keys(EX).filter(id => used[id]).map(id => {
       const ex = EX[id];
@@ -1419,13 +1491,645 @@ function renderLib() {
         h("h3", null, ex.name),
         h("p", { class: "muted", style: "font-size:14px" }, ex.desc),
         h("ul", null, ex.cues.map(c => h("li", null, c))),
-        h("div", { class: "chips" }, [...(used[id] || [])].sort().map(i => h("span", { class: "chip" }, PHASES[i].name))));
+        h("div", { class: "chips" }, [...(used[id] || [])].map(l => h("span", { class: "chip" }, l))));
     })));
+}
+
+/* ---------- Leviers : générateur de poses (planche, front lever, back lever) ---------- */
+function leverPose(kind, mode) {
+  // c = côté de la poitrine : +1 vers le sol (planche, back lever), -1 vers la barre (front lever)
+  const c = mode === "fl" ? -1 : 1;
+  const s = mode === "pl" ? [98, 128] : [92, 96];
+  const hnd = mode === "pl" ? [108, 168] : [mode === "bl" ? 106 : 100, 50];
+  const p = [s[0] + 44, s[1]];
+  const P = { s, p, h: hnd, e: [(s[0] + hnd[0]) / 2, (s[1] + hnd[1]) / 2], hd: [s[0] - 13, s[1] - 2 * c] };
+  const tuck = () => ({ k: [p[0] - 18, p[1] + c * 26], f: [p[0] + 8, p[1] + c * 28] });
+  const adv = () => ({ k: [p[0] - 12, p[1] + c * 32], f: [p[0] + 18, p[1] + c * 26] });
+  if (kind === "tuck") Object.assign(P, tuck());
+  if (kind === "adv") Object.assign(P, adv());
+  if (kind === "one") { const a = adv(); Object.assign(P, { k: [p[0] + 36, p[1]], f: [p[0] + 70, p[1]], k2: a.k, f2: a.f }); }
+  if (kind === "straddle") Object.assign(P, { k: [p[0] + 34, p[1]], f: [p[0] + 66, p[1]], k2: [p[0] + 32, p[1] + c * 9], f2: [p[0] + 62, p[1] + c * 18] });
+  if (kind === "half") Object.assign(P, { k: [p[0] + 34, p[1]], f: [p[0] + 36, p[1] + c * 32] });
+  if (kind === "full") Object.assign(P, { k: [p[0] + 36, p[1]], f: [p[0] + 72, p[1]] });
+  return P;
+}
+function breathe(P, c) { const B = JSON.parse(JSON.stringify(P)); B.p[1] += c; B.f[1] += 2 * c; if (B.f2) B.f2[1] += 2 * c; B.s[0] -= 1; return B; }
+function leverEx(kind, mode, name, short, desc, cues) {
+  const P = leverPose(kind, mode);
+  return { name, short, desc, cues, props: mode === "pl" ? [{ para: [108, 168] }] : [{ pullbar: 50 }], poses: [P, breathe(P, mode === "fl" ? -1 : 1)], seq: [[0, .8, 1], [1, .8, 1]] };
+}
+const FL_CUES = ["Bras tendus, omoplates tirées vers le bas", "Bassin aligné avec les épaules", "Tire la barre vers tes hanches"];
+const BL_CUES = ["Bras tendus derrière, biceps protégés par un échauffement long", "Corps aligné, fesses serrées", "Entre et sors toujours en contrôle"];
+Object.assign(EX, {
+  flTuck: leverEx("tuck", "fl", "Tuck front lever", "Genoux sur la poitrine", "Suspendu, bras tendus, monte le corps à l'horizontale, dos vers le sol, genoux serrés contre la poitrine. Première étape du front lever.", FL_CUES),
+  flAdv: leverEx("adv", "fl", "Advanced tuck front lever", "Dos plat", "Comme la tuck, mais dos plat et hanches éloignées : les cuisses forment un angle droit avec le buste.", FL_CUES),
+  flOne: leverEx("one", "fl", "Front lever une jambe", "Une jambe tendue", "Depuis l'advanced tuck, tends une jambe dans l'alignement du corps. Alterne la jambe à chaque série.", FL_CUES),
+  flStraddle: leverEx("straddle", "fl", "Straddle front lever", "Jambes écartées", "Corps entièrement tendu à l'horizontale, jambes très écartées pour raccourcir le levier.", FL_CUES),
+  flHalf: leverEx("half", "fl", "Half-lay front lever", "Genoux pliés", "Hanches tendues, genoux pliés à 90°. Le dernier levier avant le front lever complet.", FL_CUES),
+  flFull: leverEx("full", "fl", "Front lever", "Corps tendu", "Corps entièrement tendu à l'horizontale sous la barre, dos vers le sol. Le skill de tirage de référence.", FL_CUES),
+  blTuck: leverEx("tuck", "bl", "Tuck back lever", "Genoux groupés", "Suspendu bras tendus derrière toi, ventre vers le sol, genoux groupés. Entre par un skin the cat contrôlé.", BL_CUES),
+  blAdv: leverEx("adv", "bl", "Advanced tuck back lever", "Dos plat", "Dos plat, hanches tendues, genoux pliés sous toi.", BL_CUES),
+  blStraddle: leverEx("straddle", "bl", "Straddle back lever", "Jambes écartées", "Corps tendu à l'horizontale, ventre vers le sol, jambes écartées.", BL_CUES),
+  blFull: leverEx("full", "bl", "Back lever", "Corps tendu", "Corps entièrement tendu, ventre vers le sol, bras tendus derrière. Le premier gros levier pour beaucoup de pratiquants.", BL_CUES)
+});
+Object.assign(EX, {
+  row: {
+    name: "Rowing australien", short: "Tirage horizontal",
+    desc: "Sous une barre basse (ou des anneaux), corps gainé, talons au sol. Tire la poitrine jusqu'à la barre puis redescends bras tendus. La base du tirage, et un accessoire clé du front lever.",
+    cues: ["Corps gainé comme une planche", "Poitrine à la barre, coudes près du corps", "Pieds surélevés pour corser"],
+    props: [{ pullbar: 110 }],
+    poses: [
+      { h:[100,110], e:[99,132], s:[98,154], p:[141,168], k:[176,178], f:[210,188], hd:[85,152] },
+      { h:[104,110], e:[120,128], s:[100,124], p:[146,150], k:[180,168], f:[210,188], hd:[86,120] }
+    ],
+    seq: [[0,.3,1],[1,.3,1.2]]
+  },
+  c2b: {
+    name: "Tractions chest-to-bar", short: "Poitrine à la barre",
+    desc: "Traction stricte où la poitrine vient toucher la barre. Amplitude nécessaire pour le muscle-up.",
+    cues: ["Coudes vers les hanches en fin de mouvement", "Poitrine haute, regard au-dessus de la barre", "Descente contrôlée"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[122,152], f:[134,178], hd:[114,64] },
+      { h:[120,30], e:[134,48], s:[118,36], p:[124,78], k:[128,112], f:[140,138], hd:[110,18] }
+    ],
+    seq: [[0,.4,1],[1,.3,1.3]]
+  },
+  explosive: {
+    name: "Tractions explosives", short: "Le plus haut possible",
+    desc: "Tractions tirées le plus vite et le plus haut possible, idéalement jusqu'au nombril à la barre. Développe la puissance du muscle-up.",
+    cues: ["Pars d'une suspension active, pas morte", "Tire vers les hanches, pas vers le menton", "Arrête la série si la vitesse baisse"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[122,152], f:[134,178], hd:[114,64] },
+      { h:[120,30], e:[136,46], s:[118,34], p:[126,76], k:[130,110], f:[142,136], hd:[109,16] }
+    ],
+    seq: [[0,.5,.45],[1,.15,1.1]]
+  },
+  mu: {
+    name: "Muscle-up", short: "Traction + dips à la barre",
+    desc: "Traction explosive, transition des poignets au-dessus de la barre, puis extension en dips jusqu'au support bras tendus. Le skill de tirage dynamique par excellence.",
+    cues: ["Tire vers les hanches, la barre passe sous la poitrine", "Poignets par-dessus la barre pendant la transition", "Version stricte : sans balancer les jambes"],
+    props: [{ pullbar: 60 }], vb: "0 -16 240 250",
+    poses: [
+      { h:[120,60], e:[120,82], s:[120,104], p:[120,148], k:[118,184], f:[112,218], hd:[113,94] },
+      { h:[120,60], e:[104,76], s:[124,70], p:[126,112], k:[130,146], f:[122,178], hd:[134,52] },
+      { h:[120,60], e:[106,48], s:[130,42], p:[118,82], k:[120,118], f:[110,150], hd:[142,32] },
+      { h:[120,60], e:[121,38], s:[122,16], p:[117,60], k:[116,96], f:[114,132], hd:[126,3] }
+    ],
+    seq: [[0,.5,.55],[1,0,.45],[2,0,.5],[3,.9,1.2]]
+  },
+  muNeg: {
+    name: "Muscle-up négatif", short: "Descente lente",
+    desc: "Monte au support au-dessus de la barre (saut ou élan), puis redescends le plus lentement possible en passant par la transition. Apprend le chemin du muscle-up.",
+    cues: ["Descente de 5 s minimum", "Garde les poignets au-dessus de la barre le plus longtemps possible", "Remonte en sautant, pas en forçant"],
+    props: [{ pullbar: 60 }], vb: "0 -16 240 250",
+    poses: [
+      { h:[120,60], e:[121,38], s:[122,16], p:[117,60], k:[116,96], f:[114,132], hd:[126,3] },
+      { h:[120,60], e:[106,48], s:[130,42], p:[118,82], k:[120,118], f:[110,150], hd:[142,32] },
+      { h:[120,60], e:[120,82], s:[120,104], p:[120,148], k:[118,184], f:[112,218], hd:[113,94] }
+    ],
+    seq: [[0,.6,2.2],[1,0,2.2],[2,.5,.8]]
+  },
+  oap: {
+    name: "Traction à un bras", short: "One-arm pull-up",
+    desc: "Traction sur un seul bras, l'autre bras libre le long du corps. Commence par des négatifs de 5 s et des tractions archer.",
+    cues: ["Épaule active, pas de suspension morte", "Le corps tourne légèrement, c'est normal", "Négatifs lents avant les répétitions complètes"],
+    props: [{ pullbar: 30 }],
+    poses: [
+      { h:[120,30], e:[120,52], s:[120,74], p:[120,118], k:[122,152], f:[134,178], hd:[114,64], e2:[124,96], h2:[128,116] },
+      { h:[120,30], e:[134,56], s:[120,44], p:[122,88], k:[124,122], f:[136,148], hd:[114,22], e2:[126,66], h2:[132,86] }
+    ],
+    seq: [[0,.4,1.2],[1,.3,1.6]]
+  },
+  pushUp: {
+    name: "Pompes", short: "La base de la poussée",
+    desc: "Mains sous les épaules, corps gainé de la tête aux pieds. Descends la poitrine à quelques centimètres du sol puis repousse.",
+    cues: ["Corps en planche, fesses serrées", "Coudes à 45° du corps", "Poitrine presque au sol à chaque répétition"],
+    props: [],
+    poses: [
+      { h:[100,190], e:[100,169], s:[100,148], p:[141,162], k:[177,174], f:[214,188], hd:[88,144] },
+      { h:[100,190], e:[120,178], s:[100,176], p:[144,180], k:[179,184], f:[214,188], hd:[87,174] }
+    ],
+    seq: [[0,.3,1],[1,.2,.8]]
+  },
+  diamond: null, // défini plus bas à partir des pompes
+  oapu: {
+    name: "Pompe à un bras", short: "One-arm push-up",
+    desc: "Pieds écartés, une main au sol sous la poitrine, l'autre dans le dos. Descends en gardant les hanches à plat, sans tourner le buste.",
+    cues: ["Pieds plus écartés que les épaules", "Hanches face au sol", "Commence mains surélevées sur un banc"],
+    props: [],
+    poses: [
+      { h:[100,190], e:[100,169], s:[100,148], p:[141,162], k:[177,174], f:[214,188], hd:[88,144], e2:[116,152], h2:[134,156] },
+      { h:[100,190], e:[118,178], s:[100,174], p:[144,178], k:[179,183], f:[214,188], hd:[87,172], e2:[116,178], h2:[134,178] }
+    ],
+    seq: [[0,.3,1.3],[1,.2,1]]
+  },
+  lTuck: {
+    name: "Tuck L-sit", short: "Genoux groupés",
+    desc: "Sur les parallettes, bras tendus, décolle les fesses en gardant les genoux groupés contre la poitrine. Première étape de la compression.",
+    cues: ["Épaules poussées vers le bas", "Genoux le plus haut possible", "Bras verrouillés"],
+    props: [{ para: [120, 168] }],
+    poses: [
+      { h:[120,168], e:[120,148], s:[120,128], p:[124,162], k:[98,148], f:[98,168], hd:[119,114] },
+      { h:[120,168], e:[120,148], s:[120,127], p:[124,161], k:[98,146], f:[98,166], hd:[119,113] }
+    ],
+    seq: [[0,.8,1.2],[1,.6,1.2]]
+  },
+  vsit: {
+    name: "V-sit", short: "Jambes au-dessus de l'horizontale",
+    desc: "Depuis le L-sit, pousse fort dans les parallettes, penche le buste en arrière et monte les jambes tendues au-dessus de l'horizontale.",
+    cues: ["Mains un peu derrière les hanches", "Pousse le sol en permanence", "Jambes serrées et tendues"],
+    props: [{ para: [124, 168] }],
+    poses: [
+      { h:[124,168], e:[128,146], s:[132,124], p:[124,164], k:[96,140], f:[66,116], hd:[136,110] },
+      { h:[124,168], e:[128,146], s:[133,125], p:[124,164], k:[97,138], f:[68,112], hd:[137,111] }
+    ],
+    seq: [[0,.8,1.2],[1,.6,1.2]]
+  },
+  squat: {
+    name: "Squat au poids du corps", short: "Air squat",
+    desc: "Pieds largeur d'épaules, descends les hanches sous les genoux en gardant le dos droit, puis remonte. Base de la chaîne jambes.",
+    cues: ["Genoux dans l'axe des pieds", "Talons au sol", "Poitrine haute"],
+    props: [],
+    poses: [
+      { h:[96,76], e:[108,76], s:[120,74], p:[120,118], k:[118,154], f:[116,190], hd:[117,60] },
+      { h:[78,120], e:[96,120], s:[112,118], p:[132,160], k:[98,160], f:[110,190], hd:[106,104] }
+    ],
+    seq: [[0,.3,1],[1,.2,.9]]
+  },
+  bulgarian: {
+    name: "Squat bulgare", short: "Pied arrière surélevé",
+    desc: "Pied arrière posé sur une chaise ou une box, descends le genou arrière vers le sol puis remonte sur la jambe avant. Le meilleur exercice unilatéral pour préparer le pistol.",
+    cues: ["Genou avant dans l'axe du pied", "Buste légèrement penché", "Pousse dans le talon avant"],
+    props: [{ box: [160, 150, 40, 40] }],
+    poses: [
+      { h:[108,118], e:[106,96], s:[104,74], p:[104,118], k:[102,154], f:[100,190], hd:[103,60], k2:[130,140], f2:[168,150] },
+      { h:[112,148], e:[110,126], s:[108,104], p:[112,148], k:[86,160], f:[100,190], hd:[107,90], k2:[128,182], f2:[168,150] }
+    ],
+    seq: [[0,.3,1.1],[1,.2,.9]]
+  },
+  pistol: {
+    name: "Pistol squat", short: "Squat sur une jambe",
+    desc: "Debout sur une jambe, l'autre tendue devant toi, descends jusqu'en bas sans poser la jambe libre, puis remonte. Version assistée : tiens-toi à un poteau ou descends sur une box.",
+    cues: ["Talon d'appui au sol tout du long", "Bras devant pour l'équilibre", "Jambe libre tendue, pied flex"],
+    props: [],
+    poses: [
+      { h:[84,78], e:[102,76], s:[120,74], p:[120,118], k:[120,154], f:[120,190], hd:[119,60], k2:[108,150], f2:[90,176] },
+      { h:[66,128], e:[88,126], s:[110,124], p:[126,166], k:[92,174], f:[120,190], hd:[104,110], k2:[90,166], f2:[56,164] }
+    ],
+    seq: [[0,.3,1.4],[1,.2,1.1]]
+  }
+});
+EX.diamond = Object.assign({}, EX.pushUp, { name: "Pompes diamant", short: "Mains serrées", desc: "Pompes avec les mains rapprochées sous la poitrine, index et pouces qui se touchent. Plus de triceps et d'épaule avant.", cues: ["Mains en losange sous le sternum", "Coudes serrés le long du corps", "Corps gainé"] });
+delete EX.diamond.vb;
+
+/* ---------- Arbres de compétences ---------- */
+// k : "h" tenue (s) ou "r" répétitions ; n séries × v ; wt : % du poids de corps en lest ; side : par côté
+const TREES = [
+  { id: "hs", name: "Handstand", cat: "balance", skill: true, steps: [
+    { ex: "wallChest", k: "h", n: 3, v: 30, t: "Ventre au mur 30 s" },
+    { ex: "wallChest", k: "h", n: 3, v: 60, t: "Ventre au mur 60 s" },
+    { ex: "heelPull", k: "h", n: 3, v: 10, t: "Talons décollés 10 s" },
+    { ex: "hsFree", k: "h", n: 3, v: 10, t: "Libre 10 s" },
+    { ex: "hsFree", k: "h", n: 3, v: 30, t: "Libre 30 s" },
+    { ex: "hsFree", k: "h", n: 2, v: 60, t: "Libre 60 s" },
+    { ex: "hsFree", k: "h", n: 1, v: 120, t: "Libre 2 min" },
+    { ex: "handWalk", k: "r", n: 1, v: 20, t: "Marche 20 pas" } ],
+    acc: [["shoulderTap", "r", 3, 12], ["wallChest", "h", 2, 45]] },
+  { id: "hspu", name: "HSPU", cat: "push", skill: true, steps: [
+    { ex: "pike", k: "r", n: 3, v: 12, t: "Pike push-ups" },
+    { ex: "pikeBox", k: "r", n: 3, v: 10, t: "Pike pieds surélevés" },
+    { ex: "hspuNeg", k: "r", n: 3, v: 5, t: "Négatifs au mur 5 s" },
+    { ex: "hspu", k: "r", n: 3, v: 3, t: "HSPU au mur ×3" },
+    { ex: "hspu", k: "r", n: 3, v: 8, t: "HSPU au mur ×8" },
+    { ex: "hspuDef", k: "r", n: 3, v: 6, t: "HSPU en déficit ×6" },
+    { ex: "hspuFree", k: "r", n: 3, v: 3, t: "HSPU libre ×3" } ],
+    acc: [["pikeBox", "r", 3, 10], ["dipsW", "r", 3, 6]] },
+  { id: "planche", name: "Planche", cat: "push", skill: true, straight: true, steps: [
+    { ex: "lean", k: "h", n: 3, v: 30, t: "Planche lean 30 s" },
+    { ex: "tuckPl", k: "h", n: 3, v: 15, t: "Tuck planche" },
+    { ex: "advTuck", k: "h", n: 3, v: 12, t: "Advanced tuck" },
+    { ex: "oneLeg", k: "h", n: 3, v: 8, t: "Une jambe", side: true },
+    { ex: "straddle", k: "h", n: 3, v: 8, t: "Straddle" },
+    { ex: "halfLay", k: "h", n: 3, v: 6, t: "Half-lay" },
+    { ex: "fullPl", k: "h", n: 3, v: 5, t: "Full planche" } ],
+    acc: [["lean", "h", 3, 25], ["pppu", "r", 3, 10]] },
+  { id: "fl", name: "Front lever", cat: "pull", skill: true, straight: true, steps: [
+    { ex: "flTuck", k: "h", n: 3, v: 15, t: "Tuck" },
+    { ex: "flAdv", k: "h", n: 3, v: 12, t: "Advanced tuck" },
+    { ex: "flOne", k: "h", n: 3, v: 10, t: "Une jambe", side: true },
+    { ex: "flStraddle", k: "h", n: 3, v: 8, t: "Straddle" },
+    { ex: "flHalf", k: "h", n: 3, v: 6, t: "Half-lay" },
+    { ex: "flFull", k: "h", n: 3, v: 6, t: "Front lever" } ],
+    acc: [["row", "r", 3, 12], ["legRaise", "r", 3, 10]] },
+  { id: "bl", name: "Back lever", cat: "pull", skill: true, straight: true, steps: [
+    { ex: "blTuck", k: "h", n: 3, v: 15, t: "Tuck" },
+    { ex: "blAdv", k: "h", n: 3, v: 12, t: "Advanced tuck" },
+    { ex: "blStraddle", k: "h", n: 3, v: 10, t: "Straddle" },
+    { ex: "blFull", k: "h", n: 3, v: 10, t: "Back lever" } ],
+    acc: [["row", "r", 3, 12], ["dips", "r", 3, 12]] },
+  { id: "mu", name: "Muscle-up", cat: "pull", skill: true, steps: [
+    { ex: "pullUp", k: "r", n: 3, v: 10, t: "Tractions ×10" },
+    { ex: "c2b", k: "r", n: 3, v: 6, t: "Chest-to-bar ×6" },
+    { ex: "explosive", k: "r", n: 3, v: 5, t: "Tractions explosives ×5" },
+    { ex: "muNeg", k: "r", n: 3, v: 3, t: "Négatifs 5 s ×3" },
+    { ex: "mu", k: "r", n: 3, v: 1, t: "Muscle-up ×1" },
+    { ex: "mu", k: "r", n: 3, v: 3, t: "Muscle-up ×3" },
+    { ex: "mu", k: "r", n: 3, v: 6, t: "Muscle-up ×6" } ],
+    acc: [["explosive", "r", 4, 4], ["dips", "r", 3, 12]] },
+  { id: "pull", name: "Tractions", cat: "pull", steps: [
+    { ex: "row", k: "r", n: 3, v: 15, t: "Rowing australien ×15" },
+    { ex: "pullUp", k: "r", n: 3, v: 8, t: "Tractions ×8" },
+    { ex: "pullUp", k: "r", n: 3, v: 15, t: "Tractions ×15" },
+    { ex: "pullUpW", k: "r", n: 3, v: 5, wt: 25, t: "Lestées +25 % ×5" },
+    { ex: "pullUpW", k: "r", n: 3, v: 5, wt: 50, t: "Lestées +50 % ×5" },
+    { ex: "oap", k: "r", n: 3, v: 2, t: "Négatifs un bras 5 s", side: true },
+    { ex: "oap", k: "r", n: 1, v: 1, t: "Traction à un bras", side: true } ] },
+  { id: "push", name: "Pompes & dips", cat: "push", steps: [
+    { ex: "pushUp", k: "r", n: 3, v: 20, t: "Pompes ×20" },
+    { ex: "diamond", k: "r", n: 3, v: 15, t: "Pompes diamant ×15" },
+    { ex: "dips", k: "r", n: 3, v: 15, t: "Dips ×15" },
+    { ex: "dipsW", k: "r", n: 3, v: 5, wt: 30, t: "Dips +30 % ×5" },
+    { ex: "pppu", k: "r", n: 3, v: 10, t: "Pseudo planche ×10" },
+    { ex: "dipsW", k: "r", n: 3, v: 5, wt: 60, t: "Dips +60 % ×5" },
+    { ex: "oapu", k: "r", n: 3, v: 5, t: "Pompe un bras ×5", side: true } ] },
+  { id: "core", name: "Core & compression", cat: "core", steps: [
+    { ex: "lTuck", k: "h", n: 3, v: 15, t: "Tuck L-sit 15 s" },
+    { ex: "lsit", k: "h", n: 3, v: 10, t: "L-sit 10 s" },
+    { ex: "lsit", k: "h", n: 3, v: 30, t: "L-sit 30 s" },
+    { ex: "vsit", k: "h", n: 3, v: 5, t: "V-sit 5 s" },
+    { ex: "vsit", k: "h", n: 3, v: 15, t: "V-sit 15 s" } ] },
+  { id: "legs", name: "Jambes", cat: "legs", steps: [
+    { ex: "squat", k: "r", n: 3, v: 30, t: "Squats ×30" },
+    { ex: "bulgarian", k: "r", n: 3, v: 10, t: "Bulgares ×10", side: true },
+    { ex: "pistol", k: "r", n: 3, v: 5, t: "Pistol assisté ×5", side: true, assisted: true },
+    { ex: "pistol", k: "r", n: 3, v: 6, t: "Pistol ×6", side: true },
+    { ex: "pistol", k: "r", n: 3, v: 12, t: "Pistol ×12", side: true } ] }
+];
+const TREE = Object.fromEntries(TREES.map(t => [t.id, t]));
+const CAT_LABEL = { balance: "Équilibre", push: "Poussée", pull: "Tirage", core: "Core", legs: "Jambes" };
+const stdText = st => st.n + " × " + (st.k === "h" ? fmtS(st.v) : st.v) + (st.side ? " par côté" : "") + (st.wt ? " à +" + st.wt + " % du poids" : "");
+
+/* Niveaux et réglages partagés par tous les programmes */
+const gstore = {
+  get(k, d) { try { const v = localStorage.getItem("cap:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("cap:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+// Point de départ estimé d'après ton profil (handstand 20 s, HSPU placés, advanced tuck, +50 kg en traction, 100 kg au développé couché)
+const LEVEL_DEFAULT = { hs: 3, hspu: 3, planche: 2, fl: 1, bl: 0, mu: 2, pull: 4, push: 4, core: 1, legs: 2 };
+const levels = Object.assign({}, LEVEL_DEFAULT, gstore.get("levels", {}));
+const settings = Object.assign({ focus: ["hs", "planche", "fl"], days: 4, bw: 65 }, gstore.get("settings", {}));
+let journal = gstore.get("journal", []);
+function stepOf(id) { const t = TREE[id]; return t.steps[Math.min(levels[id], t.steps.length - 1)]; }
+function setLevel(id, lv, why) {
+  const t = TREE[id], old = levels[id];
+  levels[id] = Math.max(0, Math.min(t.steps.length, lv));
+  gstore.set("levels", levels);
+  if (why === "valid" && levels[id] > old) { journal.unshift({ d: iso(new Date()), tree: id, step: old }); journal = journal.slice(0, 80); gstore.set("journal", journal); }
+  if (PROG && PROG.id === "cu") setProgram("cu");
+}
+
+/* ---------- Programme sur mesure : cycle de 12 semaines ---------- */
+const CU_PHASES = [
+  { name: "Bloc 1 · Volume", from: 1, to: 4, color: "--p1", goal: "Accumuler du temps de qualité dans chaque palier.", detail: "Plus de séries, tenues et répétitions à 50–70 % du standard. Semaine 4 : décharge et test." },
+  { name: "Bloc 2 · Intensité", from: 5, to: 8, color: "--p3", goal: "Se rapprocher du standard de validation.", detail: "Moins de séries, plus proches du maximum. Tentatives dans le palier suivant. Semaine 8 : décharge et test." },
+  { name: "Bloc 3 · Validation", from: 9, to: 12, color: "--p4", goal: "Valider un palier dans chaque skill prioritaire.", detail: "Séries au niveau du standard. Semaine 12 : test final, puis on relance un cycle avec tes nouveaux niveaux." }
+];
+const CU_META = {
+  push: { title: "Poussée", sub: "Skills de poussée, puis force", min: 60 },
+  pull: { title: "Tirage", sub: "Skills de tirage, puis force", min: 60 },
+  full: { title: "Full body", sub: "Un skill de poussée, un de tirage, force et jambes", min: 70 },
+  bal: { title: "Équilibre & jambes", sub: "Handstand long, jambes et compression", min: 45 }
+};
+function cuSlots() {
+  if (settings.days === 3) return { 0: "full", 2: "full", 4: "full" };
+  if (settings.days === 5) return { 0: "push", 1: "pull", 3: "push", 4: "pull", 5: "bal" };
+  return { 0: "push", 1: "pull", 3: "push", 4: "pull" };
+}
+function rxItem(treeId, w, opts) {
+  opts = opts || {};
+  const t = TREE[treeId], lv = levels[treeId], done = lv >= t.steps.length, st = t.steps[Math.min(lv, t.steps.length - 1)];
+  const wi = (w - 1) % 4, blk = Math.floor((w - 1) / 4), tt = Math.min(1, wi / 2);
+  const side = st.side ? " par côté" : "";
+  const kg = st.wt ? " +" + Math.round(settings.bw * st.wt / 100) + " kg" : "";
+  const it = { ex: st.ex, title: (opts.prefix || "") + t.name + " · " + st.t, tree: treeId };
+  if (wi === 3) {
+    if (opts.test !== false && !done) {
+      return Object.assign(it, { dose: stdText(st).replace(" à +" + st.wt + " % du poids", ""), unit: "test" + kg, note: "Tente le standard après un bon échauffement. Réussi : valide le palier.", validate: treeId });
+    }
+    const n = Math.max(2, st.n - 1), v = st.k === "h" ? Math.max(3, Math.round(st.v * .5)) : Math.max(1, Math.round(st.v * .5));
+    return Object.assign(it, { dose: n + " × " + v + (st.k === "h" ? " s" : ""), unit: "décharge" + side + kg, note: "Facile, juste entretenir le geste" });
+  }
+  const frac = [[.5, .65], [.7, .85], [.85, 1]][blk];
+  const scale = opts.light ? .6 : 1;
+  const n = Math.max(2, Math.round((st.n + 2 - blk) * scale));
+  const v = Math.max(st.k === "h" ? 3 : 1, Math.round(st.v * (frac[0] + (frac[1] - frac[0]) * tt)));
+  const rest = t.straight || t.cat === "balance" ? "repos 2–3 min" : st.k === "h" ? "repos 90 s" : t.skill ? "repos 2–3 min" : "repos 2 min";
+  return Object.assign(it, { dose: n + " × " + v + (st.k === "h" ? " s" : ""), unit: rest + side + kg,
+    note: done ? "Dernier palier validé : on entretient et on allonge" : "Standard pour valider : " + stdText(st) + (st.assisted ? ". Tiens un support d'une main" : "") });
+}
+function nextAttempt(treeId, w) {
+  const t = TREE[treeId], lv = levels[treeId];
+  if (lv + 1 >= t.steps.length || (w - 1) % 4 === 3 || w <= 4) return null;
+  const nx = t.steps[lv + 1];
+  return { ex: nx.ex, title: t.name + " · " + nx.t, dose: nx.k === "h" ? "4 × 1–3 s" : "3 × 1", unit: "tentatives", note: "Juste toucher le palier suivant, en fin de bloc skill", tree: treeId };
+}
+function accItem(treeId, w, i, used) {
+  const a = TREE[treeId].acc; if (!a) return null;
+  const pick = [0, 1].map(j => a[(w + (i || 0) + j) % a.length]).find(x => !(used || []).includes(x[0]));
+  if (!pick) return null;
+  const [ex, k, n, v] = pick;
+  const blk = Math.floor((w - 1) / 4), dl = (w - 1) % 4 === 3;
+  const nn = dl ? 2 : n, vv = k === "h" ? v : Math.round(v * [1, .9, .8][blk]);
+  return item(ex, nn + " × " + vv + (k === "h" ? " s" : ""), ex.endsWith("W") ? "lestés" : "repos 90 s", "Accessoire " + TREE[treeId].name);
+}
+function cuBaseSession(w, type) {
+  const F = settings.focus.filter(id => TREE[id]);
+  const fc = c => F.filter(id => TREE[id].cat === c);
+  const wi = (w - 1) % 4, test = wi === 3;
+  const hsActive = F.includes("hs") || levels.hs < 6;
+  const warm = [item("wrists", "3 min", "", "Poignets et épaules")];
+  if (type === "pull" || type === "full") warm.push(item("scapPU", "2 × 10", "", "Activation des omoplates"));
+  else warm.push(item("scapPU", "2 × 10", "", "Protraction des épaules"));
+  if (hsActive && type !== "bal") warm.push(Object.assign(rxItem("hs", w, { test: false, light: true }), { dose: "8 min", unit: "pratique", note: "Tentatives de handstand au niveau du palier actuel : la fréquence fait progresser l'équilibre" }));
+  let main = [];
+  const add = x => { if (x) main.push(x); };
+  const pushSkills = fc("push"), pullSkills = fc("pull");
+  if (type === "push" || type === "full") {
+    const ps = type === "full" ? pushSkills.slice(0, 1) : pushSkills;
+    ps.filter(id => TREE[id].straight).forEach(id => { add(rxItem(id, w)); add(nextAttempt(id, w)); });
+    ps.filter(id => !TREE[id].straight).forEach(id => add(rxItem(id, w)));
+  }
+  if (type === "pull" || type === "full") {
+    let ps = type === "full" ? pullSkills.slice(0, 1) : pullSkills;
+    if (!ps.length) ps = ["fl"];
+    ps.filter(id => TREE[id].straight).forEach(id => { add(rxItem(id, w, { prefix: F.includes(id) ? "" : "Entretien · ", light: !F.includes(id) })); if (F.includes(id)) add(nextAttempt(id, w)); });
+    ps.filter(id => !TREE[id].straight).forEach(id => add(rxItem(id, w)));
+  }
+  if (type === "push" || type === "full") add(rxItem("push", w));
+  if (type === "pull" || type === "full") add(rxItem("pull", w));
+  if (!test) {
+    const accSrc = (type === "push" ? pushSkills : type === "pull" ? pullSkills : F).slice(0, 2);
+    accSrc.forEach((id, i) => add(accItem(id, w, i, main.map(x => x.ex))));
+  }
+  const legsDay = type === "full" || type === "push";
+  if (type === "bal") {
+    main = [];
+    add(Object.assign(rxItem("hs", w), { note: "Bloc long d'équilibre, qualité avant quantité" }));
+    add(rxItem("legs", w));
+    add(rxItem("core", w));
+    add(item("bearCrawl", "2 × 40 s", "", "Finisher"));
+  } else {
+    if (legsDay) add(rxItem("legs", w));
+    if (type !== "pull") add(rxItem("core", w));
+    else add(main.some(x => x.ex === "legRaise") ? item("plankPike", (test ? 2 : 3) + " × 10", "repos 60 s", "Compression") : item("legRaise", (test ? 2 : 3) + " × 10", "repos 60 s", "Compression"));
+  }
+  return { warm, main, test, cu: true };
+}
+const CU_VARIANTS = {};
+["push", "pull", "full", "bal"].forEach(k => { CU_VARIANTS[k] = [
+  { name: "Classique", desc: "Séries droites, repos complet. Le skill toujours en premier, quand tu es frais." },
+  { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause pour gagner du temps.", superset: true },
+  { name: "Échelle", desc: "Le premier exercice en répétitions passe en échelle 1-2-3… : même volume, autre rythme.", ladder: true }
+]; });
+const CU_DEFIS = HS_DEFIS.concat(PL_DEFIS).filter((d, i, a) => d.min === 0 && a.findIndex(x => x.t === d.t) === i);
+
+PROGRAMS.cu = {
+  id: "cu", prefix: "capcu:", title: "Cap Calisthénie", duration: "du cycle",
+  weeks: 12, peakFrom: 99,
+  phases: CU_PHASES, start: {}, tests: new Set([4, 8, 12]), deload: new Set([4, 8, 12]), meta: CU_META,
+  variants: CU_VARIANTS, order: ["push", "pull", "full", "bal"], defis: CU_DEFIS, base: cuBaseSession,
+  refresh() { this.slot = cuSlots(); },
+  eyebrow: "Programme sur mesure · cycles de 12 semaines",
+  intro: "Ton programme est construit à partir de ton niveau dans chaque skill et de tes priorités. Valide un palier, et les séances suivantes s'adaptent toutes seules.",
+  deloadLegend: "Décharge + test (valide tes paliers)",
+  weekText: (w, P) => (w - 1) % 4 === 3 ? "Semaine de décharge et de test : tente les standards de tes paliers. Réussi : appuie sur « Valider ce palier » dans la séance." : P.goal + " " + P.detail,
+  restShort: "Mobilité épaules, poignets, hanches",
+  restLong: "Optionnel, 10 à 15 minutes : poignets, épaules (dislocations au bâton), hanches et ischios. 5 tentatives de handstand si tu en as envie. Pas de force aujourd'hui.",
+  target: () => 0, best: () => ({}),
+  goals: () => {
+    const F = settings.focus.length ? settings.focus : ["push", "pull"];
+    return F.map(id => {
+      const t = TREE[id], lv = levels[id], done = lv >= t.steps.length, st = t.steps[Math.min(lv, t.steps.length - 1)];
+      return { label: t.name + " · palier " + Math.min(lv + 1, t.steps.length) + "/" + t.steps.length, val: done ? "Maîtrisé" : st.t, unit: "", pct: lv / t.steps.length * 100,
+        from: t.steps[0].t, to: t.steps[t.steps.length - 1].t, extra: done ? "Arbre terminé" : "Valider : " + stdText(st) };
+    });
+  },
+  logFields: [], logGoal: () => "",
+  phaseLine: p => "Semaines " + p.from + "–" + p.to,
+  planTitle: "Ton cycle de 12 semaines",
+  planIntro: "3 blocs de 4 semaines : 3 semaines de charge puis 1 semaine de décharge avec test. Quand tu valides un palier, tout le programme se recalcule avec le palier suivant.",
+  rules: [
+    ["Le skill d'abord", "Les skills (handstand, planche, front lever…) se travaillent en début de séance, quand le système nerveux est frais. La force et les accessoires viennent après."],
+    ["Bras tendus avant bras fléchis", "Planche, front lever et back lever chargent les tendons. Ils passent avant les tractions, dips et HSPU, jamais en fin de séance fatiguée."],
+    ["3 priorités maximum", "Progresser sur un skill demande 2 à 3 expositions par semaine. Au-delà de 3 skills prioritaires, la récupération ne suit plus : les autres arbres sont entretenus en force générale."],
+    ["Poussée et tirage équilibrés", "Chaque séance de poussée a sa séance de tirage. Si tu ne choisis aucun skill de tirage, le front lever est ajouté en entretien pour protéger les épaules."],
+    ["Valider un palier", "Un palier est validé quand tu réussis le standard (ex. 3 × 12 s) proprement, en test ou à l'entraînement. Une forme cassée ne compte pas."],
+    ["Décharger pour progresser", "Une semaine sur quatre, le volume baisse de moitié. Les tendons et les articulations progressent plus lentement que les muscles : c'est ce qui évite les blessures."]
+  ],
+  renderPlan() {
+    const bars = h("div", { class: "lvl-list" }, TREES.map(t => {
+      const lv = levels[t.id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)];
+      return h("div", { class: "lvl" },
+        h("div", { class: "lvl-top" }, h("b", null, t.name), h("span", { class: "muted" }, lv >= N ? "Maîtrisé" : st.t)),
+        h("div", { class: "segs", style: "--n:" + N }, t.steps.map((s, i) => h("i", { class: i < lv ? "on" : i === lv ? "cur" : "" }))));
+    }));
+    const jr = journal.length ? h("ul", { class: "journal" }, journal.slice(0, 15).map(j => h("li", null,
+      h("span", { class: "num" }, new Date(j.d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })),
+      " " + TREE[j.tree].name + " : " + TREE[j.tree].steps[j.step].t + " validé"))) : h("p", { class: "muted" }, "Aucun palier validé pour l'instant. Ils apparaîtront ici avec leur date.");
+    return [h("div", { class: "chart-box" }, h("h3", null, "Tes niveaux"), bars), h("div", { class: "chart-box" }, h("h3", null, "Journal des paliers"), jr)];
+  }
+};
+
+/* ---------- Onglet Skills ---------- */
+function renderSkills() {
+  const F = settings.focus;
+  const grid = h("div", { class: "trees" }, TREES.map(t => {
+    const lv = levels[t.id], N = t.steps.length, done = lv >= N, st = t.steps[Math.min(lv, N - 1)], open = state.openTree === t.id, isF = F.includes(t.id);
+    const card = h("article", { class: "tree" + (isF ? " focus" : "") },
+      h("div", { class: "tree-head" },
+        h("div", null, h("span", { class: "label" }, CAT_LABEL[t.cat] + (t.skill ? " · skill" : " · force")), h("h3", null, t.name)),
+        t.skill ? h("button", { class: "star" + (isF ? " on" : ""), "aria-pressed": isF, title: isF ? "Retirer des priorités" : "Ajouter aux priorités",
+          onclick: () => toggleFocus(t.id) }, isF ? "★ Priorité" : "☆ Priorité") : null),
+      makeFigure(st.ex),
+      h("div", { class: "tree-now" },
+        h("span", { class: "label" }, done ? "Arbre maîtrisé" : "Palier " + (lv + 1) + "/" + N),
+        h("b", null, done ? t.steps[N - 1].t : st.t),
+        h("span", { class: "muted" }, done ? "Tu as validé tous les paliers." : "Standard : " + stdText(st))),
+      h("div", { class: "segs", style: "--n:" + N }, t.steps.map((s, i) => h("i", { class: i < lv ? "on" : i === lv ? "cur" : "" }))),
+      h("div", { class: "tree-actions" },
+        done ? null : h("button", { class: "done-btn", onclick: () => { setLevel(t.id, lv + 1, "valid"); render(); } }, "✓ Valider ce palier"),
+        h("button", { class: "ghost", onclick: () => { state.openTree = open ? null : t.id; render(); } }, open ? "Masquer les paliers" : "Voir les " + N + " paliers")));
+    if (open) card.appendChild(h("ol", { class: "steps" }, t.steps.map((s, i) => h("li", { class: i < lv ? "ok" : i === lv ? "cur" : "" },
+      h("button", { onclick: () => { setLevel(t.id, i); render(); }, title: "Définir comme palier actuel" },
+        h("span", { class: "dot" }, i < lv ? "✓" : i + 1),
+        h("span", null, h("b", null, s.t), h("small", { class: "muted" }, stdText(s))))))));
+    return card;
+  }));
+  return h("div", { style: "display:grid;gap:18px" },
+    h("div", { style: "display:grid;gap:6px;max-width:68ch" }, h("h2", null, "Arbres de compétences"),
+      h("p", { class: "muted" }, "Chaque arbre va du premier palier au skill complet. Ton palier actuel est celui que tu travailles ; valide-le quand tu réussis son standard. Clique sur un palier dans la liste pour corriger ton niveau. Les étoiles choisissent tes 3 priorités du programme sur mesure.")),
+    grid);
+}
+function toggleFocus(id) {
+  const F = settings.focus;
+  const i = F.indexOf(id);
+  if (i >= 0) F.splice(i, 1); else { if (F.length >= 3) F.shift(); F.push(id); }
+  gstore.set("settings", settings);
+  if (PROG.id === "cu") setProgram("cu");
+  render();
+}
+
+/* Réglages du programme sur mesure (en tête de l'onglet Semaine) */
+function renderCuSettings() {
+  return h("section", { class: "cu-set" },
+    h("div", { class: "cu-col" },
+      h("span", { class: "label" }, "Tes priorités (3 max)"),
+      h("div", { class: "chips-sel" }, TREES.filter(t => t.skill).map(t => h("button", { class: "chip-btn" + (settings.focus.includes(t.id) ? " on" : ""), "aria-pressed": settings.focus.includes(t.id), onclick: () => toggleFocus(t.id) }, t.name)))),
+    h("div", { class: "cu-col" },
+      h("span", { class: "label" }, "Séances / semaine"),
+      h("div", { class: "seg" }, [3, 4, 5].map(n => h("button", { class: settings.days === n ? "on" : "", "aria-pressed": settings.days === n, onclick: () => { settings.days = n; gstore.set("settings", settings); setProgram("cu"); render(); } }, n)))),
+    h("label", { class: "cu-col", for: "bw" },
+      h("span", { class: "label" }, "Poids de corps (kg)"),
+      h("input", { id: "bw", type: "number", min: 30, max: 200, value: settings.bw, inputmode: "numeric", onchange: e => { const v = +e.target.value; if (v >= 30) { settings.bw = v; gstore.set("settings", settings); render(); } } })));
+}
+
+/* ---------- Séance guidée ---------- */
+const player = { on: false };
+function parseRx(it) {
+  const d = it.dose || "", u = (it.unit || "") + " " + (it.note || "");
+  let m, r;
+  const rm = u.match(/repos (\d+)(?:–\d+)? (s|min)/);
+  const rest = rm ? +rm[1] * (rm[2] === "min" ? 60 : 1) : 90;
+  if ((m = d.match(/^EMOM (\d+) min$/))) r = { mode: "emom", sets: +m[1], label: it.unit };
+  else if ((m = d.match(/^(\d+) × \((\d+) × (\d+) s\)$/))) r = { mode: "hold", sets: +m[1] * +m[2], secs: +m[3], rest: 10, restLong: rest, cluster: +m[2] };
+  else if ((m = d.match(/^(\d+) × (\d+) s$/))) r = { mode: "hold", sets: +m[1], secs: +m[2] };
+  else if ((m = d.match(/^(\d+) × (\d+)$/))) r = { mode: "reps", sets: +m[1], reps: +m[2] };
+  else if ((m = d.match(/^(\d+) × (\d+) min$/))) r = { mode: "hold", sets: +m[1], secs: +m[2] * 60 };
+  else if ((m = d.match(/^(\d+) min$/))) r = { mode: "timer", sets: 1, secs: +m[1] * 60 };
+  else if ((m = d.match(/^(\d+) s$/))) r = { mode: "hold", sets: 1, secs: +m[1], label: it.unit };
+  else if ((m = d.match(/^(\d+) min (\d+)$/))) r = { mode: "hold", sets: 1, secs: +m[1] * 60 + +m[2] };
+  else if ((m = d.match(/^(\d+) × /))) r = { mode: "free", sets: +m[1] };
+  else r = { mode: "free", sets: 1 };
+  if (it.dose && /^\d+ × \d+ min \d+$/.test(d)) { const q = d.match(/^(\d+) × (\d+) min (\d+)$/); r = { mode: "hold", sets: +q[1], secs: +q[2] * 60 + +q[3] }; }
+  r.rest = it.warm ? 30 : r.rest || (r.mode === "free" ? 60 : rest);
+  return r;
+}
+let audioCtx = null;
+function beep(f, dur) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = f || 880; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(.18, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + (dur || .18));
+    o.start(); o.stop(audioCtx.currentTime + (dur || .18));
+  } catch (e) {}
+}
+function startPlayer(w, d) {
+  const sess = buildSession(w, SLOT[d]);
+  const list = sess.warm.map(x => Object.assign({}, x, { warm: true })).concat(sess.main);
+  player.on = true; player.list = list; player.i = 0; player.set = 1; player.phase = "ready"; player.key = w + "-" + d; player.t0 = 0;
+  player.rx = parseRx(list[0]);
+  try { navigator.wakeLock && navigator.wakeLock.request("screen").then(l => { player.lock = l; }).catch(() => {}); } catch (e) {}
+  beep(660, .05);
+  drawPlayer();
+  clearInterval(player.tm); player.tm = setInterval(playerTick, 200);
+}
+function closePlayer() {
+  player.on = false; clearInterval(player.tm);
+  try { player.lock && player.lock.release(); } catch (e) {}
+  const o = $("#player"); if (o) o.remove();
+  document.body.style.overflow = "";
+}
+function nextStep() {
+  const rx = player.rx;
+  if (player.set < rx.sets) { player.set++; player.phase = "rest"; player.t0 = Date.now(); player.restFor = rx.cluster && (player.set - 1) % rx.cluster !== 0 ? rx.rest : (rx.restLong || rx.rest); }
+  else if (player.i < player.list.length - 1) { player.i++; player.set = 1; player.rx = parseRx(player.list[player.i]); player.phase = "rest"; player.t0 = Date.now(); player.restFor = Math.min(120, rx.restLong || rx.rest); player.newEx = true; }
+  else { player.phase = "done"; beep(988, .4); }
+  drawPlayer();
+}
+function playerTick() {
+  if (!player.on) return;
+  const el2 = $("#pl-clock"); if (!el2) return;
+  const now = Date.now(), rx = player.rx, sec = (now - player.t0) / 1000;
+  if (player.phase === "rest") {
+    const left = Math.ceil(player.restFor - sec);
+    if (left <= 3 && left > 0 && left !== player.lastBeep) { player.lastBeep = left; beep(660, .08); }
+    if (left <= 0) { player.phase = "ready"; player.newEx = false; beep(880, .25); drawPlayer(); return; }
+    el2.textContent = fmtClock(left);
+  } else if (player.phase === "count") {
+    const left = Math.ceil(3 - sec);
+    if (left <= 0) { player.phase = "work"; player.t0 = now; beep(880, .2); drawPlayer(); return; }
+    if (left !== player.lastBeep) { player.lastBeep = left; beep(520, .08); }
+    el2.textContent = left;
+  } else if (player.phase === "work") {
+    if (rx.mode === "hold" || rx.mode === "timer") {
+      const target = rx.secs;
+      if (rx.mode === "timer") { const left = Math.ceil(target - sec); el2.textContent = fmtClock(Math.max(0, left)); if (left <= 0) { beep(988, .3); nextStep(); } }
+      else { el2.textContent = fmtClock(Math.floor(sec)); const ring = $("#pl-ring"); if (ring) ring.style.setProperty("--p", Math.min(1, sec / target)); if (sec >= target && !player.reached) { player.reached = true; beep(988, .3); } }
+    } else if (rx.mode === "emom") {
+      const min = Math.floor(sec / 60), left = Math.ceil(60 - (sec % 60));
+      if (min + 1 > rx.sets) { beep(988, .4); player.set = rx.sets; nextStep(); return; }
+      if (min + 1 !== player.set) { player.set = min + 1; beep(880, .25); drawPlayer(); return; }
+      el2.textContent = fmtClock(left);
+    }
+  }
+}
+const fmtClock = s => { s = Math.max(0, s); return s >= 60 ? Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") : String(s); };
+function drawPlayer() {
+  let o = $("#player");
+  if (!o) { o = h("div", { id: "player", class: "player", role: "dialog", "aria-modal": "true", "aria-label": "Séance guidée" }); document.body.appendChild(o); document.body.style.overflow = "hidden"; }
+  const it = player.list[player.i], ex = EX[it.ex], rx = player.rx, N = player.list.length;
+  const top = h("div", { class: "pl-top" },
+    h("button", { class: "ghost", onclick: closePlayer }, "✕ Quitter"),
+    h("span", { class: "label" }, "Exercice " + (player.i + 1) + "/" + N),
+    h("div", { class: "pl-prog" }, h("i", { style: "width:" + ((player.i + (player.phase === "done" ? 1 : 0)) / N * 100) + "%" })));
+  if (player.phase === "done") {
+    o.replaceChildren(top, h("div", { class: "pl-body" },
+      h("h2", null, "Séance terminée"),
+      h("p", { class: "muted" }, N + " exercices bouclés. Pense à valider un palier si tu as réussi un standard."),
+      h("button", { class: "pl-main", onclick: () => { state.done[player.key] = true; store.set("done", state.done); closePlayer(); render(); } }, "✓ Marquer comme faite")));
+    return;
+  }
+  const what = rx.mode === "hold" ? (rx.cluster ? "Tenue de " + rx.secs + " s (cluster)" : "Tenue de " + fmtS(rx.secs)) : rx.mode === "reps" ? it.dose.split(" × ")[1] + " répétitions" : rx.mode === "emom" ? (it.unit || "") + " · minute " + player.set + "/" + rx.sets : rx.mode === "timer" ? fmtS(rx.secs) : it.dose + (it.unit ? " · " + it.unit : "");
+  const fig = makeFigure(it.ex, "pl-fig");
+  let clock = "", btns = [], sub = "";
+  if (player.phase === "rest") {
+    clock = fmtClock(Math.ceil(player.restFor - (Date.now() - player.t0) / 1000));
+    sub = player.newEx ? "Repos · ensuite : " + (it.title || ex.name) : "Repos avant la série " + player.set;
+    btns = [h("button", { class: "pl-main", onclick: () => { player.phase = "ready"; player.newEx = false; drawPlayer(); } }, "Passer le repos"),
+      h("button", { class: "ghost", onclick: () => { player.restFor += 15; } }, "+15 s")];
+  } else if (player.phase === "ready") {
+    clock = rx.mode === "hold" ? fmtClock(0) : rx.mode === "timer" ? fmtClock(rx.secs) : "";
+    sub = "Série " + player.set + "/" + rx.sets;
+    if (rx.mode === "hold") btns = [h("button", { class: "pl-main", onclick: () => { player.phase = "count"; player.t0 = Date.now(); player.reached = false; player.lastBeep = null; drawPlayer(); } }, "▶ Démarrer la tenue")];
+    else if (rx.mode === "timer" || rx.mode === "emom") btns = [h("button", { class: "pl-main", onclick: () => { player.phase = rx.mode === "emom" ? "work" : "work"; player.t0 = Date.now(); if (rx.mode === "emom") { player.set = 1; beep(880, .25); } drawPlayer(); } }, rx.mode === "emom" ? "▶ Lancer l'EMOM" : "▶ Lancer le chrono")];
+    else btns = [h("button", { class: "pl-main", onclick: nextStep }, "✓ Série faite")];
+    btns.push(h("button", { class: "ghost", onclick: () => { player.set = rx.sets; nextStep(); } }, "Passer l'exercice"));
+  } else if (player.phase === "count") {
+    clock = "3"; sub = "Prépare-toi";
+  } else if (player.phase === "work") {
+    sub = rx.mode === "emom" ? "Fais tes répétitions, puis récupère jusqu'à la minute suivante" : rx.mode === "timer" ? "En cours" : "Tiens… objectif " + fmtS(rx.secs);
+    btns = [h("button", { class: "pl-main", onclick: () => { if (rx.mode === "emom") player.set = rx.sets; nextStep(); } }, rx.mode === "hold" ? "■ Fin de la tenue" : "■ Terminer")];
+  }
+  o.replaceChildren(top, h("div", { class: "pl-body" },
+    h("div", { class: "pl-stage" }, fig),
+    h("div", { class: "pl-info" },
+      h("span", { class: "label" }, player.phase === "rest" ? "Récupération" : sub),
+      h("h2", null, it.title || ex.name),
+      h("p", { class: "pl-what num" }, what),
+      it.note ? h("p", { class: "muted" }, it.note) : null),
+    h("div", { id: "pl-ring", class: "pl-clock-wrap" + (player.phase === "rest" ? " resting" : ""), style: "--p:0" },
+      h("span", { id: "pl-clock", class: "pl-clock num" }, clock)),
+    player.phase === "rest" ? h("p", { class: "muted" }, sub) : null,
+    h("div", { class: "pl-btns" }, btns)));
 }
 
 /* ---------- Démarrage ---------- */
 function setProgram(id) {
-  PROG = PROGRAMS[id] || PROGRAMS.hs;
+  PROG = PROGRAMS[id] || PROGRAMS.cu;
+  if (PROG.refresh) PROG.refresh();
   ({ phases: PHASES, start: START, tests: TEST_WEEKS, deload: DELOAD, slot: SLOT, meta: SESSION_META, variants: VARIANTS, order: SLOT_ORDER, defis: DEFIS, weeks: NW } = PROG);
   state.start = store.get("start", iso(mondayOf(new Date())));
   state.done = store.get("done", {});
@@ -1435,6 +2139,7 @@ function setProgram(id) {
   initPosition();
 }
 document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { state.tab = b.dataset.tab; render(); }));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && player.on) closePlayer(); });
 document.querySelectorAll(".prog-switch button").forEach(b => b.addEventListener("click", () => { if (b.dataset.prog !== PROG.id) { setProgram(b.dataset.prog); render(); } }));
 const sd = $("#start-date");
 sd.addEventListener("change", () => {
@@ -1444,8 +2149,8 @@ sd.addEventListener("change", () => {
   store.set("start", state.start);
   initPosition(); render();
 });
-let savedProg = "hs";
-try { savedProg = localStorage.getItem("cap:prog") || "hs"; } catch (e) {}
+let savedProg = "cu";
+try { savedProg = localStorage.getItem("cap:prog") || "cu"; } catch (e) {}
 setProgram(savedProg);
 render();
 </script>

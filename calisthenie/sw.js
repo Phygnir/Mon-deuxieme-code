@@ -1,6 +1,6 @@
 // Mode hors connexion : l'appli est servie depuis le cache, puis mise à jour en arrière-plan.
 // Change VERSION à chaque nouvelle publication pour forcer le rafraîchissement du cache.
-const VERSION = "cap-cali-v9";
+const VERSION = "cap-cali-v10";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png"];
 
 self.addEventListener("install", e => {

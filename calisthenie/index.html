@@ -78,7 +78,7 @@ img { max-width: 100%; }
   --p1: #3f74c9; --p2: #0b8f75; --p3: #c98a1c; --p4: #cf4a3c; --p5: #7a4fc4;
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --r: 14px; --nav-h: 64px;
+  --r: 14px; --nav-h: 64px; --fig: var(--ink);
   color-scheme: light;
 }
 * { box-sizing: border-box; }
@@ -152,13 +152,13 @@ button:disabled { opacity: .4; cursor: default; }
 .big-fig .fig { width: 100%; height: auto; aspect-ratio: 6 / 5; display: block; }
 .fig .pr { stroke: var(--muted); stroke-width: 2; fill: none; }
 .fig .prf { fill: var(--line); stroke: var(--muted); stroke-width: 1.5; }
-.fig .lb { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; opacity: .35; }
-.fig .lf { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; }
-.fig .tr { stroke: var(--ink); stroke-linecap: round; stroke-width: 10; }
-.fig .hd { fill: var(--ink); }
-.fig .jf { fill: var(--ink); }
-.fig .jb { fill: var(--ink); opacity: .35; }
-.fig .jn { fill: var(--sunk); stroke: var(--ink); stroke-width: 1.5; }
+.fig .lb { stroke: var(--fig); stroke-linecap: round; stroke-width: 7; opacity: .35; }
+.fig .lf { stroke: var(--fig); stroke-linecap: round; stroke-width: 7; }
+.fig .tr { stroke: var(--fig); stroke-linecap: round; stroke-width: 10; }
+.fig .hd { fill: var(--fig); }
+.fig .jf { fill: var(--fig); }
+.fig .jb { fill: var(--fig); opacity: .35; }
+.fig .jn { fill: var(--sunk); stroke: var(--fig); stroke-width: 1.5; }
 .fig .lf, .fig .lb { stroke-width: 7.5; }
 .fig .tr { stroke-width: 12; }
 .segs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; }
@@ -414,6 +414,42 @@ button:disabled { opacity: .4; cursor: default; }
 .daily-txt b { font-size: 17px; }
 .xp-gain { font-size: 22px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 4px 14px; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .ring-fg { transition: none; } }
+
+/* Craie, avatar, boutique */
+.chalk { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
+.chalk-ic svg { width: 16px; height: 16px; display: block; fill: color-mix(in srgb, var(--surface) 70%, var(--accent)); stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
+.chalk b { font-family: var(--font-display); font-size: 17px; }
+.chalk.big .chalk-ic svg { width: 30px; height: 30px; }
+.chalk.big b { font-size: 40px; line-height: 1; }
+.chalk.gain { background: var(--accent-soft); padding: 3px 12px; border-radius: 99px; }
+.chalk.gain b { font-size: 20px; }
+.avatar { position: relative; width: 52px; height: 52px; flex: none; border-radius: 50%; background: var(--sunk); box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--frame, transparent); overflow: visible; }
+.avatar .fig { width: 100%; height: 100%; border-radius: 50%; display: block; }
+.avatar.big { width: 104px; height: 104px; box-shadow: 0 0 0 4px var(--surface), 0 0 0 9px var(--frame, transparent); }
+.lv-mini { position: absolute; right: -6px; bottom: -6px; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 99px; display: grid; place-items: center; font-size: 14px; font-weight: 700; background: var(--accent); color: var(--on-accent); box-shadow: 0 0 0 2px var(--surface); }
+.shop-btn { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--bg); border-radius: 99px; padding: 6px 14px; font-weight: 600; font-size: 14px; color: var(--ink); }
+.profile-card { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; padding: 22px 18px; }
+.profile-card .stack { flex: 1; min-width: 200px; justify-items: start; }
+.pseudo { font: 700 26px/1.1 var(--font-display); border: 0; border-bottom: 2px dashed var(--line); background: transparent; color: var(--ink); padding: 2px 0; width: 100%; max-width: 320px; }
+.pseudo:focus { outline: none; border-bottom-color: var(--accent); }
+.wallet { gap: 8px; }
+.freeze { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; border-color: color-mix(in srgb, var(--p1) 40%, var(--line)); }
+.freeze .stack { flex: 1; min-width: 200px; gap: 2px; }
+.freeze .btn .chalk-ic svg, .shop-item .btn .chalk-ic svg { fill: transparent; stroke: currentColor; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.shop-item { display: grid; gap: 6px; justify-items: center; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; align-content: start; }
+.shop-item.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.shop-item b { font-size: 14px; line-height: 1.2; min-height: 2.4em; display: grid; place-items: center; }
+.shop-item .btn { display: inline-flex; align-items: center; gap: 4px; }
+.shop-item .btn b, .freeze .btn b { font-size: 15px; min-height: 0; color: inherit; }
+.btn.poor { opacity: .55; }
+.sw { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--sunk); font-size: 22px; color: var(--accent); }
+.ring-sw { background: var(--sunk); box-shadow: inset 0 0 0 6px var(--frame); }
+.title-sw { font-family: var(--font-display); font-weight: 700; }
+.bg-sw { border: 1px solid var(--line); background-color: var(--bg); }
+body.bg-grille, .bg-sw.bg-grille { background-image: linear-gradient(color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1px); background-size: 24px 24px; }
+body.bg-points, .bg-sw.bg-points { background-image: radial-gradient(color-mix(in srgb, var(--accent) 22%, transparent) 1.4px, transparent 1.6px); background-size: 18px 18px; }
+.bg-sw.bg-grille, .bg-sw.bg-points { background-size: 10px 10px; }
 
 /* Lieux */
 .place-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
@@ -1453,7 +1489,7 @@ function beep(f, dur) {
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-    o.frequency.value = f || 880; o.connect(g); g.connect(audioCtx.destination);
+    const tone = beepTone(); o.type = tone.type; o.frequency.value = (f || 880) * tone.mul; dur = (dur || .18) * tone.len; o.connect(g); g.connect(audioCtx.destination);
     g.gain.setValueAtTime(.18, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + (dur || .18));
     o.start(); o.stop(audioCtx.currentTime + (dur || .18));
   } catch (e) {}
@@ -2239,7 +2275,7 @@ function confetti(cv) {
   (function f() {
     if (!cv.isConnected || n++ > 220) return;
     ctx.clearRect(0, 0, W, H);
-    ps.forEach(p => { p.vy += .28; p.x += p.vx; p.y += p.vy; p.a += .1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); ctx.restore(); });
+    ps.forEach(p => { p.vy += .28; p.x += p.vx; p.y += p.vy; p.a += .1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; confShape(ctx, p); ctx.restore(); });
     requestAnimationFrame(f);
   })();
 }
@@ -2895,7 +2931,7 @@ function levelOf(xp) {
 function dayStreak() {
   const tp = todayPos(); if (tp.before) return { n: 0, frozen: 0 };
   const slots = cuSlots();
-  let n = 0, lastFreeze = null, frozen = 0;
+  let n = 0, lastFreeze = null, frozen = 0, extra = 0;
   for (let k = 0; k < 730; k++) {
     const t = (tp.abs - 1) * 7 + tp.d - k; if (t < 0) break;
     const abs = Math.floor(t / 7) + 1, d = t % 7;
@@ -2903,6 +2939,7 @@ function dayStreak() {
     if (k === 0 && !ok) continue; // la séance du jour n'est pas encore faite : la série n'est pas cassée
     if (ok) { n++; continue; }
     if (lastFreeze === null || k - lastFreeze >= 7) { lastFreeze = k; frozen++; n++; continue; } // gel : 1 oubli toléré par semaine
+    if (extra < ((settings.shop && settings.shop.freezes) || 0)) { extra++; frozen++; n++; continue; } // gels achetés dans la boutique
     break;
   }
   if (n > (settings.bestStreak || 0)) { settings.bestStreak = n; gstore.set("settings", settings); }
@@ -2964,7 +3001,7 @@ function dailyCard() {
       h("b", null, dc.t),
       h("span", { class: "muted small" }, dc.d)),
     dc.done ? h("span", { class: "tag ok" }, "✓ Fait") :
-      h("button", { class: "btn small", onclick: () => { settings.daily[dc.key] = true; saveAll(); toast("+" + XP.daily + " XP · défi relevé"); render(); } }, "C'est fait"));
+      h("button", { class: "btn small", onclick: () => { settings.daily[dc.key] = true; saveAll(); toast("+" + XP.daily + " XP · +8 craies · défi relevé"); render(); } }, "C'est fait"));
 }
 const _renderToday5 = renderToday;
 renderToday = function () {
@@ -3027,6 +3064,171 @@ renderProgress = function () {
     h("p", { class: "muted small" }, "Série actuelle : " + st.n + " jour" + (st.n > 1 ? "s" : "") + " · record : " + (settings.bestStreak || st.n) + " jour" + ((settings.bestStreak || st.n) > 1 ? "s" : "") + ". Les jours de repos comptent, et un oubli par semaine est toléré."),
     h("p", { class: "muted small" }, "XP : séance +" + XP.session + ", série +" + XP.set + ", record +" + XP.record + ", palier validé +" + XP.step + ", défi du jour +" + XP.daily + ".")));
   return scr;
+};
+render();
+
+
+/* =====================================================================
+   V6 : la craie (monnaie), la boutique et le profil
+   ===================================================================== */
+settings.shop = Object.assign({ owned: [], equip: {}, spent: 0, freezes: 0, name: "" }, settings.shop || {});
+const SHOP_DEFAULT = { theme: "vert", avatar: "hsFree", frame: "aucun", fig: "encre", conf: "classique", sound: "bip", bg: "uni", title: "auto" };
+settings.shop.equip = Object.assign({}, SHOP_DEFAULT, settings.shop.equip);
+
+/* ---------- Gains : recalculés à partir de tes données ---------- */
+const CHALK = { session: 20, set: 1, record: 10, step: 60, daily: 8, trophy: 25, level: 30 };
+function chalkEarned() {
+  const t = xpTotal(), lv = levelOf(t.xp), trophies = achievements().filter(a => a[2]).length;
+  return t.sessions * CHALK.session + t.sets * CHALK.set + t.pr * CHALK.record + journal.length * CHALK.step + Object.keys(settings.daily).length * CHALK.daily + trophies * CHALK.trophy + (lv.L - 1) * CHALK.level;
+}
+const chalk = () => chalkEarned() - settings.shop.spent;
+function chalkIcon(cls) { const s = h("span", { class: "chalk-ic " + (cls || ""), "aria-hidden": "true" }); s.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 9.5 12 5l7 4.5v5L12 19l-7-4.5z"/><path d="M5 9.5 12 14l7-4.5M12 14v5"/></svg>'; return s; }
+function chalkPill(n, cls) { return h("span", { class: "chalk " + (cls || "") }, chalkIcon(), h("b", { class: "num" }, n)); }
+
+/* ---------- Catalogue ---------- */
+const THEMES = {
+  vert: ["Vert", "#0b7a63", "#d5ece5"], ocean: ["Océan", "#1f63b5", "#d9e6f6"], lave: ["Lave", "#c4472a", "#f7ddd4"],
+  amethyste: ["Améthyste", "#7247b8", "#e6ddf4"], rose: ["Rose", "#c23a6c", "#f6d9e4"], or: ["Or", "#a87a10", "#f3e8c8"]
+};
+const FIGS = { encre: ["Encre", "var(--ink)"], accent: ["Couleur du thème", "var(--accent)"], bleu: ["Bleu nuit", "#24408e"], bordeaux: ["Bordeaux", "#7e1f35"], olive: ["Olive", "#4f5d1c"] };
+const FRAMES = { aucun: ["Sans cadre", "transparent", 0], bronze: ["Bronze", "#b0703a", 0], argent: ["Argent", "#9aa5ad", 0], or: ["Or", "#d4a419", 4], diamant: ["Diamant", "#5cc8e6", 8] };
+const SHOP_TITLES = ["Tête en bas", "Gravity Killer", "Inarrêtable", "Ninja des barres", "Main de fer", "Machine", "Funambule", "Roi du lean"];
+const SHOP = [
+  ...Object.entries(THEMES).map(([id, t], i) => ({ cat: "theme", id, name: t[0], price: i ? (id === "or" ? 250 : 120) : 0 })),
+  ...[["hsFree", 0], ["pistol", 80], ["lsit", 80], ["advTuck", 100], ["handWalk", 120], ["flFull", 180], ["mu", 220], ["fullPl", 300]].map(([id, p]) => ({ cat: "avatar", id, name: EX[id].name, price: p })),
+  ...Object.entries(FRAMES).map(([id, f], i) => ({ cat: "frame", id, name: f[0], price: [0, 60, 150, 300, 600][i], lvl: f[2] })),
+  ...Object.entries(FIGS).map(([id, f], i) => ({ cat: "fig", id, name: f[0], price: i ? 80 : 0 })),
+  ...[["classique", "Classiques", 0], ["etoiles", "Étoiles", 100], ["flammes", "Flammes", 100]].map(([id, n, p]) => ({ cat: "conf", id, name: n, price: p })),
+  ...[["bip", "Bip", 0], ["clochette", "Clochette", 60], ["gong", "Gong", 60]].map(([id, n, p]) => ({ cat: "sound", id, name: n, price: p })),
+  ...[["uni", "Uni", 0], ["grille", "Grille", 80], ["points", "Points", 80]].map(([id, n, p]) => ({ cat: "bg", id, name: n, price: p })),
+  ...SHOP_TITLES.map(t => ({ cat: "title", id: t, name: t, price: 100 }))
+];
+const CATS_SHOP = [["theme", "Couleurs de l'appli"], ["avatar", "Avatar"], ["frame", "Cadre d'avatar"], ["title", "Titres de profil"], ["fig", "Couleur du bonhomme"], ["conf", "Confettis"], ["sound", "Son du chrono"], ["bg", "Fond d'écran"]];
+const owns = it => it.price === 0 || settings.shop.owned.includes(it.cat + ":" + it.id);
+
+/* ---------- Application des personnalisations ---------- */
+function applyLook() {
+  const E = settings.shop.equip, r = document.documentElement.style, t = THEMES[E.theme] || THEMES.vert;
+  r.setProperty("--accent", t[1]); r.setProperty("--accent-soft", t[2]);
+  r.setProperty("--fig", (FIGS[E.fig] || FIGS.encre)[1]);
+  document.body.classList.remove("bg-grille", "bg-points");
+  if (E.bg !== "uni") document.body.classList.add("bg-" + E.bg);
+  const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute("content", "#eef2f0");
+}
+function confShape(ctx, p) {
+  const st = settings.shop && settings.shop.equip.conf;
+  if (st === "etoiles") {
+    ctx.beginPath(); for (let i = 0; i < 10; i++) { const r = i % 2 ? p.r * .45 : p.r, a = i * Math.PI / 5; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill();
+  } else if (st === "flammes") {
+    ctx.beginPath(); ctx.moveTo(0, -p.r * 1.3); ctx.quadraticCurveTo(p.r, 0, 0, p.r); ctx.quadraticCurveTo(-p.r, 0, 0, -p.r * 1.3); ctx.fill();
+  } else ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
+}
+function beepTone() {
+  const st = settings.shop && settings.shop.equip.sound;
+  if (st === "clochette") return { type: "triangle", mul: 1.5, len: 1.6 };
+  if (st === "gong") return { type: "sine", mul: .5, len: 2.4 };
+  return { type: "sine", mul: 1, len: 1 };
+}
+function profileTitle() { const E = settings.shop.equip; return E.title !== "auto" && settings.shop.owned.includes("title:" + E.title) ? E.title : levelOf(xpTotal().xp).title; }
+function avatar(size) {
+  const E = settings.shop.equip, fr = FRAMES[E.frame] || FRAMES.aucun;
+  const box = h("div", { class: "avatar " + (size || ""), style: "--frame:" + fr[1] }, makeFigure(EX[E.avatar] ? E.avatar : "hsFree"));
+  return box;
+}
+
+/* ---------- Acheter, équiper ---------- */
+function buy(it) {
+  if (owns(it)) return;
+  const lv = levelOf(xpTotal().xp).L;
+  if (it.lvl && lv < it.lvl) { toast("Disponible au niveau " + it.lvl); return; }
+  if (chalk() < it.price) { toast("Il te manque " + (it.price - chalk()) + " craies"); return; }
+  settings.shop.spent += it.price; settings.shop.owned.push(it.cat + ":" + it.id);
+  settings.shop.equip[it.cat] = it.id; saveAll(); applyLook(); buzz(60);
+  toast(it.name + " débloqué et équipé"); render();
+}
+function equipItem(it) { settings.shop.equip[it.cat] = it.id; saveAll(); applyLook(); toast(it.name + " équipé"); render(); }
+
+/* ---------- Écran Profil & boutique ---------- */
+function preview(it) {
+  if (it.cat === "theme") return h("span", { class: "sw", style: "background:" + THEMES[it.id][1] });
+  if (it.cat === "avatar") return thumb(it.id, "sm");
+  if (it.cat === "frame") return h("span", { class: "sw ring-sw", style: "--frame:" + FRAMES[it.id][1] });
+  if (it.cat === "fig") return h("span", { class: "sw", style: "background:" + FIGS[it.id][1] });
+  if (it.cat === "conf") return h("span", { class: "sw conf-sw" }, it.id === "etoiles" ? "★" : it.id === "flammes" ? "▲" : "▬");
+  if (it.cat === "sound") return h("button", { class: "icon-btn", "aria-label": "Écouter " + it.name, onclick: e => { e.stopPropagation(); const k = settings.shop.equip.sound; settings.shop.equip.sound = it.id; const was = settings.sound; settings.sound = true; beep(880, .2); settings.sound = was; settings.shop.equip.sound = k; } }, "♪");
+  if (it.cat === "bg") return h("span", { class: "sw bg-sw bg-" + it.id });
+  return h("span", { class: "sw title-sw" }, "«»");
+}
+function renderShop() {
+  const t = xpTotal(), lv = levelOf(t.xp), st = dayStreak(), E = settings.shop.equip, bal = chalk();
+  const head = h("section", { class: "card profile-card" },
+    avatar("big"),
+    h("div", { class: "stack" },
+      h("input", { id: "pseudo", class: "pseudo", type: "text", maxlength: 24, placeholder: "Ton pseudo", value: settings.shop.name, "aria-label": "Pseudo",
+        onchange: e => { settings.shop.name = e.target.value.trim(); saveAll(); toast("Pseudo enregistré"); } }),
+      h("span", { class: "tag accent" }, profileTitle()),
+      h("span", { class: "muted small" }, "Niveau " + lv.L + " · " + t.sessions + " séance" + (t.sessions > 1 ? "s" : "") + " · série de " + st.n + " jour" + (st.n > 1 ? "s" : "") + " · " + journal.length + " palier" + (journal.length > 1 ? "s" : "") + " validé" + (journal.length > 1 ? "s" : ""))));
+  const wallet = h("section", { class: "card wallet" },
+    h("div", null, h("span", { class: "eyebrow" }, "Ta craie"), chalkPill(bal, "big")),
+    h("p", { class: "muted small" }, "Séance +" + CHALK.session + " · série +" + CHALK.set + " · record +" + CHALK.record + " · palier +" + CHALK.step + " · défi du jour +" + CHALK.daily + " · trophée +" + CHALK.trophy + " · niveau +" + CHALK.level + ". Comme les athlètes, plus tu t'entraînes, plus tu en as sur les mains."));
+  const freeze = h("section", { class: "card freeze" },
+    h("div", { class: "stack" }, h("span", { class: "eyebrow" }, "Objet utile"), h("b", null, "Gel de série"),
+      h("span", { class: "muted small" }, "Protège ta série si tu rates une séance en plus de l'oubli toléré chaque semaine. Il peut aussi réparer une série déjà cassée. Stock : " + settings.shop.freezes + "/3.")),
+    h("button", { class: "btn small", disabled: settings.shop.freezes >= 3, onclick: () => {
+      if (chalk() < 150) { toast("Il te manque " + (150 - chalk()) + " craies"); return; }
+      settings.shop.spent += 150; settings.shop.freezes++; saveAll(); toast("Gel de série ajouté"); render();
+    } }, chalkPill(150), " Acheter"));
+  const sections = CATS_SHOP.map(([cat, label]) => {
+    const items = SHOP.filter(i => i.cat === cat);
+    const opts = cat === "title" ? [{ cat, id: "auto", name: "Titre de niveau (" + lv.title + ")", price: 0 }].concat(items) : items;
+    return h("section", { class: "stack" }, h("h3", null, label),
+      h("div", { class: "shop-grid" }, opts.map(it => {
+        const own = owns(it), on = E[cat] === it.id, locked = it.lvl && lv.L < it.lvl;
+        return h("div", { class: "shop-item" + (on ? " on" : "") + (own ? " own" : "") },
+          preview(it),
+          h("b", null, it.name),
+          on ? h("span", { class: "tag ok" }, "✓ Équipé") :
+            own ? h("button", { class: "btn ghost small", onclick: () => equipItem(it) }, "Équiper") :
+              locked ? h("span", { class: "tag" }, "Niveau " + it.lvl) :
+                h("button", { class: "btn small" + (bal < it.price ? " poor" : ""), onclick: () => buy(it) }, chalkPill(it.price)));
+      })));
+  });
+  return h("div", { class: "screen" },
+    h("button", { class: "back", onclick: () => { S.sub = null; S.tab = "today"; render(); } }, "‹ Aujourd'hui"),
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, "Profil et boutique"), h("h1", null, settings.shop.name || "Ton profil")),
+    head, wallet, freeze, sections);
+}
+
+/* ---------- Intégration : carte joueur, bilan de séance, rendu ---------- */
+const _playerCard6 = playerCard;
+playerCard = function () {
+  const c = _playerCard6();
+  c.classList.add("clickable");
+  const lvBox = c.querySelector(".pc-lv"), badge = lvBox.querySelector(".lv-badge");
+  const av = avatar(); av.appendChild(h("span", { class: "lv-mini num" }, levelOf(xpTotal().xp).L));
+  badge.replaceWith(av);
+  const tb = lvBox.querySelector(".pc-txt b"); tb.textContent = (settings.shop.name ? settings.shop.name + " · " : "") + profileTitle();
+  c.appendChild(h("button", { class: "shop-btn", onclick: () => openSub({ type: "shop" }) }, chalkPill(chalk()), h("span", null, "Boutique ›")));
+  return c;
+};
+const _drawSummary6 = drawSummary;
+drawSummary = function () {
+  const sm = _drawSummary6(), xpP = sm.querySelector(".xp-gain");
+  if (xpP) {
+    const sets = P.rec.reduce((a, r, i) => a + (P.list[i].warm ? 0 : r.length), 0);
+    let pr = 0; P.list.forEach((it, i) => { const r = P.rec[i]; if (!r.length || it.warm) return; const prev = bestOf(lkOf(it)), mx = Math.max(...r); if (prev > 0 && mx > prev) pr++; });
+    xpP.after(chalkPill("+" + (CHALK.session + sets * CHALK.set + pr * CHALK.record), "gain"));
+  }
+  return sm;
+};
+const _render6 = render;
+render = function () {
+  applyLook();
+  if (S.onb == null && S.sub && S.sub.type === "shop") {
+    figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
+    $("#nav").hidden = false; renderNav(); $("#view").replaceChildren(renderShop()); return;
+  }
+  _render6();
 };
 render();
 

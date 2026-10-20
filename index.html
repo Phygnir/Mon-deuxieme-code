@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
-/* Layout : une colonne d'appli (max 720 px) centrée, barre d'onglets fixe en bas, écrans empilés en cartes. */
+/* Thème : mode clair imposé, quel que soit le réglage de l'appareil.
+   Layout : une colonne d'appli (max 720 px) centrée, barre d'onglets fixe en bas, écrans empilés en cartes. */
 :root {
   --bg: #eef2f0; --surface: #ffffff; --sunk: #e3e9e6; --ink: #14201c; --muted: #5a6964; --line: #d2dbd7;
   --accent: #0b7a63; --accent-soft: #d5ece5; --on-accent: #ffffff; --warn: #b4532a; --warn-soft: #f6e3d9;
@@ -19,18 +20,7 @@
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
   --r: 14px; --nav-h: 64px;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1513; --surface: #16201d; --sunk: #1f2b27; --ink: #e4ece9; --muted: #92a29c; --line: #2a3733;
-    --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b; --warn: #f0936a; --warn-soft: #3a2219;
-    --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0e1513; --surface: #16201d; --sunk: #1f2b27; --ink: #e4ece9; --muted: #92a29c; --line: #2a3733;
-  --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b; --warn: #f0936a; --warn-soft: #3a2219;
-  --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6; color-scheme: dark;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45; -webkit-tap-highlight-color: transparent; }

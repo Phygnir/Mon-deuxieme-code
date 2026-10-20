@@ -1,276 +1,280 @@
 <title>Cap Calisthénie</title>
-<meta name="description" content="Programmes de calisthénie sur mesure : arbres de compétences, cycles de 12 semaines et séances guidées.">
+<meta name="description" content="Programme de calisthénie sur mesure : arbres de skills, cycles de 12 semaines et séances guidées.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
-/* Layout: en-tête avec les deux objectifs, puis onglets ; la vue Semaine empile frise des 26 semaines → grille des 7 jours → détail de la séance. */
+/* Layout : une colonne d'appli (max 720 px) centrée, barre d'onglets fixe en bas, écrans empilés en cartes. */
 :root {
-  --bg: #eef2f0;
-  --surface: #ffffff;
-  --sunk: #e3e9e6;
-  --ink: #14201c;
-  --muted: #5a6964;
-  --line: #d2dbd7;
-  --accent: #0b7a63;
-  --accent-soft: #d5ece5;
-  --on-accent: #ffffff;
-  --p1: #3f74c9;
-  --p2: #0b8f75;
-  --p3: #c98a1c;
-  --p4: #cf4a3c;
-  --p5: #7a4fc4;
+  --bg: #eef2f0; --surface: #ffffff; --sunk: #e3e9e6; --ink: #14201c; --muted: #5a6964; --line: #d2dbd7;
+  --accent: #0b7a63; --accent-soft: #d5ece5; --on-accent: #ffffff; --warn: #b4532a; --warn-soft: #f6e3d9;
+  --p1: #3f74c9; --p2: #0b8f75; --p3: #c98a1c; --p4: #cf4a3c; --p5: #7a4fc4;
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --r: 10px;
+  --r: 14px; --nav-h: 64px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1513; --surface: #16201d; --sunk: #1d2925; --ink: #e4ece9; --muted: #92a29c;
-    --line: #2a3733; --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b;
-    --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6;
-    color-scheme: dark;
+    --bg: #0e1513; --surface: #16201d; --sunk: #1f2b27; --ink: #e4ece9; --muted: #92a29c; --line: #2a3733;
+    --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b; --warn: #f0936a; --warn-soft: #3a2219;
+    --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1513; --surface: #16201d; --sunk: #1d2925; --ink: #e4ece9; --muted: #92a29c;
-  --line: #2a3733; --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b;
-  --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6;
-  color-scheme: dark;
+  --bg: #0e1513; --surface: #16201d; --sunk: #1f2b27; --ink: #e4ece9; --muted: #92a29c; --line: #2a3733;
+  --accent: #3cc4a3; --accent-soft: #173a32; --on-accent: #06221b; --warn: #f0936a; --warn-soft: #3a2219;
+  --p1: #6d9be6; --p2: #3cc4a3; --p3: #e2a945; --p4: #ec7465; --p5: #a583e6; color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
-.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 60px; display: grid; gap: 22px; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+body.locked { overflow: hidden; }
 h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; }
-h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 700; letter-spacing: .01em; text-transform: uppercase; }
-h2 { font-size: 26px; font-weight: 600; }
+h1 { font-size: clamp(34px, 8vw, 46px); font-weight: 700; }
+h2 { font-size: 28px; font-weight: 700; }
 h3 { font-size: 21px; font-weight: 600; }
 p { margin: 0; }
-.muted { color: var(--muted); }
-.label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.num { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+ul, ol { margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
-button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .4; cursor: default; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.center { text-align: center; }
+.eyebrow, .label { font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
 
-/* En-tête */
-header { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: end; justify-content: space-between; }
-header .intro { display: grid; gap: 6px; min-width: 0; max-width: 60ch; }
-.start { display: grid; gap: 4px; }
-.start input { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+#view { max-width: 720px; margin: 0 auto; padding-inline: 16px; padding-block: 18px calc(var(--nav-h) + 40px + env(safe-area-inset-bottom, 0px)); }
+.screen { display: grid; gap: 18px; }
+.screen.with-cta { padding-bottom: 90px; }
+.top { display: grid; gap: 6px; }
+.stack { display: grid; gap: 10px; align-content: start; }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; }
+.card.left { text-align: left; }
 
-/* Sélecteur de programme */
-.prog-switch { display: inline-flex; gap: 2px; padding: 3px; background: var(--sunk); border-radius: 10px; justify-self: start; margin-bottom: 6px; }
-.prog-switch button { border: 0; background: transparent; padding: 6px 16px; border-radius: 8px; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
-.prog-switch button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 18%, transparent); }
-.log select { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+/* Boutons */
+.btn { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 12px; padding: 11px 18px; font-weight: 600; font-size: 16px; }
+.btn.big { padding: 15px 24px; font-size: 18px; }
+.btn.small { padding: 7px 12px; font-size: 14px; border-radius: 9px; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.armed { background: var(--warn); color: #fff; border-color: var(--warn); }
+.btn.danger { color: var(--warn); }
+.link { border: 0; background: none; color: var(--accent); font-weight: 600; padding: 0; }
+.back { justify-self: start; border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 16px; padding: 4px 0; }
+.icon-btn { width: 44px; height: 44px; flex: none; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: 20px; display: grid; place-items: center; }
+.icon-btn.armed { width: auto; padding: 0 12px; font-size: 14px; font-weight: 600; background: var(--warn); color: #fff; border-color: var(--warn); }
+.ghost-sp { visibility: hidden; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.cta { position: fixed; left: 0; right: 0; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); padding: 12px 16px; display: flex; gap: 10px; justify-content: center; background: linear-gradient(transparent, var(--bg) 30%); z-index: 5; }
+.cta .btn { white-space: nowrap; }
+.cta .btn.big { flex: 0 1 420px; }
+.cta .btn.ghost { background: var(--surface); }
 
-/* Objectifs */
-.goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-.goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; }
-.goal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.goal-big { font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
-.goal-big small { font-size: 18px; color: var(--muted); font-weight: 500; }
-.track { position: relative; height: 10px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
-.track > i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 99px; }
-.track-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Étiquettes (un seul composant) */
+.tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { display: inline-flex; align-items: center; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--sunk); color: var(--muted); white-space: nowrap; }
+.tag.accent { background: var(--accent-soft); color: var(--accent); }
+.tag.warn { background: var(--warn-soft); color: var(--warn); }
+.tag.ok { background: var(--accent); color: var(--on-accent); }
+.note-box { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
 
-/* Onglets */
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
-.tabs button { background: none; border: 0; padding: 10px 14px; font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
-.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-
-/* Frise des semaines */
-.timeline { display: grid; gap: 8px; }
-.weeks { display: grid; grid-template-columns: repeat(26, minmax(0, 1fr)); gap: 12px 3px; }
-.wk { position: relative; border: 0; border-radius: 5px; height: 42px; padding: 0; background: color-mix(in srgb, var(--pc) 22%, var(--surface)); color: var(--ink); font-family: var(--font-display); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.wk.deload { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--pc) 22%, var(--surface)) 0 4px, var(--surface) 4px 8px); }
-.wk.sel { background: var(--pc); color: var(--surface); }
-.wk.now::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--pc); display: inline-block; }
-.legend i.stripe { background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 4px); }
-
-/* En-tête de semaine */
-.week-head { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: end; }
-.week-head .info { display: grid; gap: 4px; min-width: 0; max-width: 64ch; }
-.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; background: color-mix(in srgb, var(--pc) 18%, var(--surface)); color: var(--ink); border: 1px solid color-mix(in srgb, var(--pc) 45%, var(--surface)); }
-.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--pc); }
-.nav { display: flex; gap: 6px; }
-.nav button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; }
-.nav button:disabled { opacity: .4; cursor: default; }
-
-/* Jours */
-.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
-.day { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 10px 10px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; }
-.day.rest { background: transparent; border-style: dashed; }
-.day.sel { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.day .d { display: flex; justify-content: space-between; align-items: center; }
-.day .d b { font-family: var(--font-display); font-size: 18px; text-transform: uppercase; letter-spacing: .04em; }
-.day .t { font-weight: 600; line-height: 1.25; }
-.day .s { font-size: 13px; color: var(--muted); line-height: 1.35; }
-.check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line); display: inline-grid; place-items: center; font-size: 12px; }
-.check.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.tag-var { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 4px; justify-self: start; }
-.defi { background: var(--accent-soft); border-radius: 8px; padding: 4px 14px 2px; }
-.defi .ex-row .fig { background: var(--surface); }
-.tag-test { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--p4); }
-
-/* Détail séance */
-.session { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 16px; }
-.session-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: start; }
-.session-head .info { display: grid; gap: 4px; min-width: 0; max-width: 64ch; }
-.done-btn { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 8px; padding: 8px 14px; font-weight: 600; }
-.done-btn.on { background: var(--accent); color: var(--on-accent); }
-.blocks { display: grid; gap: 4px; }
-.block-title { margin-top: 6px; }
-.ex-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
-.ex-row:first-of-type { border-top: 0; }
-.ex-row .fig { width: 150px; height: 125px; background: var(--sunk); border-radius: 8px; }
-.ex-row .txt { display: grid; gap: 4px; min-width: 0; }
-.ex-row .name { font-weight: 600; font-size: 16px; }
-.ex-row .note { font-size: 14px; color: var(--muted); }
-.ex-row .cues { margin: 2px 0 0; padding-left: 18px; font-size: 14px; }
-.dose { text-align: right; display: grid; gap: 2px; justify-items: end; }
-.dose b { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.dose span { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.log { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; padding: 14px; background: var(--accent-soft); border-radius: 8px; }
-.log label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
-.log input { width: 120px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
-.rest-card { display: grid; gap: 8px; }
-
-/* Bibliothèque */
-.lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 8px; align-content: start; }
-.card .fig { width: 100%; aspect-ratio: 6 / 5; height: auto; max-width: 100%; background: var(--sunk); border-radius: 8px; }
-.card ul { margin: 0; padding-left: 18px; font-size: 14px; }
-.chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--sunk); color: var(--muted); }
-
-/* Progression */
-.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
-.phase { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--pc); border-radius: var(--r); padding: 14px; display: grid; gap: 6px; align-content: start; }
-.chart-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 10px; }
-.chart-scroll { overflow-x: auto; }
-.chart-scroll svg { display: block; min-width: 560px; width: 100%; height: auto; }
-.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-.rules .card p { font-size: 14px; }
-
-
-/* Skills */
-.trees { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-.tree { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 10px; align-content: start; }
-.tree.focus { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.tree-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
-.tree .fig { width: 100%; aspect-ratio: 6 / 5; height: auto; max-width: 100%; background: var(--sunk); border-radius: 8px; }
-.tree-now { display: grid; gap: 2px; }
-.tree-now b { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.1; }
-.tree-now .muted { font-size: 14px; }
-.star { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 4px 10px; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-.star.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.segs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; }
-.segs i { height: 8px; border-radius: 3px; background: var(--sunk); }
-.segs i.on { background: var(--accent); }
-.segs i.cur { background: repeating-linear-gradient(135deg, var(--accent) 0 3px, var(--accent-soft) 3px 6px); }
-.tree-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.ghost { border: 1px solid var(--line); background: transparent; border-radius: 8px; padding: 8px 12px; color: var(--ink); }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: 8px; }
-.steps button { width: 100%; text-align: left; display: flex; gap: 10px; align-items: center; background: none; border: 0; padding: 6px 4px; border-radius: 6px; }
-.steps button:hover { background: var(--sunk); }
-.steps .dot { width: 24px; height: 24px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--sunk); color: var(--muted); }
-.steps li.ok .dot { background: var(--accent); color: var(--on-accent); }
-.steps li.cur .dot { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
-.steps b { display: block; font-weight: 600; font-size: 14px; }
-.steps small { font-size: 12px; }
-.validate-btn { margin-top: 4px; justify-self: start; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
-
-/* Réglages du programme sur mesure */
-.cu-set { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: end; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; }
-.cu-col { display: grid; gap: 6px; min-width: 0; }
-.chips-sel { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: 14px; font-weight: 500; }
-.chip-btn.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--sunk); border-radius: 8px; }
-.seg button { border: 0; background: transparent; border-radius: 6px; padding: 5px 14px; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--muted); }
-.seg button.on { background: var(--surface); color: var(--ink); }
-.cu-set input { width: 90px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
-.lvl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px 24px; }
-.lvl { display: grid; gap: 6px; }
-.lvl-top { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; flex-wrap: wrap; }
-.journal { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
-.session-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.play-btn { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 8px 14px; font-weight: 600; }
-
-/* Séance guidée */
-.player { position: fixed; inset: 0; z-index: 50; background: var(--bg); color: var(--ink); overflow-y: auto; display: grid; grid-template-rows: auto 1fr;
-  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px); }
-.pl-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 760px; width: 100%; margin: 0 auto; }
-.pl-prog { flex: 1 1 160px; height: 6px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
-.pl-prog i { display: block; height: 100%; background: var(--accent); }
-.pl-body { max-width: 760px; width: 100%; margin: 0 auto; display: grid; gap: 14px; align-content: start; justify-items: center; text-align: center; padding-top: 12px; }
-.pl-stage { width: min(100%, 420px); }
-.pl-fig { width: 100%; height: auto; aspect-ratio: 6 / 5; background: var(--sunk); border-radius: 12px; }
-.pl-info { display: grid; gap: 4px; justify-items: center; }
-.pl-info h2 { font-size: clamp(24px, 5vw, 34px); }
-.pl-what { font-size: 22px; font-weight: 600; }
-.pl-clock-wrap { --p: 0; width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center;
-  background: radial-gradient(closest-side, var(--bg) 82%, transparent 83%), conic-gradient(var(--accent) calc(var(--p) * 360deg), var(--sunk) 0); }
-.pl-clock-wrap.resting { background: radial-gradient(closest-side, var(--bg) 82%, transparent 83%), conic-gradient(var(--p3) 360deg, var(--p3) 0); }
-.pl-clock { font-size: 52px; font-weight: 700; }
-.pl-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.pl-main { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 10px; padding: 14px 26px; font-size: 18px; font-weight: 600; }
-@media (prefers-reduced-motion: reduce) { .pl-clock-wrap { transition: none; } }
+/* Puces de filtre */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 13px; font-size: 14px; font-weight: 500; }
+.chip-btn.on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--sunk); border-radius: 10px; justify-self: start; }
+.seg button { border: 0; background: transparent; border-radius: 8px; padding: 6px 18px; font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--muted); }
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 15%, transparent); }
 
 /* Figures */
+.thumb { width: 64px; height: 54px; flex: none; border-radius: 10px; background: var(--sunk); overflow: hidden; }
+.thumb.sm { width: 76px; height: 64px; }
+.thumb.xs { width: 48px; height: 40px; border-radius: 8px; }
+.thumb .fig { width: 100%; height: 100%; display: block; }
+.big-fig { width: 100%; max-width: 100%; background: var(--sunk); border-radius: var(--r); overflow: hidden; }
+.big-fig.card { padding: 0; }
+.big-fig .fig { width: 100%; height: auto; aspect-ratio: 6 / 5; display: block; }
 .fig .pr { stroke: var(--muted); stroke-width: 2; fill: none; }
 .fig .prf { fill: var(--line); stroke: var(--muted); stroke-width: 1.5; }
 .fig .lb { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; opacity: .35; }
 .fig .lf { stroke: var(--ink); stroke-linecap: round; stroke-width: 7; }
 .fig .tr { stroke: var(--ink); stroke-linecap: round; stroke-width: 10; }
 .fig .hd { fill: var(--ink); }
+.segs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; }
+.segs i { height: 6px; border-radius: 3px; background: var(--sunk); }
+.segs i.on { background: var(--accent); }
+.segs i.cur { background: repeating-linear-gradient(135deg, var(--accent) 0 3px, var(--accent-soft) 3px 6px); }
 
-@media (max-width: 860px) {
-  .days { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .weeks { grid-template-columns: repeat(13, minmax(0, 1fr)); row-gap: 12px; }
+/* Aujourd'hui */
+.weekstrip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.ws-day { border: 0; background: none; display: grid; justify-items: center; gap: 4px; padding: 4px 0; }
+.ws-l { font-size: 12px; font-weight: 600; color: var(--muted); }
+.ws-dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: var(--muted); background: transparent; }
+.ws-day.train .ws-dot { background: var(--sunk); color: var(--ink); }
+.ws-day.ok .ws-dot { background: var(--accent); color: var(--on-accent); }
+.ws-day.today .ws-dot { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+.ws-day.today .ws-l { color: var(--accent); }
+.hero { gap: 10px; border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.hero h2 { font-size: 34px; }
+.hero.rest { border-color: var(--line); }
+.mini { list-style: none; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.mini li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.mini li b { font-size: 18px; white-space: nowrap; }
+.next { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 12px; }
+.next > b { font-size: 18px; }
+.prio-list { display: grid; gap: 8px; }
+.prio, .tcard { display: flex; gap: 12px; align-items: center; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 10px; width: 100%; }
+.prio-txt, .tc-txt { display: grid; gap: 3px; flex: 1; min-width: 0; }
+.prio-txt b, .tc-txt b { font-size: 17px; }
+.journal { padding-left: 18px; display: grid; gap: 4px; font-size: 15px; }
+
+/* Plan */
+.cycle { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; }
+.cy { position: relative; height: 38px; border: 0; border-radius: 6px; padding: 0; background: color-mix(in srgb, var(--pc) 20%, var(--surface)); font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--ink); }
+.cy.dl { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--pc) 20%, var(--surface)) 0 4px, var(--surface) 4px 8px); }
+.cy.sel { background: var(--pc); color: var(--surface); }
+.cy.now::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 11px; height: 11px; border-radius: 3px; background: var(--pc); display: inline-block; }
+.legend i.stripe { background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 4px); }
+.phase-txt { display: grid; gap: 2px; }
+.daylist { display: grid; gap: 6px; }
+.dayrow { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px; }
+.dayrow.rest { background: transparent; border-style: dashed; padding: 8px 12px; }
+.dayrow.today { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.dr-date { width: 54px; flex: none; display: grid; }
+.dr-date b { font-family: var(--font-display); font-size: 18px; text-transform: uppercase; }
+.dr-date span { font-size: 12px; color: var(--muted); }
+.dr-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.dr-main b { font-size: 17px; }
+.dr-main .small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dr-end { display: flex; align-items: center; gap: 8px; }
+.chev { font-size: 22px; color: var(--muted); }
+
+/* Lignes d'exercice */
+.xlist { display: grid; gap: 8px; }
+.xrow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.xrow.defi { background: var(--accent-soft); border-color: transparent; }
+.xrow summary { list-style: none; display: flex; gap: 12px; align-items: center; padding: 10px; cursor: pointer; }
+.xrow summary::-webkit-details-marker { display: none; }
+.xmain { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.xname { font-size: 16px; font-weight: 600; }
+.last { font-size: 13px; color: var(--accent); font-weight: 500; }
+.xdose { font-size: 24px; font-weight: 700; white-space: nowrap; text-align: right; }
+.xmore { padding: 0 12px 12px 86px; display: grid; gap: 8px; font-size: 15px; }
+.xmore ul { padding-left: 18px; }
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Skills */
+.tree-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.tcard.focus { border-color: var(--accent); }
+.tree-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+.std { display: grid; gap: 0; }
+.std b { font-size: 26px; }
+.steps { list-style: none; padding: 0; display: grid; gap: 6px; }
+.steps li { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+.steps li.ok { opacity: .7; }
+.steps li.cur { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.st-txt { flex: 1; min-width: 0; display: grid; }
+
+/* Exercices */
+.search { width: 100%; font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); }
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.ex-card { display: grid; gap: 4px; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 8px 10px; align-content: start; }
+.ex-card .thumb { width: 100%; height: auto; aspect-ratio: 6 / 5; }
+.ex-card b { font-size: 15px; line-height: 1.2; }
+.cues-list { padding-left: 20px; display: grid; gap: 4px; }
+.gloss { margin: 0; display: grid; gap: 2px; }
+.gloss dt { font-weight: 600; margin-top: 8px; }
+.gloss dd { margin: 0; color: var(--muted); font-size: 15px; }
+
+/* Profil */
+.field { display: grid; gap: 6px; }
+.field-row { display: flex; flex-wrap: wrap; gap: 14px; }
+.field input { font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); max-width: 200px; }
+.how { padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
+
+/* Bilan */
+.onb { gap: 16px; padding-bottom: 20px; }
+.onb-dots { display: flex; gap: 6px; }
+.onb-dots i { height: 5px; flex: 1; border-radius: 3px; background: var(--sunk); }
+.onb-dots i.on { background: var(--accent); }
+.lead { font-size: 19px; }
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.goal-card { position: relative; display: grid; gap: 4px; text-align: left; border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 8px 10px; }
+.goal-card .thumb { width: 100%; height: auto; aspect-ratio: 6 / 5; }
+.goal-card.on { border-color: var(--accent); background: var(--accent-soft); }
+.goal-card .tick { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-weight: 700; }
+.opt-list { display: grid; gap: 8px; }
+.opt { display: grid; gap: 2px; text-align: left; border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px; }
+.opt.on { border-color: var(--accent); background: var(--accent-soft); }
+.opt b { font-size: 18px; }
+.lvl-pick { display: grid; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; }
+.pick-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.pick { flex: none; display: grid; gap: 1px; text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 7px 10px; font-size: 14px; font-weight: 600; max-width: 170px; }
+.pick small { font-size: 11px; font-weight: 400; color: var(--muted); }
+.pick.below { background: var(--accent-soft); border-color: transparent; }
+.pick.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.pick.on small { color: var(--on-accent); }
+.week-type { list-style: none; padding: 0; display: grid; gap: 4px; }
+.week-type li { display: flex; justify-content: space-between; font-size: 15px; }
+
+/* Barre d'onglets */
+#nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.nav-btn { flex: 1 1 0; max-width: 140px; height: var(--nav-h); border: 0; background: none; display: grid; justify-items: center; align-content: center; gap: 3px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.nav-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-btn.on { color: var(--accent); }
+
+/* Séance guidée */
+.player { position: fixed; inset: 0; z-index: 50; background: var(--bg); overflow-y: auto; padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px calc(env(safe-area-inset-bottom, 0px) + 20px); }
+.p-top { max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 8px; }
+.p-prog { flex: 1; display: grid; gap: 4px; justify-items: center; font-size: 15px; font-weight: 600; min-width: 0; }
+.p-prog .bar { width: 100%; height: 5px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.p-prog .bar i { display: block; height: 100%; background: var(--accent); }
+.p-body { max-width: 640px; margin: 0 auto; display: grid; gap: 12px; justify-items: center; text-align: center; padding-top: 12px; }
+.p-stage { width: min(100%, 380px); }
+.p-fig { width: 100%; height: auto; aspect-ratio: 6 / 5; background: var(--sunk); border-radius: 16px; display: block; }
+.p-info { display: grid; gap: 3px; justify-items: center; }
+.p-info h2 { font-size: clamp(26px, 6vw, 34px); }
+.p-target { font-size: 22px; font-weight: 600; }
+.p-ring { --p: 0; width: 140px; height: 140px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(closest-side, var(--bg) 84%, transparent 85%), conic-gradient(var(--accent) calc(var(--p) * 360deg), var(--sunk) 0); }
+.p-ring.rest { background: radial-gradient(closest-side, var(--bg) 84%, transparent 85%), conic-gradient(var(--p3) calc(var(--p) * 360deg), var(--sunk) 0); }
+.p-clock { font-size: 50px; font-weight: 700; }
+.p-sub { font-weight: 600; min-height: 1.4em; }
+.p-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.p-note { max-width: 46ch; }
+.stepper { display: flex; align-items: center; gap: 16px; }
+.stepper .icon-btn { width: 52px; height: 52px; font-size: 26px; }
+.st-val { display: grid; justify-items: center; }
+.st-val b { font-size: 46px; line-height: 1; }
+.summary { text-align: center; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 6px; display: grid; }
+.stats b { font-size: 34px; line-height: 1; }
+.stats span { font-size: 13px; color: var(--muted); }
+.summary .card { width: 100%; }
+.fb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.fb-btn { border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 6px; display: grid; gap: 2px; }
+.fb-btn.on { border-color: var(--accent); background: var(--accent-soft); }
+.summary .stack { width: 100%; }
+
+.toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + 92px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60;
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 15px; transition: opacity .2s, transform .2s; max-width: calc(100% - 32px); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 520px) {
+  .tree-hero { grid-template-columns: 1fr; }
+  .xmore { padding-left: 12px; }
+  .xdose { font-size: 21px; }
+  .tree-grid { grid-template-columns: 1fr; }
 }
-@media (max-width: 560px) {
-  .days { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ex-row { grid-template-columns: 110px minmax(0, 1fr); }
-  .ex-row .fig { width: 110px; height: 92px; }
-  .dose { grid-column: 2; justify-items: start; text-align: left; }
-  .dose b { font-size: 24px; }
-}
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
 
-<div class="wrap">
-  <header>
-    <div class="intro">
-      <div class="prog-switch" role="tablist" aria-label="Programme">
-        <button role="tab" data-prog="cu">Sur mesure</button>
-        <button role="tab" data-prog="hs">Handstand</button>
-        <button role="tab" data-prog="pl">Planche</button>
-      </div>
-      <span class="label" id="eyebrow"></span>
-      <h1 id="prog-title">Cap Handstand</h1>
-      <p class="muted" id="prog-intro"></p>
-    </div>
-    <label class="start">
-      <span class="label">Début du programme (un lundi)</span>
-      <input type="date" id="start-date">
-    </label>
-  </header>
-
-  <section class="goals" id="goals" aria-label="Objectifs"></section>
-
-  <nav class="tabs" role="tablist">
-    <button role="tab" data-tab="week" aria-selected="true">Semaine</button>
-    <button role="tab" data-tab="skills" aria-selected="false">Skills</button>
-    <button role="tab" data-tab="plan" aria-selected="false" id="plan-tab">Progression</button>
-    <button role="tab" data-tab="lib" aria-selected="false">Exercices</button>
-  </nav>
-
-  <main id="view"></main>
-</div>
+<main id="view"></main>
+<nav id="nav" aria-label="Navigation principale"></nav>
 
 <script>
 /* ---------- Exercices : poses (coordonnées viewBox 240×200, sol y=190) ---------- */
@@ -527,223 +531,10 @@ EX.handWalk.minPhase = 2;
 EX.handWalk.swapNote = "Compte les pas : une main = un pas";
 EX.shapes.swapNote = "Tiens chaque forme quelques secondes";
 
-/* ---------- Programme ---------- */
-const HS_PHASES = [
-  { name: "Fondations", from: 1, to: 6, color: "--p1",
-    goal: "Corps aligné au mur, 3 HSPU au mur d'affilée.",
-    detail: "Tenue ventre au mur jusqu'à 60 s. Ta force permet d'attaquer tout de suite les HSPU au mur : on soigne la technique (triangle tête-mains).",
-    hold: 30, hspu: 3 },
-  { name: "Contrôle", from: 7, to: 12, color: "--p2",
-    goal: "Tenir 45 s en libre, 5 HSPU d'affilée.",
-    detail: "On quitte le mur pour l'équilibre (décollés de talons). Le HSPU passe en séries de 3 à 5, avec un premier déficit.",
-    hold: 45, hspu: 5 },
-  { name: "Force", from: 13, to: 18, color: "--p3",
-    goal: "Tenir 70 s, 8 HSPU d'affilée.",
-    detail: "Déficit plus profond et dips lestés. Les tenues libres s'allongent.",
-    hold: 70, hspu: 8 },
-  { name: "Volume", from: 19, to: 24, color: "--p4",
-    goal: "Tenir 1 min 45, 10 HSPU d'affilée.",
-    detail: "Séries longues, déficit à 10 cm, HSPU libre en tentatives régulières.",
-    hold: 105, hspu: 10 },
-  { name: "Pic & test", from: 25, to: 26, color: "--p5",
-    goal: "2 min de handstand, 12 HSPU.",
-    detail: "Volume réduit pour arriver frais, puis test final le samedi de la semaine 26. 10 HSPU, c'est l'objectif ; 12, c'est le bonus.",
-    hold: 120, hspu: 12 }
-];
-const HS_START = { hold: 20, hspu: 1 };
-const HS_TEST_WEEKS = new Set([6, 12, 18, 24, 26]);
-const HS_DELOAD = new Set([6, 12, 18, 24]);
-let PHASES, START, TEST_WEEKS, DELOAD, SLOT, SESSION_META, VARIANTS, SLOT_ORDER, DEFIS, PROG, NW;
-const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
-const HS_SLOT = { 0: "forceA", 1: "balance", 3: "forceB", 5: "long" };
-const HS_SESSION_META = {
-  forceA: { title: "Force — HSPU", sub: "Pousser à la verticale", min: 45 },
-  balance: { title: "Équilibre", sub: "Technique de tenue", min: 40 },
-  forceB: { title: "Force — volume", sub: "Répétitions faciles, beaucoup de qualité", min: 40 },
-  long: { title: "Tenues longues", sub: "Endurance en équilibre", min: 45 }
-};
-
-function phaseIndex(w) { return PHASES.findIndex(p => w >= p.from && w <= p.to); }
-function rampT(w) {
-  const p = PHASES[phaseIndex(w)];
-  const last = DELOAD.has(p.to) ? p.to - 1 : p.to;
-  if (last === p.from) return 0;
-  return Math.min(1, (w - p.from) / (last - p.from));
-}
 const R = (a, b, t) => Math.round(a + (b - a) * t);
 function fmtS(s) { if (s < 60) return s + " s"; const m = Math.floor(s / 60), r = s % 60; return m + " min" + (r ? " " + String(r).padStart(2, "0") : ""); }
 
-function targetAt(w, key) {
-  // interpolation linéaire entre les jalons de fin de phase
-  const pts = [[0, START[key]]].concat(PHASES.map(p => [p.to, p[key]]));
-  for (let i = 1; i < pts.length; i++) {
-    const [w0, v0] = pts[i - 1], [w1, v1] = pts[i];
-    if (w <= w1) return v0 + (v1 - v0) * (w - w0) / (w1 - w0);
-  }
-  return pts[pts.length - 1][1];
-}
-
 function item(ex, dose, unit, note) { return { ex, dose, unit, note }; }
-
-function hsBaseSession(w, type) {
-  const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w);
-  const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
-  const warm = [
-    item("wrists", "3 min", "", "Rotations de poignets puis bascules"),
-    item("bearCrawl", S(3) + " × " + R(20, 40, pi === 0 ? t : 1) + " s", "repos 30 s", "Avant puis arrière")
-  ];
-  let main = [];
-  const holdTarget = Math.round(targetAt(w, "hold") / 5) * 5;
-
-  if (type === "forceA") {
-    if (pi === 0) main = [
-      item("pikeBox", S(4) + " × " + R(6, 10, t), "repos 2 min", "Pieds à hauteur de hanches"),
-      item("hspu", S(4) + " × " + R(1, 3, t), "repos 2 min", "Coussin fin, tête en triangle avec les mains"),
-      item("hspuNeg", S(3) + " × 3", "descente 5 s", "Remonte en descendant les pieds, pas en poussant"),
-      item("dipsW", S(4) + " × " + R(5, 8, t), "lestés", "Charge pour finir à 2 répétitions de l'échec")
-    ];
-    else if (pi === 1) main = [
-      item("wallWalk", "2 × 1", "échauffement", "Prépare les épaules à la verticale"),
-      item("hspu", S(5) + " × " + R(3, 5, t), "repos 2 min", "Coussin fin sous la tête"),
-      item("hspuDef", S(3) + " × " + R(2, 3, t), "repos 2 min", "Déficit de 5 cm"),
-      item("dipsW", S(4) + " × 6", "lestés", "Charge à 2 répétitions de l'échec")
-    ];
-    else if (pi === 2) main = [
-      item("hspu", S(5) + " × " + R(5, 7, t), "repos 2–3 min", "Garde 1 à 2 répétitions en réserve"),
-      item("hspuDef", S(4) + " × " + R(3, 5, t), "repos 2 min", "Déficit de 5 à 8 cm"),
-      item("hspuFree", S(4) + " × 1", "tentatives", "Seulement si tu tiens 60 s en libre"),
-      item("dipsW", S(4) + " × 5", "lestés", "Lourd, technique parfaite")
-    ];
-    else if (pi === 3) main = [
-      item("hspu", S(4) + " × " + R(7, 10, t), "repos 3 min", "Dernière série : max propre si tu te sens bien"),
-      item("hspuDef", S(4) + " × " + R(5, 7, t), "repos 2 min", "Déficit de 10 cm"),
-      item("hspuFree", S(5) + " × " + R(1, 2, t), "tentatives", ""),
-      item("dipsW", S(3) + " × 5", "lestés", "")
-    ];
-    else main = w === 25 ? [
-      item("hspu", "4 × 5", "repos 3 min", "Rapide et propre, loin de l'échec"),
-      item("hspuDef", "3 × 4", "repos 2 min", "")
-    ] : [
-      item("hspu", "2 × 4", "repos 3 min", "Juste pour garder le geste avant le test")
-    ];
-  }
-
-  if (type === "balance") {
-    if (pi === 0) main = [
-      item("kickup", "10", "entrées", "Alterne les jambes d'appel"),
-      item("wallChest", S(4) + " × " + R(30, 60, t) + " s", "repos 60 s", "Arrête la série dès que l'alignement se casse"),
-      item("shoulderTap", S(3) + " × " + R(6, 12, t), "repos 60 s", "Total des deux mains"),
-      item("hsFree", "10", "tentatives", "Cible " + R(15, 25, t) + " s, sortie en roue si besoin")
-    ];
-    else if (pi === 1) main = [
-      item("kickup", "8", "entrées", "Arrive à la verticale sans toucher le mur"),
-      item("heelPull", S(5) + " × " + R(5, 15, t) + " s", "repos 45 s", ""),
-      item("hsFree", S(8), "tentatives", "Cible " + R(25, 45, t) + " s"),
-      item("wallChest", S(2) + " × 60 s", "repos 90 s", "")
-    ];
-    else if (pi === 2) main = [
-      item("kickup", "6", "entrées", ""),
-      item("hsFree", S(6), "tentatives", "Cible " + R(40, 70, t) + " s"),
-      item("heelPull", S(3) + " × 20 s", "repos 45 s", ""),
-      item("shoulderTap", S(3) + " × 20", "repos 60 s", "")
-    ];
-    else if (pi === 3) main = [
-      item("kickup", "5", "entrées", ""),
-      item("hsFree", S(5), "tentatives", "Cible " + fmtS(R(60, 105, t))),
-      item("wallChest", "1 × " + fmtS(R(90, 120, t)), "", "Endurance des épaules")
-    ];
-    else main = w === 25 ? [
-      item("hsFree", "4", "tentatives", "Cible 1 min 50"),
-      item("heelPull", "3 × 20 s", "repos 45 s", "")
-    ] : [
-      item("hsFree", "3 × 45 s", "facile", "Juste pour garder les sensations")
-    ];
-  }
-
-  if (type === "forceB") {
-    if (pi === 0) main = [
-      item("wallWalk", S(3) + " × " + R(2, 3, t), "repos 90 s", ""),
-      item("hspu", "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", "1 rép. / min", "Une répétition au début de chaque minute"),
-      item("pikeBox", S(3) + " × 10", "tempo 3-1-1", "3 s de descente, 1 s en bas, montée normale"),
-      item("shoulderTap", S(3) + " × " + R(6, 10, t), "repos 60 s", "")
-    ];
-    else if (pi === 1) main = [
-      item("hspu", "EMOM " + (dl ? 6 : R(8, 10, t)) + " min", "2 rép. / min", ""),
-      item("hspuNeg", S(3) + " × 3", "descente 8 s", ""),
-      item("shoulderTap", S(3) + " × 12", "repos 60 s", "")
-    ];
-    else if (pi === 2) main = [
-      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", "3 rép. / min", ""),
-      item("hspuNeg", S(3) + " × 3", "descente 8 s", ""),
-      item("shoulderTap", S(3) + " × 16", "repos 60 s", "")
-    ];
-    else if (pi === 3) main = [
-      item("hspu", "EMOM " + (dl ? 6 : 10) + " min", R(4, 5, t) + " rép. / min", ""),
-      item("pikeBox", S(3) + " × 12", "tempo 3-1-1", ""),
-      item("dipsW", S(3) + " × 8", "lestés", "Charge modérée")
-    ];
-    else main = w === 25 ? [
-      item("hspu", "EMOM 8 min", "3 rép. / min", "Facile, on garde de l'énergie")
-    ] : [
-      item("wallChest", "2 × 45 s", "facile", "Séance légère : 20 min maximum")
-    ];
-  }
-
-  if (type === "long") {
-    if (dl || w === 26) {
-      return { warm, main: [
-        item("kickup", "4", "entrées", "Échauffement du test"),
-        item("hsFree", "3", "essais", "Meilleure tenue en libre, 3 min de repos entre les essais"),
-        item("hspu", "1 × max", "test", "Répétitions strictes d'affilée, tête au sol et bras tendus en haut")
-      ], test: true };
-    }
-    if (pi === 0) main = [
-      item("wallChest", R(3, 5, t) + " min", "cumulées", "Découpe comme tu veux, ex. 6 × 40 s"),
-      item("hsFree", "10", "tentatives", "Note ta meilleure tenue")
-    ];
-    else if (pi === 1) main = [
-      item("hsFree", R(4, 6, t) + " min", "cumulées", "Séries de 20 à 40 s"),
-      item("wallChest", "1 × max", "", "Une seule série longue")
-    ];
-    else if (pi === 2) main = [
-      item("hsFree", R(5, 7, t) + " min", "cumulées", "Séries de " + R(30, 60, t) + " s minimum"),
-      item("wallChest", "2 × " + fmtS(R(75, 90, t)), "repos 2 min", "")
-    ];
-    else if (pi === 3) main = [
-      item("hsFree", "3 × " + fmtS(R(75, 120, t)), "repos 3 min", "Si tu tombes, remonte et complète le temps"),
-      item("wallChest", "1 × 2 min", "", "")
-    ];
-    else main = [
-      item("hsFree", "5 min", "cumulées", "Séries faciles de 45 s")
-    ];
-  }
-  return { warm, main, test: false, holdTarget };
-}
-
-/* ---------- Variantes : 3 versions de chaque séance qui tournent d'une semaine à l'autre ---------- */
-const HS_VARIANTS = {
-  forceA: [
-    { name: "Classique", desc: "Séries classiques, repos complet entre les séries." },
-    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true, swap: { bearCrawl: "plankPike" } },
-    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true, warmAdd: () => item("frog", "3 × 15 s", "", "Pour réveiller les poignets") }
-  ],
-  balance: [
-    { name: "Classique", desc: "Entrées, tenues au mur et tentatives en libre." },
-    { name: "Formes", desc: "On joue avec la forme des jambes : groupé, fente, droit. Ça apprend à corriger avec le bassin.", swap: { shoulderTap: "shapes", wallChest: "wallBack", bearCrawl: "plankPike" } },
-    { name: "Terrain de jeu", desc: "Frog stand en échauffement, et marche sur les mains dès que tu es prêt.", swap: { shoulderTap: "handWalk", heelPull: "shapes" }, warmAdd: () => item("frog", "3 × 15 s", "", "") }
-  ],
-  forceB: [
-    { name: "Classique", desc: "Répétitions faciles, beaucoup de qualité." },
-    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true, swap: { dipsW: "declinePU" } },
-    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : mains surélevées, pompes déclinées, planche → pike.", swap: { pikeBox: "pikeDef", dipsW: "dips", bearCrawl: "plankPike", shoulderTap: "shapes" } }
-  ],
-  long: [
-    { name: "Classique", desc: "Endurance en équilibre." },
-    { name: "Chrono", desc: "Chaque série doit battre la précédente. Note tes temps.", swap: { wallChest: "wallBack" }, hsNote: "Mode chrono : essaie de battre ta série précédente" },
-    { name: "Formes", desc: "Les tenues longues, plus un bloc de jeu avec les formes de jambes.", add: () => item("shapes", "3 × 3 cycles", "", "Droit → groupé → fente, 5 s chacun") }
-  ]
-};
-const HS_SLOT_ORDER = ["forceA", "balance", "forceB", "long"];
 
 const HS_DEFIS = [
   { ex: "handWalk", t: "Marche sur les mains", d: "Fais le plus de pas possible, 3 essais. Note ton record.", min: 2 },
@@ -759,94 +550,6 @@ const HS_DEFIS = [
   { ex: "pikeDef", t: "Pike échelle express", d: "1-2-3-4-5 en mains surélevées, 15 s de repos entre chaque palier.", min: 0 },
   { ex: "heelPull", t: "Combien de secondes ?", d: "Dos au mur, décolle les talons : 3 essais, garde le meilleur.", min: 1 }
 ];
-
-function buildSession(w, type) {
-  const s = PROG.base(w, type);
-  if (s.test) return s;
-  const pi = phaseIndex(w), si = SLOT_ORDER.indexOf(type);
-  const v = (DELOAD.has(w) || w >= PROG.peakFrom) ? 0 : (w - 1 + si) % 3;
-  const V = VARIANTS[type][v];
-  const swap = it => {
-    const to = V.swap && V.swap[it.ex];
-    if (!to || (EX[to].minPhase || 0) > pi) return it;
-    return Object.assign({}, it, { ex: to, note: EX[to].swapNote || it.note });
-  };
-  s.warm = s.warm.map(swap);
-  s.main = s.main.map(swap);
-  if (V.warmAdd) s.warm.push(V.warmAdd());
-  if (V.ladder) {
-    const i = s.main.findIndex(it => /^\d+ × \d+$/.test(it.dose) && +it.dose.split(" × ")[1] >= 3);
-    if (i >= 0) {
-      const [a, reps] = s.main[i].dose.split(" × ").map(Number);
-      const b = Math.min(5, reps);
-      const k = Math.max(1, Math.round(a * reps / (b * (b + 1) / 2)));
-      s.main[i] = Object.assign({}, s.main[i], { dose: "1→" + b + (k > 1 ? " × " + k : ""), unit: "échelle", note: "1 rép., 20 s de repos, 2 rép.… jusqu'à " + b + ". " + (k > 1 ? "Repos 2 min, " : "") + (k > 1 ? "puis recommence (" + k + " échelles au total)" : "une seule échelle") });
-    }
-  }
-  if (V.superset && s.main.length >= 3) {
-    const n = s.main.length;
-    s.main[n - 2] = Object.assign({}, s.main[n - 2], { unit: "superset A", note: "Enchaîne directement avec l'exercice suivant" });
-    s.main[n - 1] = Object.assign({}, s.main[n - 1], { unit: "superset B", note: "Puis 90 s de repos et on repart sur A" });
-  }
-  if (V.circuit) {
-    s.main = s.main.map(it => (it.dose.startsWith("EMOM") || it.unit === "cumulées") ? it : Object.assign({}, it, { dose: it.dose.split(" × ").pop(), unit: "circuit · " + (it.dose.includes(" × ") ? it.dose.split(" × ")[0] : 3) + " tours" }));
-  }
-  if (V.hsNote) s.main = s.main.map(it => it.ex === "hsFree" ? Object.assign({}, it, { note: V.hsNote }) : it);
-  if (V.cluster && s.main.length) {
-    const it = s.main[0], m = it.dose.match(/^(\d+) × (\d+) s$/);
-    if (m) { const hs = Math.max(2, Math.ceil(+m[2] * 0.5)); s.main[0] = Object.assign({}, it, { dose: m[1] + " × (3 × " + hs + " s)", unit: "clusters", note: "3 tenues de " + hs + " s séparées de 10 s de repos = 1 série. Repos 2–3 min entre les séries" }); }
-  }
-  if (V.add) s.main.push(V.add(w));
-  s.variant = V;
-  const inSession = new Set(s.warm.concat(s.main).map(it => it.ex));
-  const pool = DEFIS.filter(d => d.min <= pi && !inSession.has(d.ex));
-  s.defi = pool.length ? pool[(w * 5 + si * 3) % pool.length] : null;
-  return s;
-}
-
-/* ---------- Programme handstand : configuration ---------- */
-const PROGRAMS = {};
-PROGRAMS.hs = {
-  id: "hs", prefix: "caphs:", title: "Cap Handstand", duration: "6 mois",
-  weeks: 26, peakFrom: 25,
-  phases: HS_PHASES, start: HS_START, tests: HS_TEST_WEEKS, deload: HS_DELOAD, slot: HS_SLOT, meta: HS_SESSION_META,
-  variants: HS_VARIANTS, order: HS_SLOT_ORDER, defis: HS_DEFIS, base: hsBaseSession,
-  eyebrow: "Programme 26 semaines · 4 séances / semaine · 3 versions qui tournent",
-  intro: "De 20 s instables à 2 min de handstand, et de quelques HSPU placés à 10 d'affilée (12 en bonus). Calibré pour un profil déjà fort en muscu. Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
-  deloadLegend: "Semaine de décharge + test",
-  weekText: (w, P) => DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins pour récupérer, et test le samedi." :
-    w === 26 ? "Dernière semaine : séances légères, test final samedi." : P.goal + " " + P.detail,
-  restShort: "10 min de mobilité épaules et poignets",
-  restLong: "Optionnel, 10 minutes : rotations de poignets, étirement épaules contre un mur (bras tendus au-dessus de la tête), 2 × 30 s de bear crawl. Pas de handstand en force aujourd'hui.",
-  target: (w, k) => targetAt(w, k),
-  best: res => { let hold = 0, hspu = 0; Object.values(res).forEach(r => { if (+r.hold > hold) hold = +r.hold; if (+r.hspu > hspu) hspu = +r.hspu; }); return { hold, hspu }; },
-  goals: (w, best) => {
-    const hold = Math.round(targetAt(w, "hold") / 5) * 5, rep = Math.round(targetAt(w, "hspu"));
-    return [
-      { label: "Tenue visée · semaine " + w, val: hold < 60 ? hold : fmtS(hold).replace(" s", ""), unit: hold < 60 ? "s" : "", pct: hold - 20, from: "20 s", to: "2 min",
-        extra: best.hold ? "Ton record : " + fmtS(best.hold) : "Pas encore de test enregistré" },
-      { label: "HSPU d'affilée · semaine " + w, val: rep, unit: rep > 1 ? "répétitions" : "répétition", pct: (rep - 1) / 11 * 100, from: "1", to: "12",
-        extra: best.hspu ? "Ton record : " + best.hspu : "Pas encore de test enregistré" }
-    ];
-  },
-  logFields: [{ key: "hold", label: "Meilleure tenue (s)" }, { key: "hspu", label: "HSPU d'affilée" }],
-  logGoal: w => "Objectif de la semaine " + w + " : " + fmtS(Math.round(targetAt(w, "hold") / 5) * 5) + " et " + Math.round(targetAt(w, "hspu")) + " HSPU.",
-  phaseLine: p => fmtS(p.hold) + " · " + p.hspu + " HSPU",
-  chart: {
-    left: { key: "hold", max: 120, ticks: [0, 30, 60, 90, 120], fmt: v => v + " s", legend: "Tenue visée (axe gauche)" },
-    right: { key: "hspu", max: 12, ticks: [0, 3, 6, 9, 12], fmt: v => v, legend: "HSPU visés (axe droit)" },
-    xTicks: [1, 6, 12, 18, 24, 26]
-  },
-  planTitle: "6 mois en 5 phases",
-  planIntro: "Chaque phase dure 6 semaines : 5 semaines de progression puis une semaine plus légère qui se termine par un test. Les deux dernières semaines servent à arriver frais au test final.",
-  rules: [
-    ["Quand avancer plus vite", "Si tu réussis toutes les séries d'une séance avec de la marge (une ou deux répétitions en réserve), passe aux chiffres de la semaine suivante. Ne saute jamais une semaine de décharge."],
-    ["Quand ralentir", "Si tu rates la cible deux séances de suite, répète la semaine. Si un test de fin de phase est loin de l'objectif, refais les deux dernières semaines de la phase."],
-    ["Poignets et nuque", "Échauffement poignets à chaque séance, même courte. Pour les HSPU, coussin fin ou tapis plié sous la tête, et jamais de rebond sur la nuque. Douleur articulaire = arrêt de la séance."],
-    ["Pourquoi les séances changent", "Chaque séance existe en 3 versions (classique, puis deux variantes de format ou d'exercices) qui tournent d'une semaine à l'autre. La charge de travail reste la même : seuls le format et les mouvements changent. Les semaines de décharge et de test restent en version classique."],
-    ["La pratique en plus", "La tenue progresse surtout avec la fréquence. Les jours de repos actif, 5 tentatives de handstand libre en fin de mobilité suffisent, sans chercher l'échec."]
-  ]
-};
 
 /* ---------- Exercices planche (parallettes à x=108, prise à y=168) ---------- */
 Object.assign(EX, {
@@ -1006,113 +709,7 @@ EX.pullUpW = Object.assign({}, EX.pullUp, {
   cues: ["Charge à RPE 8 : 2 répétitions en réserve", "Bras complètement tendus en bas", "Pas de kipping, descente contrôlée"]
 });
 
-/* ---------- Programme planche : 52 semaines ---------- */
-const PL_POS = ["Advanced tuck", "Une jambe", "Straddle", "Half-lay", "Full planche"];
-const PL_POS_EX = ["advTuck", "oneLeg", "straddle", "halfLay", "fullPl"];
-const PL_PHASES = [
-  { name: "Advanced tuck", from: 1, to: 6, color: "--p1", pos: 0, hf: 12, ht: 20,
-    goal: "Advanced tuck propre pendant 20 s.", detail: "Tu as déjà la position et la force : 6 semaines pour la rendre solide, avec des tentatives sur une jambe dès la semaine 3." },
-  { name: "Une jambe", from: 7, to: 18, color: "--p2", pos: 1, hf: 5, ht: 12,
-    goal: "Planche une jambe 12 s de chaque côté.", detail: "Pompes en advanced tuck, dips et tractions lestés, premières tentatives de straddle." },
-  { name: "Straddle", from: 19, to: 30, color: "--p3", pos: 2, hf: 4, ht: 12,
-    goal: "Straddle planche 12 s.", detail: "La première vraie planche à l'horizontale. On entretient l'une jambe en volume." },
-  { name: "Half-lay", from: 31, to: 42, color: "--p4", pos: 3, hf: 4, ht: 10,
-    goal: "Half-lay 10 s, straddle solide.", detail: "Hanches tendues, genoux pliés : le dernier levier avant la full. Tentatives de full planche en fin de séance." },
-  { name: "Full planche", from: 43, to: 52, color: "--p5", pos: 4, hf: 2, ht: 8,
-    goal: "Full planche, 5 à 8 s.", detail: "10 semaines dans la position finale : tenues courtes et fraîches qui s'allongent, test final le vendredi de la semaine 52." }
-];
-const PL_DELOAD = new Set([6, 12, 18, 24, 30, 36, 42, 48]);
-const PL_TEST_WEEKS = new Set([6, 18, 30, 42, 52]);
-const PL_SLOT = { 0: "heavy", 2: "dyn", 4: "vol" };
-const PL_SESSION_META = {
-  heavy: { title: "Tenues lourdes", sub: "La position la plus dure du moment, séries courtes et fraîches", min: 50 },
-  dyn: { title: "Force dynamique", sub: "Pompes en planche et tirage", min: 50 },
-  vol: { title: "Volume", sub: "Beaucoup de secondes dans les positions plus faciles", min: 45 }
-};
-function plHold(w) { const p = PL_PHASES[phaseIndex(w)]; return R(p.hf, p.ht, rampT(w)); }
 
-function plBaseSession(w, type) {
-  const pi = phaseIndex(w), t = rampT(w), dl = DELOAD.has(w), P = PL_PHASES[pi];
-  const S = n => dl ? Math.max(2, Math.round(n * 0.6)) : n;
-  const tp = PL_POS_EX[P.pos], prev = P.pos ? PL_POS_EX[P.pos - 1] : "tuckPl", next = PL_POS_EX[Math.min(4, P.pos + 1)];
-  const hold = plHold(w), side = P.pos === 1 ? " par jambe" : "";
-  const warm = [
-    item("wrists", "3 min", "", "Poignets en extension, doigts vers l'arrière"),
-    item("scapPU", S(2) + " × 10", "", "Épaules prêtes pour la protraction"),
-    item("lean", "2 × 15 s", "léger", "Lean modéré, juste pour chauffer")
-  ];
-  if (TEST_WEEKS.has(w) && type === "vol") {
-    return { warm: warm.concat([item("tuckPl", "2 × 5 s", "", "Échauffement spécifique")]), main: [
-      item(tp, "3", "essais", "Meilleure tenue propre dans la position de la phase, 3 min de repos entre les essais"),
-      P.pos < 4 ? item(next, "2", "essais", "Pour voir où tu en es dans la position suivante") : null
-    ].filter(Boolean), test: true };
-  }
-  let main = [];
-  if (type === "heavy") {
-    main = [
-      item(tp, S(5) + " × " + Math.max(2, hold - 2) + " s", "repos 2–3 min", "Arrête la série dès que la forme se casse" + (side ? ". Alterne les jambes" : "")),
-      item("lean", S(3) + " × " + R(25, 40, t) + " s", "repos 90 s", "Lean profond, doigts vers l'extérieur"),
-      item("pullUp", S(3) + " × " + R(6, 10, t), "repos 2 min", "Équilibre tirage / poussée"),
-      item("lsit", S(3) + " × " + R(10, 20, t) + " s", "repos 60 s", "")
-    ];
-    if ((pi === 0 && w >= 3) || (pi > 0 && pi < 4)) main.splice(1, 0, item(next, "5 × 1–3 s", "tentatives", "Juste toucher la position, en fin de partie lourde"));
-    if (pi === 4) main = w >= 51 ? [
-      item("fullPl", w === 52 ? "3 × 2 s" : "4 × " + Math.max(2, hold - 3) + " s", "repos 3 min", "Très frais, loin de l'échec"),
-      item("halfLay", "2 × 4 s", "repos 2 min", "")
-    ] : [
-      item("fullPl", S(6) + " × " + Math.max(2, hold - 1) + " s", "repos 3 min", "Tenues courtes et parfaites, 3 min de repos"),
-      item("halfLay", S(3) + " × " + R(6, 10, t) + " s", "repos 2–3 min", "Entretien du levier précédent"),
-      item("lean", S(3) + " × 30 s", "repos 90 s", "Lean maximal"),
-      item("pullUp", "3 × 8", "repos 2 min", "")
-    ];
-  }
-  if (type === "dyn") {
-    if (pi === 0) main = [
-      item("atPU", S(4) + " × " + R(3, 5, t), "repos 2–3 min", "Répétitions complètes, dos plat en bas"),
-      item("pppu", S(4) + " × " + R(8, 12, t), "repos 2 min", "Lean maintenu en bas, pieds surélevés si trop facile"),
-      item("dipsW", S(4) + " × " + R(5, 8, t), "lestés", "Charge à 2 répétitions de l'échec"),
-      item("pullUpW", S(4) + " × 5", "lestés", "RPE 8"),
-      item("legRaise", S(3) + " × " + R(8, 12, t), "repos 60 s", "")
-    ];
-    else main = [
-      item("atPU", S(4) + " × " + R(5, 8, t), "repos 2–3 min", pi >= 2 ? "Jambes en une jambe sur la dernière série si possible" : "Dos plat en bas"),
-      item("pppu", S(4) + " × " + R(10, 12, t), "repos 2 min", "Plus de lean que le mois dernier"),
-      item("dipsW", S(4) + " × " + R(4, 6, t), "lestés", "Lourd, buste penché"),
-      item("pullUpW", S(4) + " × " + R(3, 5, t), "lestés", "RPE 8"),
-      item("legRaise", S(3) + " × " + R(10, 12, t), "repos 60 s", "")
-    ];
-    if (w >= 51) main = main.slice(0, 2).map(it => Object.assign({}, it, { dose: "3 × " + it.dose.split(" × ")[1] }));
-  }
-  if (type === "vol") {
-    main = [
-      item(prev, R(40, 60, t) + " s", "cumulées", "Position plus facile, séries de 5 à 10 s"),
-      item(tp, "EMOM " + (dl ? 5 : R(6, 10, t)) + " min", Math.max(2, Math.round(hold / 2)) + " s / min" + side, "Une tenue courte au début de chaque minute"),
-      item("lean", S(3) + " × " + R(15, 25, t) + " s", "sur parallettes", "Pieds au sol, mains sur les parallettes"),
-      item("pullUp", S(3) + " × " + R(5, 8, t), "tempo 3-1-1", "3 s de descente"),
-      item("bearCrawl", "2 × 40 s", "", "Finisher")
-    ];
-    if (w >= 51) main = main.slice(0, 3);
-  }
-  return { warm, main, test: false };
-}
-
-const PL_VARIANTS = {
-  heavy: [
-    { name: "Classique", desc: "Tenues complètes, repos long." },
-    { name: "Clusters", desc: "Chaque série devient 3 tenues plus courtes séparées de 10 s : plus de secondes de qualité.", cluster: true },
-    { name: "Contraste", desc: "Après le bloc lourd, une tenue max dans la position plus facile pour finir les épaules.", add: w => { const P = PL_PHASES[phaseIndex(w)]; return item(P.pos ? PL_POS_EX[P.pos - 1] : "tuckPl", "1 × max", "contraste", "Tenue max propre dans la position plus facile"); }, swap: { pullUp: "legRaise" } }
-  ],
-  dyn: [
-    { name: "Classique", desc: "Séries classiques, repos complet." },
-    { name: "Échelle", desc: "Le premier exercice se fait en échelle : 1 rép., 2 rép., 3 rép.… Même volume, autre rythme.", ladder: true },
-    { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true }
-  ],
-  vol: [
-    { name: "Classique", desc: "Volume dans les positions faciles, EMOM dans la position de la phase." },
-    { name: "Circuit", desc: "Les accessoires s'enchaînent en circuit : un exercice après l'autre, 2 min de repos entre les tours.", circuit: true },
-    { name: "Variantes", desc: "Mêmes muscles, autres mouvements : pompes pseudo planche, relevés de jambes, planche → pike.", swap: { lean: "pppu", pullUp: "legRaise", bearCrawl: "plankPike" } }
-  ]
-};
 const PL_DEFIS = [
   { ex: "frog", t: "Frog stand chrono", d: "Tiens le plus longtemps possible, 2 essais.", min: 0 },
   { ex: "lsit", t: "L-sit chrono", d: "Une seule tenue max, jambes tendues.", min: 0 },
@@ -1127,77 +724,8 @@ const PL_DEFIS = [
   { ex: "legRaise", t: "Relevés jusqu'à la barre", d: "Jambes tendues jusqu'à toucher la barre : combien d'affilée ?", min: 2 }
 ];
 
-PROGRAMS.pl = {
-  id: "pl", prefix: "cappl:", title: "Cap Planche", duration: "12 mois",
-  weeks: 52, peakFrom: 51,
-  phases: PL_PHASES, start: {}, tests: PL_TEST_WEEKS, deload: PL_DELOAD, slot: PL_SLOT, meta: PL_SESSION_META,
-  variants: PL_VARIANTS, order: ["heavy", "dyn", "vol"], defis: PL_DEFIS, base: plBaseSession,
-  eyebrow: "Programme 52 semaines · 3 séances / semaine · parallettes + barre",
-  intro: "De l'advanced tuck à une full planche de 5 à 8 s, étape par étape : une jambe, straddle, half-lay. Calibré pour un profil déjà fort (dips et tractions lestés). Choisis une semaine, puis un jour pour voir la séance et les mouvements.",
-  deloadLegend: "Semaine de décharge (test en fin de phase)",
-  weekText: (w, P) => TEST_WEEKS.has(w) ? (w === 52 ? "Dernière semaine : séances légères, test final vendredi." : "Semaine de décharge : environ 40 % de volume en moins, et test de fin de phase le vendredi.") :
-    DELOAD.has(w) ? "Semaine de décharge : environ 40 % de volume en moins. Les tendons du coude et du biceps en ont besoin." : P.goal + " " + P.detail,
-  restShort: "Mobilité poignets et épaules, 10 min",
-  restLong: "Optionnel, 10 minutes : poignets en extension, étirement des épaules, 2 × 30 s de bear crawl. La planche sollicite beaucoup les tendons du biceps : un jour de repos entre deux séances, c'est obligatoire.",
-  target: (w, k) => {
-    if (w <= 0) return k === "pos" ? 0 : 12;
-    const pi = phaseIndex(w), P = PL_PHASES[pi];
-    return k === "pos" ? P.pos : R(P.hf, P.ht, rampT(w));
-  },
-  best: res => {
-    let pos = -1, hold = 0;
-    Object.values(res).forEach(r => { const p = +r.pos, hd = +r.hold || 0; if (!hd) return; if (p > pos || (p === pos && hd > hold)) { pos = p; hold = hd; } });
-    return { pos, hold };
-  },
-  goals: (w, best) => {
-    const P = PL_PHASES[phaseIndex(w)], hold = plHold(w);
-    const rec = best.pos >= 0 ? "Ton record : " + PL_POS[best.pos].toLowerCase() + ", " + best.hold + " s" : "Pas encore de test enregistré";
-    return [
-      { label: "Position visée · semaine " + w, val: PL_POS[P.pos], unit: "", pct: P.pos / 4 * 100 + 4, from: "Advanced tuck", to: "Full planche", extra: rec },
-      { label: "Tenue visée dans cette position", val: hold, unit: "s" + (P.pos === 1 ? " par jambe" : ""), pct: hold / P.ht * 100, from: "0 s", to: P.ht + " s en fin de phase", extra: "Phase " + (phaseIndex(w) + 1) + " · " + P.name }
-    ];
-  },
-  logFields: [{ key: "pos", label: "Position", options: PL_POS, def: 0 }, { key: "hold", label: "Meilleure tenue (s)" }],
-  logGoal: w => { const P = PL_PHASES[phaseIndex(w)]; return "Objectif de la semaine " + w + " : " + PL_POS[P.pos].toLowerCase() + " pendant " + plHold(w) + " s."; },
-  phaseLine: p => PL_POS[p.pos] + " · " + p.ht + " s",
-  chart: {
-    left: { key: "hold", max: 20, ticks: [0, 5, 10, 15, 20], fmt: v => v + " s", legend: "Tenue visée dans la position (axe gauche)" },
-    right: { key: "pos", needs: "hold", max: 4, ticks: [0, 1, 2, 3, 4], fmt: v => PL_POS[v], legend: "Position visée (axe droit)" },
-    xTicks: [1, 12, 24, 36, 48, 52]
-  },
-  planTitle: "12 mois en 5 positions",
-  planIntro: "Chaque phase vise une position plus dure. Toutes les 6 semaines, une semaine plus légère protège les tendons, et chaque fin de phase se termine par un test le vendredi. La tenue visée redescend à chaque nouvelle position : c'est normal.",
-  rules: [
-    ["Ta force n'est pas le frein", "Avec ton niveau en muscu, ce qui limite la planche, ce sont les tendons (coude, biceps, poignets) et la position bras tendus, pas les muscles. Résiste à l'envie d'ajouter du volume de planche : la progression est déjà rapide pour des tendons."],
-    ["Quand passer à la position suivante", "Si tu tiens la position de la phase 2 secondes au-dessus de l'objectif, avec un dos propre, tu peux commencer la phase suivante plus tôt. Une tenue moche ne compte pas."],
-    ["Quand ralentir", "Si la tenue stagne trois séances de suite, répète la semaine. Si le test de fin de phase est loin de l'objectif, refais les 4 dernières semaines de la phase. Rester plus longtemps sur une position, c'est normal."],
-    ["Coudes et biceps", "La planche charge beaucoup le tendon du biceps. Bras toujours verrouillés, jamais deux séances planche à la suite, et arrêt immédiat si le coude ou l'avant du bras fait mal."],
-    ["Avec le programme handstand", "Les deux programmes en même temps, c'est trop de poussée. Le plus simple : enchaîner la planche après les 6 mois de handstand, ou garder seulement les séances Équilibre du handstand en parallèle."],
-    ["Pourquoi les séances changent", "Chaque séance existe en 3 versions qui tournent d'une semaine à l'autre : classique, puis deux variantes de format ou d'exercices. La charge reste la même. Les semaines de décharge et de test restent en version classique."]
-  ]
-};
-
-/* ---------- État local (confort par navigateur) ---------- */
-const store = {
-  get(k, d) { try { const v = localStorage.getItem((PROG ? PROG.prefix : "cap:") + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem((PROG ? PROG.prefix : "cap:") + k, JSON.stringify(v)); } catch (e) {} }
-};
 function mondayOf(d) { const x = new Date(d); x.setHours(12, 0, 0, 0); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; }
 function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
-
-const state = { tab: "week", start: null, done: {}, results: {}, week: 1, day: 0 };
-function currentWeek() {
-  const s = new Date(state.start + "T12:00:00"), now = new Date(); now.setHours(12, 0, 0, 0);
-  const diff = Math.floor((now - s) / 86400000);
-  return { week: Math.floor(diff / 7) + 1, day: ((diff % 7) + 7) % 7 };
-}
-function initPosition() {
-  const c = currentWeek();
-  state.week = Math.min(NW, Math.max(1, c.week));
-  state.day = c.week >= 1 && c.week <= NW ? c.day : 0;
-}
-function dateOf(w, d) { const s = new Date(state.start + "T12:00:00"); s.setDate(s.getDate() + (w - 1) * 7 + d); return s; }
-const fmtDate = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 
 /* ---------- Figures animées ---------- */
 const NS = "http://www.w3.org/2000/svg";
@@ -1211,6 +739,7 @@ function makeFigure(id, cls) {
   const hasBars = ex.props.some(p => p.bars || p.pullbar);
   if (!hasBars) el("line", { x1: 8, y1: 190, x2: 232, y2: 190, class: "pr" }, svg);
   else el("line", { x1: 8, y1: 194, x2: 232, y2: 194, class: "pr", "stroke-dasharray": "4 5" }, svg);
+  if (ex.tag) { const tx = el("text", { x: 12, y: 20, "font-size": 12, fill: "var(--muted)", "font-family": "var(--font-body)" }, svg); tx.textContent = "↕ " + ex.tag; }
   ex.props.forEach(p => {
     if (p.wall) el("line", { x1: p.wall, y1: 6, x2: p.wall, y2: 190, class: "pr" }, svg);
     if (p.box) el("rect", { x: p.box[0], y: p.box[1], width: p.box[2], height: p.box[3], rx: 2, class: "prf" }, svg);
@@ -1266,8 +795,6 @@ function tick(now) {
 }
 if (!reduceMotion) requestAnimationFrame(tick);
 
-/* ---------- Rendu ---------- */
-const $ = s => document.querySelector(s);
 function h(tag, attrs, ...kids) {
   const n = document.createElement(tag);
   if (attrs) for (const k in attrs) {
@@ -1276,216 +803,8 @@ function h(tag, attrs, ...kids) {
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]);
     else if (attrs[k] !== false && attrs[k] != null) n.setAttribute(k, attrs[k]);
   }
-  kids.flat().forEach(c => { if (c == null || c === false) return; n.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(String(c)) : c); });
+  kids.flat(Infinity).forEach(c => { if (c == null || c === false) return; n.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(String(c)) : c); });
   return n;
-}
-const pc = i => "--pc: var(" + PHASES[i].color + ")";
-
-function renderGoals() {
-  const w = state.week;
-  const g = (o) => h("div", { class: "goal" },
-    h("div", { class: "goal-top" },
-      h("span", { class: "label" }, o.label),
-      h("span", { class: "muted", style: "font-size:13px" }, o.extra)),
-    h("div", { class: "goal-big" }, o.val, " ", h("small", null, o.unit)),
-    h("div", { class: "track" }, h("i", { style: "width:" + Math.max(3, Math.min(100, o.pct)) + "%" })),
-    h("div", { class: "track-scale" }, h("span", null, o.from), h("span", null, o.to)));
-  $("#goals").replaceChildren(...PROG.goals(w, PROG.best(state.results)).map(g));
-}
-
-function render() {
-  figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
-  document.querySelectorAll(".prog-switch button").forEach(b => b.setAttribute("aria-selected", b.dataset.prog === PROG.id));
-  $("#eyebrow").textContent = PROG.eyebrow;
-  $("#prog-title").textContent = PROG.title;
-  $("#prog-intro").textContent = PROG.intro;
-  $("#plan-tab").textContent = "Progression";
-  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === state.tab));
-  renderGoals();
-  const v = $("#view");
-  if (state.tab === "week") v.replaceChildren(renderWeek());
-  if (state.tab === "plan") v.replaceChildren(renderPlan());
-  if (state.tab === "lib") v.replaceChildren(renderLib());
-  if (state.tab === "skills") v.replaceChildren(renderSkills());
-}
-
-function renderTimeline() {
-  const now = currentWeek().week;
-  const weeks = h("div", { class: "weeks", role: "group", "aria-label": "Semaines du programme" });
-  for (let w = 1; w <= NW; w++) {
-    const pi = phaseIndex(w);
-    weeks.appendChild(h("button", {
-      class: "wk" + (DELOAD.has(w) ? " deload" : "") + (w === state.week ? " sel" : "") + (w === now ? " now" : ""),
-      style: pc(pi), title: "Semaine " + w + " · " + PHASES[pi].name + (DELOAD.has(w) ? " · décharge" : "") + (TEST_WEEKS.has(w) ? " + test" : ""),
-      "aria-pressed": w === state.week,
-      onclick: () => { state.week = w; state.day = 0; render(); }
-    }, w));
-  }
-  return h("div", { class: "timeline" }, weeks,
-    h("div", { class: "legend" },
-      PHASES.map((p, i) => h("span", { style: pc(i) }, h("i"), p.name)),
-      h("span", null, h("i", { class: "stripe" }), PROG.deloadLegend),
-      h("span", null, "● semaine en cours")));
-}
-
-function renderWeek() {
-  const w = state.week, pi = phaseIndex(w), P = PHASES[pi];
-  const head = h("div", { class: "week-head" },
-    h("div", { class: "info" },
-      h("div", null, h("span", { class: "pill", style: pc(pi) }, h("i"), (PROG.id === "cu" ? "" : "Phase " + (pi + 1) + " · ") + P.name)),
-      h("h2", null, "Semaine " + w + " · " + fmtDate(dateOf(w, 0)) + " – " + fmtDate(dateOf(w, 6))),
-      h("p", { class: "muted" }, PROG.weekText(w, P))),
-    h("div", { class: "nav" },
-      h("button", { disabled: w === 1, onclick: () => { state.week--; state.day = 0; render(); } }, "← Semaine " + (w - 1 || "")),
-      h("button", { disabled: w === NW, onclick: () => { state.week++; state.day = 0; render(); } }, "Semaine " + (w + 1 <= NW ? w + 1 : "") + " →")));
-
-  const days = h("div", { class: "days" });
-  DAYS.forEach((name, d) => {
-    const type = SLOT[d];
-    const key = w + "-" + d;
-    const isDone = !!state.done[key];
-    if (!type) {
-      days.appendChild(h("button", { class: "day rest" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); } },
-        h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)))),
-        h("div", { class: "t muted" }, d === 6 ? "Repos complet" : "Repos actif"),
-        h("div", { class: "s" }, d === 6 ? "Rien. La force se construit pendant la récup." : PROG.restShort)));
-      return;
-    }
-    const m = SESSION_META[type], sess = buildSession(w, type);
-    const mains = sess.main.map(it => it.title ? it.title.split(" · ")[0] : EX[it.ex].name).filter((x, i, a) => a.indexOf(x) === i);
-    days.appendChild(h("button", { class: "day" + (state.day === d ? " sel" : ""), onclick: () => { state.day = d; render(); }, "aria-label": name + " : " + m.title },
-      h("div", { class: "d" }, h("b", null, name.slice(0, 3)), h("span", { class: "check" + (isDone ? " on" : "") }, isDone ? "✓" : "")),
-      h("span", { class: "muted", style: "font-size:12px" }, fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
-      sess.test ? h("span", { class: "tag-test" }, "Test") : sess.variant && sess.variant.name !== "Classique" ? h("span", { class: "tag-var" }, sess.variant.name) : null,
-      h("div", { class: "t" }, m.title),
-      h("div", { class: "s" }, mains.slice(0, 3).join(" · "))));
-  });
-  return h("div", { style: "display:grid;gap:22px" }, PROG.id === "cu" ? renderCuSettings() : null, renderTimeline(), head, days, renderSession(w, state.day));
-}
-
-function exRow(it) {
-  const ex = EX[it.ex];
-  return h("div", { class: "ex-row" },
-    makeFigure(it.ex),
-    h("div", { class: "txt" },
-      h("div", { class: "name" }, it.title || ex.name),
-      it.note ? h("div", { class: "note" }, it.note) : h("div", { class: "note" }, ex.short),
-      h("ul", { class: "cues" }, ex.cues.slice(0, 2).map(c => h("li", null, c))),
-      it.validate && levels[it.validate] < TREE[it.validate].steps.length ? h("button", { class: "validate-btn", onclick: () => { setLevel(it.validate, levels[it.validate] + 1, "valid"); render(); } }, "✓ Standard réussi : valider ce palier") : null),
-    h("div", { class: "dose" }, h("b", null, it.dose), it.unit ? h("span", null, it.unit) : null));
-}
-
-function renderSession(w, d) {
-  const type = SLOT[d];
-  if (!type) {
-    return h("section", { class: "session" },
-      h("div", { class: "rest-card" },
-        h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d))),
-        h("h3", null, d === 6 ? "Repos complet" : "Repos actif"),
-        h("p", { class: "muted", style: "max-width:62ch" }, d === 6
-          ? "Aucune séance. Dors bien, mange assez de protéines. Les épaules et les poignets récupèrent plus lentement que les muscles."
-          : PROG.restLong),
-        h("div", { class: "blocks" }, exRow(item("wrists", "3 min", "", "")))));
-  }
-  const m = SESSION_META[type], sess = buildSession(w, type), key = w + "-" + d, isDone = !!state.done[key];
-  const box = h("section", { class: "session" },
-    h("div", { class: "session-head" },
-      h("div", { class: "info" },
-        h("span", { class: "label" }, DAYS[d] + " · " + fmtDate(dateOf(w, d)) + " · ~" + m.min + " min"),
-        h("h3", null, sess.test ? (sess.cu ? m.title + " · test des paliers" : w === NW ? "Test final" : "Test de fin de phase") : m.title),
-        h("p", { class: "muted" }, sess.test ? (sess.cu ? "Bien échauffé et frais. Tente le standard de chaque palier, et valide ceux que tu réussis." : "Bien échauffé, frais, sans fatigue de la veille. Note tes résultats en bas.") : m.sub),
-        sess.variant ? h("p", null, h("span", { class: "tag-var" }, "Version " + sess.variant.name), " ", h("span", { class: "muted", style: "font-size:14px" }, sess.variant.desc)) : null),
-      h("div", { class: "session-btns" },
-        h("button", { class: "play-btn", onclick: () => startPlayer(w, d) }, "▶ Lancer la séance guidée"),
-        h("button", { class: "done-btn" + (isDone ? " on" : ""), onclick: () => {
-          if (state.done[key]) delete state.done[key]; else state.done[key] = true;
-          store.set("done", state.done); render();
-        } }, isDone ? "✓ Séance faite" : "Marquer comme faite"))),
-    h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Échauffement"), sess.warm.map(exRow)),
-    h("div", { class: "blocks" }, h("span", { class: "label block-title" }, "Corps de séance"), sess.main.map(exRow)));
-  if (sess.defi) {
-    box.appendChild(h("div", { class: "blocks defi" },
-      h("span", { class: "label block-title" }, "Défi bonus · facultatif, 5 min"),
-      exRow({ ex: sess.defi.ex, dose: "Bonus", unit: "si tu as encore de l'énergie", note: sess.defi.d, title: sess.defi.t })));
-  }
-
-  if (sess.test && PROG.logFields.length) {
-    const r = state.results[w] || {};
-    const save = () => { const o = {}; PROG.logFields.forEach(f => { o[f.key] = $("#res-" + f.key).value; }); state.results[w] = o; store.set("results", state.results); renderGoals(); };
-    box.appendChild(h("div", { class: "log" },
-      PROG.logFields.map(f => h("label", { for: "res-" + f.key }, f.label,
-        f.options
-          ? h("select", { id: "res-" + f.key, onchange: save }, f.options.map((o, i) => h("option", { value: i, selected: String(r[f.key] ?? f.def) === String(i) }, o)))
-          : h("input", { id: "res-" + f.key, type: "number", min: 0, inputmode: "numeric", value: r[f.key] || "", oninput: save }))),
-      h("p", { class: "muted", style: "font-size:13px;max-width:44ch" }, PROG.logGoal(w) + " Tes résultats apparaissent dans l'onglet Progression.")));
-  }
-  return box;
-}
-
-function renderChart() {
-  const C = PROG.chart, W = 640, H = 250, L = 64, Rt = 84, T = 16, B = 34;
-  const x = w => L + w / NW * (W - L - Rt);
-  const yL = v => T + (1 - v / C.left.max) * (H - T - B);
-  const yR = v => T + (1 - v / C.right.max) * (H - T - B);
-  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Courbes d'objectifs sur " + NW + " semaines" });
-  PHASES.forEach(p => el("rect", { x: x(p.from - 1), y: T, width: x(p.to) - x(p.from - 1), height: H - T - B, fill: "var(" + p.color + ")", opacity: .09 }, svg));
-  C.left.ticks.forEach(v => {
-    el("line", { x1: L, x2: W - Rt, y1: yL(v), y2: yL(v), stroke: "var(--line)" }, svg);
-    const t = el("text", { x: L - 8, y: yL(v) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = C.left.fmt(v);
-  });
-  C.right.ticks.forEach(v => { const t = el("text", { x: W - Rt + 8, y: yR(v) + 4, "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = C.right.fmt(v); });
-  C.xTicks.forEach(w => { const t = el("text", { x: x(w), y: H - B + 18, "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }, svg); t.textContent = "S" + w; });
-  let dL = "", dR = "";
-  for (let w = 0; w <= NW; w++) { dL += (w ? "L" : "M") + x(w) + " " + yL(PROG.target(w, C.left.key)); dR += (w ? "L" : "M") + x(w) + " " + yR(PROG.target(w, C.right.key)); }
-  el("path", { d: dL, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, svg);
-  el("path", { d: dR, fill: "none", stroke: "var(--p3)", "stroke-width": 2.5, "stroke-dasharray": "6 4" }, svg);
-  Object.entries(state.results).forEach(([w, r]) => {
-    if (r[C.left.key] !== "" && r[C.left.key] != null && +r[C.left.key] >= 0 && !(C.left.key === "hold" && !+r.hold)) el("circle", { cx: x(+w), cy: yL(Math.min(C.left.max * 1.05, +r[C.left.key])), r: 5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
-    if ((!C.right.needs || +r[C.right.needs]) && r[C.right.key] !== "" && r[C.right.key] != null && +r[C.right.key] >= 0 && !(C.right.key === "hspu" && !+r.hspu)) el("rect", { x: x(+w) - 5, y: yR(Math.min(C.right.max * 1.05, +r[C.right.key])) - 5, width: 10, height: 10, fill: "var(--p3)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
-  });
-  return svg;
-}
-
-function renderPlan() {
-  const phases = h("div", { class: "phases" }, PHASES.map((p, i) => h("div", { class: "phase", style: pc(i) },
-    h("span", { class: "label" }, "Semaines " + p.from + "–" + p.to),
-    h("h3", null, p.name),
-    h("p", { style: "font-weight:600" }, p.goal),
-    h("p", { class: "muted", style: "font-size:14px" }, p.detail),
-    h("p", { class: "num", style: "font-size:20px;margin-top:4px" }, PROG.phaseLine(p)))));
-  const chart = PROG.renderPlan ? null : h("div", { class: "chart-box" },
-    h("div", { class: "goal-top" },
-      h("h3", null, "Objectifs semaine par semaine"),
-      h("div", { class: "legend" },
-        h("span", { style: "--pc: var(--accent)" }, h("i"), PROG.chart.left.legend),
-        h("span", { style: "--pc: var(--p3)" }, h("i"), PROG.chart.right.legend),
-        h("span", null, "● ■ tes tests"))),
-    h("div", { class: "chart-scroll" }, renderChart()));
-  const rule = (t, p) => h("div", { class: "card" }, h("h3", null, t), h("p", { class: "muted" }, p));
-  const rules = h("div", { class: "rules" }, PROG.rules.map(r => rule(r[0], r[1])));
-  return h("div", { style: "display:grid;gap:22px" },
-    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, PROG.planTitle),
-      h("p", { class: "muted" }, PROG.planIntro)),
-    phases, PROG.renderPlan ? PROG.renderPlan() : chart, rules);
-}
-
-function renderLib() {
-  const used = {};
-  const tag = (id, label) => (used[id] = used[id] || new Set()).add(label);
-  if (PROG.id === "cu") { TREES.forEach(t => t.steps.forEach(s => tag(s.ex, t.name))); Object.keys(EX).forEach(id => { if (!used[id]) tag(id, "Accessoire"); }); }
-  else for (let w = 1; w <= NW; w++) Object.values(SLOT).forEach(t => { const s = buildSession(w, t); s.warm.concat(s.main, s.defi ? [s.defi] : []).forEach(it => tag(it.ex, PHASES[phaseIndex(w)].name)); });
-  return h("div", { style: "display:grid;gap:18px" },
-    h("div", { style: "display:grid;gap:6px;max-width:66ch" }, h("h2", null, PROG.id === "cu" ? "Les " + Object.keys(used).length + " exercices" : "Les " + Object.keys(used).length + " exercices du programme"),
-      h("p", { class: "muted" }, "Chaque animation montre le mouvement de profil. Le trait clair, c'est le bras ou la jambe du côté opposé.")),
-    h("div", { class: "lib" }, Object.keys(EX).filter(id => used[id]).map(id => {
-      const ex = EX[id];
-      return h("article", { class: "card" },
-        makeFigure(id),
-        h("h3", null, ex.name),
-        h("p", { class: "muted", style: "font-size:14px" }, ex.desc),
-        h("ul", null, ex.cues.map(c => h("li", null, c))),
-        h("div", { class: "chips" }, [...(used[id] || [])].map(l => h("span", { class: "chip" }, l))));
-    })));
 }
 
 /* ---------- Leviers : générateur de poses (planche, front lever, back lever) ---------- */
@@ -1509,7 +828,7 @@ function leverPose(kind, mode) {
 function breathe(P, c) { const B = JSON.parse(JSON.stringify(P)); B.p[1] += c; B.f[1] += 2 * c; if (B.f2) B.f2[1] += 2 * c; B.s[0] -= 1; return B; }
 function leverEx(kind, mode, name, short, desc, cues) {
   const P = leverPose(kind, mode);
-  return { name, short, desc, cues, props: mode === "pl" ? [{ para: [108, 168] }] : [{ pullbar: 50 }], poses: [P, breathe(P, mode === "fl" ? -1 : 1)], seq: [[0, .8, 1], [1, .8, 1]] };
+  return { name, short, desc, cues, tag: mode === "fl" ? "dos vers le sol" : "ventre vers le sol", props: mode === "pl" ? [{ para: [108, 168] }] : [{ pullbar: 50 }], poses: [P, breathe(P, mode === "fl" ? -1 : 1)], seq: [[0, .8, 1], [1, .8, 1]] };
 }
 const FL_CUES = ["Bras tendus, omoplates tirées vers le bas", "Bassin aligné avec les épaules", "Tire la barre vers tes hanches"];
 const BL_CUES = ["Bras tendus derrière, biceps protégés par un échauffement long", "Corps aligné, fesses serrées", "Entre et sors toujours en contrôle"];
@@ -1677,6 +996,7 @@ Object.assign(EX, {
 EX.diamond = Object.assign({}, EX.pushUp, { name: "Pompes diamant", short: "Mains serrées", desc: "Pompes avec les mains rapprochées sous la poitrine, index et pouces qui se touchent. Plus de triceps et d'épaule avant.", cues: ["Mains en losange sous le sternum", "Coudes serrés le long du corps", "Corps gainé"] });
 delete EX.diamond.vb;
 
+
 /* ---------- Arbres de compétences ---------- */
 // k : "h" tenue (s) ou "r" répétitions ; n séries × v ; wt : % du poids de corps en lest ; side : par côté
 const TREES = [
@@ -1772,7 +1092,7 @@ const gstore = {
 // Point de départ estimé d'après ton profil (handstand 20 s, HSPU placés, advanced tuck, +50 kg en traction, 100 kg au développé couché)
 const LEVEL_DEFAULT = { hs: 3, hspu: 3, planche: 2, fl: 1, bl: 0, mu: 2, pull: 4, push: 4, core: 1, legs: 2 };
 const levels = Object.assign({}, LEVEL_DEFAULT, gstore.get("levels", {}));
-const settings = Object.assign({ focus: ["hs", "planche", "fl"], days: 4, bw: 65 }, gstore.get("settings", {}));
+const settings = Object.assign({ focus: ["hs", "planche", "fl"], days: 4, bw: 65, adj: 0, onboarded: false, start: null }, gstore.get("settings", {}));
 let journal = gstore.get("journal", []);
 function stepOf(id) { const t = TREE[id]; return t.steps[Math.min(levels[id], t.steps.length - 1)]; }
 function setLevel(id, lv, why) {
@@ -1780,8 +1100,8 @@ function setLevel(id, lv, why) {
   levels[id] = Math.max(0, Math.min(t.steps.length, lv));
   gstore.set("levels", levels);
   if (why === "valid" && levels[id] > old) { journal.unshift({ d: iso(new Date()), tree: id, step: old }); journal = journal.slice(0, 80); gstore.set("journal", journal); }
-  if (PROG && PROG.id === "cu") setProgram("cu");
 }
+
 
 /* ---------- Programme sur mesure : cycle de 12 semaines ---------- */
 const CU_PHASES = [
@@ -1806,7 +1126,7 @@ function rxItem(treeId, w, opts) {
   const wi = (w - 1) % 4, blk = Math.floor((w - 1) / 4), tt = Math.min(1, wi / 2);
   const side = st.side ? " par côté" : "";
   const kg = st.wt ? " +" + Math.round(settings.bw * st.wt / 100) + " kg" : "";
-  const it = { ex: st.ex, title: (opts.prefix || "") + t.name + " · " + st.t, tree: treeId };
+  const it = { ex: st.ex, title: (opts.prefix || "") + t.name + " · " + st.t, tree: treeId, eyebrow: (opts.prefix || "") + t.name + " · palier " + (Math.min(lv, t.steps.length - 1) + 1) + "/" + t.steps.length, name: EX[st.ex].name + (st.assisted ? " assisté" : ""), lk: treeId + ":" + Math.min(lv, t.steps.length - 1) };
   if (wi === 3) {
     if (opts.test !== false && !done) {
       return Object.assign(it, { dose: stdText(st).replace(" à +" + st.wt + " % du poids", ""), unit: "test" + kg, note: "Tente le standard après un bon échauffement. Réussi : valide le palier.", validate: treeId });
@@ -1817,7 +1137,7 @@ function rxItem(treeId, w, opts) {
   const frac = [[.5, .65], [.7, .85], [.85, 1]][blk];
   const scale = opts.light ? .6 : 1;
   const n = Math.max(2, Math.round((st.n + 2 - blk) * scale));
-  const v = Math.max(st.k === "h" ? 3 : 1, Math.round(st.v * (frac[0] + (frac[1] - frac[0]) * tt)));
+  const v = Math.max(st.k === "h" ? 3 : 1, Math.round(st.v * Math.min(1.1, (frac[0] + (frac[1] - frac[0]) * tt) * (1 + (settings.adj || 0)))));
   const rest = t.straight || t.cat === "balance" ? "repos 2–3 min" : st.k === "h" ? "repos 90 s" : t.skill ? "repos 2–3 min" : "repos 2 min";
   return Object.assign(it, { dose: n + " × " + v + (st.k === "h" ? " s" : ""), unit: rest + side + kg,
     note: done ? "Dernier palier validé : on entretient et on allonge" : "Standard pour valider : " + stdText(st) + (st.assisted ? ". Tiens un support d'une main" : "") });
@@ -1826,7 +1146,7 @@ function nextAttempt(treeId, w) {
   const t = TREE[treeId], lv = levels[treeId];
   if (lv + 1 >= t.steps.length || (w - 1) % 4 === 3 || w <= 4) return null;
   const nx = t.steps[lv + 1];
-  return { ex: nx.ex, title: t.name + " · " + nx.t, dose: nx.k === "h" ? "4 × 1–3 s" : "3 × 1", unit: "tentatives", note: "Juste toucher le palier suivant, en fin de bloc skill", tree: treeId };
+  return { ex: nx.ex, title: t.name + " · " + nx.t, eyebrow: t.name + " · palier suivant", name: EX[nx.ex].name, lk: treeId + ":" + (lv + 1), dose: nx.k === "h" ? "4 × 1–3 s" : "3 × 1", unit: "tentatives", note: "Juste toucher le palier suivant, en fin de bloc skill", tree: treeId };
 }
 function accItem(treeId, w, i, used) {
   const a = TREE[treeId].acc; if (!a) return null;
@@ -1880,116 +1200,7 @@ function cuBaseSession(w, type) {
   }
   return { warm, main, test, cu: true };
 }
-const CU_VARIANTS = {};
-["push", "pull", "full", "bal"].forEach(k => { CU_VARIANTS[k] = [
-  { name: "Classique", desc: "Séries droites, repos complet. Le skill toujours en premier, quand tu es frais." },
-  { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause pour gagner du temps.", superset: true },
-  { name: "Échelle", desc: "Le premier exercice en répétitions passe en échelle 1-2-3… : même volume, autre rythme.", ladder: true }
-]; });
-const CU_DEFIS = HS_DEFIS.concat(PL_DEFIS).filter((d, i, a) => d.min === 0 && a.findIndex(x => x.t === d.t) === i);
 
-PROGRAMS.cu = {
-  id: "cu", prefix: "capcu:", title: "Cap Calisthénie", duration: "du cycle",
-  weeks: 12, peakFrom: 99,
-  phases: CU_PHASES, start: {}, tests: new Set([4, 8, 12]), deload: new Set([4, 8, 12]), meta: CU_META,
-  variants: CU_VARIANTS, order: ["push", "pull", "full", "bal"], defis: CU_DEFIS, base: cuBaseSession,
-  refresh() { this.slot = cuSlots(); },
-  eyebrow: "Programme sur mesure · cycles de 12 semaines",
-  intro: "Ton programme est construit à partir de ton niveau dans chaque skill et de tes priorités. Valide un palier, et les séances suivantes s'adaptent toutes seules.",
-  deloadLegend: "Décharge + test (valide tes paliers)",
-  weekText: (w, P) => (w - 1) % 4 === 3 ? "Semaine de décharge et de test : tente les standards de tes paliers. Réussi : appuie sur « Valider ce palier » dans la séance." : P.goal + " " + P.detail,
-  restShort: "Mobilité épaules, poignets, hanches",
-  restLong: "Optionnel, 10 à 15 minutes : poignets, épaules (dislocations au bâton), hanches et ischios. 5 tentatives de handstand si tu en as envie. Pas de force aujourd'hui.",
-  target: () => 0, best: () => ({}),
-  goals: () => {
-    const F = settings.focus.length ? settings.focus : ["push", "pull"];
-    return F.map(id => {
-      const t = TREE[id], lv = levels[id], done = lv >= t.steps.length, st = t.steps[Math.min(lv, t.steps.length - 1)];
-      return { label: t.name + " · palier " + Math.min(lv + 1, t.steps.length) + "/" + t.steps.length, val: done ? "Maîtrisé" : st.t, unit: "", pct: lv / t.steps.length * 100,
-        from: t.steps[0].t, to: t.steps[t.steps.length - 1].t, extra: done ? "Arbre terminé" : "Valider : " + stdText(st) };
-    });
-  },
-  logFields: [], logGoal: () => "",
-  phaseLine: p => "Semaines " + p.from + "–" + p.to,
-  planTitle: "Ton cycle de 12 semaines",
-  planIntro: "3 blocs de 4 semaines : 3 semaines de charge puis 1 semaine de décharge avec test. Quand tu valides un palier, tout le programme se recalcule avec le palier suivant.",
-  rules: [
-    ["Le skill d'abord", "Les skills (handstand, planche, front lever…) se travaillent en début de séance, quand le système nerveux est frais. La force et les accessoires viennent après."],
-    ["Bras tendus avant bras fléchis", "Planche, front lever et back lever chargent les tendons. Ils passent avant les tractions, dips et HSPU, jamais en fin de séance fatiguée."],
-    ["3 priorités maximum", "Progresser sur un skill demande 2 à 3 expositions par semaine. Au-delà de 3 skills prioritaires, la récupération ne suit plus : les autres arbres sont entretenus en force générale."],
-    ["Poussée et tirage équilibrés", "Chaque séance de poussée a sa séance de tirage. Si tu ne choisis aucun skill de tirage, le front lever est ajouté en entretien pour protéger les épaules."],
-    ["Valider un palier", "Un palier est validé quand tu réussis le standard (ex. 3 × 12 s) proprement, en test ou à l'entraînement. Une forme cassée ne compte pas."],
-    ["Décharger pour progresser", "Une semaine sur quatre, le volume baisse de moitié. Les tendons et les articulations progressent plus lentement que les muscles : c'est ce qui évite les blessures."]
-  ],
-  renderPlan() {
-    const bars = h("div", { class: "lvl-list" }, TREES.map(t => {
-      const lv = levels[t.id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)];
-      return h("div", { class: "lvl" },
-        h("div", { class: "lvl-top" }, h("b", null, t.name), h("span", { class: "muted" }, lv >= N ? "Maîtrisé" : st.t)),
-        h("div", { class: "segs", style: "--n:" + N }, t.steps.map((s, i) => h("i", { class: i < lv ? "on" : i === lv ? "cur" : "" }))));
-    }));
-    const jr = journal.length ? h("ul", { class: "journal" }, journal.slice(0, 15).map(j => h("li", null,
-      h("span", { class: "num" }, new Date(j.d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })),
-      " " + TREE[j.tree].name + " : " + TREE[j.tree].steps[j.step].t + " validé"))) : h("p", { class: "muted" }, "Aucun palier validé pour l'instant. Ils apparaîtront ici avec leur date.");
-    return [h("div", { class: "chart-box" }, h("h3", null, "Tes niveaux"), bars), h("div", { class: "chart-box" }, h("h3", null, "Journal des paliers"), jr)];
-  }
-};
-
-/* ---------- Onglet Skills ---------- */
-function renderSkills() {
-  const F = settings.focus;
-  const grid = h("div", { class: "trees" }, TREES.map(t => {
-    const lv = levels[t.id], N = t.steps.length, done = lv >= N, st = t.steps[Math.min(lv, N - 1)], open = state.openTree === t.id, isF = F.includes(t.id);
-    const card = h("article", { class: "tree" + (isF ? " focus" : "") },
-      h("div", { class: "tree-head" },
-        h("div", null, h("span", { class: "label" }, CAT_LABEL[t.cat] + (t.skill ? " · skill" : " · force")), h("h3", null, t.name)),
-        t.skill ? h("button", { class: "star" + (isF ? " on" : ""), "aria-pressed": isF, title: isF ? "Retirer des priorités" : "Ajouter aux priorités",
-          onclick: () => toggleFocus(t.id) }, isF ? "★ Priorité" : "☆ Priorité") : null),
-      makeFigure(st.ex),
-      h("div", { class: "tree-now" },
-        h("span", { class: "label" }, done ? "Arbre maîtrisé" : "Palier " + (lv + 1) + "/" + N),
-        h("b", null, done ? t.steps[N - 1].t : st.t),
-        h("span", { class: "muted" }, done ? "Tu as validé tous les paliers." : "Standard : " + stdText(st))),
-      h("div", { class: "segs", style: "--n:" + N }, t.steps.map((s, i) => h("i", { class: i < lv ? "on" : i === lv ? "cur" : "" }))),
-      h("div", { class: "tree-actions" },
-        done ? null : h("button", { class: "done-btn", onclick: () => { setLevel(t.id, lv + 1, "valid"); render(); } }, "✓ Valider ce palier"),
-        h("button", { class: "ghost", onclick: () => { state.openTree = open ? null : t.id; render(); } }, open ? "Masquer les paliers" : "Voir les " + N + " paliers")));
-    if (open) card.appendChild(h("ol", { class: "steps" }, t.steps.map((s, i) => h("li", { class: i < lv ? "ok" : i === lv ? "cur" : "" },
-      h("button", { onclick: () => { setLevel(t.id, i); render(); }, title: "Définir comme palier actuel" },
-        h("span", { class: "dot" }, i < lv ? "✓" : i + 1),
-        h("span", null, h("b", null, s.t), h("small", { class: "muted" }, stdText(s))))))));
-    return card;
-  }));
-  return h("div", { style: "display:grid;gap:18px" },
-    h("div", { style: "display:grid;gap:6px;max-width:68ch" }, h("h2", null, "Arbres de compétences"),
-      h("p", { class: "muted" }, "Chaque arbre va du premier palier au skill complet. Ton palier actuel est celui que tu travailles ; valide-le quand tu réussis son standard. Clique sur un palier dans la liste pour corriger ton niveau. Les étoiles choisissent tes 3 priorités du programme sur mesure.")),
-    grid);
-}
-function toggleFocus(id) {
-  const F = settings.focus;
-  const i = F.indexOf(id);
-  if (i >= 0) F.splice(i, 1); else { if (F.length >= 3) F.shift(); F.push(id); }
-  gstore.set("settings", settings);
-  if (PROG.id === "cu") setProgram("cu");
-  render();
-}
-
-/* Réglages du programme sur mesure (en tête de l'onglet Semaine) */
-function renderCuSettings() {
-  return h("section", { class: "cu-set" },
-    h("div", { class: "cu-col" },
-      h("span", { class: "label" }, "Tes priorités (3 max)"),
-      h("div", { class: "chips-sel" }, TREES.filter(t => t.skill).map(t => h("button", { class: "chip-btn" + (settings.focus.includes(t.id) ? " on" : ""), "aria-pressed": settings.focus.includes(t.id), onclick: () => toggleFocus(t.id) }, t.name)))),
-    h("div", { class: "cu-col" },
-      h("span", { class: "label" }, "Séances / semaine"),
-      h("div", { class: "seg" }, [3, 4, 5].map(n => h("button", { class: settings.days === n ? "on" : "", "aria-pressed": settings.days === n, onclick: () => { settings.days = n; gstore.set("settings", settings); setProgram("cu"); render(); } }, n)))),
-    h("label", { class: "cu-col", for: "bw" },
-      h("span", { class: "label" }, "Poids de corps (kg)"),
-      h("input", { id: "bw", type: "number", min: 30, max: 200, value: settings.bw, inputmode: "numeric", onchange: e => { const v = +e.target.value; if (v >= 30) { settings.bw = v; gstore.set("settings", settings); render(); } } })));
-}
-
-/* ---------- Séance guidée ---------- */
-const player = { on: false };
 function parseRx(it) {
   const d = it.dose || "", u = (it.unit || "") + " " + (it.note || "");
   let m, r;
@@ -2019,131 +1230,661 @@ function beep(f, dur) {
     o.start(); o.stop(audioCtx.currentTime + (dur || .18));
   } catch (e) {}
 }
-function startPlayer(w, d) {
-  const sess = buildSession(w, SLOT[d]);
-  const list = sess.warm.map(x => Object.assign({}, x, { warm: true })).concat(sess.main);
-  player.on = true; player.list = list; player.i = 0; player.set = 1; player.phase = "ready"; player.key = w + "-" + d; player.t0 = 0;
-  player.rx = parseRx(list[0]);
-  try { navigator.wakeLock && navigator.wakeLock.request("screen").then(l => { player.lock = l; }).catch(() => {}); } catch (e) {}
+
+
+/* =====================================================================
+   Interface : Aujourd'hui · Plan · Skills · Exercices · Profil
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const DAYS_S = ["L", "M", "M", "J", "V", "S", "D"];
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const fmtClock = s => { s = Math.max(0, s); return s >= 60 ? Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") : String(s); };
+
+/* ---------- Données ---------- */
+function legacy(k) { try { const v = localStorage.getItem(k); return v === null ? null : JSON.parse(v); } catch (e) { return null; } }
+if (!settings.start) settings.start = legacy("capcu:start") || iso(mondayOf(new Date()));
+let done = gstore.get("done", null) || legacy("capcu:done") || {};
+let logs = gstore.get("logs", {});
+function saveAll() { gstore.set("settings", settings); gstore.set("done", done); gstore.set("logs", logs); gstore.set("levels", levels); gstore.set("journal", journal); }
+
+const S = { tab: gstore.get("tab", "today"), sub: null, weekAbs: null, exCat: "all", exQ: "", onb: settings.onboarded ? null : 0 };
+
+/* ---------- Calendrier du cycle ---------- */
+function todayPos() {
+  const s = new Date(settings.start + "T12:00:00"), n = new Date(); n.setHours(12, 0, 0, 0);
+  const diff = Math.round((n - s) / 864e5);
+  return { abs: Math.floor(diff / 7) + 1, d: ((diff % 7) + 7) % 7, before: diff < 0 };
+}
+const cw = abs => ((Math.max(1, abs) - 1) % 12) + 1;
+const cycleOf = abs => Math.floor((Math.max(1, abs) - 1) / 12) + 1;
+function dateOf(abs, d) { const s = new Date(settings.start + "T12:00:00"); s.setDate(s.getDate() + (abs - 1) * 7 + d); return s; }
+const fmtLong = d => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+const fmtShort = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+const phaseOf = w => CU_PHASES.find(p => w >= p.from && w <= p.to);
+const isDeload = w => w % 4 === 0;
+
+/* ---------- Séances ---------- */
+const CU_DEFIS = HS_DEFIS.concat(PL_DEFIS).filter((d, i, a) => d.min === 0 && a.findIndex(x => x.t === d.t) === i);
+const FORMATS = [
+  { name: "Classique", desc: "Séries droites, repos complet." },
+  { name: "Superset", desc: "Les deux derniers exercices s'enchaînent sans pause.", superset: true },
+  { name: "Échelle", desc: "Un exercice en répétitions passe en échelle 1-2-3… : même volume, autre rythme.", ladder: true }
+];
+function session(abs, d) {
+  const w = cw(abs), type = cuSlots()[d];
+  if (!type) return null;
+  const base = cuBaseSession(w, type);
+  const si = ["push", "pull", "full", "bal"].indexOf(type);
+  const F = isDeload(w) ? FORMATS[0] : FORMATS[(w + si + d) % 3];
+  let main = base.main.map(x => Object.assign({}, x));
+  if (F.ladder) {
+    const i = main.findIndex(it => /^\d+ × \d+$/.test(it.dose) && +it.dose.split(" × ")[1] >= 3);
+    if (i >= 0) {
+      const [a, reps] = main[i].dose.split(" × ").map(Number), b = Math.min(5, reps), k = Math.max(1, Math.round(a * reps / (b * (b + 1) / 2)));
+      main[i] = Object.assign(main[i], { dose: "1→" + b + (k > 1 ? " × " + k : ""), unit: (main[i].unit || "").replace(/repos [^ ]+ (s|min)/, "").trim() + " échelle", ladder: { b, k },
+        note: "1 rép., 20 s de repos, 2 rép.… jusqu'à " + b + (k > 1 ? ". 2 min de repos puis recommence : " + k + " échelles" : "") });
+    }
+  }
+  if (F.superset && main.length >= 3) { main[main.length - 2].ss = "A"; main[main.length - 1].ss = "B"; }
+  const inS = new Set(base.warm.concat(main).map(i => i.ex));
+  const pool = CU_DEFIS.filter(x => !inS.has(x.ex) && EX[x.ex]);
+  const defi = isDeload(w) || !pool.length ? null : pool[(abs * 5 + si * 3 + d) % pool.length];
+  return { abs, w, d, type, meta: CU_META[type], warm: base.warm, main, test: base.test, format: F, defi, key: abs + "-" + d };
+}
+function nextSession(fromAbs, fromD, includeSame) {
+  for (let k = includeSame ? 0 : 1; k < 15; k++) {
+    const t = fromD + k, abs = fromAbs + Math.floor(t / 7), d = t % 7;
+    if (cuSlots()[d] && !done[abs + "-" + d]) return { abs, d };
+  }
+  return null;
+}
+const nameOf = it => it.name || EX[it.ex].name;
+const eyebrowOf = it => it.eyebrow || (it.note && it.note.startsWith("Accessoire") ? it.note : "");
+function lkOf(it) { return it.lk || it.ex; }
+function chips(it) {
+  const u = it.unit || "", out = [];
+  let m = u.match(/repos ([\d–]+ (?:s|min))/); if (m) out.push(["Repos " + m[1], ""]);
+  if (u.includes("par côté")) out.push(["Par côté", ""]);
+  m = u.match(/\+(\d+) kg/); if (m) out.push(["Lest +" + m[1] + " kg", "accent"]);
+  ["test", "décharge", "tentatives", "pratique", "échelle", "lestés", "tempo 3-1-1", "cumulées"].forEach(f => { if (u.includes(f) && !(f === "lestés" && /\+\d+ kg/.test(u))) out.push([cap(f), f === "test" ? "warn" : ""]); });
+  if (it.ss) out.push(["Superset " + it.ss, "accent"]);
+  return out.map(([t, k]) => h("span", { class: "tag " + k }, t));
+}
+function lastLog(it) { const L = logs[lkOf(it)]; return L && L.length ? L[L.length - 1] : null; }
+function fmtVals(e) { return e.vals.map(v => e.u === "s" ? v : v).join(" · ") + (e.u === "s" ? " s" : e.u === "r" ? " rép." : ""); }
+function bestOf(lk) { const L = logs[lk] || []; let b = 0; L.forEach(e => e.vals.forEach(v => { if (v > b) b = v; })); return b; }
+
+/* ---------- Petits composants ---------- */
+function thumb(id, cls) { const box = h("div", { class: "thumb " + (cls || "") }); box.appendChild(makeFigure(id)); return box; }
+function segs(t) { const lv = levels[t.id], N = t.steps.length; return h("div", { class: "segs", style: "--n:" + N }, t.steps.map((s, i) => h("i", { class: i < lv ? "on" : i === lv ? "cur" : "" }))); }
+function confirmBtn(label, confirmLabel, action, cls) {
+  const b = h("button", { class: cls || "btn" }, label);
+  b.addEventListener("click", () => {
+    if (b.dataset.armed) { action(); return; }
+    b.dataset.armed = "1"; b.textContent = confirmLabel; b.classList.add("armed");
+    setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = label; b.classList.remove("armed"); } }, 4000);
+  });
+  return b;
+}
+function validateStep(treeId) {
+  const t = TREE[treeId], st = t.steps[Math.min(levels[treeId], t.steps.length - 1)];
+  setLevel(treeId, levels[treeId] + 1, "valid");
+  toast("Palier validé : " + t.name + " · " + st.t);
+  render();
+}
+let toastT;
+function toast(msg) {
+  let t = $("#toast"); if (!t) { t = h("div", { id: "toast", class: "toast", role: "status" }); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function backBar(label, fn) { return h("button", { class: "back", onclick: fn }, "‹ " + label); }
+
+/* ---------- Ligne d'exercice ---------- */
+function exRow(it, opts) {
+  opts = opts || {};
+  const ex = EX[it.ex], last = lastLog(it), eb = eyebrowOf(it);
+  const st = it.tree ? TREE[it.tree].steps[Math.min(levels[it.tree], TREE[it.tree].steps.length - 1)] : null;
+  return h("details", { class: "xrow" + (opts.defi ? " defi" : "") },
+    h("summary", null,
+      thumb(it.ex),
+      h("div", { class: "xmain" },
+        eb ? h("span", { class: "eyebrow" }, eb) : null,
+        h("b", { class: "xname" }, opts.title || nameOf(it)),
+        h("div", { class: "tags" }, chips(it)),
+        last && !opts.defi ? h("span", { class: "last" }, "Dernière fois : " + fmtVals(last)) : null),
+      h("div", { class: "xdose num" }, it.dose)),
+    h("div", { class: "xmore" },
+      it.note ? h("p", null, it.note) : null,
+      st && it.validate === undefined && !it.warm ? h("p", { class: "muted small" }, "Standard du palier : " + stdText(st)) : null,
+      h("ul", null, ex.cues.map(c => h("li", null, c))),
+      h("div", { class: "row-actions" },
+        it.validate && levels[it.validate] < TREE[it.validate].steps.length ? confirmBtn("✓ Standard réussi", "Confirmer la validation ?", () => validateStep(it.validate), "btn small") : null,
+        h("button", { class: "btn ghost small", onclick: () => openSub({ type: "ex", id: it.ex }) }, "Fiche de l'exercice"))));
+}
+
+/* ---------- Navigation ---------- */
+const TABS = [
+  ["today", "Aujourd'hui", '<path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4.2"/>'],
+  ["plan", "Plan", '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'],
+  ["skills", "Skills", '<path d="M5 20V9M12 20V4M19 20v-7"/><circle cx="5" cy="7" r="2"/><circle cx="12" cy="4" r="0.01"/><circle cx="19" cy="11" r="2"/>'],
+  ["ex", "Exercices", '<path d="M4 6h16M4 12h16M4 18h10"/>'],
+  ["profile", "Profil", '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']
+];
+function renderNav() {
+  $("#nav").replaceChildren(...TABS.map(([id, label, path]) => {
+    const b = h("button", { class: "nav-btn" + (S.tab === id ? " on" : ""), "aria-current": S.tab === id ? "page" : null, onclick: () => { S.tab = id; S.sub = null; gstore.set("tab", id); render(); window.scrollTo(0, 0); } });
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + path + "</svg>";
+    b.appendChild(h("span", null, label));
+    return b;
+  }));
+}
+function openSub(sub) { S.sub = Object.assign({ from: S.sub }, sub); render(); window.scrollTo(0, 0); }
+function closeSub() { S.sub = S.sub && S.sub.from || null; render(); }
+
+/* ---------- Aujourd'hui ---------- */
+function renderToday() {
+  const tp = todayPos(), abs = Math.max(1, tp.abs), d = tp.before ? 0 : tp.d, w = cw(abs), P = phaseOf(w);
+  const slots = cuSlots();
+  const week = h("div", { class: "weekstrip" }, DAYS_S.map((L, i) => {
+    const k = abs + "-" + i, train = !!slots[i], isT = i === d && !tp.before, ok = !!done[k];
+    return h("button", { class: "ws-day" + (train ? " train" : "") + (ok ? " ok" : "") + (isT ? " today" : ""), onclick: () => { if (train) openSub({ type: "session", abs, d: i }); }, "aria-label": DAYS[i] + (train ? " : " + CU_META[slots[i]].title : " : repos") + (ok ? ", faite" : "") },
+      h("span", { class: "ws-l" }, L), h("span", { class: "ws-dot" }, ok ? "✓" : train ? "" : "·"));
+  }));
+  const nDone = Object.keys(slots).filter(i => done[abs + "-" + i]).length, nTot = Object.keys(slots).length;
+  const todaySess = tp.before ? null : session(abs, d);
+  let card;
+  if (todaySess && !done[todaySess.key]) card = sessionCard(todaySess, "Séance du jour");
+  else {
+    const nx = nextSession(abs, d, tp.before || !todaySess);
+    const nxs = nx ? session(nx.abs, nx.d) : null;
+    card = h("section", { class: "card hero rest" },
+      h("span", { class: "eyebrow" }, todaySess ? "Séance du jour terminée" : tp.before ? "Ton cycle commence lundi" : "Jour de repos"),
+      h("h2", null, todaySess ? "Bien joué." : "Récupère."),
+      h("p", { class: "muted" }, todaySess ? "La séance est enregistrée. Le progrès se construit maintenant, pendant la récupération." :
+        "10 minutes de mobilité suffisent : poignets, épaules, hanches. Les tendons progressent pendant le repos."),
+      nxs ? h("div", { class: "next" },
+        h("span", { class: "eyebrow" }, "Prochaine séance · " + cap(fmtLong(dateOf(nxs.abs, nxs.d)))),
+        h("b", null, nxs.meta.title + (nxs.test ? " · test" : "")),
+        h("div", { class: "hero-actions" },
+          h("button", { class: "btn", onclick: () => startSession(nxs) }, "S'entraîner quand même"),
+          h("button", { class: "btn ghost", onclick: () => openSub({ type: "session", abs: nxs.abs, d: nxs.d }) }, "Voir la séance"))) : null);
+  }
+  const prio = (settings.focus.length ? settings.focus : ["push", "pull"]).map(id => {
+    const t = TREE[id], lv = levels[id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)];
+    return h("button", { class: "prio", onclick: () => { S.tab = "skills"; S.sub = { type: "tree", id }; render(); } },
+      thumb(st.ex, "sm"),
+      h("div", { class: "prio-txt" }, h("span", { class: "eyebrow" }, t.name + " · " + Math.min(lv + 1, N) + "/" + N), h("b", null, lv >= N ? "Maîtrisé" : st.t), segs(t)));
+  });
+  const recent = journal.slice(0, 3);
+  return h("div", { class: "screen" },
+    h("header", { class: "top" },
+      h("span", { class: "eyebrow" }, cap(fmtLong(new Date()))),
+      h("h1", null, "Aujourd'hui")),
+    h("section", { class: "card" },
+      h("div", { class: "row-between" }, h("span", { class: "eyebrow" }, "Cycle " + cycleOf(abs) + " · semaine " + w + "/12 · " + P.name.split(" · ")[1]), h("span", { class: "muted small num" }, nDone + "/" + nTot + " séances")),
+      week,
+      isDeload(w) ? h("p", { class: "note-box" }, h("b", null, "Semaine de décharge et de test. "), "Volume divisé par deux. Tente le standard de tes paliers : si tu le réussis, valide-le.") : null),
+    card,
+    h("section", { class: "stack" }, h("div", { class: "row-between" }, h("h3", null, "Tes priorités"), h("button", { class: "link", onclick: () => { S.tab = "skills"; S.sub = null; render(); } }, "Tous les skills ›")), h("div", { class: "prio-list" }, prio)),
+    recent.length ? h("section", { class: "stack" }, h("h3", null, "Derniers paliers validés"),
+      h("ul", { class: "journal" }, recent.map(j => h("li", null, h("span", { class: "num muted" }, fmtShort(new Date(j.d + "T12:00:00"))), " " + TREE[j.tree].name + " · " + TREE[j.tree].steps[j.step].t)))) : null);
+}
+function sessionCard(s, label) {
+  const items = s.main;
+  return h("section", { class: "card hero" },
+    h("div", { class: "row-between" }, h("span", { class: "eyebrow" }, label + " · " + DAYS[s.d]), s.test ? h("span", { class: "tag warn" }, "Test") : s.format.name !== "Classique" ? h("span", { class: "tag accent" }, s.format.name) : null),
+    h("h2", null, s.meta.title),
+    h("p", { class: "muted" }, "≈ " + s.meta.min + " min · " + (s.warm.length + items.length) + " exercices · " + s.meta.sub),
+    h("ol", { class: "mini" }, items.map(it => h("li", null, h("span", null, nameOf(it), eyebrowOf(it) && it.tree ? h("small", { class: "muted" }, " · " + TREE[it.tree].name) : null), h("b", { class: "num" }, it.dose)))),
+    h("div", { class: "hero-actions" },
+      h("button", { class: "btn big", onclick: () => startSession(s) }, "▶ Commencer"),
+      h("button", { class: "btn ghost", onclick: () => openSub({ type: "session", abs: s.abs, d: s.d }) }, "Détail de la séance")));
+}
+
+/* ---------- Plan ---------- */
+function renderPlan() {
+  const tp = todayPos();
+  if (S.weekAbs == null) S.weekAbs = Math.max(1, tp.abs);
+  const abs = S.weekAbs, w = cw(abs), P = phaseOf(w), slots = cuSlots();
+  const cyc = h("div", { class: "cycle" }, Array.from({ length: 12 }, (_, i) => {
+    const ww = i + 1, a = abs - w + ww, ph = phaseOf(ww);
+    return h("button", { class: "cy" + (ww === w ? " sel" : "") + (isDeload(ww) ? " dl" : "") + (a === tp.abs ? " now" : ""), style: "--pc: var(" + ph.color + ")", onclick: () => { S.weekAbs = a; render(); }, "aria-label": "Semaine " + ww }, ww);
+  }));
+  const days = h("div", { class: "daylist" }, DAYS.map((name, d) => {
+    const type = slots[d], k = abs + "-" + d, isT = abs === tp.abs && d === tp.d, ok = !!done[k];
+    if (!type) return h("div", { class: "dayrow rest" + (isT ? " today" : "") },
+      h("div", { class: "dr-date" }, h("b", null, name.slice(0, 3)), h("span", null, fmtShort(dateOf(abs, d)))),
+      h("div", { class: "dr-main" }, h("span", { class: "muted" }, d === 6 ? "Repos complet" : "Repos · mobilité 10 min")));
+    const s = session(abs, d);
+    return h("button", { class: "dayrow" + (isT ? " today" : "") + (ok ? " ok" : ""), onclick: () => openSub({ type: "session", abs, d }) },
+      h("div", { class: "dr-date" }, h("b", null, name.slice(0, 3)), h("span", null, fmtShort(dateOf(abs, d)))),
+      h("div", { class: "dr-main" }, h("b", null, s.meta.title), h("span", { class: "muted small" }, "≈ " + s.meta.min + " min · " + s.main.slice(0, 3).map(nameOf).join(", "))),
+      h("div", { class: "dr-end" }, ok ? h("span", { class: "tag ok" }, "✓ Faite") : s.test ? h("span", { class: "tag warn" }, "Test") : isT ? h("span", { class: "tag accent" }, "Aujourd'hui") : null, h("span", { class: "chev" }, "›")));
+  }));
+  return h("div", { class: "screen" },
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, "Cycle " + cycleOf(abs) + " · 12 semaines"), h("h1", null, "Plan")),
+    h("section", { class: "card" },
+      cyc,
+      h("div", { class: "legend" }, CU_PHASES.map(p => h("span", { style: "--pc: var(" + p.color + ")" }, h("i"), p.name.split(" · ")[1])), h("span", null, h("i", { class: "stripe" }), "Décharge + test")),
+      h("div", { class: "phase-txt" }, h("b", null, P.name), h("p", { class: "muted small" }, isDeload(w) ? "Semaine de décharge : volume divisé par deux, et test des standards de tes paliers." : P.goal + " " + P.detail))),
+    h("div", { class: "row-between" },
+      h("button", { class: "btn ghost small", onclick: () => { S.weekAbs = Math.max(1, abs - 1); render(); }, disabled: abs <= 1 }, "‹ Préc."),
+      h("b", { class: "num" }, "Semaine " + w + " · " + fmtShort(dateOf(abs, 0)) + " – " + fmtShort(dateOf(abs, 6))),
+      h("button", { class: "btn ghost small", onclick: () => { S.weekAbs = abs + 1; render(); } }, "Suiv. ›")),
+    days,
+    h("p", { class: "muted small center" }, settings.days + " séances par semaine · priorités : " + (settings.focus.map(id => TREE[id].name).join(", ") || "aucune") + ". ", h("button", { class: "link", onclick: () => { S.tab = "profile"; S.sub = null; render(); } }, "Modifier")));
+}
+function renderSessionDetail(abs, d) {
+  const s = session(abs, d);
+  if (!s) return h("div", { class: "screen" }, backBar("Retour", closeSub), h("p", null, "Pas de séance ce jour-là."));
+  const ok = done[s.key];
+  const skills = s.main.filter(it => it.tree && TREE[it.tree].skill), rest = s.main.filter(it => !(it.tree && TREE[it.tree].skill));
+  const group = (title, list, hint) => list.length ? h("section", { class: "stack" }, h("div", { class: "row-between" }, h("h3", null, title), hint ? h("span", { class: "muted small" }, hint) : null), h("div", { class: "xlist" }, list.map(it => exRow(it)))) : null;
+  return h("div", { class: "screen with-cta" },
+    backBar(S.sub.from ? "Retour" : "Plan", closeSub),
+    h("header", { class: "top" },
+      h("span", { class: "eyebrow" }, cap(fmtLong(dateOf(abs, d))) + " · semaine " + s.w + "/12"),
+      h("h1", null, s.meta.title + (s.test ? " · test" : "")),
+      h("p", { class: "muted" }, "≈ " + s.meta.min + " min · " + s.meta.sub),
+      h("div", { class: "tags" },
+        s.format.name !== "Classique" ? h("span", { class: "tag accent" }, s.format.name) : null,
+        ok ? h("span", { class: "tag ok" }, "✓ Faite") : null)),
+    s.test ? h("p", { class: "note-box" }, h("b", null, "Semaine de test. "), "Tente le standard de chaque palier après un bon échauffement. Réussi : ouvre l'exercice et appuie sur « Standard réussi ».") :
+      s.format.name !== "Classique" ? h("p", { class: "note-box" }, h("b", null, "Format " + s.format.name + ". "), s.format.desc) : null,
+    group("Échauffement", s.warm.map(x => Object.assign({}, x, { warm: true })), "≈ 12 min"),
+    group("Skills", skills, "frais, en premier"),
+    group("Force & accessoires", rest),
+    s.defi ? h("section", { class: "stack" }, h("h3", null, "Défi bonus"), h("div", { class: "xlist" }, exRow({ ex: s.defi.ex, dose: "Bonus", unit: "", note: s.defi.d }, { defi: true, title: s.defi.t }))) : null,
+    h("div", { class: "cta" },
+      h("button", { class: "btn big", onclick: () => startSession(s) }, ok ? "▶ Refaire" : "▶ Commencer"),
+      ok ? null : h("button", { class: "btn ghost", "aria-label": "Marquer comme faite sans la séance guidée", onclick: () => { done[s.key] = { d: iso(new Date()), manual: true }; saveAll(); toast("Séance marquée comme faite"); render(); } }, "✓ Faite")));
+}
+
+/* ---------- Skills ---------- */
+function renderSkills() {
+  const groups = [["Skills", TREES.filter(t => t.skill)], ["Force", TREES.filter(t => !t.skill)]];
+  return h("div", { class: "screen" },
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, "10 arbres · " + TREES.reduce((a, t) => a + t.steps.length, 0) + " paliers"), h("h1", null, "Skills"),
+      h("p", { class: "muted" }, "Chaque arbre va du premier palier au skill complet. Tu travailles toujours ton palier actuel ; quand tu réussis son standard, valide-le et le programme passe au suivant. ★ = priorité du programme.")),
+    groups.map(([title, list]) => h("section", { class: "stack" }, h("h3", null, title),
+      h("div", { class: "tree-grid" }, list.map(t => {
+        const lv = levels[t.id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)], f = settings.focus.includes(t.id);
+        return h("button", { class: "tcard" + (f ? " focus" : ""), onclick: () => openSub({ type: "tree", id: t.id }) },
+          thumb(st.ex, "sm"),
+          h("div", { class: "tc-txt" },
+            h("span", { class: "eyebrow" }, (f ? "★ " : "") + t.name + " · " + Math.min(lv + 1, N) + "/" + N),
+            h("b", null, lv >= N ? "Maîtrisé" : st.t),
+            h("span", { class: "muted small" }, lv >= N ? "Tous les paliers validés" : stdText(st)),
+            segs(t)));
+      })))));
+}
+function renderTree(id) {
+  const t = TREE[id], lv = levels[id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)], f = settings.focus.includes(id);
+  const best = bestOf(id + ":" + Math.min(lv, N - 1));
+  return h("div", { class: "screen" },
+    backBar("Skills", closeSub),
+    h("header", { class: "top" },
+      h("span", { class: "eyebrow" }, CAT_LABEL[t.cat] + (t.skill ? " · skill" : " · force") + " · palier " + Math.min(lv + 1, N) + "/" + N),
+      h("h1", null, t.name)),
+    h("section", { class: "card tree-hero" },
+      h("div", { class: "big-fig" }, makeFigure(st.ex)),
+      h("div", { class: "stack" },
+        h("span", { class: "eyebrow" }, lv >= N ? "Arbre maîtrisé" : "Ton palier actuel"),
+        h("h2", null, lv >= N ? t.steps[N - 1].t : st.t),
+        h("p", { class: "std" }, h("span", { class: "muted" }, "Standard pour valider"), h("b", { class: "num" }, stdText(st))),
+        best ? h("p", { class: "muted small" }, "Ton meilleur résultat enregistré sur ce palier : " + best + (st.k === "h" ? " s" : " rép.")) : null,
+        segs(t),
+        h("div", { class: "hero-actions" },
+          lv < N ? confirmBtn("✓ J'ai réussi le standard", "Confirmer : " + stdText(st) + " réussi ?", () => validateStep(id), "btn") : null,
+          t.skill ? h("button", { class: "btn ghost", onclick: () => toggleFocus(id) }, f ? "★ Retirer des priorités" : "☆ Mettre en priorité") : null))),
+    h("section", { class: "stack" }, h("h3", null, "Tous les paliers"),
+      h("ol", { class: "steps" }, t.steps.map((s, i) => h("li", { class: i < lv ? "ok" : i === lv ? "cur" : "" },
+        thumb(s.ex, "xs"),
+        h("div", { class: "st-txt" }, h("b", null, (i + 1) + ". " + s.t), h("span", { class: "muted small" }, stdText(s))),
+        i === lv ? h("span", { class: "tag accent" }, "Actuel") : i < lv ? h("span", { class: "tag ok" }, "✓") :
+          confirmBtn("Placer ici", "Confirmer ?", () => { setLevel(id, i); toast("Palier actuel : " + s.t); render(); }, "btn ghost small"))))),
+    h("p", { class: "muted small" }, "Tu t'es trompé de niveau ? « Placer ici » change ton palier actuel sans l'enregistrer comme validation."));
+}
+function toggleFocus(id) {
+  const F = settings.focus, i = F.indexOf(id);
+  if (i >= 0) F.splice(i, 1); else { if (F.length >= 3) { toast("3 priorités maximum : " + TREE[F[0]].name + " retiré"); F.shift(); } F.push(id); }
+  saveAll(); render();
+}
+
+/* ---------- Exercices ---------- */
+const EX_CAT = {};
+TREES.forEach(t => { t.steps.forEach(s => { EX_CAT[s.ex] = EX_CAT[s.ex] || t.cat; }); (t.acc || []).forEach(a => { EX_CAT[a[0]] = EX_CAT[a[0]] || t.cat; }); });
+Object.assign(EX_CAT, { wrists: "mobility", scapPU: "push", bearCrawl: "core", plankPike: "core", frog: "balance", kickup: "balance", wallBack: "balance", shapes: "balance", wallWalk: "balance", declinePU: "push", pikeDef: "push", atPU: "push", legRaise: "core", hollowRock: "core" });
+const CATS = [["all", "Tous"], ["push", "Poussée"], ["pull", "Tirage"], ["balance", "Équilibre"], ["core", "Core"], ["legs", "Jambes"], ["mobility", "Mobilité"]];
+function renderExercises() {
+  const q = S.exQ.trim().toLowerCase();
+  const ids = Object.keys(EX).filter(id => EX[id] && EX[id].poses && !["hollow", "hollowRock"].includes(id))
+    .filter(id => S.exCat === "all" || (EX_CAT[id] || "push") === S.exCat)
+    .filter(id => !q || (EX[id].name + " " + EX[id].short).toLowerCase().includes(q));
+  return h("div", { class: "screen" },
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, Object.keys(EX).length + " mouvements animés"), h("h1", null, "Exercices")),
+    h("input", { id: "ex-search", class: "search", type: "search", placeholder: "Rechercher un exercice", value: S.exQ, oninput: e => { S.exQ = e.target.value; const pos = e.target.selectionStart; render(); const n = $("#ex-search"); n.focus(); n.setSelectionRange(pos, pos); } }),
+    h("div", { class: "filters" }, CATS.map(([id, l]) => h("button", { class: "chip-btn" + (S.exCat === id ? " on" : ""), "aria-pressed": S.exCat === id, onclick: () => { S.exCat = id; render(); } }, l))),
+    ids.length ? h("div", { class: "ex-grid" }, ids.map(id => h("button", { class: "ex-card", onclick: () => openSub({ type: "ex", id }) }, thumb(id), h("b", null, EX[id].name), h("span", { class: "muted small" }, EX[id].short)))) :
+      h("p", { class: "muted" }, "Aucun exercice ne correspond. Essaie un autre mot, par exemple « planche » ou « traction »."));
+}
+function renderExercise(id) {
+  const ex = EX[id];
+  const inTrees = TREES.filter(t => t.steps.some(s => s.ex === id));
+  const words = GLOSSARY.filter(([k]) => (ex.name + " " + ex.desc).toLowerCase().includes(k.toLowerCase().split(" ")[0]));
+  const best = bestOf(id);
+  return h("div", { class: "screen" },
+    backBar("Retour", closeSub),
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, ex.short), h("h1", null, ex.name)),
+    h("div", { class: "big-fig card" }, makeFigure(id)),
+    h("p", null, ex.desc),
+    h("section", { class: "stack" }, h("h3", null, "Points clés"), h("ul", { class: "cues-list" }, ex.cues.map(c => h("li", null, c)))),
+    inTrees.length ? h("section", { class: "stack" }, h("h3", null, "Dans les arbres"), h("div", { class: "tags" }, inTrees.map(t => h("button", { class: "chip-btn", onclick: () => openSub({ type: "tree", id: t.id }) }, t.name + " · " + t.steps.filter(s => s.ex === id).map(s => s.t).join(", "))))) : null,
+    best ? h("p", { class: "muted" }, "Ton meilleur résultat enregistré : " + best) : null,
+    words.length ? h("section", { class: "stack" }, h("h3", null, "Vocabulaire"), h("dl", { class: "gloss" }, words.map(([k, v]) => [h("dt", null, k), h("dd", null, v)]))) : null);
+}
+
+/* ---------- Profil ---------- */
+const GLOSSARY = [
+  ["Palier", "Une étape d'un arbre de skill. Tu travailles toujours ton palier actuel jusqu'à réussir son standard."],
+  ["Standard", "Le test qui valide un palier, par exemple 3 × 12 s : trois tenues de 12 s, propres, avec 2 à 3 min de repos."],
+  ["Décharge", "Une semaine sur quatre, le volume est divisé par deux pour laisser récupérer tendons et articulations. On en profite pour tester les standards."],
+  ["Tuck", "Position groupée : genoux serrés contre la poitrine. C'est le levier le plus court, donc le plus facile."],
+  ["Advanced tuck", "Comme la tuck, mais le dos est plat et les hanches s'éloignent : les cuisses font un angle droit avec le buste."],
+  ["Straddle", "Jambes tendues et très écartées. Raccourcit le levier par rapport aux jambes serrées."],
+  ["Half-lay", "Hanches tendues, genoux pliés à 90°. Le dernier palier avant la version complète."],
+  ["Lean", "Penché vers l'avant au-delà des mains (planche lean). Plus tu penches, plus c'est dur."],
+  ["Protraction", "Omoplates écartées, haut du dos arrondi : la position d'épaules de la planche."],
+  ["EMOM", "Every minute on the minute : au début de chaque minute, tu fais tes répétitions, puis tu récupères jusqu'à la minute suivante."],
+  ["Superset", "Deux exercices enchaînés sans pause, puis repos."],
+  ["Échelle", "1 répétition, courte pause, 2 répétitions, pause, 3… jusqu'au sommet de l'échelle."],
+  ["Négatif", "Seulement la phase de descente, la plus lente possible. Construit la force avant le mouvement complet."],
+  ["Déficit", "Les mains sont surélevées pour descendre plus bas qu'au sol : plus d'amplitude."],
+  ["Lest", "Charge ajoutée avec une ceinture ou un sac. Calculée ici en % de ton poids de corps."],
+  ["RPE 8", "Effort à 8 sur 10 : tu pourrais encore faire 2 répétitions."],
+  ["Tempo 3-1-1", "3 s de descente, 1 s de pause en bas, 1 s pour remonter."],
+  ["Parallettes", "Petites barres parallèles au sol. Elles soulagent les poignets et permettent de descendre plus bas."]
+];
+function renderProfile() {
+  const presets = [
+    ["Handstand & HSPU", ["hs", "hspu", "fl"]], ["Planche", ["planche", "hs", "fl"]], ["Front lever", ["fl", "planche", "hs"]], ["Muscle-up", ["mu", "hspu", "hs"]], ["Leviers", ["fl", "bl", "planche"]]
+  ];
+  return h("div", { class: "screen" },
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, "Réglages et aide"), h("h1", null, "Profil")),
+    h("section", { class: "card stack" },
+      h("h3", null, "Ton programme"),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Priorités (3 max)"),
+        h("div", { class: "filters" }, TREES.filter(t => t.skill).map(t => h("button", { class: "chip-btn" + (settings.focus.includes(t.id) ? " on" : ""), "aria-pressed": settings.focus.includes(t.id), onclick: () => toggleFocus(t.id) }, t.name)))),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Préréglages"),
+        h("div", { class: "filters" }, presets.map(([l, f]) => h("button", { class: "chip-btn ghost", onclick: () => { settings.focus = f.slice(); saveAll(); toast("Priorités : " + f.map(x => TREE[x].name).join(", ")); render(); } }, l)))),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Séances par semaine"),
+        h("div", { class: "seg" }, [3, 4, 5].map(n => h("button", { class: settings.days === n ? "on" : "", "aria-pressed": settings.days === n, onclick: () => { settings.days = n; saveAll(); render(); } }, n))),
+        h("span", { class: "muted small" }, { 3: "Full body lundi, mercredi, vendredi.", 4: "Poussée lundi et jeudi, tirage mardi et vendredi.", 5: "4 séances + équilibre et jambes le samedi." }[settings.days])),
+      h("div", { class: "field-row" },
+        h("label", { class: "field", for: "bw" }, h("span", { class: "label" }, "Poids de corps (kg)"),
+          h("input", { id: "bw", type: "number", min: 30, max: 200, inputmode: "numeric", value: settings.bw, onchange: e => { const v = +e.target.value; if (v >= 30) { settings.bw = v; saveAll(); toast("Poids enregistré"); } } })),
+        h("label", { class: "field", for: "start" }, h("span", { class: "label" }, "Début du cycle"),
+          h("input", { id: "start", type: "date", value: settings.start, onchange: e => { if (e.target.value) { settings.start = iso(mondayOf(new Date(e.target.value + "T12:00:00"))); S.weekAbs = null; saveAll(); render(); } } }))),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Intensité"),
+        h("p", { class: "small" }, "Ajustée par ton ressenti après chaque séance : ", h("b", { class: "num" }, (settings.adj >= 0 ? "+" : "") + Math.round(settings.adj * 100) + " %"), settings.adj ? " " : "", settings.adj ? h("button", { class: "link", onclick: () => { settings.adj = 0; saveAll(); render(); } }, "Remettre à zéro") : null)),
+      h("button", { class: "btn ghost", onclick: () => { S.onb = 3; render(); } }, "Refaire le test de niveau")),
+    h("section", { class: "card stack" }, h("h3", null, "Comment ça marche"),
+      h("ol", { class: "how" },
+        h("li", null, h("b", null, "Tu choisis 3 priorités. "), "Ce sont les skills travaillés en premier dans chaque séance, 2 à 3 fois par semaine."),
+        h("li", null, h("b", null, "Chaque arbre a un palier actuel. "), "Les séries et tenues sont calculées à partir de son standard."),
+        h("li", null, h("b", null, "Cycle de 12 semaines. "), "3 blocs : volume, intensité, validation. Chaque 4e semaine : décharge et test."),
+        h("li", null, h("b", null, "Tu valides, ça s'adapte. "), "Un palier validé fait passer tout le programme au suivant. Ton ressenti ajuste l'intensité de ±5 %."))),
+    h("section", { class: "card stack" }, h("h3", null, "Lexique"), h("dl", { class: "gloss" }, GLOSSARY.map(([k, v]) => [h("dt", null, k), h("dd", null, v)]))),
+    h("section", { class: "card stack" }, h("h3", null, "Données"),
+      h("p", { class: "muted small" }, "Tout est enregistré dans ce navigateur, sur cet appareil. Utilise toujours le même pour garder ton historique."),
+      confirmBtn("Effacer l'historique des séances", "Confirmer l'effacement ?", () => { done = {}; logs = {}; saveAll(); toast("Historique effacé"); render(); }, "btn ghost danger")));
+}
+
+/* ---------- Test de placement (premier lancement) ---------- */
+let onbDraft = null;
+function renderOnboarding() {
+  if (!onbDraft) onbDraft = { focus: settings.focus.slice(), days: settings.days, bw: settings.bw, levels: Object.assign({}, levels) };
+  const D = onbDraft, step = S.onb, N = 5;
+  const go = n => { S.onb = n; render(); window.scrollTo(0, 0); };
+  const dots = h("div", { class: "onb-dots" }, Array.from({ length: N }, (_, i) => h("i", { class: i <= step ? "on" : "" })));
+  let body;
+  if (step === 0) body = [
+    h("div", { class: "big-fig" }, makeFigure("hsFree")),
+    h("h1", null, "Cap Calisthénie"),
+    h("p", { class: "lead" }, "Un programme qui part de ton niveau réel, travaille tes skills prioritaires et s'adapte à chaque palier validé."),
+    h("ul", { class: "how" }, h("li", null, "10 arbres de skills, du premier palier au mouvement complet"), h("li", null, "Des cycles de 12 semaines avec décharge et tests"), h("li", null, "Des séances guidées avec chrono et suivi de tes séries")),
+    h("button", { class: "btn big", onclick: () => go(1) }, "Faire mon bilan · 2 min")];
+  if (step === 1) body = [
+    h("span", { class: "eyebrow" }, "1/4 · Objectifs"), h("h1", null, "Qu'est-ce que tu veux débloquer ?"),
+    h("p", { class: "muted" }, "Choisis jusqu'à 3 skills. Conseil : mélange poussée et tirage, par exemple planche + front lever."),
+    h("div", { class: "goal-grid" }, TREES.filter(t => t.skill).map(t => {
+      const on = D.focus.includes(t.id);
+      return h("button", { class: "goal-card" + (on ? " on" : ""), "aria-pressed": on, onclick: () => { const i = D.focus.indexOf(t.id); if (i >= 0) D.focus.splice(i, 1); else { if (D.focus.length >= 3) D.focus.shift(); D.focus.push(t.id); } render(); } },
+        thumb(t.steps[t.steps.length - 1].ex), h("b", null, t.name), h("span", { class: "muted small" }, CAT_LABEL[t.cat]), on ? h("span", { class: "tick" }, "✓") : null);
+    })),
+    h("button", { class: "btn big", disabled: !D.focus.length, onclick: () => go(2) }, "Continuer")];
+  if (step === 2) body = [
+    h("span", { class: "eyebrow" }, "2/4 · Rythme"), h("h1", null, "Combien de séances par semaine ?"),
+    h("div", { class: "opt-list" }, [[3, "3 séances", "Full body lundi, mercredi, vendredi. Idéal pour progresser en récupérant bien."], [4, "4 séances", "Poussée / tirage en alternance. Le meilleur équilibre pour la plupart."], [5, "5 séances", "4 séances + un samedi équilibre et jambes. Si tu récupères vite."]].map(([n, t, s]) =>
+      h("button", { class: "opt" + (D.days === n ? " on" : ""), "aria-pressed": D.days === n, onclick: () => { D.days = n; render(); } }, h("b", null, t), h("span", { class: "muted small" }, s)))),
+    h("label", { class: "field", for: "onb-bw" }, h("span", { class: "label" }, "Ton poids de corps (kg), pour calculer les lests"),
+      h("input", { id: "onb-bw", type: "number", min: 30, max: 200, inputmode: "numeric", value: D.bw, onchange: e => { const v = +e.target.value; if (v >= 30) D.bw = v; } })),
+    h("div", { class: "hero-actions" }, h("button", { class: "btn ghost", onclick: () => go(1) }, "‹ Retour"), h("button", { class: "btn big", onclick: () => go(3) }, "Continuer"))];
+  if (step === 3) body = [
+    h("span", { class: "eyebrow" }, "3/4 · Niveau"), h("h1", null, "Qu'est-ce que tu réussis déjà ?"),
+    h("p", { class: "muted" }, "Pour chaque arbre, touche le dernier palier dont tu réussis le standard aujourd'hui. Dans le doute, choisis le palier en dessous : mieux vaut valider vite que se blesser."),
+    TREES.map(t => h("section", { class: "lvl-pick" },
+      h("div", { class: "row-between" }, h("b", null, t.name), h("span", { class: "muted small" }, D.levels[t.id] === 0 ? "On commence au 1er palier" : "Prochain : " + (t.steps[D.levels[t.id]] ? t.steps[D.levels[t.id]].t : "maîtrisé"))),
+      h("div", { class: "pick-row" },
+        h("button", { class: "pick" + (D.levels[t.id] === 0 ? " on" : ""), onclick: () => { D.levels[t.id] = 0; render(); } }, "Aucun"),
+        t.steps.map((s, i) => h("button", { class: "pick" + (D.levels[t.id] === i + 1 ? " on" : "") + (D.levels[t.id] > i + 1 ? " below" : ""), title: stdText(s), onclick: () => { D.levels[t.id] = i + 1; render(); } }, h("span", null, s.t), h("small", null, stdText(s))))))),
+    h("div", { class: "hero-actions" }, h("button", { class: "btn ghost", onclick: () => go(settings.onboarded ? 0 : 2) }, "‹ Retour"), h("button", { class: "btn big", onclick: () => go(4) }, "Voir mon programme"))];
+  if (step === 4) {
+    const sl = { 3: { 0: "full", 2: "full", 4: "full" }, 4: { 0: "push", 1: "pull", 3: "push", 4: "pull" }, 5: { 0: "push", 1: "pull", 3: "push", 4: "pull", 5: "bal" } }[D.days];
+    body = [
+      h("span", { class: "eyebrow" }, "4/4 · Ton programme"), h("h1", null, "C'est prêt."),
+      h("section", { class: "card stack" },
+        h("span", { class: "label" }, "Priorités"),
+        h("div", { class: "tags" }, D.focus.map(id => h("span", { class: "tag accent" }, TREE[id].name + " · " + (TREE[id].steps[D.levels[id]] || { t: "maîtrisé" }).t))),
+        h("span", { class: "label" }, "Ta semaine type"),
+        h("ul", { class: "week-type" }, DAYS.map((n, d) => h("li", { class: sl[d] ? "" : "muted" }, h("b", null, n), h("span", null, sl[d] ? CU_META[sl[d]].title : "Repos")))),
+        h("span", { class: "label" }, "Les 12 semaines"),
+        h("p", { class: "small" }, "Semaines 1–3 volume · 4 décharge et test · 5–7 intensité · 8 test · 9–11 validation · 12 test final.")),
+      h("div", { class: "hero-actions" }, h("button", { class: "btn ghost", onclick: () => go(3) }, "‹ Retour"),
+        h("button", { class: "btn big", onclick: () => {
+          settings.focus = D.focus; settings.days = D.days; settings.bw = D.bw; Object.assign(levels, D.levels);
+          if (!settings.onboarded) settings.start = iso(mondayOf(new Date()));
+          settings.onboarded = true; S.onb = null; onbDraft = null; S.tab = "today"; S.sub = null; S.weekAbs = null; saveAll(); render(); toast("Programme créé");
+        } }, "C'est parti"))];
+  }
+  return h("div", { class: "screen onb" }, settings.onboarded ? h("button", { class: "back", onclick: () => { S.onb = null; onbDraft = null; render(); } }, "✕ Annuler") : null, dots, body);
+}
+
+/* ---------- Séance guidée ---------- */
+const P = { on: false };
+function startSession(sess) {
+  const list = sess.warm.map(x => Object.assign({}, x, { warm: true })).concat(sess.main.map(x => Object.assign({}, x)));
+  Object.assign(P, { on: true, sess, list, i: 0, set: 1, phase: "ready", t0: 0, paused: false, rx: parseRx(list[0]), rec: list.map(() => []), started: Date.now(), fb: null });
+  P.reps = P.rx.reps || 1;
+  try { navigator.wakeLock && navigator.wakeLock.request("screen").then(l => { P.lock = l; }).catch(() => {}); } catch (e) {}
   beep(660, .05);
-  drawPlayer();
-  clearInterval(player.tm); player.tm = setInterval(playerTick, 200);
+  clearInterval(P.tm); P.tm = setInterval(tickP, 200);
+  drawP();
 }
-function closePlayer() {
-  player.on = false; clearInterval(player.tm);
-  try { player.lock && player.lock.release(); } catch (e) {}
+function closeP() {
+  P.on = false; clearInterval(P.tm);
+  try { P.lock && P.lock.release(); } catch (e) {}
   const o = $("#player"); if (o) o.remove();
-  document.body.style.overflow = "";
+  document.body.classList.remove("locked");
 }
-function nextStep() {
-  const rx = player.rx;
-  if (player.set < rx.sets) { player.set++; player.phase = "rest"; player.t0 = Date.now(); player.restFor = rx.cluster && (player.set - 1) % rx.cluster !== 0 ? rx.rest : (rx.restLong || rx.rest); }
-  else if (player.i < player.list.length - 1) { player.i++; player.set = 1; player.rx = parseRx(player.list[player.i]); player.phase = "rest"; player.t0 = Date.now(); player.restFor = Math.min(120, rx.restLong || rx.rest); player.newEx = true; }
-  else { player.phase = "done"; beep(988, .4); }
-  drawPlayer();
+function gotoEx(i) { P.i = Math.max(0, Math.min(P.list.length - 1, i)); P.set = 1; P.rx = parseRx(P.list[P.i]); P.reps = P.rx.reps || 1; P.phase = "ready"; P.paused = false; drawP(); }
+function record(v) { P.rec[P.i].push(v); }
+function nextSet() {
+  const rx = P.rx;
+  if (P.set < rx.sets) { P.set++; P.phase = "rest"; P.t0 = Date.now(); P.restFor = rx.rest; P.newEx = false; }
+  else if (P.i < P.list.length - 1) {
+    const was = P.list[P.i];
+    P.i++; P.set = 1; P.rx = parseRx(P.list[P.i]); P.reps = P.rx.reps || 1;
+    P.phase = "rest"; P.t0 = Date.now(); P.restFor = was.warm ? 20 : Math.min(120, rx.rest); P.newEx = true;
+  } else { P.phase = "done"; beep(988, .4); }
+  P.paused = false; P.lastBeep = null;
+  drawP();
 }
-function playerTick() {
-  if (!player.on) return;
-  const el2 = $("#pl-clock"); if (!el2) return;
-  const now = Date.now(), rx = player.rx, sec = (now - player.t0) / 1000;
-  if (player.phase === "rest") {
-    const left = Math.ceil(player.restFor - sec);
-    if (left <= 3 && left > 0 && left !== player.lastBeep) { player.lastBeep = left; beep(660, .08); }
-    if (left <= 0) { player.phase = "ready"; player.newEx = false; beep(880, .25); drawPlayer(); return; }
-    el2.textContent = fmtClock(left);
-  } else if (player.phase === "count") {
+function tickP() {
+  if (!P.on || P.paused) return;
+  const c = $("#p-clock"); if (!c) return;
+  const now = Date.now(), rx = P.rx, sec = (now - P.t0) / 1000;
+  if (P.phase === "rest") {
+    const left = Math.ceil(P.restFor - sec);
+    const ring = $("#p-ring"); if (ring) ring.style.setProperty("--p", Math.max(0, 1 - sec / P.restFor));
+    if (left <= 3 && left > 0 && left !== P.lastBeep) { P.lastBeep = left; beep(660, .08); }
+    if (left <= 0) { P.phase = "ready"; P.newEx = false; beep(880, .25); drawP(); return; }
+    c.textContent = fmtClock(left);
+  } else if (P.phase === "count") {
     const left = Math.ceil(3 - sec);
-    if (left <= 0) { player.phase = "work"; player.t0 = now; beep(880, .2); drawPlayer(); return; }
-    if (left !== player.lastBeep) { player.lastBeep = left; beep(520, .08); }
-    el2.textContent = left;
-  } else if (player.phase === "work") {
-    if (rx.mode === "hold" || rx.mode === "timer") {
-      const target = rx.secs;
-      if (rx.mode === "timer") { const left = Math.ceil(target - sec); el2.textContent = fmtClock(Math.max(0, left)); if (left <= 0) { beep(988, .3); nextStep(); } }
-      else { el2.textContent = fmtClock(Math.floor(sec)); const ring = $("#pl-ring"); if (ring) ring.style.setProperty("--p", Math.min(1, sec / target)); if (sec >= target && !player.reached) { player.reached = true; beep(988, .3); } }
+    if (left <= 0) { P.phase = "work"; P.t0 = now; beep(880, .2); drawP(); return; }
+    if (left !== P.lastBeep) { P.lastBeep = left; beep(520, .08); }
+    c.textContent = left;
+  } else if (P.phase === "work") {
+    if (rx.mode === "hold") {
+      c.textContent = fmtClock(Math.floor(sec));
+      const ring = $("#p-ring"); if (ring) ring.style.setProperty("--p", Math.min(1, sec / rx.secs));
+      if (sec >= rx.secs && !P.reached) { P.reached = true; beep(988, .3); const s2 = $("#p-sub"); if (s2) s2.textContent = "Objectif atteint ! Continue si c'est propre, sinon arrête."; }
+    } else if (rx.mode === "timer") {
+      const left = Math.ceil(rx.secs - sec); c.textContent = fmtClock(Math.max(0, left));
+      const ring = $("#p-ring"); if (ring) ring.style.setProperty("--p", Math.min(1, sec / rx.secs));
+      if (left <= 0) { beep(988, .3); record(1); P.set = rx.sets; nextSet(); }
     } else if (rx.mode === "emom") {
       const min = Math.floor(sec / 60), left = Math.ceil(60 - (sec % 60));
-      if (min + 1 > rx.sets) { beep(988, .4); player.set = rx.sets; nextStep(); return; }
-      if (min + 1 !== player.set) { player.set = min + 1; beep(880, .25); drawPlayer(); return; }
-      el2.textContent = fmtClock(left);
+      const ring = $("#p-ring"); if (ring) ring.style.setProperty("--p", (sec % 60) / 60);
+      if (min + 1 > rx.sets) { beep(988, .4); record(rx.sets); P.set = rx.sets; nextSet(); return; }
+      if (min + 1 !== P.emomMin) { P.emomMin = min + 1; beep(880, .25); const s2 = $("#p-sub"); if (s2) s2.textContent = "Minute " + P.emomMin + "/" + rx.sets; }
+      c.textContent = fmtClock(left);
     }
   }
 }
-const fmtClock = s => { s = Math.max(0, s); return s >= 60 ? Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") : String(s); };
-function drawPlayer() {
+function togglePause() {
+  if (!P.paused) { P.paused = true; P.pausedAt = Date.now(); }
+  else { P.paused = false; P.t0 += Date.now() - P.pausedAt; }
+  drawP();
+}
+function drawP() {
   let o = $("#player");
-  if (!o) { o = h("div", { id: "player", class: "player", role: "dialog", "aria-modal": "true", "aria-label": "Séance guidée" }); document.body.appendChild(o); document.body.style.overflow = "hidden"; }
-  const it = player.list[player.i], ex = EX[it.ex], rx = player.rx, N = player.list.length;
-  const top = h("div", { class: "pl-top" },
-    h("button", { class: "ghost", onclick: closePlayer }, "✕ Quitter"),
-    h("span", { class: "label" }, "Exercice " + (player.i + 1) + "/" + N),
-    h("div", { class: "pl-prog" }, h("i", { style: "width:" + ((player.i + (player.phase === "done" ? 1 : 0)) / N * 100) + "%" })));
-  if (player.phase === "done") {
-    o.replaceChildren(top, h("div", { class: "pl-body" },
-      h("h2", null, "Séance terminée"),
-      h("p", { class: "muted" }, N + " exercices bouclés. Pense à valider un palier si tu as réussi un standard."),
-      h("button", { class: "pl-main", onclick: () => { state.done[player.key] = true; store.set("done", state.done); closePlayer(); render(); } }, "✓ Marquer comme faite")));
-    return;
+  if (!o) { o = h("div", { id: "player", class: "player", role: "dialog", "aria-modal": "true", "aria-label": "Séance guidée" }); document.body.appendChild(o); document.body.classList.add("locked"); }
+  figures = figures.filter(f => f.svg.isConnected && !f.svg.closest(".player"));
+  const N = P.list.length;
+  const quit = confirmBtn("✕", "Quitter sans enregistrer ?", closeP, "icon-btn");
+  quit.setAttribute("aria-label", "Quitter la séance");
+  const top = h("div", { class: "p-top" },
+    quit,
+    h("button", { class: "icon-btn", onclick: () => gotoEx(P.i - 1), disabled: P.i === 0 || P.phase === "done", "aria-label": "Exercice précédent" }, "‹"),
+    h("div", { class: "p-prog" }, h("span", { class: "num" }, P.phase === "done" ? "Terminé" : (P.i + 1) + " / " + N), h("div", { class: "bar" }, h("i", { style: "width:" + ((P.i + (P.phase === "done" ? 1 : 0)) / N * 100) + "%" }))),
+    h("button", { class: "icon-btn", onclick: () => gotoEx(P.i + 1), disabled: P.i >= N - 1 || P.phase === "done", "aria-label": "Exercice suivant" }, "›"),
+    P.phase === "work" || P.phase === "rest" ? h("button", { class: "icon-btn", onclick: togglePause, "aria-label": P.paused ? "Reprendre" : "Pause" }, P.paused ? "▶" : "❚❚") : h("span", { class: "icon-btn ghost-sp" }));
+  if (P.phase === "done") { o.replaceChildren(top, drawSummary()); return; }
+  const it = P.list[P.i], ex = EX[it.ex], rx = P.rx, last = lastLog(it);
+  const target = rx.mode === "hold" ? "Objectif " + fmtS(rx.secs) : rx.mode === "reps" ? rx.reps + " répétitions" : rx.mode === "emom" ? "EMOM " + rx.sets + " min · " + (it.unit || "") : rx.mode === "timer" ? fmtS(rx.secs) : it.dose + (it.unit ? " · " + it.unit : "");
+  let clock = "", ring = "", sub = "", btns = [], extra = null;
+  if (P.phase === "rest") {
+    const left = Math.ceil(P.restFor - (Date.now() - P.t0) / 1000);
+    clock = fmtClock(left); ring = "rest";
+    sub = P.paused ? "En pause" : P.newEx ? "Repos · exercice suivant" : "Repos avant la série " + P.set + "/" + rx.sets;
+    btns = [h("button", { class: "btn big", onclick: () => { P.phase = "ready"; P.newEx = false; P.paused = false; drawP(); } }, "Passer le repos"),
+      h("button", { class: "btn ghost", onclick: () => { P.restFor += 15; } }, "+15 s")];
+  } else if (P.phase === "ready") {
+    sub = "Série " + P.set + "/" + rx.sets;
+    if (rx.mode === "hold") { clock = "0"; btns = [h("button", { class: "btn big", onclick: () => { P.phase = "count"; P.t0 = Date.now(); P.reached = false; P.lastBeep = null; drawP(); } }, "▶ Démarrer la tenue")]; }
+    else if (rx.mode === "timer") { clock = fmtClock(rx.secs); btns = [h("button", { class: "btn big", onclick: () => { P.phase = "work"; P.t0 = Date.now(); drawP(); } }, "▶ Lancer le chrono")]; }
+    else if (rx.mode === "emom") { clock = "60"; btns = [h("button", { class: "btn big", onclick: () => { P.phase = "work"; P.t0 = Date.now(); P.emomMin = 1; beep(880, .25); drawP(); } }, "▶ Lancer l'EMOM")]; }
+    else if (rx.mode === "reps") {
+      extra = h("div", { class: "stepper" },
+        h("button", { class: "icon-btn", "aria-label": "Moins", onclick: () => { P.reps = Math.max(0, P.reps - 1); drawP(); } }, "−"),
+        h("div", { class: "st-val" }, h("b", { class: "num" }, P.reps), h("span", { class: "muted small" }, "répétitions faites")),
+        h("button", { class: "icon-btn", "aria-label": "Plus", onclick: () => { P.reps++; drawP(); } }, "+"));
+      btns = [h("button", { class: "btn big", onclick: () => { record(P.reps); P.reps = rx.reps || 1; nextSet(); } }, "✓ Série faite")];
+    } else btns = [h("button", { class: "btn big", onclick: () => { record(1); nextSet(); } }, "✓ Fait")];
+    btns.push(h("button", { class: "btn ghost", onclick: () => { P.set = rx.sets; nextSet(); } }, "Passer"));
+  } else if (P.phase === "count") { clock = "3"; sub = "Prépare-toi…"; }
+  else if (P.phase === "work") {
+    ring = "work";
+    sub = P.paused ? "En pause" : rx.mode === "emom" ? "Minute " + (P.emomMin || 1) + "/" + rx.sets + " · fais tes répétitions puis récupère" : rx.mode === "timer" ? "En cours" : "Tiens… objectif " + fmtS(rx.secs);
+    if (rx.mode === "hold") btns = [h("button", { class: "btn big", onclick: () => { record(Math.floor((Date.now() - P.t0) / 1000)); nextSet(); } }, "■ Fin de la tenue")];
+    else btns = [h("button", { class: "btn big", onclick: () => { if (rx.mode === "emom") { record(P.emomMin || 1); P.set = rx.sets; } else record(1); nextSet(); } }, "■ Terminer")];
   }
-  const what = rx.mode === "hold" ? (rx.cluster ? "Tenue de " + rx.secs + " s (cluster)" : "Tenue de " + fmtS(rx.secs)) : rx.mode === "reps" ? it.dose.split(" × ")[1] + " répétitions" : rx.mode === "emom" ? (it.unit || "") + " · minute " + player.set + "/" + rx.sets : rx.mode === "timer" ? fmtS(rx.secs) : it.dose + (it.unit ? " · " + it.unit : "");
-  const fig = makeFigure(it.ex, "pl-fig");
-  let clock = "", btns = [], sub = "";
-  if (player.phase === "rest") {
-    clock = fmtClock(Math.ceil(player.restFor - (Date.now() - player.t0) / 1000));
-    sub = player.newEx ? "Repos · ensuite : " + (it.title || ex.name) : "Repos avant la série " + player.set;
-    btns = [h("button", { class: "pl-main", onclick: () => { player.phase = "ready"; player.newEx = false; drawPlayer(); } }, "Passer le repos"),
-      h("button", { class: "ghost", onclick: () => { player.restFor += 15; } }, "+15 s")];
-  } else if (player.phase === "ready") {
-    clock = rx.mode === "hold" ? fmtClock(0) : rx.mode === "timer" ? fmtClock(rx.secs) : "";
-    sub = "Série " + player.set + "/" + rx.sets;
-    if (rx.mode === "hold") btns = [h("button", { class: "pl-main", onclick: () => { player.phase = "count"; player.t0 = Date.now(); player.reached = false; player.lastBeep = null; drawPlayer(); } }, "▶ Démarrer la tenue")];
-    else if (rx.mode === "timer" || rx.mode === "emom") btns = [h("button", { class: "pl-main", onclick: () => { player.phase = rx.mode === "emom" ? "work" : "work"; player.t0 = Date.now(); if (rx.mode === "emom") { player.set = 1; beep(880, .25); } drawPlayer(); } }, rx.mode === "emom" ? "▶ Lancer l'EMOM" : "▶ Lancer le chrono")];
-    else btns = [h("button", { class: "pl-main", onclick: nextStep }, "✓ Série faite")];
-    btns.push(h("button", { class: "ghost", onclick: () => { player.set = rx.sets; nextStep(); } }, "Passer l'exercice"));
-  } else if (player.phase === "count") {
-    clock = "3"; sub = "Prépare-toi";
-  } else if (player.phase === "work") {
-    sub = rx.mode === "emom" ? "Fais tes répétitions, puis récupère jusqu'à la minute suivante" : rx.mode === "timer" ? "En cours" : "Tiens… objectif " + fmtS(rx.secs);
-    btns = [h("button", { class: "pl-main", onclick: () => { if (rx.mode === "emom") player.set = rx.sets; nextStep(); } }, rx.mode === "hold" ? "■ Fin de la tenue" : "■ Terminer")];
-  }
-  o.replaceChildren(top, h("div", { class: "pl-body" },
-    h("div", { class: "pl-stage" }, fig),
-    h("div", { class: "pl-info" },
-      h("span", { class: "label" }, player.phase === "rest" ? "Récupération" : sub),
-      h("h2", null, it.title || ex.name),
-      h("p", { class: "pl-what num" }, what),
-      it.note ? h("p", { class: "muted" }, it.note) : null),
-    h("div", { id: "pl-ring", class: "pl-clock-wrap" + (player.phase === "rest" ? " resting" : ""), style: "--p:0" },
-      h("span", { id: "pl-clock", class: "pl-clock num" }, clock)),
-    player.phase === "rest" ? h("p", { class: "muted" }, sub) : null,
-    h("div", { class: "pl-btns" }, btns)));
+  const recNow = P.rec[P.i];
+  o.replaceChildren(top, h("div", { class: "p-body" },
+    h("div", { class: "p-stage" }, makeFigure(it.ex, "p-fig")),
+    h("div", { class: "p-info" },
+      eyebrowOf(it) ? h("span", { class: "eyebrow" }, eyebrowOf(it)) : null,
+      h("h2", null, nameOf(it)),
+      h("p", { class: "p-target num" }, target, it.unit && /par côté/.test(it.unit) ? " · par côté" : "", (it.unit || "").match(/\+\d+ kg/) ? " · lest " + it.unit.match(/\+\d+ kg/)[0] : ""),
+      last ? h("p", { class: "muted small" }, "Dernière fois : " + fmtVals(last)) : null,
+      recNow.length ? h("p", { class: "small" }, "Aujourd'hui : " + recNow.join(" · ") + (rx.mode === "hold" ? " s" : "")) : null),
+    clock !== "" ? h("div", { id: "p-ring", class: "p-ring " + ring, style: "--p:" + (ring === "rest" ? 1 : 0) }, h("span", { id: "p-clock", class: "p-clock num" }, clock)) : null,
+    h("p", { id: "p-sub", class: "p-sub" }, sub),
+    extra,
+    h("div", { class: "p-btns" }, btns),
+    it.note && P.phase !== "rest" ? h("p", { class: "muted small p-note" }, it.note) : null));
+}
+function drawSummary() {
+  const mins = Math.max(1, Math.round((Date.now() - P.started) / 60000));
+  const nSets = P.rec.reduce((a, r) => a + r.length, 0);
+  const prs = [], vals = [];
+  P.list.forEach((it, i) => {
+    const r = P.rec[i]; if (!r.length || it.warm) return;
+    const rx = parseRx(it); if (rx.mode !== "hold" && rx.mode !== "reps") return;
+    const prev = bestOf(lkOf(it)), mx = Math.max(...r);
+    if (prev > 0 && mx > prev) prs.push(nameOf(it) + " : " + mx + (rx.mode === "hold" ? " s" : " rép.") + " (avant " + prev + ")");
+    if (it.tree && it.lk === it.tree + ":" + levels[it.tree]) {
+      const st = TREE[it.tree].steps[levels[it.tree]];
+      if (st && r.filter(v => v >= st.v).length >= st.n && !vals.includes(it.tree)) vals.push(it.tree);
+    }
+  });
+  const fb = [["easy", "Trop facile", "+5 %"], ["ok", "Parfait", "on garde"], ["hard", "Trop dur", "−5 %"]];
+  return h("div", { class: "p-body summary" },
+    h("span", { class: "eyebrow" }, "Séance terminée"),
+    h("h2", null, "Bien joué."),
+    h("div", { class: "stats" },
+      h("div", null, h("b", { class: "num" }, mins), h("span", null, "minutes")),
+      h("div", null, h("b", { class: "num" }, nSets), h("span", null, "séries")),
+      h("div", null, h("b", { class: "num" }, prs.length), h("span", null, prs.length > 1 ? "records" : "record"))),
+    prs.length ? h("div", { class: "card stack left" }, h("span", { class: "label" }, "Nouveaux records"), h("ul", { class: "journal" }, prs.map(x => h("li", null, x)))) : null,
+    vals.length ? h("div", { class: "card stack left" }, h("span", { class: "label" }, "Standard réussi"),
+      vals.map(id => { const st = TREE[id].steps[levels[id]]; return h("div", { class: "row-between" }, h("span", null, TREE[id].name + " · " + st.t), confirmBtn("Valider", "Confirmer ?", () => { setLevel(id, levels[id] + 1, "valid"); toast("Palier validé"); drawP(); }, "btn small")); })) : null,
+    h("div", { class: "stack" }, h("span", { class: "label" }, "Comment c'était ?"),
+      h("div", { class: "fb" }, fb.map(([k, l, s]) => h("button", { class: "fb-btn" + (P.fb === k ? " on" : ""), "aria-pressed": P.fb === k, onclick: () => { P.fb = k; drawP(); } }, h("b", null, l), h("span", { class: "muted small" }, s))))),
+    h("button", { class: "btn big", onclick: finishSession }, "Enregistrer la séance"));
+}
+function finishSession() {
+  const today = iso(new Date());
+  P.list.forEach((it, i) => {
+    const r = P.rec[i]; if (!r.length) return;
+    const rx = parseRx(it), k = lkOf(it);
+    (logs[k] = logs[k] || []).push({ d: today, vals: r, u: rx.mode === "hold" ? "s" : rx.mode === "reps" ? "r" : "" });
+    logs[k] = logs[k].slice(-30);
+  });
+  if (P.fb === "easy") settings.adj = Math.min(.2, (settings.adj || 0) + .05);
+  if (P.fb === "hard") settings.adj = Math.max(-.2, (settings.adj || 0) - .05);
+  done[P.sess.key] = { d: today, min: Math.max(1, Math.round((Date.now() - P.started) / 60000)), fb: P.fb };
+  saveAll(); closeP(); toast("Séance enregistrée"); render();
 }
 
-/* ---------- Démarrage ---------- */
-function setProgram(id) {
-  PROG = PROGRAMS[id] || PROGRAMS.cu;
-  if (PROG.refresh) PROG.refresh();
-  ({ phases: PHASES, start: START, tests: TEST_WEEKS, deload: DELOAD, slot: SLOT, meta: SESSION_META, variants: VARIANTS, order: SLOT_ORDER, defis: DEFIS, weeks: NW } = PROG);
-  state.start = store.get("start", iso(mondayOf(new Date())));
-  state.done = store.get("done", {});
-  state.results = store.get("results", {});
-  $("#start-date").value = state.start;
-  try { localStorage.setItem("cap:prog", PROG.id); } catch (e) {}
-  initPosition();
+/* ---------- Rendu principal ---------- */
+function render() {
+  figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
+  const v = $("#view");
+  if (S.onb != null) { $("#nav").hidden = true; v.replaceChildren(renderOnboarding()); return; }
+  $("#nav").hidden = false;
+  renderNav();
+  let scr;
+  if (S.sub && S.sub.type === "session") scr = renderSessionDetail(S.sub.abs, S.sub.d);
+  else if (S.sub && S.sub.type === "tree") scr = renderTree(S.sub.id);
+  else if (S.sub && S.sub.type === "ex") scr = renderExercise(S.sub.id);
+  else scr = { today: renderToday, plan: renderPlan, skills: renderSkills, ex: renderExercises, profile: renderProfile }[S.tab]();
+  v.replaceChildren(scr);
 }
-document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { state.tab = b.dataset.tab; render(); }));
-document.addEventListener("keydown", e => { if (e.key === "Escape" && player.on) closePlayer(); });
-document.querySelectorAll(".prog-switch button").forEach(b => b.addEventListener("click", () => { if (b.dataset.prog !== PROG.id) { setProgram(b.dataset.prog); render(); } }));
-const sd = $("#start-date");
-sd.addEventListener("change", () => {
-  if (!sd.value) return;
-  state.start = iso(mondayOf(new Date(sd.value + "T12:00:00")));
-  sd.value = state.start;
-  store.set("start", state.start);
-  initPosition(); render();
-});
-let savedProg = "cu";
-try { savedProg = localStorage.getItem("cap:prog") || "cu"; } catch (e) {}
-setProgram(savedProg);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && S.sub && !P.on) closeSub(); });
 render();
+
 </script>

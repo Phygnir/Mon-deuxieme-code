@@ -551,6 +551,30 @@ button:disabled { opacity: .4; cursor: default; }
 .egg-svg .s-tw { animation: c-twinkle 1.5s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .k-sh *, .k-sh { animation: none !important; } }
 
+/* Blocs intensifs */
+.spec-card, .spec-entry { width: 100%; text-align: left; color: var(--ink); font: inherit; cursor: pointer; border-color: var(--accent); }
+.spec-entry { gap: 4px; }
+.spec-entry b { font-size: 18px; }
+.spec-goal { font-size: 18px; line-height: 1.3; }
+.spec-bar i { height: 8px; }
+.spec-bar i.test { box-shadow: inset 0 -2px 0 var(--warn); }
+.spec-goals { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.spec-goals li { display: flex; gap: 10px; align-items: flex-start; }
+.spec-goals li > div { display: grid; gap: 2px; }
+.sg-mark { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: var(--sunk); color: var(--muted); }
+.spec-goals li.now .sg-mark { background: var(--accent-soft); color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.spec-goals li.ok .sg-mark { background: var(--accent); color: #fff; }
+.spec-goals li.ok b { text-decoration: none; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.spec-pick { align-content: start; }
+.spec-pick.on { border-color: var(--accent); }
+.spec-pick p { margin: 0; }
+.spec-pick .btn, .spec-pick .tag { justify-self: start; }
+.sp-head { display: flex; gap: 12px; align-items: center; }
+.sp-head > div { display: grid; gap: 2px; min-width: 0; }
+.sp-head b { font-size: 18px; }
+@media (max-width: 640px) { .spec-grid { grid-template-columns: 1fr; } }
+
 /* Craie, avatar, boutique */
 .chalk { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
 .chalk-ic svg { width: 16px; height: 16px; display: block; fill: color-mix(in srgb, var(--surface) 70%, var(--accent)); stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
@@ -4639,6 +4663,257 @@ eggSVG = function (rar) {
     '<g class="egg-shell">' + cel(u, shell, base, sh, { dx: -3, dy: -7, x: pat, hl: [34, 32, 7, 12, 20], hlo: .6, sw: 3.4 }) + '</g>' +
     '<path class="egg-crack" d="M16 66 L28 58 L34 68 L46 56 L54 70 L64 58 L72 68 L84 62" fill="none" stroke="' + OL + '" stroke-width="3" stroke-linejoin="round"/>' +
     '</svg>';
+};
+render();
+
+
+/* =====================================================================
+   V10 : blocs intensifs de 3 mois, un grand skill en priorité absolue
+   3 mois = 3 × (3 semaines de charge + 1 semaine de test et récupération).
+   Séances lourdes et techniques alternées : jamais deux séances lourdes d'affilée.
+   ===================================================================== */
+settings.specHist = settings.specHist || [];
+
+// Exercices d'appoint de chaque bloc : [exercice, dose, unité, consigne]
+const SPEC = {
+  planche: { name: "Planche",
+    real: "La full planche demande en général 1 à 2 ans depuis l'advanced tuck : le bloc vise les 2 paliers suivants, sans abîmer coudes et poignets.",
+    tips: ["Bras verrouillés sur toutes les tenues : un coude plié cache ta vraie progression.", "Omoplates écartées et bassin rentré, du lean jusqu'à la full.", "Si un biceps ou un coude tire, passe la séance en technique."],
+    heavy: lv => [lv <= 4 ? ["plNeg", "3 × 3", "négatifs 4 s · repos 3 min", "Pars du palier au-dessus du tien et descends lentement"] : null,
+      [lv <= 1 ? "pppu" : lv <= 4 ? "atPU" : "plPU", "EMOM 6 min", "1+ rép. / min", "Méthode Heria : ta pompe planche la plus dure, 1 répétition ou plus au début de chaque minute"],
+      ["dipsW", "4 × 6", "lestés · repos 2 min", "Force de poussée lourde : transfert direct sur la planche"]],
+    tech: () => [["lean", "3 × 20 s", "repos 60 s", "Penche un peu plus loin chaque semaine, bras verrouillés"], ["pppu", "3 × 8", "repos 90 s", "Garde le lean jusqu'en bas"]] },
+  hs: { name: "Handstand", every: true,
+    real: "L'équilibre progresse surtout avec la fréquence : un peu à chaque séance vaut mieux qu'une grosse séance par semaine.",
+    tips: ["Côtes rentrées, épaules complètement ouvertes : la ligne avant la durée.", "Corrige avec les doigts, pas en marchant avec les mains.", "Filme-toi de profil une fois par semaine."],
+    heavy: lv => [["kickup", "8 min", "pratique", "Entrées en équilibre : arrête-toi propre en haut, sans toucher le mur"],
+      lv >= 3 ? ["shapes", "3 × 20 s", "repos 60 s", "Change la forme des jambes sans perdre l'équilibre"] : ["heelPull", "3 × 10 s", "repos 60 s", "Décolle les talons du mur, trouve le point d'équilibre"],
+      ["shoulderTap", "3 × 10", "repos 60 s", "Transfert de poids d'une main à l'autre"]],
+    tech: () => [["kickup", "6 min", "pratique", "Entrées détendues, qualité avant tout"], ["wallChest", "2 × 45 s", "repos 60 s", "Ligne parfaite : côtes rentrées, épaules ouvertes"]] },
+  hspu: { name: "HSPU",
+    real: "Les HSPU progressent vite avec de la force de poussée : 2 à 3 paliers en 3 mois sont réalistes. Les HSPU libres demandent en plus un handstand solide.",
+    tips: ["Coudes à 45°, la tête passe devant les mains en bas.", "Amplitude complète avant d'ajouter du déficit.", "Garde un peu de handstand libre chaque semaine."],
+    heavy: lv => [lv <= 4 ? ["hspuNeg", "3 × 4", "négatifs 5 s · repos 2 min", "Descente lente jusqu'à la tête, coudes à 45°"] : null,
+      ["dipsW", "4 × 6", "lestés · repos 2 min", "Force de poussée lourde"], ["pikeDef", "3 × 8", "repos 90 s", "Amplitude complète, hanches hautes"]],
+    tech: () => [["kickup", "6 min", "pratique", "Équilibre au mur ou en libre"], ["pikeBox", "3 × 8", "repos 90 s", "Rapide en montée, contrôlé en descente"]] },
+  fl: { name: "Front lever",
+    real: "Le front lever avance d'un palier tous les 1 à 3 mois chez un pratiquant fort en traction : 2 paliers en 3 mois est un bon objectif.",
+    tips: ["Bras tendus, omoplates basses et serrées.", "Hanches à hauteur des épaules, même en tuck.", "Le lest lourd en traction aide beaucoup : garde-le."],
+    heavy: () => [["flNeg", "3 × 3", "négatifs 4 s · repos 3 min", "Descends lentement depuis la barre jusqu'à l'horizontale, corps gainé"],
+      ["pullUpW", "4 × 5", "lestés · repos 2 min", "Tirage lourd : la base du front lever"], ["legRaise", "3 × 8", "repos 60 s", "Jambes tendues, sans balancer"]],
+    tech: () => [["scapPull", "3 × 8", "repos 60 s", "Omoplates basses et serrées"], ["row", "3 × 10", "tempo 3-1-1 · repos 90 s", "Corps gainé, bras serrés"]] },
+  bl: { name: "Back lever",
+    real: "Le back lever est souvent le levier le plus rapide, mais le plus exigeant pour les biceps : la progression reste volontairement prudente.",
+    tips: ["Échauffe longuement les biceps et les épaules avant chaque tenue.", "Entre et sors du levier lentement, jamais en lâchant.", "Arrête dès qu'une douleur apparaît à l'avant du coude."],
+    heavy: () => [["pullUp", "4 × 6", "tempo 3-1-1 · repos 2 min", "Tractions lentes et contrôlées"], ["dips", "3 × 10", "repos 90 s", "Épaules basses, poitrine ouverte"]],
+    tech: () => [["row", "3 × 12", "repos 90 s", "Corps gainé"], ["plankPike", "3 × 10", "repos 60 s", "Gainage pour garder le corps aligné"]] },
+  mu: { name: "Muscle-up",
+    real: "Avec de bonnes tractions, le muscle-up strict vient souvent en 1 à 3 mois : la technique de transition compte autant que la force.",
+    tips: ["Tire vers les hanches, pas vers le menton.", "Prise un peu plus serrée, poignets par-dessus la barre.", "Transition des deux bras en même temps."],
+    heavy: () => [["explosive", "5 × 3", "repos 2 min", "Tire le plus haut possible, jusqu'aux hanches"], ["muNeg", "3 × 3", "négatifs 5 s · repos 2 min", "Descends lentement à travers la transition"], ["dips", "3 × 10", "repos 90 s", "Le haut du muscle-up"]],
+    tech: () => [["c2b", "3 × 4", "repos 2 min", "Poitrine à la barre, sans élan"], ["pullUp", "2 × 6", "tempo 3-1-1 · repos 90 s", "Contrôle total"]] },
+  pull: { name: "Traction à un bras",
+    real: "La traction à un bras demande en général 6 mois à 2 ans : ce bloc construit la base (lest lourd, négatifs à un bras) et rapproche des premiers paliers.",
+    tips: ["Le lest lourd est le meilleur indicateur : vise des tractions à +50 % de ton poids.", "Négatifs à un bras : le plus lent possible, l'autre main ne touche pas.", "Coudes sensibles : on réduit, on n'insiste pas."],
+    heavy: lv => [["pullUpW", "5 × 3", "lestés · repos 3 min", "Lest lourd : vise 50 % de ton poids et plus"], lv >= 5 ? ["oap", "3 × 2", "négatifs 5 s · par côté · repos 3 min", "Descends le plus lentement possible sur un bras"] : ["explosive", "4 × 3", "repos 2 min", "Puissance de tirage"]],
+    tech: () => [["pullUp", "3 × 8", "tempo 3-1-1 · repos 90 s", "Contrôle total"], ["scapPull", "3 × 8", "repos 60 s", "Omoplates actives"]] },
+  core: { name: "V-sit",
+    real: "Le V-sit dépend autant de la souplesse en compression que de la force : le bloc travaille les deux à chaque séance.",
+    tips: ["Épaules basses, bras verrouillés, pousse le sol loin de toi.", "La compression vient des abdos et des fléchisseurs de hanche : tire les jambes vers toi.", "Étire l'arrière des jambes tous les jours."],
+    heavy: () => [["legRaise", "4 × 8", "repos 60 s", "Jambes tendues, montée lente"], ["plankPike", "3 × 10", "repos 60 s", "Compression active"]],
+    tech: () => [["pikeFold", "2 min", "", "Étirement actif en pike : la compression vient de la souplesse"], ["lTuck", "3 × 15 s", "repos 60 s", "Genoux le plus haut possible"]] }
+};
+const SPEC_IDS = Object.keys(SPEC);
+
+/* ---------- Calendrier du bloc ---------- */
+const specWeekOf = date => { const sp = settings.spec; if (!sp) return 0; return Math.floor((mondayOf(date) - new Date(sp.start + "T12:00:00")) / 6048e5) + 1; };
+const specWeekNow = () => specWeekOf(new Date());
+function specHeavy(id, d) {
+  if (SPEC[id].every) return true;
+  const days = Object.keys(cuSlots()).map(Number).sort((a, b) => a - b), H = {};
+  let last = -9; days.forEach(x => { if (x - last > 1) { H[x] = true; last = x; } });
+  return !!H[d];
+}
+function specAt(abs, d) {
+  const sp = settings.spec; if (!sp || !SPEC[sp.id]) return null;
+  const sw = specWeekOf(dateOf(abs, d));
+  if (sw < 1 || sw > 12) return null;
+  return { id: sp.id, sw, m: Math.ceil(sw / 4), wm: (sw - 1) % 4, heavy: specHeavy(sp.id, d) };
+}
+function specGoals(sp) {
+  const t = TREE[sp.id], N = t.steps.length, lv = levels[sp.id];
+  return [0, 1, 2].map(k => {
+    const i = sp.lv0 + k;
+    if (i >= N) return { k, label: "Entretenir et allonger : " + t.steps[N - 1].t, std: "", done: lv >= N };
+    const st = t.steps[i], touch = k === 2;
+    return { k, i, label: (touch ? (st.k === "h" ? "Premières tenues : " : "Premières répétitions : ") : "Valider : ") + st.t, std: touch ? "" : stdText(st),
+      done: touch ? lv > i || (lv >= i && bestOf(sp.id + ":" + i) > 0) : lv > i };
+  });
+}
+
+/* ---------- Contenu des séances ---------- */
+function specItems(sp) {
+  const id = sp.id, t = TREE[id], N = t.steps.length, lv = levels[id], si = Math.min(lv, N - 1), st = t.steps[si], nx = lv + 1 < N ? t.steps[lv + 1] : null;
+  const fin = lv >= N, test = sp.wm === 3, heavy = sp.heavy, hold = st.k === "h", tag = "Bloc intensif · " + t.name;
+  const side = st.side ? " par côté" : "", kg = st.wt ? " +" + Math.round(settings.bw * st.wt / 100) + " kg" : "", lk = id + ":" + si;
+  const main = { ex: st.ex, tree: id, lk, name: EX[st.ex].name + (st.assisted ? " assisté" : ""), title: t.name + " · " + st.t, eyebrow: tag + " · palier " + (si + 1) + "/" + N, keep: true, spec: true };
+  if (test && heavy && !fin) Object.assign(main, { dose: st.n + " × " + st.v + (hold ? " s" : ""), unit: "test" + side + kg, validate: id, note: "Test du mois " + sp.m + " : " + stdText(st) + ". Réussi : valide le palier." });
+  else if (test) { const ref = hold ? maxHold(lk, st).v : st.v; Object.assign(main, { dose: "2 × " + Math.max(hold ? 3 : 1, Math.round(ref * .5)) + (hold ? " s" : ""), unit: "décharge" + side + kg, note: "Semaine de test : on récupère, les tendons aussi." }); }
+  else if (hold) {
+    const mx = maxHold(lk, st), pct = heavy ? [.7, .8, .85][sp.wm] : .55, v = Math.max(3, Math.round(mx.v * pct));
+    Object.assign(main, { dose: (heavy ? 5 : 4) + " × " + v + " s", unit: "repos 2–3 min" + side, maxv: mx.v, last: heavy,
+      note: (heavy ? "Séance lourde" : "Séance technique") + " · tenue max " + (mx.est ? "estimée à " : "") + mx.v + " s, travail à " + Math.round(pct * 100) + " %. " + (heavy ? "Dernière série : tiens au max sans casser la forme." : "Forme parfaite, loin de l'échec.") });
+  } else {
+    const b0 = Math.max(1, Math.round(st.v * (heavy ? [.6, .7, .8][sp.wm] : .5))), r = Math.max(1, Math.min(st.v, b0 + (heavy ? autoAdj[lk] || 0 : 0)));
+    Object.assign(main, { dose: (heavy ? 5 : 3) + " × " + r, unit: "repos 2–3 min" + side + kg,
+      note: (heavy ? "Séance lourde : +1 répétition dès que toutes les séries passent" : "Séance technique : vitesse et forme parfaite") + ". Standard : " + stdText(st) + "." });
+    if (heavy && r !== b0) main.auto = r - b0;
+  }
+  const out = [main];
+  if (heavy && !test && nx && nx.ex !== st.ex) out.push({ ex: nx.ex, tree: id, lk: id + ":" + (lv + 1), name: EX[nx.ex].name, title: t.name + " · " + nx.t, eyebrow: tag + " · palier suivant",
+    dose: nx.k === "h" ? "4 × 4 s" : "3 × 1", unit: "tentatives · repos 2 min" + (nx.side ? " par côté" : ""), note: "Touche le palier suivant, frais : c'est l'objectif des semaines à venir.", keep: true, spec: true });
+  SPEC[id][heavy ? "heavy" : "tech"](lv).filter(Boolean).forEach(([ex, dose, unit, note]) => {
+    if (!EX[ex] || out.some(o => o.ex === ex) || (test && /^EMOM/.test(dose))) return;
+    if (!settings.eq.bar && EX[ex].props.some(p => p.pullbar)) return;
+    out.push(Object.assign(item(ex, test ? dose.replace(/^(\d+) ×/, (m, n) => Math.min(2, +n) + " ×") : dose, unit, note), { eyebrow: tag, keep: true, spec: true }));
+  });
+  return out;
+}
+
+// La séance normale passe en entretien, le bloc passe en premier
+let SPEC_CTX = null;
+const _cuBase10 = cuBaseSession;
+cuBaseSession = function (w, type) {
+  const b = _cuBase10(w, type), sp = SPEC_CTX;
+  if (!sp) return b;
+  b.warm = b.warm.filter(x => x.tree !== sp.id);
+  const rest = b.main.filter(x => x.tree !== sp.id && !(x.tree && (x.eyebrow || "").includes("palier suivant")));
+  rest.forEach(x => { if (x.tree && TREE[x.tree].skill && !x.validate) { x.dose = x.dose.replace(/^(\d+) ×/, (m, n) => Math.max(2, Math.ceil(n / 2)) + " ×"); if (!/^Entretien/.test(x.eyebrow || "")) x.eyebrow = "Entretien · " + (x.eyebrow || TREE[x.tree].name); } });
+  b.main = specItems(sp).concat(rest);
+  return b;
+};
+// Pendant un bloc, pas de négatifs ni d'EMOM supplémentaires pour les skills en entretien
+const _extraItems10 = extraItems;
+extraItems = function (main, s) {
+  if (!SPEC_CTX) return _extraItems10(main, s);
+  const keepF = settings.focus; settings.focus = [];
+  try { return _extraItems10(main, s); } finally { settings.focus = keepF; }
+};
+const _session10 = session;
+session = function (abs, d) {
+  const sp = specAt(abs, d);
+  if (!sp) return _session10(abs, d);
+  const keepF = settings.focus;
+  settings.focus = keepF.filter(x => x !== sp.id); SPEC_CTX = sp;
+  try {
+    const s = _session10(abs, d);
+    if (s) Object.assign(s, { spec: sp, meta: Object.assign({}, s.meta, { sub: s.main.some(i => i.spec) ? "Bloc intensif " + SPEC[sp.id].name + (sp.wm === 3 ? " (test)" : sp.heavy ? " (lourd)" : " (technique)") + ", puis entretien" : "Bloc " + SPEC[sp.id].name + " en pause ici (pas de barre) : séance d'entretien" }) });
+    return s;
+  } finally { settings.focus = keepF; SPEC_CTX = null; }
+};
+
+/* ---------- Lancer, arrêter, archiver ---------- */
+function startSpec(id) {
+  if (settings.spec) archiveSpec(true);
+  settings.spec = { id, start: iso(mondayOf(new Date())), lv0: Math.min(levels[id], TREE[id].steps.length) };
+  saveAll(); toast("Bloc intensif lancé : " + SPEC[id].name + " pour 12 semaines"); render(); window.scrollTo(0, 0);
+}
+function archiveSpec(stopped) {
+  const sp = settings.spec; if (!sp) return;
+  settings.specHist.unshift({ id: sp.id, start: sp.start, lv0: sp.lv0, lv1: levels[sp.id], end: iso(new Date()), stopped: !!stopped && specWeekNow() <= 12, goals: specGoals(sp).filter(g => g.done).length });
+  settings.specHist = settings.specHist.slice(0, 20);
+  settings.spec = null; saveAll();
+}
+
+/* ---------- Affichage ---------- */
+function specBar(sw) { return h("div", { class: "segs spec-bar", style: "--n:12" }, Array.from({ length: 12 }, (_, i) => h("i", { class: (i + 1 < sw ? "on" : i + 1 === sw ? "cur" : "") + ((i + 1) % 4 === 0 ? " test" : "") }))); }
+function goalList(sp, sw) {
+  return h("ol", { class: "spec-goals" }, specGoals(sp).map(g => h("li", { class: (g.done ? "ok" : "") + (sw && Math.ceil(sw / 4) === g.k + 1 && !g.done ? " now" : "") },
+    h("span", { class: "sg-mark", "aria-hidden": "true" }, g.done ? "✓" : String(g.k + 1)),
+    h("div", null, h("span", { class: "eyebrow" }, "Mois " + (g.k + 1)), h("b", null, g.label), g.std ? h("span", { class: "muted small" }, "Standard : " + g.std) : null))));
+}
+function specCard() {
+  const sp = settings.spec; if (!sp) return null;
+  const sw = specWeekNow(), t = TREE[sp.id], goals = specGoals(sp);
+  if (sw > 12) return h("section", { class: "card spec-card stack" },
+    h("span", { class: "eyebrow" }, "Bloc intensif terminé · " + SPEC[sp.id].name),
+    h("h3", null, goals.filter(g => g.done).length + " objectif" + (goals.filter(g => g.done).length > 1 ? "s" : "") + " sur 3 atteint" + (goals.filter(g => g.done).length > 1 ? "s" : "")),
+    goalList(sp),
+    h("p", { class: "muted small" }, "Ton programme normal a repris. Enchaîne avec un autre bloc, ou garde quelques semaines d'entraînement équilibré avant le suivant."),
+    h("div", { class: "hero-actions" }, h("button", { class: "btn", onclick: () => { archiveSpec(false); openSub({ type: "spec" }); } }, "Choisir un nouveau bloc"), h("button", { class: "btn ghost", onclick: () => { archiveSpec(false); render(); } }, "Archiver")));
+  const m = Math.max(1, Math.ceil(sw / 4)), g = goals[m - 1], test = sw >= 1 && (sw - 1) % 4 === 3;
+  return h("button", { class: "card spec-card", onclick: () => openSub({ type: "spec" }) },
+    h("div", { class: "row-between" }, h("span", { class: "eyebrow" }, "Bloc intensif · " + t.name + " · semaine " + Math.max(1, sw) + "/12"), test ? h("span", { class: "tag warn" }, "Test du mois") : null),
+    h("b", { class: "spec-goal" }, (g.done ? "✓ " : "") + g.label),
+    specBar(sw),
+    h("span", { class: "muted small" }, test ? "Semaine de test : tente le standard lors de ta séance lourde, puis récupère." : "Mois " + m + " sur 3 · " + goals.filter(x => x.done).length + "/3 objectifs atteints · Voir le bloc ›"));
+}
+function renderSpec() {
+  const sp = settings.spec, sw = specWeekNow();
+  const cards = SPEC_IDS.map(id => {
+    const t = TREE[id], lv = levels[id], N = t.steps.length, st = t.steps[Math.min(lv, N - 1)], on = sp && sp.id === id;
+    const g = specGoals({ id, lv0: Math.min(lv, N) });
+    return h("section", { class: "card spec-pick" + (on ? " on" : "") },
+      h("div", { class: "sp-head" }, thumb(st.ex, "sm"),
+        h("div", null, h("span", { class: "eyebrow" }, t.name + " · palier " + Math.min(lv + 1, N) + "/" + N), h("b", null, SPEC[id].name), h("span", { class: "muted small" }, lv >= N ? "Arbre terminé" : "Actuel : " + st.t))),
+      h("p", { class: "small" }, h("b", null, "En 3 mois : "), g.map(x => x.label.replace(/^Valider : /, "")).join(" → ")),
+      h("p", { class: "muted small" }, SPEC[id].real),
+      on ? h("span", { class: "tag accent" }, "Bloc en cours") : sp ? confirmBtn("Remplacer le bloc actuel", "Confirmer : arrêter " + SPEC[sp.id].name + " ?", () => startSpec(id), "btn ghost small") : h("button", { class: "btn small", onclick: () => startSpec(id) }, "Lancer ce bloc"));
+  });
+  const hist = settings.specHist;
+  return h("div", { class: "screen" },
+    backBar("Retour", closeSub),
+    h("header", { class: "top" }, h("span", { class: "eyebrow" }, "12 semaines · 1 skill en priorité"), h("h1", null, "Blocs intensifs"),
+      h("p", { class: "muted" }, "Un skill passe en priorité absolue pendant 3 mois. Tes autres skills restent en entretien, avec moins de séries.")),
+    sp && sw <= 12 ? h("section", { class: "card stack" },
+      h("span", { class: "eyebrow" }, "En cours · semaine " + Math.max(1, sw) + "/12 · depuis le " + fmtShort(new Date(sp.start + "T12:00:00"))),
+      h("h2", null, SPEC[sp.id].name), specBar(sw), goalList(sp, sw),
+      h("h3", null, "Conseils"), h("ul", { class: "how" }, SPEC[sp.id].tips.map(x => h("li", null, x))),
+      confirmBtn("Arrêter le bloc", "Confirmer l'arrêt ?", () => { archiveSpec(true); toast("Bloc arrêté : retour au programme normal"); render(); }, "btn ghost small")) : null,
+    h("section", { class: "card stack" }, h("h3", null, "Comment ça marche"),
+      h("ol", { class: "how" },
+        h("li", null, h("b", null, "Chaque mois : 3 semaines de charge, 1 semaine de test. "), "Les tenues montent de 70 à 85 % de ta tenue max. En semaine 4, tu tentes le standard du palier lors de ta séance lourde, puis tu récupères."),
+        h("li", null, h("b", null, "Séances lourdes et techniques. "), "Le skill est travaillé à chaque séance, mais jamais lourd deux jours de suite : les tendons récupèrent moins vite que les muscles."),
+        h("li", null, h("b", null, "Objectifs par mois. "), "Valider ton palier actuel, puis le suivant, puis toucher celui d'après. Valide-les comme d'habitude, le bloc s'adapte."),
+        h("li", null, h("b", null, "Ensuite. "), "Après 12 semaines, ton programme normal reprend. Tu peux enchaîner sur un autre bloc."))),
+    h("section", { class: "stack" }, h("h3", null, sp && sw <= 12 ? "Changer de bloc" : "Choisir un bloc"), h("div", { class: "spec-grid" }, cards)),
+    hist.length ? h("section", { class: "stack" }, h("h3", null, "Blocs précédents"),
+      h("ul", { class: "journal" }, hist.map(x => h("li", null, h("span", { class: "num muted" }, fmtShort(new Date(x.start + "T12:00:00"))), " " + SPEC[x.id].name + " · " + x.goals + "/3 objectifs" + (x.stopped ? " · arrêté" : ""))))) : null);
+}
+
+/* ---------- Points d'entrée : Aujourd'hui, Skills, fiche d'un arbre ---------- */
+const _renderToday10 = renderToday;
+renderToday = function () {
+  const scr = _renderToday10(), c = specCard();
+  if (c) { const pc = scr.querySelector(".player-card"); (pc || scr.querySelector(".top")).after(c); }
+  return scr;
+};
+const _renderSkills10 = renderSkills;
+renderSkills = function () {
+  const scr = _renderSkills10(), sp = settings.spec;
+  scr.querySelector(".top").after(h("button", { class: "card spec-entry", onclick: () => openSub({ type: "spec" }) },
+    h("span", { class: "eyebrow" }, "Nouveau · 3 mois"), h("b", null, sp ? "Bloc intensif en cours : " + SPEC[sp.id].name : "Blocs intensifs"),
+    h("span", { class: "muted small" }, sp ? "Semaine " + Math.min(12, Math.max(1, specWeekNow())) + "/12 · voir les objectifs ›" : "Planche, handstand, muscle-up, front lever… Un skill en priorité pendant 12 semaines ›")));
+  return scr;
+};
+const _renderTree10 = renderTree;
+renderTree = function (id) {
+  const scr = _renderTree10(id);
+  if (SPEC[id]) {
+    const on = settings.spec && settings.spec.id === id;
+    scr.appendChild(h("section", { class: "card stack" }, h("h3", null, "Bloc intensif 3 mois"),
+      h("p", { class: "muted small" }, SPEC[id].real),
+      h("button", { class: on ? "btn ghost" : "btn", onclick: () => openSub({ type: "spec" }) }, on ? "Voir le bloc en cours" : "Découvrir le bloc " + SPEC[id].name)));
+  }
+  return scr;
+};
+const _render10 = render;
+render = function () {
+  if (S.onb == null && S.sub && S.sub.type === "spec") {
+    applyLook(); figures = figures.filter(f => f.svg.isConnected && f.svg.closest(".player"));
+    $("#nav").hidden = false; renderNav(); $("#view").replaceChildren(renderSpec()); return;
+  }
+  _render10();
 };
 render();
 

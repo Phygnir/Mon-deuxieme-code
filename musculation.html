@@ -112,16 +112,18 @@ button:disabled { opacity: .4; cursor: default; }
 .chev { font-size: 22px; color: var(--muted); }
 
 /* Lignes d'exercice */
-.xlist { display: grid; gap: 8px; }
+.xlist { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.xrow { min-width: 0; }
 .xrow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .xrow summary { list-style: none; display: flex; gap: 12px; align-items: center; padding: 12px; cursor: pointer; }
 .xrow summary::-webkit-details-marker { display: none; }
 .xmain { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .xname { font-size: 16px; font-weight: 600; }
 .xwhy { font-size: 13px; color: var(--accent); font-weight: 500; }
-.xdose { font-family: var(--font-display); font-size: 21px; font-weight: 700; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.xdose { font-family: var(--font-display); font-size: 18px; font-weight: 700; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
 .xmore { padding: 0 12px 12px; display: grid; gap: 8px; font-size: 15px; }
 .xmore ul { padding-left: 18px; }
+.xmore { overflow-x: auto; }
 .settbl { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
 .settbl td, .settbl th { padding: 5px 4px; border-bottom: 1px solid var(--line); text-align: left; }
 .settbl th { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
@@ -176,6 +178,31 @@ button:disabled { opacity: .4; cursor: default; }
 .hist-items { list-style: none; padding: 0 12px 12px; display: grid; gap: 4px; font-size: 14px; }
 .hist-items li { display: flex; justify-content: space-between; gap: 10px; }
 .hist-items li span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Schémas */
+.thumb { width: 64px; height: 54px; flex: none; border-radius: 10px; background: var(--sunk); overflow: hidden; }
+.thumb .fig { width: 100%; height: 100%; display: block; }
+.big-fig { width: 100%; background: var(--sunk); border-radius: var(--r); overflow: hidden; }
+.big-fig .fig { width: 100%; height: auto; aspect-ratio: 6 / 5; display: block; }
+.p-body .big-fig { max-width: 220px; justify-self: center; }
+.fig .pr { stroke: var(--muted); stroke-width: 2; fill: none; }
+.fig .prl { stroke: color-mix(in srgb, var(--muted) 45%, var(--sunk)); stroke-linecap: round; }
+.fig .prf { fill: var(--line); stroke: var(--muted); stroke-width: 1.5; }
+.fig .lb { stroke: var(--ink); stroke-linecap: round; stroke-width: 7.5; opacity: .3; }
+.fig .lf { stroke: var(--ink); stroke-linecap: round; stroke-width: 7.5; }
+.fig .tr { stroke: var(--ink); stroke-linecap: round; stroke-width: 12; }
+.fig .hd, .fig .jf { fill: var(--ink); }
+.fig .jb { fill: var(--ink); opacity: .3; }
+.fig .jn { fill: var(--sunk); stroke: var(--ink); stroke-width: 1.5; }
+.fig .plate { fill: color-mix(in srgb, var(--accent) 22%, var(--surface)); stroke: var(--accent); stroke-width: 3; }
+.fig .dbell { fill: var(--accent); }
+.fig .handle, .fig .sled { stroke: var(--accent); stroke-width: 4; stroke-linecap: round; }
+.fig .cab { stroke: var(--muted); stroke-width: 1.5; }
+.fig .pul { fill: var(--muted); }
+
+.thumb { position: relative; }
+.thumb .role { position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; font-size: 11px; border-radius: 5px; }
+.p-target .big { font-size: 40px; }
 
 /* Barre d'onglets */
 #nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
@@ -355,6 +382,154 @@ const EX = {
     cues: ["Corps gainé de la tête aux talons", "Poitrine à un poing du sol", "Bras tendus en haut, rythme régulier"], err: ["Bassin qui s'affaisse", "Demi-reps en fin de série"] }
 };
 for (const id in EX) EX[id].id = id;
+
+/* ---------- Schémas animés (même moteur que Cap Calisthénie : bonhomme articulé, angles interpolés) ---------- */
+const ST = { t: 90, th: -90, sh: -90, ua: -90, fa: -90, at: ["f", 120, 190] };          // debout, profil, regard à gauche
+const STF = { front: 1, t: 90, th: -98, sh: -92, th2: -82, sh2: -88, at: ["f", 113, 190] }; // debout, de face
+const S2 = (a, b) => [Object.assign({}, a), Object.assign({}, a, b)];
+const FIG = {
+  bench:      { props: [{ bench: [76, 146, 108] }], imp: [{ t: "bar", r: 16 }], poses: [{ t: 180, th: -20, sh: -90, ua: 90, fa: 90, at: ["s", 100, 138] }, { t: 180, th: -20, sh: -90, ua: -80, fa: 90, at: ["s", 100, 138] }] },
+  benchDb:    { props: [{ bench: [76, 146, 108] }], imp: [{ t: "db" }], poses: [{ t: 180, th: -20, sh: -90, ua: 90, fa: 90, at: ["s", 100, 138] }, { t: 180, th: -20, sh: -90, ua: -80, fa: 90, at: ["s", 100, 138] }] },
+  inclineDb:  { props: [{ line: [[158, 156], [108, 127]], w: 9 }, { seat: [138, 155, 46] }], imp: [{ t: "db" }], poses: [{ t: 150, th: -12, sh: -95, ua: 90, fa: 90, at: ["p", 150, 146] }, { t: 150, th: -12, sh: -95, ua: -75, fa: 100, at: ["p", 150, 146] }] },
+  inclineBar: { props: [{ line: [[158, 156], [108, 127]], w: 9 }, { seat: [138, 155, 46] }], imp: [{ t: "bar", r: 16 }], poses: [{ t: 150, th: -12, sh: -95, ua: 90, fa: 90, at: ["p", 150, 146] }, { t: 150, th: -12, sh: -95, ua: -75, fa: 100, at: ["p", 150, 146] }] },
+  ohp:        { imp: [{ t: "bar", r: 16 }], poses: S2(Object.assign({}, ST, { ua: -100, fa: 100 }), { ua: -267, fa: 92 }) },
+  ohpDb:      { props: [{ seat: [108, 158, 46] }], imp: [{ t: "db" }], poses: S2({ t: 92, th: 180, sh: -90, ua: -105, fa: 95, at: ["p", 130, 152] }, { ua: -268, fa: 90 }) },
+  dips:       { props: [{ bars: 112 }], poses: [{ t: 100, th: -100, sh: -40, ua: -90, fa: -90, at: ["h", 110, 112] }, { t: 120, th: -115, sh: -50, ua: 0, fa: -100, at: ["h", 110, 112] }] },
+  fly:        { cables: [[16, 18, "h"], [224, 18, "h2"]], imp: [{ t: "hd", both: 1 }], poses: S2(Object.assign({}, STF, { ua: 160, fa: 150, ua2: 20, fa2: 30 }), { ua: 240, fa: 300, ua2: -60, fa2: -120 }) },
+  lat:        { imp: [{ t: "db", both: 1 }], poses: S2(Object.assign({}, STF, { ua: -112, fa: -100, ua2: -68, fa2: -80 }), { ua: -178, fa: -182, ua2: -2, fa2: 2 }) },
+  latCable:   { cables: [[30, 186, "h2"]], imp: [{ t: "hd", at: "h2" }], poses: S2(Object.assign({}, STF, { ua: -112, fa: -100, ua2: -100, fa2: -110 }), { ua2: -2, fa2: 2 }) },
+  facepull:   { cables: [[22, 50, "h"]], imp: [{ t: "hd" }], poses: S2(Object.assign({}, ST, { ua: 178, fa: 178 }), { ua: 10, fa: 165 }) },
+  rear:       { imp: [{ t: "db" }], poses: S2({ t: 170, th: -80, sh: -95, ua: -90, fa: -90, at: ["f", 150, 190] }, { ua: 85, fa: 85 }) },
+  pullup:     { props: [{ pullbar: 30 }], poses: [{ t: 90, th: -95, sh: -125, ua: 90, fa: 90, at: ["h", 120, 30] }, { t: 85, th: -100, sh: -130, ua: 225, fa: 60, at: ["h", 120, 30] }] },
+  pulldown:   { props: [{ seat: [118, 156, 46] }, { pad: [92, 137, 22, 7] }], cables: [[140, 4, "h"]], imp: [{ t: "hd", w: 34 }], poses: [{ t: 80, th: 180, sh: -90, ua: 95, fa: 95, at: ["p", 140, 150] }, { t: 76, th: 180, sh: -90, ua: 245, fa: 75, at: ["p", 140, 150] }] },
+  row:        { imp: [{ t: "bar", r: 16 }], poses: [{ t: 148, th: -108, sh: -80, ua: -90, fa: -90, at: ["f", 130, 190] }, { t: 150, th: -108, sh: -80, ua: 25, fa: -120, at: ["f", 130, 190] }] },
+  rowDb:      { props: [{ bench: [52, 150, 60] }], imp: [{ t: "db" }], poses: [{ t: 165, th: -100, sh: -80, ua: -90, fa: -90, ua2: -100, fa2: -95, at: ["f", 150, 190] }, { t: 165, th: -100, sh: -80, ua: 30, fa: -110, ua2: -100, fa2: -95, at: ["f", 150, 190] }] },
+  cableRow:   { props: [{ seat: [136, 176, 46] }, { pad: [72, 148, 7, 42] }], cables: [[22, 160, "h"]], imp: [{ t: "hd" }], poses: [{ t: 112, th: 175, sh: 185, ua: 178, fa: 180, at: ["p", 160, 170] }, { t: 86, th: 175, sh: 185, ua: 325, fa: 178, at: ["p", 160, 170] }] },
+  curl:       { imp: [{ t: "bar", r: 11 }], poses: S2(Object.assign({}, ST, { ua: -88, fa: -92 }), { fa: -260 }) },
+  curlInc:    { props: [{ line: [[150, 157], [176, 112]], w: 9 }, { seat: [118, 156, 46] }], imp: [{ t: "db" }], poses: S2({ t: 60, th: 180, sh: -90, ua: -90, fa: -90, at: ["p", 140, 150] }, { fa: -255 }) },
+  hammer:     { imp: [{ t: "db" }], poses: S2(Object.assign({}, ST, { ua: -88, fa: -92 }), { fa: -260 }) },
+  skull:      { props: [{ bench: [76, 146, 108] }], imp: [{ t: "bar", r: 11 }], poses: S2({ t: 180, th: -20, sh: -90, ua: 100, fa: 100, at: ["s", 100, 138] }, { fa: 200 }) },
+  pushdown:   { cables: [[78, 4, "h"]], imp: [{ t: "hd" }], poses: S2(Object.assign({}, ST, { ua: -95, fa: 150 }), { ua: -92, fa: 268 }) },
+  ohExt:      { cables: [[222, 30, "h"]], imp: [{ t: "hd" }], poses: S2(Object.assign({}, ST, { t: 100, ua: 110, fa: -60 }), { fa: 105 }) },
+  squat:      { imp: [{ t: "bar", r: 15, at: "s", dx: 14, dy: 3 }], poses: S2(Object.assign({}, ST, { ua: -30, fa: 110 }), { t: 128, th: -172, sh: -62, ua: 8, fa: 148 }) },
+  frontSquat: { imp: [{ t: "bar", r: 15, dx: -8 }], poses: S2(Object.assign({}, ST, { ua: 175, fa: 20 }), { t: 108, th: -172, sh: -62, ua: 185, fa: 30 }) },
+  deadlift:   { imp: [{ t: "bar", r: 22 }], poses: [{ t: 150, th: -160, sh: -78, ua: -88, fa: -90, at: ["f", 120, 190] }, Object.assign({}, ST, { ua: -90, fa: -90 })] },
+  rdl:        { imp: [{ t: "bar", r: 18 }], poses: [Object.assign({}, ST, { ua: -90, fa: -90 }), { t: 165, th: -110, sh: -80, ua: -90, fa: -90, at: ["f", 120, 190] }] },
+  legpress:   { props: [{ line: [[170, 160], [214, 132]], w: 9 }, { line: [[150, 160], [196, 160]], w: 5 }], imp: [{ t: "sled", at: "f" }], poses: S2({ t: 35, th: 115, sh: 195, ua: -40, fa: -100, at: ["p", 160, 150] }, { th: 150, sh: 150 }) },
+  bulgarian:  { props: [{ box: [138, 162, 46, 28] }], imp: [{ t: "db" }], poses: S2({ t: 95, th: -95, sh: -90, th2: -60, sh2: -20, ua: -90, fa: -90, at: ["f", 92, 190] }, { t: 100, th: -170, sh: -70, th2: -100, sh2: 40 }) },
+  hipthrust:  { props: [{ bench: [30, 154, 56] }], imp: [{ t: "bar", r: 18, at: "p", dy: -10 }], poses: [{ t: 150, th: 30, sh: -80, ua: -40, fa: -20, at: ["s", 80, 150] }, { t: 180, th: 0, sh: -90, ua: -10, fa: 10, at: ["s", 80, 150] }] },
+  legcurl:    { props: [{ bench: [92, 148, 110] }], imp: [{ t: "roller", at: "f" }], poses: S2({ t: 180, th: 0, sh: 0, ua: -110, fa: -80, at: ["s", 88, 140] }, { sh: 95 }) },
+  legext:     { props: [{ seat: [118, 154, 46] }, { line: [[160, 154], [166, 104]], w: 8 }], imp: [{ t: "roller", at: "f" }], poses: S2({ t: 92, th: 180, sh: -90, ua: -80, fa: -100, at: ["p", 140, 148] }, { sh: -190 }) },
+  calf:       { props: [{ box: [96, 184, 46, 6] }], imp: [{ t: "db" }], poses: S2(Object.assign({}, ST, { at: ["f", 118, 184] }), { at: ["f", 118, 170] }) },
+  calfSeat:   { props: [{ seat: [118, 156, 46] }, { box: [84, 188, 30, 4] }], imp: [{ t: "roller", at: "k", dy: -9 }], poses: S2({ t: 92, th: 180, sh: -90, ua: -100, fa: 180, at: ["p", 140, 150] }, { th: 170, sh: -92 }) },
+  hlr:        { props: [{ pullbar: 30 }], poses: S2({ t: 90, th: -92, sh: -90, ua: 90, fa: 90, at: ["h", 120, 30] }, { th: -178, sh: -180 }) },
+  cableCrunch:{ cables: [[36, 6, "h"]], imp: [{ t: "hd" }], poses: S2({ t: 95, th: -90, sh: 0, ua: 155, fa: -25, at: ["k", 130, 188] }, { t: 195, ua: 255, fa: 75 }) },
+  pushups:    { poses: [{ t: 158, th: -25, sh: -25, ua: -90, fa: -90, at: ["h", 86, 190] }, { t: 172, th: -7, sh: -7, ua: 10, fa: -125, at: ["h", 86, 190] }] }
+};
+const NS = "http://www.w3.org/2000/svg";
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let figures = [];
+function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+const dirA = a => { const r = a * Math.PI / 180; return [Math.cos(r), -Math.sin(r)]; };
+function fk(q) {
+  const go = (a, l, ang) => { const d = dirA(ang); return [a[0] + d[0] * l, a[1] + d[1] * l]; };
+  const p = [0, 0], s = go(p, 46, q.t), hd = go(s, 15, q.t);
+  const k = go(p, 40, q.th), f = go(k, 38, q.sh), k2 = go(p, 40, q.th2 != null ? q.th2 : q.th), f2 = go(k2, 38, q.sh2 != null ? q.sh2 : q.sh);
+  const e = go(s, 26, q.ua), hh = go(e, 24, q.fa), e2 = go(s, 26, q.ua2 != null ? q.ua2 : q.ua), h2 = go(e2, 24, q.fa2 != null ? q.fa2 : q.fa);
+  const P = { p, s, hd, k, f, k2, f2, e, h: hh, e2, h2 };
+  const at = q.at || ["f", 120, 190], dx = at[1] - P[at[0]][0], dy = at[2] - P[at[0]][1];
+  for (const n in P) P[n] = [P[n][0] + dx, P[n][1] + dy];
+  return P;
+}
+function lerpQ(a, b, t) {
+  const o = Object.assign({}, a);
+  for (const k of ["t", "th", "sh", "th2", "sh2", "ua", "fa", "ua2", "fa2"]) {
+    const va = a[k] != null ? a[k] : (k.endsWith("2") ? a[k.slice(0, -1)] : null), vb = b[k] != null ? b[k] : (k.endsWith("2") ? b[k.slice(0, -1)] : null);
+    if (va != null && vb != null) o[k] = va + (vb - va) * t;
+  }
+  const A = a.at || ST.at, B = b.at || ST.at;
+  o.at = [A[0], A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+  return o;
+}
+function makeFigure(id, cls, keep) {
+  const F = FIG[id], ex = EX[id];
+  const svg = el("svg", { viewBox: "0 0 240 200", class: "fig " + (cls || ""), role: "img", "aria-label": "Schéma animé : " + ex.n });
+  if (!F) return svg;
+  el("line", { x1: 6, y1: 190, x2: 234, y2: 190, class: "pr" }, svg);
+  (F.props || []).forEach(p => {
+    if (p.bench) { const [x, y, w] = p.bench; el("rect", { x, y, width: w, height: 7, rx: 3, class: "prf" }, svg); el("line", { x1: x + 10, y1: y + 7, x2: x + 10, y2: 190, class: "pr" }, svg); el("line", { x1: x + w - 10, y1: y + 7, x2: x + w - 10, y2: 190, class: "pr" }, svg); }
+    if (p.seat) { const [x, y, w] = p.seat; el("rect", { x, y, width: w, height: 7, rx: 3, class: "prf" }, svg); el("line", { x1: x + w / 2, y1: y + 7, x2: x + w / 2, y2: 190, class: "pr" }, svg); }
+    if (p.box) { const [x, y, w, hh] = p.box; el("rect", { x, y, width: w, height: hh, rx: 2, class: "prf" }, svg); }
+    if (p.pad) { const [x, y, w, hh] = p.pad; el("rect", { x, y, width: w, height: hh, rx: 3, class: "prf" }, svg); }
+    if (p.line) el("line", { x1: p.line[0][0], y1: p.line[0][1], x2: p.line[1][0], y2: p.line[1][1], class: "prl", "stroke-width": p.w || 6 }, svg);
+    if (p.pullbar) el("line", { x1: 40, y1: p.pullbar, x2: 200, y2: p.pullbar, class: "pr", "stroke-width": 4, "stroke-linecap": "round" }, svg);
+    if (p.bars) { el("line", { x1: 60, y1: p.bars, x2: 180, y2: p.bars, class: "pr", "stroke-width": 4, "stroke-linecap": "round" }, svg); el("line", { x1: 72, y1: p.bars, x2: 72, y2: 190, class: "pr" }, svg); el("line", { x1: 168, y1: p.bars, x2: 168, y2: 190, class: "pr" }, svg); }
+  });
+  const cab = (F.cables || []).map(c => { el("circle", { cx: c[0], cy: c[1], r: 4, class: "pul" }, svg); return { c, l: el("line", { class: "cab" }, svg) }; });
+  const front = F.poses[0].front;
+  const L = c => el("line", { class: c }, svg), C = (r, c) => el("circle", { r, class: c }, svg);
+  const back = front ? "lf" : "lb", backj = front ? "jf" : "jb";
+  const parts = { a2u: L(back), a2l: L(back), l2u: L(back), l2l: L(back), hb: C(3.5, backj), fb: C(3.5, backj),
+    tr: L("tr"), lu: L("lf"), ll: L("lf"), au: L("lf"), al: L("lf"), hf: C(4.5, "jf"), ff: C(4.5, "jf"), kn: C(3, "jn"), el: C(2.6, "jn"), hd: el("circle", { r: 9.5, class: "hd" }, svg) };
+  const imps = [];
+  (F.imp || []).forEach(m => {
+    const ats = m.both ? ["h", "h2"] : [m.at || "h"];
+    ats.forEach(at => {
+      let n;
+      if (m.t === "bar") n = el("circle", { r: m.r || 16, class: "plate" }, svg);
+      else if (m.t === "db") n = el("rect", { width: 16, height: 9, rx: 2.5, class: "dbell" }, svg);
+      else if (m.t === "roller") n = el("circle", { r: 7, class: "dbell" }, svg);
+      else if (m.t === "sled") n = el("line", { class: "sled" }, svg);
+      else n = el("line", { class: "handle" }, svg);
+      imps.push({ m, at, n });
+    });
+  });
+  const fig = { svg, F, parts, cab, imps, t: Math.random() * 3, speed: 1, keep: !!keep };
+  fig.seq = F.seq || [[0, .5, 1.1], [1, .35, 1.1]];
+  fig.total = fig.seq.reduce((a, s) => a + s[1] + s[2], 0);
+  drawFig(fig, reduceMotion ? F.poses[1] : F.poses[0]);
+  figures.push(fig);
+  return svg;
+}
+function setL(l, a, b) { l.setAttribute("x1", a[0].toFixed(1)); l.setAttribute("y1", a[1].toFixed(1)); l.setAttribute("x2", b[0].toFixed(1)); l.setAttribute("y2", b[1].toFixed(1)); }
+function drawFig(fig, q) {
+  const P = fk(q), r = fig.parts;
+  setL(r.a2u, P.s, P.e2); setL(r.a2l, P.e2, P.h2); setL(r.l2u, P.p, P.k2); setL(r.l2l, P.k2, P.f2);
+  setL(r.tr, P.s, P.p); setL(r.lu, P.p, P.k); setL(r.ll, P.k, P.f); setL(r.au, P.s, P.e); setL(r.al, P.e, P.h);
+  const pt = (c, a) => { c.setAttribute("cx", a[0].toFixed(1)); c.setAttribute("cy", a[1].toFixed(1)); };
+  pt(r.hb, P.h2); pt(r.fb, P.f2); pt(r.hf, P.h); pt(r.ff, P.f); pt(r.kn, P.k); pt(r.el, P.e); pt(r.hd, P.hd);
+  fig.cab.forEach(({ c, l }) => setL(l, [c[0], c[1]], P[c[2]]));
+  fig.imps.forEach(({ m, at, n }) => {
+    const a = [P[at][0] + (m.dx || 0), P[at][1] + (m.dy || 0)];
+    if (m.t === "bar" || m.t === "roller") pt(n, a);
+    else if (m.t === "db") { n.setAttribute("x", (a[0] - 8).toFixed(1)); n.setAttribute("y", (a[1] - 4.5).toFixed(1)); }
+    else if (m.t === "sled") { const d = dirA(60); setL(n, [a[0] - d[0] * 18 - 4, a[1] - d[1] * 18], [a[0] + d[0] * 18 - 4, a[1] + d[1] * 18]); }
+    else { const w = (m.w || 16) / 2; setL(n, [a[0] - w, a[1]], [a[0] + w, a[1]]); }
+  });
+}
+const easeIO = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+let lastNow = 0;
+function tickFig(now) {
+  const dt = lastNow ? Math.min(.1, (now - lastNow) / 1000) : 0; lastNow = now;
+  figures = figures.filter(f => f.svg.isConnected || f.keep);
+  figures.forEach(f => {
+    if (!f.svg.isConnected) return;
+    f.t += dt * f.speed;
+    let t = f.t % f.total; const seq = f.seq, poses = f.F.poses;
+    for (let i = 0; i < seq.length; i++) {
+      const [pi, hold, move] = seq[i];
+      if (t < hold) { drawFig(f, poses[pi]); return; }
+      t -= hold;
+      if (t < move) { drawFig(f, lerpQ(poses[pi], poses[seq[(i + 1) % seq.length][0]], easeIO(t / move))); return; }
+      t -= move;
+    }
+  });
+  requestAnimationFrame(tickFig);
+}
+if (!reduceMotion) requestAnimationFrame(tickFig);
+function thumb(id, cls) { const b = h("div", { class: "thumb " + (cls || "") }); b.append(makeFigure(id)); return b; }
+function bigFig(id, keep) { const b = h("div", { class: "big-fig" }); b.append(makeFigure(id, null, keep)); return b; }
+function playerFig(id) { P.figs = P.figs || {}; return P.figs[id] || (P.figs[id] = bigFig(id, true)); }
 
 /* ---------- Bloc de 12 semaines ---------- */
 // F/H : [reps, RPE, séries, test?]  I : [min, max, RPE, séries]
@@ -638,7 +813,7 @@ function doseTxt(it) {
 function itemRow(it, opts) {
   const e = EX[it.ex];
   const d = h("details", { class: "xrow" },
-    h("summary", null, roleBadge(it.role),
+    h("summary", null, (() => { const t = thumb(it.ex); t.append(roleBadge(it.role)); return t; })(),
       h("span", { class: "xmain" }, h("span", { class: "xname" }, e.n), h("span", { class: "xwhy" + (it.warn ? " muted" : "") }, it.goal)),
       h("span", { class: "xdose" }, doseTxt(it))),
     h("div", { class: "xmore" },
@@ -797,7 +972,7 @@ function renderExercises() {
   const list = Object.values(EX).filter(e => (S.exMus === "all" || e.m.includes(S.exMus)) && (!q || e.n.toLowerCase().includes(q)));
   const inp = h("input", { class: "search", id: "exq", type: "search", placeholder: "Rechercher un exercice", value: S.exQ, "aria-label": "Rechercher un exercice" });
   inp.addEventListener("input", () => { S.exQ = inp.value; const c = $("#exlist"); c.replaceChildren(...exList()); });
-  const exList = () => Object.values(EX).filter(e => (S.exMus === "all" || e.m.includes(S.exMus)) && (!S.exQ.trim() || e.n.toLowerCase().includes(S.exQ.trim().toLowerCase()))).map(e => h("button", { class: "exbtn", onclick: () => openSub({ type: "exo", id: e.id }) },
+  const exList = () => Object.values(EX).filter(e => (S.exMus === "all" || e.m.includes(S.exMus)) && (!S.exQ.trim() || e.n.toLowerCase().includes(S.exQ.trim().toLowerCase()))).map(e => h("button", { class: "exbtn", onclick: () => openSub({ type: "exo", id: e.id }) }, thumb(e.id),
     h("span", { class: "xmain" }, h("b", null, e.n), h("span", { class: "small muted" }, e.m.map(m => MUS[m]).join(", ") + (e.m2.length ? " · " + e.m2.map(m => MUS[m]).join(", ") : ""))),
     !e.pdc ? h("span", { class: "xdose", style: "font-size:17px" }, (e.bw ? "+" : "") + kg(Math.round(toDisp(e.id, stOf(e.id).e1) * 2) / 2)) : null, h("span", { class: "chev" }, "›")));
   return h("section", { class: "screen" },
@@ -811,6 +986,7 @@ function renderExo(id) {
   const e = EX[id], s = stOf(id), last = lastItem(id);
   return h("section", { class: "screen" }, backBar("Retour"),
     h("div", { class: "top" }, h("span", { class: "eyebrow" }, e.m.map(m => MUS[m]).join(" · ")), h("h1", null, e.n)),
+    bigFig(id),
     h("div", { class: "kpis" },
       e.amrap ? h("div", { class: "kpi" }, h("b", null, s.best || e.ini), h("span", null, "Record (reps)")) :
         e.pdc ? h("div", { class: "kpi" }, h("b", null, s.w ? "+" + kg(s.w) : "PDC"), h("span", null, "Charge de travail")) :
@@ -891,7 +1067,7 @@ function loadCur() {
   P.warmOk = [];
   if (t) P.cur = { w: t.w, r: t.r, rpe: t.rpe };
 }
-function closeP() { P.on = false; clearInterval(P.tm); try { P.lock && P.lock.release(); } catch (e) {} document.body.style.overflow = ""; $("#player").hidden = true; render(); }
+function closeP() { P.figs = {}; figures = figures.filter(f => !f.keep); P.on = false; clearInterval(P.tm); try { P.lock && P.lock.release(); } catch (e) {} document.body.style.overflow = ""; $("#player").hidden = true; render(); }
 function tickP() {
   if (!P.on || P.phase !== "rest") return;
   const left = Math.ceil((P.restEnd - Date.now()) / 1000);
@@ -959,6 +1135,7 @@ function drawP() {
   } else if (P.phase === "warm") {
     body = h("div", { class: "p-body" },
       h("div", { class: "p-info" }, h("span", { class: "eyebrow" }, "Échauffement · " + ROLE[it.role]), h("h2", null, e.n)),
+      playerFig(it.ex),
       h("p", { class: "muted" }, "Montée progressive jusqu'à " + loadTxt(it.ex, P.plan[P.i][0].w) + ". Repos court entre chaque palier."),
       h("ul", { class: "warm-list" }, it.warm.map((x, k) => h("li", null, h("button", { class: P.warmOk.includes(k) ? "on" : null, onclick: () => { if (!P.warmOk.includes(k)) P.warmOk.push(k); beep(600, 0.03); drawP(); } },
         h("span", null, (P.warmOk.includes(k) ? "✓ " : "") + "Palier " + (k + 1)), h("b", null, loadTxt(it.ex, x.w) + " × " + x.r))))),
@@ -968,6 +1145,7 @@ function drawP() {
     const t = P.plan[P.i][P.si], c = P.cur, inc = e.inc || 2.5;
     body = h("div", { class: "p-body" },
       h("div", { class: "p-info" }, h("span", { class: "eyebrow" }, ROLE[it.role] + " · " + (t.lbl || "Série " + (P.si + 1) + "/" + P.plan[P.i].length)), h("h2", null, e.n)),
+      playerFig(it.ex),
       h("div", { class: "p-target" }, h("span", { class: "label" }, "Objectif"),
         h("span", { class: "big" }, e.amrap ? t.r + " reps ou plus" : loadTxt(it.ex, t.w) + " × " + t.r),
         h("span", { class: "muted small" }, e.amrap ? "Une seule série, jusqu'à l'échec technique" : "RPE " + rpeTxt(t.rpe) + " · " + (10 - t.rpe > 0 ? rpeTxt(10 - t.rpe) + " rep" + (10 - t.rpe >= 2 ? "s" : "") + " en réserve" : "à fond")),

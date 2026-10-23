@@ -303,6 +303,11 @@ button:disabled { opacity: .4; cursor: default; }
   background: radial-gradient(closest-side, var(--bg) 84%, transparent 85%), conic-gradient(var(--accent) calc(var(--p) * 360deg), var(--sunk) 0); }
 .p-ring.rest { background: radial-gradient(closest-side, var(--bg) 84%, transparent 85%), conic-gradient(var(--p3) calc(var(--p) * 360deg), var(--sunk) 0); }
 .p-clock { font-size: 50px; font-weight: 700; }
+.p-total { font-size: 14px; font-weight: 600; color: var(--muted); }
+.p-ring.set { width: 120px; height: 120px; }
+.p-ring.set .p-clock { font-size: 40px; line-height: 1; }
+.p-ring-in { display: grid; justify-items: center; gap: 2px; }
+.p-ring-l { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .p-sub { font-weight: 600; min-height: 1.4em; }
 .p-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .p-note { max-width: 46ch; }
@@ -4980,6 +4985,42 @@ render = function () {
     $("#nav").hidden = false; renderNav(); $("#view").replaceChildren(renderSpec()); return;
   }
   _render10();
+};
+render();
+
+
+/* =====================================================================
+   V11 : chronos visibles pendant la séance
+   Chrono de la série en cours (répétitions, exercices libres) et durée totale.
+   ===================================================================== */
+const fmtTotal = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+const chronoMode = rx => rx.mode === "reps" || rx.mode === "free";
+const _drawP11 = drawP;
+drawP = function () {
+  // Le chrono de série repart à chaque nouvelle série, pas quand on ajuste le compteur
+  const key = P.i + "-" + P.set;
+  if (P.phase === "ready" && P.readyKey !== key) { P.readyKey = key; P.setT0 = Date.now(); }
+  if (P.phase !== "ready") P.readyKey = null;
+  _drawP11();
+  const o = $("#player"); if (!o || !P.on) return;
+  const prog = o.querySelector(".p-prog");
+  if (prog && P.phase !== "done") prog.appendChild(h("span", { id: "p-total", class: "p-total num", "aria-label": "Durée de la séance" }, "⏱ " + fmtTotal(Math.floor((Date.now() - P.started) / 1000))));
+  if (P.phase === "ready" && chronoMode(P.rx) && !o.querySelector("#p-ring")) {
+    const sec = Math.floor((Date.now() - P.setT0) / 1000);
+    o.querySelector("#p-sub").before(h("div", { id: "p-ring", class: "p-ring set", style: "--p:" + (sec % 60) / 60, role: "timer", "aria-label": "Chrono de la série" },
+      h("div", { class: "p-ring-in" }, h("span", { id: "p-clock", class: "p-clock num" }, fmtClock(sec)), h("span", { class: "p-ring-l" }, "série"))));
+  }
+};
+const _tickP11 = tickP;
+tickP = function () {
+  _tickP11();
+  if (!P.on) return;
+  const tot = $("#p-total"); if (tot) tot.textContent = "⏱ " + fmtTotal(Math.floor((Date.now() - P.started) / 1000));
+  if (P.phase === "ready" && chronoMode(P.rx) && P.setT0) {
+    const c = $("#p-clock"), ring = $("#p-ring"), sec = (Date.now() - P.setT0) / 1000;
+    if (c) c.textContent = fmtClock(Math.floor(sec));
+    if (ring) ring.style.setProperty("--p", (sec % 60) / 60);
+  }
 };
 render();
 
